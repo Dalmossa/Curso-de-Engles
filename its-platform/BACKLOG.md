@@ -172,9 +172,9 @@ for neglect.
 | **P3.11** | Chaos engineering | TD-005 | Could | 10d | P2.5, P2.9 | Pod kill, network partition, latency injection |
 | **P3.12** | OpenTelemetry — non-core paths | TD-003 (rest) | Should | 6d | P2.6 | Remainder of the instrumentation sweep |
 | **P3.13** | ADR-013 Q2: IdP evaluation | — | Should | 2d | ADR-013 closure | Blocked behind Q1 by design. Managed vs self-hosted, incl. LGPD posture |
-| ~~P3.14~~ | ~~Content submodule workflow automation~~ | TD-002 | — | ~~5d~~ | **Removed** | ADR-010 is `Accepted` but was never implemented — no `.gitmodules` exists. There is nothing to automate. Delete this row or implement ADR-010 first |
+| **P3.14** | **Legacy pack schema migration — close the pack-schema warning** | TD-001 | Should | 20d | P0.5 | `verify-integrity.py` emits a **WARN** on every run for 115 packs (110 with no `**Reuse basis:**` in the `pack_les_<lesson>_v1.md` schema and IDs that do not satisfy §1.2's prefix↔namespace rule). `[11c]/[11d]/[11e]` do cover them, so release gates are not blocked, but the warning is a permanent alarm. Close by bringing those packs to the same schema validation surface as `pack-les-*.md` or by retiring them. See `post-lesson-practice-spec.md` §12. |
 
-**P3 = 65d** (`5+2+3+5+2+2+1+3+20+2+10+6+2`)
+**P3 = 70d** (`5+2+3+5+2+2+1+3+20+2+10+6+2+20` — added P3.14 at 20d; total rises from 65 to 70)
 
 ---
 
@@ -188,9 +188,9 @@ Arithmetic is shown because `CONSTITUTION.md` §2 forbids asserted numbers.
 | **P1** — MVP core | 18 | 42d | ✅ |
 | **P2** — MVP release | 12 | 34d | ✅ |
 
-| **P3** — deferred | 13 + 1 removed | 65d | ❌ |
+| **P3** — deferred | 14 | 70d | ❌ |
 | **MVP total** | **39** | **88d** | |
-| **Grand total** | 52 | 153d | |
+| **Grand total** | 53 | 158d | |
 
 ### Reconciliation against the previous version
 
@@ -203,7 +203,7 @@ Arithmetic is shown because `CONSTITUTION.md` §2 forbids asserted numbers.
 | Stories scheduled twice | 1 (M3.4) | **0** | fixed |
 | Stories covering the stack migration | 0 | 9 | added |
 | Story for PRD RF-002 (blocks the statistical layer) | 0 | 1 | added |
-| Deferred, with a stated blocker | 0 | 13 | added |
+| Deferred, with a stated blocker | 0 | 14 | added (includes P3.14 to close the pack-schema warning) |
 | L2 logging clauses with no implementing story | 4 | **0** | added |
 
 The MVP total is **9 days smaller** than the old scheduled figure while absorbing 34 days of
