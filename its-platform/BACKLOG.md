@@ -121,22 +121,34 @@ parameters. This is the story the old backlog was missing.
 
 Infrastructure and the gates that decide whether the MVP may ship.
 
+Listed in **execution order**. Ids are sequential within the phase.
+
 | ID | Story | Legacy | Pri | Est | Depends | Spec / ADR | Acceptance |
 |---|---|---|---|---|---|---|---|
 | **P2.1** | RLS policies + cross-learner integration suite | M6.4 | Must | 2d | P0.4 | **ADR-003**, ADR-014 | All learner-scoped tables; 403 on cross-learner access. **Runs on real PostgreSQL — PGlite's single exclusive connection cannot test this** |
-| **P2.2** | Kong rate limiting (Redis-backed) | M6.3 | Must | 2d | P0.8 | ADR-006 | Per-learner 100/min, per-IP 1000/min, enforced at the gateway |
-| **P2.3** | Helm chart + ArgoCD (dev/staging/prod) | M7.1 | Must | 3d | P1.7 | ADR-008 | `helm install` works; ArgoCD auto-syncs dev, manual for prod |
-| **P2.4** | pgBackRest + DR | M7.2 | Must | 3d | P2.1 | ADR-009 | RPO < 1 min, RTO < 2 h; **weekly** restore test |
-| **P2.5** | Observability stack (Prom/Grafana/Loki/Tempo) + SLO dashboards | M7.3 | Must | 3d | P0.8 | ADR-007 | Metrics, logs, traces; `/health` + `/ready` are the bound probes |
-| **P2.6** | OpenTelemetry instrumentation, core request path | TD-003 (part) | Must | 4d | P2.5 | `CONSTITUTION.md` §4.6 | Traces, metrics, logs unified; remainder → P3.12 |
-| **P2.7** | Resilience patterns on outbound calls | — | Must | 3d | P0.8 | `CONSTITUTION.md` §4.6 | Circuit breaker (closed→open→half-open); retry with **exponential backoff + jitter on idempotent calls only**; documented fallback; explicit timeout on every call |
-| **P2.8** | Load test, 1k concurrent | M7.4 | Must | 2d | P2.2, P2.3 | `CONSTITUTION.md` §6.3 | p95 < 200 ms; error rate < 0.1%. **PostgreSQL, not PGlite** — PGlite cannot exhibit contention |
-| **P2.9** | Security audit (OWASP ASVS L2) | M7.5 | Must | 5d | P1.14–1.18, P2.1–2.2 | `CONSTITUTION.md` §8.1 | Zero critical/high; medium findings documented with owners |
-| **P2.10** | Runbook + on-call rotation | M7.6 | Must | 2d | P2.5 | `CONSTITUTION.md` §7 | Covers P1–P4; 4-week rotation |
-| **P2.11** | Immutable audit log | M6.6 | Should | 2d | P2.1 | ADR-003 | Hash-chained; WORM storage; queryable |
+| **P2.2** | Immutable, tamper-evident audit log | M6.6 | **Must** | 2d | P2.1 | **ASVS `v4.0.3-7.1.3`, `7.2.1`, `7.2.2`, `7.3.3`**, §4.6 | Append-only hash chain; WORM-backed; records auth success **and** failure, access-control denials, validation failures, consent changes, data export/erasure. **Concurrency behaviour tested on real PostgreSQL** — appends serialise, which PGlite cannot exercise |
+| **P2.3** | Kong rate limiting (Redis-backed) | M6.3 | Must | 2d | P0.8 | ADR-006 | Per-learner 100/min, per-IP 1000/min, enforced at the gateway |
+| **P2.4** | **Security audit (OWASP ASVS 4.0.3 L2)** | M7.5 | Must | 5d | P1.14–1.18, P2.1–P2.3 | `CONSTITUTION.md` §8.1 | Zero critical/high; medium findings documented with owners. **Depends on P2.2** — an assessor cannot validate `7.3.3` against a system with no immutable log |
+| **P2.5** | Helm chart + ArgoCD (dev/staging/prod) | M7.1 | Must | 3d | P1.7 | ADR-008 | `helm install` works; ArgoCD auto-syncs dev, manual for prod |
+| **P2.6** | pgBackRest + DR | M7.2 | Must | 3d | P2.1 | ADR-009 | RPO < 1 min, RTO < 2 h; **weekly** restore test |
+| **P2.7** | Observability stack (Prom/Grafana/Loki/Tempo) + SLO dashboards | M7.3 | Must | 3d | P0.8, P2.2 | ADR-007 | Metrics, logs, traces; `/health` + `/ready` are the bound probes; log ingestion consumes the P2.2 audit trail |
+| **P2.8** | OpenTelemetry instrumentation, core request path | TD-003 (part) | Must | 4d | P2.7 | `CONSTITUTION.md` §4.6 | Traces, metrics, logs unified; remainder → P3.12 |
+| **P2.9** | Resilience patterns on outbound calls | — | Must | 3d | P0.8 | `CONSTITUTION.md` §4.6 | Circuit breaker (closed→open→half-open); retry with **exponential backoff + jitter on idempotent calls only**; documented fallback; explicit timeout on every call |
+| **P2.10** | Load test, 1k concurrent | M7.4 | Must | 2d | P2.3, P2.5 | `CONSTITUTION.md` §6.3 | p95 < 200 ms; error rate < 0.1%. **PostgreSQL, not PGlite** — PGlite cannot exhibit contention |
+| **P2.11** | Runbook + on-call rotation | M7.6 | Must | 2d | P2.7 | `CONSTITUTION.md` §7 | Covers P1–P4; 4-week rotation. Incident procedures consume the P2.2 audit trail |
 | **P2.12** | Documentation (API, architecture, runbook) | M7.7 | Should | 3d | all | `CONSTITUTION.md` §10 | `docs/` complete; OpenAPI examples on every response |
 
-**P2 = 34d** (`2+2+3+3+3+4+3+2+5+2+2+3`)
+**P2 = 34d** (`2+2+2+5+3+3+3+4+3+2+2+3`)
+
+> **Why the audit log is P2.2 and not last.** ASVS 4.0.3 `7.3.3` is a **Level 2** requirement:
+> *"Verify that security logs are protected from unauthorized access **and modification**."*
+> That clause cannot be assessed against a system whose logs are mutable, so running the
+> assessment first guarantees a finding on `7.3.3` plus the three clauses that depend on a
+> trustworthy record — `7.1.3` (auth success and failure), `7.2.1` (all auth decisions), and
+> `7.2.2` (all access-control denials). Two days of work moves before a five-day assessment
+> and removes a likely release-gate failure. The old order also had the property that the
+> finding would be raised *by* the audit and remediated *after* it — the same work, worse
+> sequencing, and an open finding carried through §6.3.
 
 ---
 
@@ -157,7 +169,7 @@ for neglect.
 | **P3.8** | Model versioning and A/B framework | M3.7 | Could | 3d | P1.6 | Swap model versions per learner cohort |
 | **P3.9** | **Legacy pack migration (115 packs)** | TD-001 | **Must** | 20d | — | **Reclassified from tech debt.** `verify-integrity.py` warns on this on **every run**; a release gate that blocks is an obligation, not debt. Largest single item here |
 | **P3.10** | Mutation testing in CI | TD-004 | Could | 2d | P0.1 | Monthly on release branches; `CONSTITUTION.md` §4.8 sets ≥ 85% |
-| **P3.11** | Chaos engineering | TD-005 | Could | 10d | P2.3, P2.7 | Pod kill, network partition, latency injection |
+| **P3.11** | Chaos engineering | TD-005 | Could | 10d | P2.5, P2.9 | Pod kill, network partition, latency injection |
 | **P3.12** | OpenTelemetry — non-core paths | TD-003 (rest) | Should | 6d | P2.6 | Remainder of the instrumentation sweep |
 | **P3.13** | ADR-013 Q2: IdP evaluation | — | Should | 2d | ADR-013 closure | Blocked behind Q1 by design. Managed vs self-hosted, incl. LGPD posture |
 | ~~P3.14~~ | ~~Content submodule workflow automation~~ | TD-002 | — | ~~5d~~ | **Removed** | ADR-010 is `Accepted` but was never implemented — no `.gitmodules` exists. There is nothing to automate. Delete this row or implement ADR-010 first |
@@ -175,6 +187,7 @@ Arithmetic is shown because `CONSTITUTION.md` §2 forbids asserted numbers.
 | **P0** — stack migration | 9 | 12d | ✅ |
 | **P1** — MVP core | 18 | 42d | ✅ |
 | **P2** — MVP release | 12 | 34d | ✅ |
+
 | **P3** — deferred | 13 + 1 removed | 65d | ❌ |
 | **MVP total** | **39** | **88d** | |
 | **Grand total** | 52 | 153d | |
@@ -191,6 +204,7 @@ Arithmetic is shown because `CONSTITUTION.md` §2 forbids asserted numbers.
 | Stories covering the stack migration | 0 | 9 | added |
 | Story for PRD RF-002 (blocks the statistical layer) | 0 | 1 | added |
 | Deferred, with a stated blocker | 0 | 13 | added |
+| L2 logging clauses with no implementing story | 4 | **0** | added |
 
 The MVP total is **9 days smaller** than the old scheduled figure while absorbing 34 days of
 Python work that must be redone, 27 days of previously-unscheduled stories, and 9 days of
@@ -198,6 +212,17 @@ newly-found gaps. The reduction comes entirely from deferring work that **cannot
 be done** — 34d of IRT/CAT that requires `a`/`b` parameters no story produced — not from
 optimism. `CONSTITUTION.md` §2 is satisfied by the arithmetic above rather than by a
 capacity assertion.
+
+### Two priority corrections made after the audit
+
+**M6.6 (audit log) was `Should`; it is now `Must`, at P2.2.** ASVS 4.0.3 `7.3.3` is a Level 2
+requirement and cannot be assessed without it. `7.1.3`, `7.2.1`, and `7.2.2` depend on the
+same record. Under the old order the assessment would have raised the finding and the
+remediation would have followed it — same work, worse sequencing, and an open finding carried
+into the §6.3 release gate.
+
+**M6.7 (LGPD Art. 18 export/erasure) was `Should`; it is now `Must`, at P1.16.** Art. 18
+carries a statutory response deadline. An obligation with a legal clock is not a `Should`.
 
 ---
 
@@ -255,7 +280,7 @@ mandatory layers** — a standard that weakened without being declared, contrary
 
 **Removed from this list:** *"Deployed to staging + smoke tested"*. Deployment is a
 release-level gate under §6.3, not a per-story one; requiring it per story made the DoD
-depend on infrastructure that is not ready until P2.3.
+depend on infrastructure that is not ready until P2.5.
 
 ---
 

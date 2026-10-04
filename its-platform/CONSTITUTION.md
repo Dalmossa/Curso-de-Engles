@@ -144,6 +144,9 @@ This Constitution establishes the **technical governance** for the ITS Platform 
 |---|---|
 | **Tracing** | OpenTelemetry is mandatory. W3C `traceparent` is propagated across every hop, and a `Correlation-ID` is attached to every log line and error response. |
 | **Logs** | Structured JSON. **PII and LGPD-protected data are never logged** — redaction happens at the logger, not at the call site. |
+| **Log timestamps** | **UTC only**, synchronised across every node (ASVS `v4.0.3-7.3.4`). A learner's local time is stored on the record, never in the log line. Mixed time zones make forensic timelines unusable. |
+| **Log integrity** | Every log value is **encoded to prevent log injection** (ASVS `v4.0.3-7.3.1`). A value containing newlines or control characters must not be able to forge a second log record. Serialise structured fields; never interpolate raw strings into a log format. |
+| **Security audit log** | Authentication decisions (success **and** failure), access-control denials, validation failures, consent changes, and data-subject export/erasure are written to an **append-only, tamper-evident** log — hash-chained, WORM-backed. ASVS `v4.0.3-7.3.3` requires security logs be *"protected from unauthorized access **and modification**"*: a log anyone can edit is not evidence. |
 | **Metrics** | `/health` (liveness — process is up) and `/ready` (readiness — dependencies reachable) are **mandatory** and are the probes Kubernetes and the ArgoCD health checks bind to. Prometheus metrics are exposed. |
 | **Circuit breaker** | Required on every outbound call to a service that can fail independently. States: closed → open → half-open. |
 | **Retry** | Exponential backoff **with jitter**, bounded attempts. **Only on idempotent operations** — a retried `POST` that is not idempotent duplicates the write. |
@@ -341,10 +344,12 @@ Alert → Acknowledge (15m) → Diagnose → Mitigate → Resolve → Postmortem
 
 | Standard | Status | Evidence |
 |---|---|---|
-| LGPD (Lei 13.709/2018) | Compliant | DPO appointed, consent mgmt, data export/erasure |
+| LGPD (Lei 13.709/2018) | Compliant | DPO appointed, consent mgmt, data export/erasure, tamper-evident audit trail |
 | GDPR (where applicable) | Compliant | DPA, SCCs, DPIA for high-risk processing |
-| OWASP ASVS 4.0 Level 2 | Target | CI scans, annual pentest |
+| OWASP ASVS **4.0.3** Level 2 | Target | CI scans, annual pentest. **Version is pinned** — requirement ids change between releases, so clause references are written `v4.0.3-<clause>`. ASVS 5.0.0 exists; adopting it is a separate, versioned decision, not a silent upgrade. |
 | ISO 27001 Annex A | In progress | Risk register, SoA |
+
+**Logging requirements are L2, not L3.** ASVS 4.0.3 `7.1.3`, `7.1.4`, `7.2.1`, `7.2.2`, `7.3.1`, `7.3.3`, `7.3.4`, `7.4.2`, `7.4.3` are all Level 2. A Level 2 assessment therefore requires the tamper-evident audit log **before** the assessment is performed — an assessor cannot validate `7.3.3` against a system that has no immutable log to inspect. `BACKLOG.md` P2 orders the audit log ahead of the audit for this reason.
 
 ### 8.2 Vulnerability Management
 
@@ -397,7 +402,16 @@ An amendment that only strengthens is not an amendment, it is a wish list. Recor
 | **Executable coverage** | 12 tables migrated, 20 tests passing | **Zero**, during the migration window | Nothing was ever in production, so no runtime guarantee is lost — but the repository is **spec-only** until P0 completes. See `BACKLOG.md` P0. |
 | **Pre-commit tooling** | `ruff`/`mypy`/`black` were fast and Python-native | `eslint` + `tsc` + `prettier`; slower and TypeScript-native | Accepted cost. RLS test suites (§4.8) still require real PostgreSQL, not PGlite. |
 
-**Explicitly not changed:** §6.1 release SemVer, §6.3 release gates, §4.8 coverage thresholds, §7 incident severity, §8.1 compliance posture. These were audited during this amendment and found sound.
+**Strengthened by the same amendment (recorded because §9 requires visibility in both
+directions):**
+
+| Strengthened | Before | After | Evidence found |
+|---|---|---|---|
+| **Logging** | Structured JSON, no PII. UTC and log-injection were **unspecified**. | Four requirements added: UTC-only synchronised timestamps, log-injection encoding, a tamper-evident audit trail, and pinned clause references | ASVS 4.0.3 `7.3.4`, `7.3.1`, `7.3.3` are all **Level 2**. The §4.6 "Logs" row satisfied none of the three |
+| **Audit-log priority** | `BACKLOG.md` M6.6 = `Should`, sequenced last | `Must`, at P2.2, ahead of the security assessment | `7.3.3` cannot be assessed without an immutable log. Four L2 clauses were unimplementable as sequenced |
+| **ASVS versioning** | "OWASP ASVS 4.0 Level 2" | Pinned to **4.0.3**, clause refs written `v4.0.3-<clause>` | ASVS states requirement ids change between releases; 5.0.0 is now published. An unpinned reference is not reproducible |
+
+**Explicitly not changed:** §6.1 release SemVer, §6.3 release gates, §4.8 coverage thresholds, §7 incident severity. These were audited during this amendment and found sound.
 
 ---
 
