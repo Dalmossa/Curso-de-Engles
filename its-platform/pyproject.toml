@@ -1,0 +1,175 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "its-platform"
+version = "0.1.0"
+description = "Intelligent Tutoring System Platform for English Learning"
+authors = ["ITS Platform Team <team@its-platform.local>"]
+readme = "README.md"
+repository = "https://github.com/its-platform/its-platform"
+license = "Proprietary"
+packages = [{include = "its_platform", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.109.0"
+uvicorn = ["standard", "^0.27.0"]
+pydantic = "^2.5.0"
+pydantic-settings = "^2.1.0"
+sqlalchemy = ["asyncio", "^2.0.0"]
+alembic = "^1.13.0"
+asyncpg = "^0.29.0"
+redis = "^5.0.0"
+celery = "^5.3.0"
+pymc = "^5.10.0"
+numpy = "^1.26.0"
+scipy = "^1.12.0"
+fsrs = "^1.0.0"
+python-jose = ["cryptography", "^3.3.0"]
+passlib = ["bcrypt", "^1.7.4"]
+python-multipart = "^0.0.6"
+httpx = "^0.26.0"
+pyyaml = "^6.0.1"
+python-dotenv = "^1.0.0"
+structlog = "^24.1.0"
+prometheus-client = "^0.19.0"
+opentelemetry-api = "^1.22.0"
+opentelemetry-sdk = "^1.22.0"
+opentelemetry-instrumentation-fastapi = "^0.43b0"
+opentelemetry-instrumentation-sqlalchemy = "^0.43b0"
+opentelemetry-instrumentation-redis = "^0.43b0"
+opentelemetry-exporter-otlp = "^1.22.0"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.2.0"
+black = "^23.12.0"
+mypy = "^1.8.0"
+pytest = "^7.4.0"
+pytest-asyncio = "^0.23.0"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.12.0"
+httpx = "^0.26.0"
+faker = "^22.0.0"
+factory-boy = "^3.3.0"
+mutmut = "^2.5.0"
+bandit = "^1.7.0"
+spectral = "^6.8.0"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.0"
+pytest-asyncio = "^0.23.0"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.12.0"
+httpx = "^0.26.0"
+faker = "^22.0.0"
+factory-boy = "^3.3.0"
+behave = "^1.2.6"
+pytest-bdd = "^6.0.0"
+
+[tool.poetry.scripts]
+its-platform = "its_platform.main:run"
+alembic = "alembic"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "ARG", # flake8-unused-arguments
+    "PTH", # flake8-use-pathlib
+    "T20", # flake8-print
+]
+ignore = [
+    "E501",  # line too long (handled by black)
+    "B008",  # do not perform function calls in argument defaults
+    "ARG001", # unused argument (common in FastAPI deps)
+    "ARG002", # unused argument (common in FastAPI deps)
+]
+per-file-ignores = {
+    "tests/*": ["S101", "S106"],  # allow assert and hardcoded passwords in tests
+}
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+include = '\.pyi?$'
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+show_error_codes = true
+pretty = true
+namespace_packages = true
+explicit_package_bases = true
+
+[tool.mypy.overrides]
+module = [
+    "sqlalchemy.*",
+    "pydantic.*",
+    "fastapi.*",
+    "celery.*",
+    "redis.*",
+    "pymc.*",
+    "numpy.*",
+    "scipy.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--tb=short",
+    "-ra",
+]
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "contract: Contract tests",
+    "bdd: BDD tests",
+    "mutation: Mutation tests",
+    "slow: Slow tests",
+]
+
+[tool.coverage.run]
+source = ["its_platform"]
+omit = ["*/tests/*", "*/migrations/*"]
+parallel = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]
+show_missing = true
+precision = 2
+
+[tool.alembic]
+script_location = "its_platform.db.migrations"

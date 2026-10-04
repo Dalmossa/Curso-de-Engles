@@ -1,0 +1,414 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  PYTHON_VERSION: "3.11"
+  POETRY_VERSION: "1.8.3"
+
+jobs:
+  # ------------------------------------------------------------------
+  # Lint & Type Check
+  # ------------------------------------------------------------------
+  lint:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: ${{ env.POETRY_VERSION }}
+
+      - name: Configure Poetry
+        run: |
+          poetry config virtualenvs.in-project true
+          poetry config installer.max-workers 10
+
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v4
+        with:
+          path: its-platform/.venv
+          key: poetry-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            poetry-${{ runner.os }}-
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: poetry install --no-interaction --with dev,test
+
+      - name: Run ruff (lint)
+        working-directory: its-platform
+        run: poetry run ruff check src/ tests/
+
+      - name: Run black (format check)
+        working-directory: its-platform
+        run: poetry run black --check src/ tests/
+
+      - name: Run mypy (type check)
+        working-directory: its-platform
+        run: poetry run mypy --strict src/
+
+      - name: Run yamlfmt (YAML format check)
+        working-directory: its-platform
+        run: |
+          pip install yamlfmt
+          yamlfmt -c .
+
+  # ------------------------------------------------------------------
+  # Content Integrity Verification
+  # ------------------------------------------------------------------
+  content-integrity:
+    name: Content Integrity Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Run verify-integrity.py
+        working-directory: .
+        run: python3 verify-integrity.py
+
+      - name: Run prd-score.py
+        working-directory: .
+        run: python3 prd-score.py
+
+  # ------------------------------------------------------------------
+  # Contract Testing (OpenAPI Spec Validation)
+  # ------------------------------------------------------------------
+  contract-test:
+    name: OpenAPI Contract Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Node.js for spectral
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install spectral
+        run: npm install -g @stoplight/spectral-cli
+
+      - name: Validate OpenAPI spec
+        working-directory: its-platform
+        run: spectral lint docs/api-spec.openapi.yaml --ruleset @stoplight/spectral/rulesets/owasp-api-security.json
+
+      - name: Validate OpenAPI spec structure
+        working-directory: its-platform
+        run: |
+          python3 -c "
+          import yaml
+          with open('docs/api-spec.openapi.yaml') as f:
+              spec = yaml.safe_load(f)
+          assert 'openapi' in spec and spec['openapi'].startswith('3.1')
+          assert 'paths' in spec and len(spec['paths']) > 0
+          assert 'components' in spec and 'schemas' in spec['components']
+          print(f'OpenAPI {spec[\"openapi\"]} valid: {len(spec[\"paths\"])} paths, {len(spec[\"components\"][\"schemas\"])} schemas')
+          "
+
+  # ------------------------------------------------------------------
+  # Unit Tests
+  # ------------------------------------------------------------------
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: ${{ env.POETRY_VERSION }}
+
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v4
+        with:
+          path: its-platform/.venv
+          key: poetry-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            poetry-${{ runner.os }}-
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: poetry install --no-interaction --with dev,test
+
+      - name: Run unit tests with coverage
+        working-directory: its-platform
+        run: |
+          poetry run pytest tests/unit -v --cov=its_platform --cov-report=xml --cov-report=term-missing --cov-fail-under=95
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: its-platform/coverage.xml
+          flags: unit
+
+  # ------------------------------------------------------------------
+  # Integration Tests (requires services)
+  # ------------------------------------------------------------------
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: its_platform_test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: [6379:6379]
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: ${{ env.POETRY_VERSION }}
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: poetry install --no-interaction --with dev,test
+
+      - name: Run database migrations
+        working-directory: its-platform
+        run: |
+          export DATABASE_URL="postgresql://test:test@localhost:5432/its_platform_test"
+          poetry run alembic upgrade head
+
+      - name: Run integration tests
+        working-directory: its-platform
+        run: |
+          export DATABASE_URL="postgresql://test:test@localhost:5432/its_platform_test"
+          export REDIS_URL="redis://localhost:6379/0"
+          poetry run pytest tests/integration -v --cov=its_platform --cov-append --cov-report=xml --cov-fail-under=80
+
+  # ------------------------------------------------------------------
+  # Mutation Testing (adaptive engine)
+  # ------------------------------------------------------------------
+  mutation-test:
+    name: Mutation Testing (Adaptive Engine)
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    if: github.event_name == 'schedule' || github.repository == 'owner/its-platform'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: ${{ env.POETRY_VERSION }}
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: poetry install --no-interaction --with dev,test
+
+      - name: Run mutmut on adaptive engine
+        working-directory: its-platform
+        run: |
+          poetry run mutmut run --paths-to-mutate=its_platform/adaptive --runner="pytest tests/unit/adaptive -x"
+          poetry run mutmut results --threshold=85
+
+  # ------------------------------------------------------------------
+  # BDD Tests
+  # ------------------------------------------------------------------
+  bdd-tests:
+    name: BDD Tests
+    runs-on: ubuntu-latest
+    needs: integration-tests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: ${{ env.POETRY_VERSION }}
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: poetry install --no-interaction --with dev,test
+
+      - name: Run BDD tests
+        working-directory: its-platform
+        run: |
+          export DATABASE_URL="postgresql://test:test@localhost:5432/its_platform_test"
+          export REDIS_URL="redis://localhost:6379/0"
+          poetry run pytest tests/bdd -v --tb=short
+
+  # ------------------------------------------------------------------
+  # Security Scan
+  # ------------------------------------------------------------------
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: 'its-platform'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Run bandit (Python security lint)
+        working-directory: its-platform
+        run: |
+          pip install bandit[toml]
+          bandit -r src/ -f json -o bandit-results.json || true
+
+  # ------------------------------------------------------------------
+  # Build & Push Docker Image
+  # ------------------------------------------------------------------
+  build-image:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: [lint, content-integrity, contract-test, unit-tests]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        uses: docker/build-push-action@v5
+        with:
+          context: its-platform
+          push: false
+          tags: its-platform:${{ github.sha }}
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Run container smoke test
+        run: |
+          docker run --rm its-platform:${{ github.sha }} python -c "import its_platform; print('Import OK')"
+
+  # ------------------------------------------------------------------
+  # Deploy to Staging (ArgoCD)
+  # ------------------------------------------------------------------
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [build-image, integration-tests, bdd-tests]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: staging
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Update ArgoCD Application image tag
+        run: |
+          echo "Update iac/argocd/applications/its-platform-staging.yaml with new image tag"
+          # This would be done via Kustomize or Helm values update in practice
+
+  # ------------------------------------------------------------------
+  # Summary
+  # ------------------------------------------------------------------
+  summary:
+    name: CI Summary
+    runs-on: ubuntu-latest
+    needs: [lint, content-integrity, contract-test, unit-tests, integration-tests, bdd-tests, security-scan]
+    if: always()
+    steps:
+      - name: Check job statuses
+        run: |
+          echo "Lint: ${{ needs.lint.result }}"
+          echo "Content Integrity: ${{ needs.content-integrity.result }}"
+          echo "Contract Test: ${{ needs.contract-test.result }}"
+          echo "Unit Tests: ${{ needs.unit-tests.result }}"
+          echo "Integration Tests: ${{ needs.integration-tests.result }}"
+          echo "BDD Tests: ${{ needs.bdd-tests.result }}"
+          echo "Security Scan: ${{ needs.security-scan.result }}"
+
+      - name: Fail if any required job failed
+        if: |
+          needs.lint.result != 'success' ||
+          needs.content-integrity.result != 'success' ||
+          needs.contract-test.result != 'success' ||
+          needs.unit-tests.result != 'success' ||
+          needs.integration-tests.result != 'success' ||
+          needs.bdd-tests.result != 'success'
+        run: exit 1
