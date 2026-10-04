@@ -1,0 +1,888 @@
+---
+name: OpenAPI Spec
+description: OpenAPI 3.1 specification design, validation, examples, contract testing for ITS Platform
+---
+
+# OpenAPI Spec Skill — ITS Platform
+
+## When to Use
+- Designing API contracts
+- Validating implementation against spec
+- Generating client SDKs
+- Contract testing with schemathesis
+
+## OpenAPI 3.1 Structure
+
+```yaml
+openapi: 3.1.0
+info:
+  title: ITS Platform API
+  version: 1.0.0
+  description: |
+    Intelligent Tutoring System for teaching English to Brazilian Portuguese speakers.
+    All contracts derived from Curso-de-Ingles specs.
+  contact:
+    name: ITS Team
+    email: its@example.com
+  license:
+    name: Proprietary
+    url: https://example.com/license
+
+servers:
+  - url: https://api.its.example.com/v1
+    description: Production
+  - url: https://staging-api.its.example.com/v1
+    description: Staging
+  - url: http://localhost:8000/v1
+    description: Local development
+
+tags:
+  - name: placement
+    description: Diagnostic placement and start-node mapping
+  - name: curriculum
+    description: Curriculum graph navigation and next-activity selection
+  - name: practice
+    description: Practice pack submission and scoring
+  - name: listening
+    description: Listening corpus delivery
+  - name: content
+    description: Lesson and pack rendering
+  - name: learners
+    description: Learner profile, mastery, history
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    RefreshToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # ============================================================
+    # Placement / Diagnostic
+    # ============================================================
+    DiagnosticRequest:
+      type: object
+      required: [learner_id, mode]
+      properties:
+        learner_id:
+          type: string
+          format: uuid
+          description: Anonymous learner identifier
+        mode:
+          type: string
+          enum: [adaptive, fixed]
+          description: Adaptive (IRT) or fixed blueprint
+        prior_estimate:
+          type: object
+          description: Optional prior θ estimate for warm start
+          properties:
+            theta:
+              type: number
+            se:
+              type: number
+            source:
+              type: string
+              enum: [previous_diagnostic, self_report, external_test]
+
+    PlacementResult:
+      type: object
+      required: [learner_id, start_node, theta_estimate, confidence]
+      properties:
+        learner_id:
+          type: string
+          format: uuid
+        start_node:
+          type: string
+          pattern: '^(les|mod)_[a-z0-9_]+$'
+          description: Lesson or module ID from curriculum-graph-spec.md §4.3
+        theta_estimate:
+          type: object
+          required: [theta, se, ci95]
+          properties:
+            theta:
+              type: number
+              description: IRT ability estimate
+            se:
+              type: number
+              description: Standard error
+            ci95:
+              type: array
+              items:
+                type: number
+              minItems: 2
+              maxItems: 2
+              description: 95% confidence interval [lower, upper]
+        blueprint_coverage:
+          type: object
+          description: Skills covered by diagnostic items
+          additionalProperties:
+            type: integer
+        stopping_rule:
+          type: string
+          description: Which rule terminated the diagnostic (SE threshold, max items, etc.)
+
+    # ============================================================
+    # Curriculum / Next Activity
+    # ============================================================
+    NextActivityRequest:
+      type: object
+      required: [learner_id]
+      properties:
+        learner_id:
+          type: string
+          format: uuid
+        context:
+          type: object
+          description: Optional context for selection (time available, device, etc.)
+          properties:
+            time_budget_minutes:
+              type: integer
+              minimum: 5
+              maximum: 60
+            device:
+              type: string
+              enum: [mobile, desktop, tablet]
+            offline:
+              type: boolean
+
+    NextActivity:
+      type: object
+      required: [activity_type, activity_id, rationale]
+      properties:
+        activity_type:
+          type: string
+          enum: [lesson, practice_pack, listening, review]
+        activity_id:
+          type: string
+          description: Lesson ID (les_*), Pack ID (pack_*), or Dialogue ID (dlg_*)
+        rationale:
+          type: object
+          required: [selection_rule, mastery_gaps, i_plus_1]
+          properties:
+            selection_rule:
+              type: string
+              enum: [mastery_gate, prerequisite, spaced_review, diagnostic_followup]
+            mastery_gaps:
+              type: array
+              items:
+                type: string
+              description: Skill IDs where mastery < 0.85
+            i_plus_1:
+              type: boolean
+              description: Whether this activity is at i+1 level per Krashen
+        estimated_duration_minutes:
+          type: integer
+          minimum: 5
+          maximum: 45
+        prerequisites_met:
+          type: boolean
+
+    # ============================================================
+    # Practice Pack Submission
+    # ============================================================
+    PracticeSubmission:
+      type: object
+      required: [learner_id, pack_id, responses]
+      properties:
+        learner_id:
+          type: string
+          format: uuid
+        pack_id:
+          type: string
+          pattern: '^pack[-_]les_[a-z0-9_]+(_v1)?$'
+        responses:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [item_id, response, response_time_ms]
+            properties:
+              item_id:
+                type: string
+                pattern: '^(grm|voc|rdg|prn|lst|coh)_[a-z0-9_.-]+$'
+              response:
+                oneOf:
+                  - type: string
+                    description: Selected option letter (A, B, C, D)
+                  - type: object
+                    description: Production response (ASR transcript, etc.)
+                    properties:
+                      transcript:
+                        type: string
+                      audio_ref:
+                        type: string
+                        format: uri
+              response_time_ms:
+                type: integer
+                minimum: 0
+              confidence:
+                type: number
+                minimum: 0
+                maximum: 1
+                description: Learner's self-reported confidence (optional)
+
+    PracticeResult:
+      type: object
+      required: [pack_id, scored_items, mastery_updates, next_review_schedule]
+      properties:
+        pack_id:
+          type: string
+        scored_items:
+          type: array
+          items:
+            type: object
+            required: [item_id, correct, skill, bkt_update]
+            properties:
+              item_id:
+                type: string
+              correct:
+                type: boolean
+                description: Null for production items scored asynchronously
+              skill:
+                type: string
+                pattern: '^(grammar|vocab|reading|pronunciation|listening|coherence)$'
+              bkt_update:
+                type: object
+                required: [prior, posterior, transition]
+                properties:
+                  prior:
+                    type: number
+                    minimum: 0
+                    maximum: 1
+                  posterior:
+                    type: number
+                    minimum: 0
+                    maximum: 1
+                  transition:
+                    type: string
+                    enum: [learned, retained, forgot, guessed]
+        mastery_updates:
+          type: array
+          items:
+            type: object
+            required: [skill, mastery_before, mastery_after, gate_passed]
+            properties:
+              skill:
+                type: string
+              mastery_before:
+                type: number
+                minimum: 0
+                maximum: 1
+              mastery_after:
+                type: number
+                minimum: 0
+                maximum: 1
+              gate_passed:
+                type: boolean
+                description: Whether mastery ≥ 0.85
+        next_review_schedule:
+          type: array
+          items:
+            type: object
+            required: [skill, next_review_at, interval_days]
+            properties:
+              skill:
+                type: string
+              next_review_at:
+                type: string
+                format: date-time
+              interval_days:
+                type: number
+                description: FSRS-derived interval
+
+    # ============================================================
+    # Content Delivery
+    # ============================================================
+    LessonContent:
+      type: object
+      required: [lesson_id, fase1, fase2, fase3, fase4, learner_model]
+      properties:
+        lesson_id:
+          type: string
+          pattern: '^les_[a-z0-9_]+$'
+        title:
+          type: string
+        cefr_level:
+          type: string
+          pattern: '^A[12]|B[12]|C[12]$'
+        reuse_basis:
+          type: string
+          enum: [cite_only, adapt_with_attribution, adapt_requires_permission]
+        fase1:
+          type: object
+          description: Input (i+1) — comprehensible input
+          required: [content, media]
+          properties:
+            content:
+              type: string
+            media:
+              type: array
+              items:
+                type: object
+                required: [type, url]
+                properties:
+                  type:
+                    type: string
+                    enum: [text, audio, video, image, interactive]
+                  url:
+                    type: string
+                    format: uri
+        fase2:
+          type: object
+          description: Guided Practice — immediate recast + uptake (opt-in)
+          required: [exercises]
+          properties:
+            exercises:
+              type: array
+              items:
+                type: object
+                required: [type, prompt, expected_response]
+                properties:
+                  type:
+                    type: string
+                    enum: [recognition, production, minimal_pair]
+                  prompt:
+                    type: string
+                  expected_response:
+                    type: string
+                  recast_enabled:
+                    type: boolean
+                    default: true
+        fase3:
+          type: object
+          description: Output Task — communicative task
+          required: [task, success_criteria]
+          properties:
+            task:
+              type: string
+            success_criteria:
+              type: array
+              items:
+                type: string
+            meta_button:
+              type: boolean
+              description: "Por que?" button for metalinguistic explanation
+        fase4:
+          type: object
+          description: Formative Check — low-stakes assessment
+          required: [items]
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                required: [item_id, skill]
+                properties:
+                  item_id:
+                    type: string
+                  skill:
+                    type: string
+        learner_model:
+          type: object
+          description: JSON block from lesson file (validated by check_json)
+          additionalProperties: true
+
+    PackContent:
+      type: object
+      required: [pack_id, lesson_id, items, schema_version]
+      properties:
+        pack_id:
+          type: string
+        lesson_id:
+          type: string
+          pattern: '^les_[a-z0-9_]+$'
+        schema_version:
+          type: string
+          enum: [canonical, legacy_v1]
+        reuse_basis:
+          type: string
+          enum: [cite_only, adapt_with_attribution, adapt_requires_permission]
+        items:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [item_id, skill, domain, prompt, options, key]
+            properties:
+              item_id:
+                type: string
+                pattern: '^(grm|voc|rdg|prn|lst|coh)_[a-z0-9_.-]+$'
+              skill:
+                type: string
+                enum: [grammar, vocab, reading, pronunciation, listening, coherence]
+              domain:
+                type: string
+                description: Required for coherence items per assessment-item-spec.md §1.2
+              prompt:
+                type: string
+              options:
+                type: array
+                minItems: 3
+                items:
+                  type: object
+                  required: [letter, text, is_key]
+                  properties:
+                    letter:
+                      type: string
+                      pattern: '^[A-D]$'
+                    text:
+                      type: string
+                    is_key:
+                      type: boolean
+                    br_pt_form:
+                      type: string
+                      description: Portuguese form for distractor analysis
+                    note:
+                      type: string
+                      description: Required distractor rationale per post-lesson-practice-spec.md §6
+              key:
+                type: string
+                pattern: '^[A-D]$'
+                description: Correct option letter
+              listening_items:
+                type: array
+                description: For listening items only
+                items:
+                  type: object
+                  required: [slot_id, skill]
+                  properties:
+                    slot_id:
+                      type: string
+                      pattern: '^lst_[a-z0-9_]+$'
+                    skill:
+                      type: string
+
+    DialogueContent:
+      type: object
+      required: [dialogue_id, title, cefr_level, status, slots]
+      properties:
+        dialogue_id:
+          type: string
+          pattern: '^dlg_[a-z0-9_]+$'
+        title:
+          type: string
+        cefr_level:
+          type: string
+          pattern: '^A[12]|B[12]|C[12]$'
+        status:
+          type: string
+          enum: [shipped, withdrawn, shadow-only]
+          description: Per listening-corpus-spec.md vocabulary
+        duration_seconds:
+          type: integer
+          minimum: 45
+          description: Q-L2 floor per listening-corpus-spec.md §3
+        voices:
+          type: array
+          items:
+            type: object
+            required: [voice_id, speaker, accent]
+            properties:
+              voice_id:
+                type: string
+                pattern: '^v_[a-z]+$'
+              speaker:
+                type: string
+              accent:
+                type: string
+        slots:
+          type: array
+          items:
+            type: object
+            required: [slot_id, skill, key, transcript]
+            properties:
+              slot_id:
+                type: string
+                pattern: '^lst_[a-z0-9_]+$'
+              skill:
+                type: string
+                enum: [gist, detail, inference, lexical, pronunciation]
+              key:
+                type: string
+              transcript:
+                type: string
+              distractors:
+                type: array
+                items:
+                  type: object
+                  required: [letter, text, type]
+                  properties:
+                    letter:
+                      type: string
+                      pattern: '^[A-D]$'
+                    text:
+                      type: string
+                    type:
+                      type: string
+                      enum: [semantic_plausible, overgeneralization, phonological, lexical]
+
+    # ============================================================
+    # Learner Profile & Mastery
+    # ============================================================
+    LearnerProfile:
+      type: object
+      required: [learner_id, created_at, cefr_level, mastery, preferences]
+      properties:
+        learner_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        cefr_level:
+          type: string
+          pattern: '^A[12]|B[12]|C[12]$'
+        mastery:
+          type: object
+          description: Per-skill mastery probabilities (BKT)
+          additionalProperties:
+            type: number
+            minimum: 0
+            maximum: 1
+        theta_estimates:
+          type: object
+          description: Per-skill IRT θ estimates
+          additionalProperties:
+            type: object
+            required: [theta, se, last_updated]
+            properties:
+              theta:
+                type: number
+              se:
+                type: number
+              last_updated:
+                  type: string
+                  format: date-time
+        fsrs_states:
+          type: object
+          description: Per-item FSRS states (stability, difficulty)
+          additionalProperties:
+            type: object
+            required: [stability, difficulty, last_review]
+            properties:
+              stability:
+                type: number
+                minimum: 0
+              difficulty:
+                type: number
+                minimum: 0
+                maximum: 10
+              last_review:
+                type: string
+                format: date-time
+        preferences:
+          type: object
+          properties:
+            recast_enabled:
+              type: boolean
+              default: true
+            meta_button_enabled:
+              type: boolean
+              default: true
+            audio_autoplay:
+              type: boolean
+              default: false
+            daily_goal_minutes:
+              type: integer
+              default: 15
+        streak_days:
+          type: integer
+          default: 0
+        xp:
+          type: integer
+          default: 0
+
+    # ============================================================
+    # Errors
+    # ============================================================
+    ErrorResponse:
+      type: object
+      required: [error, message, request_id]
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        request_id:
+          type: string
+          format: uuid
+        details:
+          type: object
+
+security:
+  - BearerAuth: []
+
+paths:
+  /learners/{learner_id}/placement:
+    post:
+      tags: [placement]
+      summary: Run diagnostic placement test
+      operationId: runDiagnostic
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: learner_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiagnosticRequest'
+      responses:
+        '200':
+          description: Placement result with start node and θ estimate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlacementResult'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '429':
+          description: Rate limited
+
+  /learners/{learner_id}/next:
+    get:
+      tags: [curriculum]
+      summary: Get next recommended activity (i+1 selection)
+      operationId: getNextActivity
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: learner_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: time_budget_minutes
+          in: query
+          schema:
+            type: integer
+            minimum: 5
+            maximum: 60
+        - name: device
+          in: query
+          schema:
+            type: string
+            enum: [mobile, desktop, tablet]
+      responses:
+        '200':
+          description: Next activity with rationale
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NextActivity'
+        '404':
+          description: Learner not found or curriculum exhausted
+
+  /learners/{learner_id}/practice:
+    post:
+      tags: [practice]
+      summary: Submit practice pack responses
+      operationId: submitPractice
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: learner_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PracticeSubmission'
+      responses:
+        '200':
+          description: Scored results with mastery updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PracticeResult'
+        '400':
+          description: Invalid submission (missing items, invalid item_ids)
+        '404':
+          description: Pack or learner not found
+
+  /content/lessons/{lesson_id}:
+    get:
+      tags: [content]
+      summary: Get lesson content (FASE 1-4 + learner-model JSON)
+      operationId: getLesson
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: lesson_id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^les_[a-z0-9_]+$'
+      responses:
+        '200':
+          description: Full lesson content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LessonContent'
+        '404':
+          description: Lesson not found
+
+  /content/packs/{pack_id}:
+    get:
+      tags: [content]
+      summary: Get practice pack with items
+      operationId: getPack
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: pack_id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^pack[-_]les_[a-z0-9_]+(_v1)?$'
+      responses:
+        '200':
+          description: Pack content with items
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackContent'
+        '404':
+          description: Pack not found
+
+  /content/listening/{dialogue_id}:
+    get:
+      tags: [listening]
+      summary: Get listening dialogue with slots (filtered by Status)
+      operationId: getDialogue
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: dialogue_id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^dlg_[a-z0-9_]+$'
+      responses:
+        '200':
+          description: Dialogue with slots
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DialogueContent'
+        '404':
+          description: Dialogue not found or status=withdrawn
+
+  /learners/{learner_id}/profile:
+    get:
+      tags: [learners]
+      summary: Get learner profile with mastery, θ, FSRS states
+      operationId: getLearnerProfile
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: learner_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Learner profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LearnerProfile'
+        '404':
+          description: Learner not found
+
+  /learners/{learner_id}/mastery:
+    get:
+      tags: [learners]
+      summary: Get per-skill mastery (BKT) with gate status
+      operationId: getMastery
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: learner_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Mastery per skill
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+                  required: [mastery, gate_passed, last_practice]
+                  properties:
+                    mastery:
+                      type: number
+                      minimum: 0
+                      maximum: 1
+                    gate_passed:
+                      type: boolean
+                    last_practice:
+                      type: string
+                      format: date-time
+
+  /auth/refresh:
+    post:
+      tags: [auth]
+      summary: Refresh access token
+      operationId: refreshToken
+      security:
+        - RefreshToken: []
+      responses:
+        '200':
+          description: New access token
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [access_token, expires_in]
+                properties:
+                  access_token:
+                    type: string
+                  expires_in:
+                    type: integer
+```
+
+## Validation Checklist
+- [ ] All schemas have examples for every endpoint
+- [ ] Pydantic models use `strict=True`, `extra='forbid'`
+- [ ] All endpoints have RFC 7807 error responses
+- [ ] Rate limiting headers documented
+- [ ] Correlation-ID propagated through all services
+- [ ] Async/await used for all I/O
+- [ ] Contract tests pass (`pytest tests/contract/ -v`)
+- [ ] `verify-integrity.py` passes
+- [ ] `prd-score.py` ≥ 80%

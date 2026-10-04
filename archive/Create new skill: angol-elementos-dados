@@ -1,0 +1,41 @@
+---
+name: angol-elementos-dados
+description: Função para obter as 7 matrizes de conteúdo (`.md` files) do projeto Curso de Inglês
+version: 1.0.0
+author: User
+license: MIT
+platforms: [linux, macos]
+metadata:
+  hermes:
+    tags: [Education, Content, File Reading]
+    related_skills: [hermes-agent]
+    requires_toolsets: [sync]
+    requires_tools: [read_file]
+    fallback_for_toolsets: [browser]
+---
+
+# Angol-Elementos-Dados
+Retrieve all 7 content markdown files from the Curso-de-Ingles project.
+
+## When to Use
+The user needs to read the content of the following markdown files from the project directory:
+- `apostila-ingles-para-iniciantes-impresso.md`
+- `Ingles-basico.md`
+- `Ingles para Viagens.md`
+- `frases-ingles-trabalho.md`
+- `Ingles-Tecnico-Para-Informatica.md`
+- `leia-e-escreva-melhor-em-ingles.md`
+- `Dicionario-de-Siglas-e-Termos-Profissionais-em-Ingles.md`
+
+## Procedure
+1. Read all 7 markdown files simultaneously (they are independent)
+2. Strip page marker placeholders (e.g., ` Page 1`, `• 1`, `\f`) from each file
+3. Return clean content for each file
+
+## Pitfalls
+- `ls` command does not work in the terminal environment (throws `SyntaxError: invalid syntax`) — use Python `os.listdir` instead
+- File paths must use forward slashes and the exact path: `.../Curso-de-Ingles/Ingles/output/`
+
+## Verification
+Each file should read as plain text with no page marker artifacts.
+</content>
