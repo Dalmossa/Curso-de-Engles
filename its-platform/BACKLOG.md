@@ -91,18 +91,18 @@ parameters. This is the story the old backlog was missing.
 
 | ID | Story | Legacy | Pri | Est | Depends | Spec / ADR | Acceptance |
 |---|---|---|---|---|---|---|---|
-| **P1.1** | DAG loader from the lesson registry | M2.1 | Must | 2d | P0.5 | `curriculum-graph-spec.md` §4.3 | 18 modules, 123 lessons, prerequisites; acyclicity asserted |
-| **P1.2** | Mastery gate enforcement | M2.2 | Must | 1d | P1.1, P1.4 | `curriculum-graph-spec.md` §1.1 | BKT p ≥ 0.85 required for prerequisite traversal |
-| **P1.3** | Next-activity selector (i+1) | M2.3 | Must | 3d | P1.1, P1.2, P1.5 | `curriculum-graph-spec.md`, PRD §6 | Returns lesson / pack / spaced review; honours prerequisites |
-| **P1.4** | BKT engine | M3.1 | Must | 3d | P0.2 | ADR-002, `stats-progress-evaluation-spec.md` §2 | `update_mastery()` vectorised; 10k updates < 50 ms p95; property tests |
-| **P1.5** | FSRS-4.5 scheduler | M3.3 | Must | 3d | P0.2 | ADR-002, `stats-progress-evaluation-spec.md` §4 | `next_interval()` monotonic; stability ≥ 0; property tests |
+| **P1.1** | DAG loader from the lesson registry | M2.1 | Must | 2d | P0.5 | `../specs/curriculum-graph-spec.md` §4.3 | 18 modules, 123 lessons, prerequisites; acyclicity asserted |
+| **P1.2** | Mastery gate enforcement | M2.2 | Must | 1d | P1.1, P1.4 | `../specs/curriculum-graph-spec.md` §1.1 | BKT p ≥ 0.85 required for prerequisite traversal |
+| **P1.3** | Next-activity selector (i+1) | M2.3 | Must | 3d | P1.1, P1.2, P1.5 | `../specs/curriculum-graph-spec.md`, PRD §6 | Returns lesson / pack / spaced review; honours prerequisites |
+| **P1.4** | BKT engine | M3.1 | Must | 3d | P0.2 | ADR-002, `../specs/stats-progress-evaluation-spec.md` §2 | `update_mastery()` vectorised; 10k updates < 50 ms p95; property tests |
+| **P1.5** | FSRS-4.5 scheduler | M3.3 | Must | 3d | P0.2 | ADR-002, `../specs/stats-progress-evaluation-spec.md` §4 | `next_interval()` monotonic; stability ≥ 0; property tests |
 | **P1.6** | `AdaptiveEngine` orchestrator + domain events | M3.4 | Must | 2d | P1.4, P1.5 | ADR-012, ADR-011 | Emits typed domain events; handlers are idempotent (at-least-once assumed) |
 | **P1.7** | Async task queue with priority classes | M3.5 | Must | 2d | P0.7 | ADR-005, ADR-011 | `update_bkt_mastery` priority, `schedule_fsrs` standard |
-| **P1.8** | **Stage-1 pilot bank: 10 items, five validation criteria** | **RF-002** | **Must** | 4d | P0.4 | `assessment-item-spec.md` §9, PRD §9 M2 | Produces the first real `a`/`b` values; each of the five criteria reported **pass or fail, with failures named** |
-| **P1.9** | Fixed-blueprint diagnostic executor (**no CAT**) | M4.1 | Must | 3d | P1.8, P1.11 | `diagnostic-spec.md` §2 | Administers items per blueprint; **stops at `SE < 0.3`; never selects by θ** — no calibrated item model exists yet |
-| **P1.10** | Placement result persistence | M4.3 | Must | 1d | P1.9 | `diagnostic-spec.md` | Writes `diagnostic_results` + `diagnostic_responses` |
-| **P1.11** | Start-node mapping (diagnostic → curriculum) | M2.4 | Must | 2d | P1.1 | `diagnostic-spec.md` §4 | Maps a placement result to an entry lesson |
-| **P1.12** | Content API — lessons, packs, dialogues | M5.1 + API layer | Must | 3d | P0.5 | ADR-004, `listening-corpus-spec.md` §4 | Only `Status=shipped`; Q-L2 ≥ 45 s validated; both pack schemas served |
+| **P1.8** | **Stage-1 pilot bank: 10 items, five validation criteria** | **RF-002** | **Must** | 4d | P0.4 | `../specs/assessment-item-spec.md` §9, PRD §9 M2 | Produces the first real `a`/`b` values; each of the five criteria reported **pass or fail, with failures named** |
+| **P1.9** | Fixed-blueprint diagnostic executor (**no CAT**) | M4.1 | Must | 3d | P1.8, P1.11 | `../specs/diagnostic-spec.md` §2 | Administers items per blueprint; **stops at `SE < 0.3`; never selects by θ** — no calibrated item model exists yet |
+| **P1.10** | Placement result persistence | M4.3 | Must | 1d | P1.9 | `../specs/diagnostic-spec.md` | Writes `diagnostic_results` + `diagnostic_responses` |
+| **P1.11** | Start-node mapping (diagnostic → curriculum) | M2.4 | Must | 2d | P1.1 | `../specs/diagnostic-spec.md` §4 | Maps a placement result to an entry lesson |
+| **P1.12** | Content API — lessons, packs, dialogues | M5.1 + API layer | Must | 3d | P0.5 | ADR-004, `../specs/listening-corpus-spec.md` §4 | Only `Status=shipped`; Q-L2 ≥ 45 s validated; both pack schemas served |
 | **P1.13** | Audio streaming with signed URLs | M5.2 | Must | 2d | P1.12 | ADR-005 | 5 min TTL; KMS-encrypted; consent checked before issue |
 | **P1.14** | JWT auth wired to the IdP contract | M6.2 | Must | 2d | P0.7 | ADR-013, `CONSTITUTION.md` §4.5 | 15 min access token. **Refresh rotation is the IdP's responsibility** — `/auth/refresh` stays out of scope |
 | **P1.15** | Consent management (LGPD) | M6.5 | Must | 2d | P0.7 | `CONSTITUTION.md` §8.1, ADR-013 | Granular consents; withdrawal triggers erasure |
@@ -172,7 +172,7 @@ for neglect.
 | **P3.11** | Chaos engineering | TD-005 | Could | 10d | P2.5, P2.9 | Pod kill, network partition, latency injection |
 | **P3.12** | OpenTelemetry — non-core paths | TD-003 (rest) | Should | 6d | P2.6 | Remainder of the instrumentation sweep |
 | **P3.13** | ADR-013 Q2: IdP evaluation | — | Should | 2d | ADR-013 closure | Blocked behind Q1 by design. Managed vs self-hosted, incl. LGPD posture |
-| **P3.14** | **Legacy pack schema migration — close the pack-schema warning** | TD-001 | Should | 20d | P0.5 | `verify-integrity.py` emits a **WARN** on every run for 115 packs (110 with no `**Reuse basis:**` in the `pack_les_<lesson>_v1.md` schema and IDs that do not satisfy §1.2's prefix↔namespace rule). `[11c]/[11d]/[11e]` do cover them, so release gates are not blocked, but the warning is a permanent alarm. Close by bringing those packs to the same schema validation surface as `pack-les-*.md` or by retiring them. See `post-lesson-practice-spec.md` §12. |
+| **P3.14** | **Legacy pack schema migration — close the pack-schema warning** | TD-001 | Should | 20d | P0.5 | `verify-integrity.py` emits a **WARN** on every run for 115 packs (110 with no `**Reuse basis:**` in the `pack_les_<lesson>_v1.md` schema and IDs that do not satisfy §1.2's prefix↔namespace rule). `[11c]/[11d]/[11e]` do cover them, so release gates are not blocked, but the warning is a permanent alarm. Close by bringing those packs to the same schema validation surface as `pack-les-*.md` or by retiring them. See `../specs/post-lesson-practice-spec.md` §12. |
 
 **P3 = 70d** (`5+2+3+5+2+2+1+3+20+2+10+6+2+20` — added P3.14 at 20d; total rises from 65 to 70)
 
@@ -241,7 +241,7 @@ Note the tension with `PRD.md` risk **RF-009** ("build the learner-facing applic
 which is rated `Low` but is the work most likely to be started first, because it is the
 part that is visible. Starting P1.12 before P1.8 yields an application that displays a
 mastery probability with no calibrated confidence interval behind it — the exact failure
-`diagnostic-spec.md` §3.6 records as a defect in a worked example.
+`../specs/diagnostic-spec.md` §3.6 records as a defect in a worked example.
 
 ---
 

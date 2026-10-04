@@ -25,7 +25,7 @@ This Constitution establishes the **technical governance** for the ITS Platform 
 
 | Principle | Description |
 |---|---|
-| **Spec-First** | No implementation without a spec (`specs/*.md`, `api-spec.openapi.yaml`). Contract tests enforce compliance. |
+| **Spec-First** | No implementation without a spec (`specs/*.md`, `docs/api-spec.openapi.yaml`). Contract tests enforce compliance. |
 | **Derivation over Assertion** | Every number in code/docs names its derivation (function, spec section, command). "Magic numbers" are forbidden. |
 | **Defense in Depth** | Security at every layer: network (Istio), gateway (Kong), application (RLS, JWT), data (encryption). |
 | **Observability by Default** | Every service emits metrics, logs, traces. No "black box" services. |
@@ -104,7 +104,7 @@ This Constitution establishes the **technical governance** for the ITS Platform 
 | **Nomenclature — fixed segments** | `kebab-case` (e.g. `/content/listening-slow`) |
 | **Nomenclature — JSON properties** | `camelCase` |
 | **Nomenclature — query parameters** | `camelCase` |
-| **Nomenclature — content identifiers** | `snake_case` and **immutable**: `les_a1_greetings`, `pack_les_a1_greetings_v1`, `lst_prn_th_001`. This is a **data-integrity rule, not a style rule.** Renaming one breaks `verify-integrity.py` checks [1], [2], [8], [11] and requires amending the registry at `curriculum-graph-spec.md` §4.3. Prohibited without that amendment. |
+| **Nomenclature — content identifiers** | `snake_case` and **immutable**: `les_a1_greetings`, `pack_les_a1_greetings_v1`, `lst_prn_th_001`. This is a **data-integrity rule, not a style rule.** Renaming one breaks `verify-integrity.py` checks [1], [2], [8], [11] and requires amending the registry at `../specs/curriculum-graph-spec.md` §4.3. Prohibited without that amendment. |
 | **HTTP methods** | `GET` — read only, **idempotent**, no side effects, never returns `200` with an error body. `POST` — create or non-idempotent action. `PUT` — full replacement, idempotent. `PATCH` — partial update. `DELETE` — idempotent (repeating returns the same outcome). |
 | **Errors** | RFC 9457 (Problem Details for HTTP APIs) — `application/problem+json` with `type`, `title`, `status`, `detail`, `instance`. Business failures use 4xx/5xx, **never `200` with an error payload**. Stack traces and internal messages are never serialised. |
 | **Event-driven work** | Work that is asynchronous, decoupled, or outside the request path is dispatched as a domain event. In-process via `@nestjs/event-emitter`; externalised via broker where ADR-005/ADR-011 require durability. Event handlers are idempotent — at-least-once delivery is assumed. |
@@ -333,7 +333,7 @@ Alert → Acknowledge (15m) → Diagnose → Mitigate → Resolve → Postmortem
 ### 7.3 On-Call
 
 - 4-week rotation (Platform, Adaptive, Backend, SRE)
-- Handoff Friday 17:00 (checklist in `runbook.md` §7)
+- Handoff Friday 17:00 (checklist in `docs/runbook.md` §7)
 - Compensation: 1.5x days off
 
 ---
