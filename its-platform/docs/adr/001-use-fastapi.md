@@ -1,7 +1,8 @@
 ---
 adr: 001
 title: Use FastAPI for API services
-status: Accepted
+status: Superseded
+superseded_by: 012
 date: 2026-10-03
 authors: [@platform-lead]
 deciders: [@platform-lead, @backend-lead, @security-lead]
@@ -9,6 +10,12 @@ consulted: [@adaptive-lead, @sre-lead]
 informed: [@team]
 tags: [api, framework, python, async]
 ---
+
+> **Superseded by [ADR-012](012-migrate-api-layer-to-nestjs.md) on 2026-10-04.**
+> The API layer was migrated to NestJS + TypeORM. The rationale below is retained as the
+> historical record of why FastAPI was chosen, and is not edited. Note that this record's own
+> *"Migration cost — if later switching to Go/Rust"* risk entry is what made the change
+> deliberate rather than a reversal.
 
 ## Context
 

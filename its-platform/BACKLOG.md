@@ -1,163 +1,264 @@
 # ITS Platform — Product Backlog
 
-**Source:** `Curso-de-Ingles/PRD.md` §9 Milestones, `ITS-ARCHITECTURE.md` §10
-**Format:** User Stories + Technical Tasks
-**Prioritization:** MoSCoW (Must/Should/Could/Won't) + WSJF
-**Tool:** GitHub Projects / Linear (sync from this file)
+**Source:** `Curso-de-Ingles/PRD.md` §9, `ITS-ARCHITECTURE.md` §10, `CONSTITUTION.md`
+**Structure:** Phase-gated, dependency-ordered. See *Why this file was restructured* below.
+**Prioritisation:** MoSCoW (Must/Should/Could/Won't)
+**Constraint:** `CONSTITUTION.md` §2 — *Derivation over Assertion*. Every number below
+names its derivation. No capacity figures appear anywhere in this file, and none may be
+added without stating how the team size and availability were determined.
 
 ---
 
 ## Legend
 
-| Prefix | Type | SLA |
+| Prefix | Type | Meaning |
 |---|---|---|
-| **M** | Milestone deliverable | Per PRD §9 |
-| **E** | Epic (multi-sprint) | — |
-| **S** | Story (1-3 days) | — |
-| **T** | Technical task (hours) | — |
-| **B** | Bug | P1: 24h, P2: 72h, P3: 1 sprint |
+| **P0** | Phase 0 | Stack migration. Blocks everything. |
+| **P1** | Phase 1 | MVP core — the adaptive tutor. |
+| **P2** | Phase 2 | MVP release — infrastructure and security gates. |
+| **P3** | Phase 3 | Deferred. Explicitly out of the MVP. |
+| **Legacy** | — | The `M1.1`–`M7.7` id this story carried before the 2026-10-04 restructuring. Traceability only. |
+| **B** | Bug | P1: 24h, P2: 72h, P3: one sprint |
 
 ---
 
-## M1: Content Pipeline (Foundation)
+## Why this file was restructured (2026-10-04)
 
-| ID | Title | Type | Priority | Est. | Dependencies | Acceptance Criteria |
+The previous version was organised as seven sequential milestones (M1–M7) with a sprint
+table. Six defects were found by auditing it against the repository. Each is stated with
+its evidence, because a restructure that cannot say what was wrong is indistinguishable
+from a preference.
+
+| # | Defect | Evidence |
+|---|---|---|
+| **D1** | **The stack migration was not in the plan at all.** All 40 stories assumed Python/FastAPI. [ADR-012](docs/adr/012-migrate-api-layer-to-nestjs.md) supersedes [ADR-001](docs/adr/001-use-fastapi.md); ~34 days of already-built work must be redone in TypeScript and no story said so. | `pyproject.toml`, CI running `ruff`/`mypy`, `src/its_platform/*.py` |
+| **D2** | **The item the PRD says blocks the entire statistical layer had no story.** PRD §9 risk **RF-002** (build the 10-item Stage-1 pilot bank) is `High` and gates M2 → M6. It appears nowhere in the backlog, while M4.1/M4.2 depend on the `a`/`b` parameters it produces. | `PRD.md` §9: *"No Stage-1 responses, therefore no IRT calibration. This blocks the CAT, every θ…"*; `PRD.md` §9 M2 exit condition; RF-002 |
+| **D3** | **11 stories were in no sprint**, including 3 `Must`: M2.4, M5.2, M6.5. Effort omitted: 27d. M6.7 (LGPD Art. 18 data export/erasure, a legal obligation with a <30-day deadline) was unscheduled. | Sprint table listed only M1.1–1.5, M2.1–2.3, M3.1/3.3/3.4/3.5, M3.2/3.4, M4.1–4.3, M5.1, M6.1–6.4, M7.1–7.7 |
+| **D4** | **M3.4 appeared in two sprints** (3 and 4), double-counting 2d. | Sprint 3 and Sprint 4 |
+| **D5** | **Capacity was fabricated.** `5 devs × 10d = 50d` per sprint × 8 = 400d against 97d of scheduled work — **18% average utilisation** (sprint 5: 6d of stories in a 50d sprint = 12%). Nothing states how "5 devs" was derived. This violates `CONSTITUTION.md` §2 directly. | Sprint table `Capacity` column |
+| **D6** | **`M` ids collided with the PRD's own milestones and meant different things.** Backlog M2 = Curriculum Graph; PRD M2 = Calibration pilot. A reader cross-referencing a risk ID to a milestone would silently get the wrong milestone. | `PRD.md` §9 M0–M6 vs backlog M1–M7 |
+
+### Two further corrections
+
+**M1.1's dependency was fictional.** It required ADR-010 (content submodule, `Accepted`).
+No `.gitmodules` file exists; content lives in the same repository. TD-002 inherits the
+same phantom dependency and is **removed** rather than deferred — there is nothing to
+automate until ADR-010 is either implemented or superseded.
+
+**TD-001 was miscategorised.** "Legacy pack migration (115 packs)" sat under *Technical
+Debt*, but `verify-integrity.py` emits a schema warning about it on **every run**. Work
+that a release gate blocks is not debt; it is an unfulfilled obligation. It moves to P3 as
+`P3.9` with that framing, and its 20 days are the largest single item in the deferred phase.
+
+### On the phase axis
+
+Milestones answer *"what do we deliver?"*. The actual problem was *"what is blocked, and
+what is in the MVP?"* — a question about dependencies and a cut line. Phases answer both.
+Legacy `M` ids are retained per story so nothing loses its history.
+
+---
+
+## Phase 0 — Stack migration · BLOCKING
+
+Everything in P1 and P2 assumes this phase is complete. No product feature may be started
+against the Python implementation; it is being replaced, not extended.
+
+| ID | Story | Legacy | Pri | Est | Depends | Spec / ADR | Acceptance |
+|---|---|---|---|---|---|---|---|
+| **P0.1** | Scaffold NestJS + TypeScript `strict`, eslint, prettier, jest | — | Must | 1d | ADR-012 | `CONSTITUTION.md` §4.1, §4.7 | `npm run typecheck` clean; `noImplicitAny` + `strictNullChecks` on |
+| **P0.2** | TypeORM `DataSource` factory + **CI domain-isolation check** | — | Must | 1d | P0.1 | ADR-012, ADR-014 | A file under `src/domain/` importing `typeorm` or `@nestjs/*` fails CI |
+| **P0.3** | 12 tables → ORM entities + domain entities + bidirectional mappers | — | Must | 3d | P0.2 | ADR-012, `docs/data-model.erd.md` | 12 tables ported; no `@Entity()` outside `infrastructure/entities/` |
+| **P0.4** | Port `001_initial.py` migration; verify on PGlite **and** Postgres | — | Must | 1d | P0.3 | ADR-014 | 4 named enums, `PGUUID`, `timestamptz`, `JSONB` created identically on both drivers |
+| **P0.5** | Port content loader (lessons, packs, listening) | M1.2–M1.5, M1.1 | Must | 2d | P0.4 | ADR-012 | Passes `verify-integrity.py` check [4] (`check_json`); pack schemas per ADR-004 |
+| **P0.6** | Global `ValidationPipe` + RFC 9457 `Problem` exception filter | — | Must | 1d | P0.1 | `CONSTITUTION.md` §4.3, §4.5 | `whitelist` + `forbidNonWhitelisted` + `transform`; unknown field → 400, not silent strip |
+| **P0.7** | Global `JwtAuthGuard` with `@Public()` opt-out | — | Must | 1d | P0.6 | ADR-012, ADR-013 | RS256; `verifyOptions.algorithms` pinned; `iss`/`aud`/`exp`/`nbf` checked every request |
+| **P0.8** | OpenTelemetry bootstrap, Correlation-ID, `/health`, `/ready` | — | Must | 1d | P0.1 | `CONSTITUTION.md` §4.6 | `traceparent` propagated; `request_id` on every error response |
+| **P0.9** | Contract tests green on both drivers; **delete the Python tree** | M1.5 | Must | 1d | P0.3–0.8 | ADR-012 | `its-platform/tests/contract/` passes; `src/its_platform/` and `pyproject.toml` gone |
+
+**P0 = 12d** (`1+1+3+1+2+1+1+1+1`)
+
+> **P0.7 is bounded by ADR-013.** This story validates tokens. It must not implement
+> `/auth/refresh` — the platform is a Resource Server only. The published contract contains
+> that path; the implementation must not.
+
+---
+
+## Phase 1 — MVP core
+
+The critical path runs **P0 → P1.8 → P1.9 → P1.10**. P1.8 is the Stage-1 pilot bank: per
+PRD §9, every statistical claim downstream is blocked until it produces real `a`/`b`
+parameters. This is the story the old backlog was missing.
+
+| ID | Story | Legacy | Pri | Est | Depends | Spec / ADR | Acceptance |
+|---|---|---|---|---|---|---|---|
+| **P1.1** | DAG loader from the lesson registry | M2.1 | Must | 2d | P0.5 | `curriculum-graph-spec.md` §4.3 | 18 modules, 123 lessons, prerequisites; acyclicity asserted |
+| **P1.2** | Mastery gate enforcement | M2.2 | Must | 1d | P1.1, P1.4 | `curriculum-graph-spec.md` §1.1 | BKT p ≥ 0.85 required for prerequisite traversal |
+| **P1.3** | Next-activity selector (i+1) | M2.3 | Must | 3d | P1.1, P1.2, P1.5 | `curriculum-graph-spec.md`, PRD §6 | Returns lesson / pack / spaced review; honours prerequisites |
+| **P1.4** | BKT engine | M3.1 | Must | 3d | P0.2 | ADR-002, `stats-progress-evaluation-spec.md` §2 | `update_mastery()` vectorised; 10k updates < 50 ms p95; property tests |
+| **P1.5** | FSRS-4.5 scheduler | M3.3 | Must | 3d | P0.2 | ADR-002, `stats-progress-evaluation-spec.md` §4 | `next_interval()` monotonic; stability ≥ 0; property tests |
+| **P1.6** | `AdaptiveEngine` orchestrator + domain events | M3.4 | Must | 2d | P1.4, P1.5 | ADR-012, ADR-011 | Emits typed domain events; handlers are idempotent (at-least-once assumed) |
+| **P1.7** | Async task queue with priority classes | M3.5 | Must | 2d | P0.7 | ADR-005, ADR-011 | `update_bkt_mastery` priority, `schedule_fsrs` standard |
+| **P1.8** | **Stage-1 pilot bank: 10 items, five validation criteria** | **RF-002** | **Must** | 4d | P0.4 | `assessment-item-spec.md` §9, PRD §9 M2 | Produces the first real `a`/`b` values; each of the five criteria reported **pass or fail, with failures named** |
+| **P1.9** | Fixed-blueprint diagnostic executor (**no CAT**) | M4.1 | Must | 3d | P1.8, P1.11 | `diagnostic-spec.md` §2 | Administers items per blueprint; **stops at `SE < 0.3`; never selects by θ** — no calibrated item model exists yet |
+| **P1.10** | Placement result persistence | M4.3 | Must | 1d | P1.9 | `diagnostic-spec.md` | Writes `diagnostic_results` + `diagnostic_responses` |
+| **P1.11** | Start-node mapping (diagnostic → curriculum) | M2.4 | Must | 2d | P1.1 | `diagnostic-spec.md` §4 | Maps a placement result to an entry lesson |
+| **P1.12** | Content API — lessons, packs, dialogues | M5.1 + API layer | Must | 3d | P0.5 | ADR-004, `listening-corpus-spec.md` §4 | Only `Status=shipped`; Q-L2 ≥ 45 s validated; both pack schemas served |
+| **P1.13** | Audio streaming with signed URLs | M5.2 | Must | 2d | P1.12 | ADR-005 | 5 min TTL; KMS-encrypted; consent checked before issue |
+| **P1.14** | JWT auth wired to the IdP contract | M6.2 | Must | 2d | P0.7 | ADR-013, `CONSTITUTION.md` §4.5 | 15 min access token. **Refresh rotation is the IdP's responsibility** — `/auth/refresh` stays out of scope |
+| **P1.15** | Consent management (LGPD) | M6.5 | Must | 2d | P0.7 | `CONSTITUTION.md` §8.1, ADR-013 | Granular consents; withdrawal triggers erasure |
+| **P1.16** | Data export and erasure (LGPD Art. 18) | M6.7 | **Must** | 3d | P1.15 | `CONSTITUTION.md` §8.1 | `GET /me/data-export` and `DELETE /me` within **< 30 days** |
+| **P1.17** | Migrate error responses `ErrorResponse` → RFC 9457 `Problem` | — | Must | 2d | P0.6 | `CONSTITUTION.md` §4.3, §4.4 | `application/problem+json` on all 9 paths. **Breaking change** — recorded in `CHANGELOG.md` with migration path before merge |
+| **P1.18** | Pre-publish licence check | M6.1 | Must | 2d | P1.12 | `AGENTS.md` licensing, ADR-006 | Blocks `adapt_*` against restricted sources |
+
+**P1 = 42d** (`2+1+3+3+3+2+2+4+3+1+2+3+2+2+2+3+2+2`)
+
+> **P1.16 was `Should`. It is now `Must`.** Art. 18 carries a statutory response deadline.
+> Classing a legal obligation as optional is how it gets missed.
+
+---
+
+## Phase 2 — MVP release
+
+Infrastructure and the gates that decide whether the MVP may ship.
+
+| ID | Story | Legacy | Pri | Est | Depends | Spec / ADR | Acceptance |
+|---|---|---|---|---|---|---|---|
+| **P2.1** | RLS policies + cross-learner integration suite | M6.4 | Must | 2d | P0.4 | **ADR-003**, ADR-014 | All learner-scoped tables; 403 on cross-learner access. **Runs on real PostgreSQL — PGlite's single exclusive connection cannot test this** |
+| **P2.2** | Kong rate limiting (Redis-backed) | M6.3 | Must | 2d | P0.8 | ADR-006 | Per-learner 100/min, per-IP 1000/min, enforced at the gateway |
+| **P2.3** | Helm chart + ArgoCD (dev/staging/prod) | M7.1 | Must | 3d | P1.7 | ADR-008 | `helm install` works; ArgoCD auto-syncs dev, manual for prod |
+| **P2.4** | pgBackRest + DR | M7.2 | Must | 3d | P2.1 | ADR-009 | RPO < 1 min, RTO < 2 h; **weekly** restore test |
+| **P2.5** | Observability stack (Prom/Grafana/Loki/Tempo) + SLO dashboards | M7.3 | Must | 3d | P0.8 | ADR-007 | Metrics, logs, traces; `/health` + `/ready` are the bound probes |
+| **P2.6** | OpenTelemetry instrumentation, core request path | TD-003 (part) | Must | 4d | P2.5 | `CONSTITUTION.md` §4.6 | Traces, metrics, logs unified; remainder → P3.12 |
+| **P2.7** | Resilience patterns on outbound calls | — | Must | 3d | P0.8 | `CONSTITUTION.md` §4.6 | Circuit breaker (closed→open→half-open); retry with **exponential backoff + jitter on idempotent calls only**; documented fallback; explicit timeout on every call |
+| **P2.8** | Load test, 1k concurrent | M7.4 | Must | 2d | P2.2, P2.3 | `CONSTITUTION.md` §6.3 | p95 < 200 ms; error rate < 0.1%. **PostgreSQL, not PGlite** — PGlite cannot exhibit contention |
+| **P2.9** | Security audit (OWASP ASVS L2) | M7.5 | Must | 5d | P1.14–1.18, P2.1–2.2 | `CONSTITUTION.md` §8.1 | Zero critical/high; medium findings documented with owners |
+| **P2.10** | Runbook + on-call rotation | M7.6 | Must | 2d | P2.5 | `CONSTITUTION.md` §7 | Covers P1–P4; 4-week rotation |
+| **P2.11** | Immutable audit log | M6.6 | Should | 2d | P2.1 | ADR-003 | Hash-chained; WORM storage; queryable |
+| **P2.12** | Documentation (API, architecture, runbook) | M7.7 | Should | 3d | all | `CONSTITUTION.md` §10 | `docs/` complete; OpenAPI examples on every response |
+
+**P2 = 34d** (`2+2+3+3+3+4+3+2+5+2+2+3`)
+
+---
+
+## Phase 3 — Deferred
+
+**Explicitly outside the MVP.** Each item states what blocks it, so deferral is not mistaken
+for neglect.
+
+| ID | Story | Legacy | Pri | Est | Blocked by | Note |
 |---|---|---|---|---|---|---|
-| M1.1 | Content submodule + CI | E | Must | 3d | ADR-010 | `git submodule add`; CI runs `verify-integrity.py` + contract tests |
-| M1.2 | Content loader (lessons) | S | Must | 2d | M1.1 | Loads FASE 1-4 + learner_model JSON; passes `check_json` |
-| M1.3 | Content loader (packs) | S | Must | 2d | M1.1 | Parses both canonical + legacy schemas; unified `PackItem` model |
-| M1.4 | Content loader (listening) | S | Must | 1d | M1.1 | Filters by Status=shipped; validates Q-L2 ≥ 45s |
-| M1.5 | Contract tests: content → specs | S | Must | 2d | M1.2-1.4 | 100% spec coverage; CI fails on drift |
+| **P3.1** | IRT 2PL calibration | M3.2 | Could | 5d | **P1.8**, plus real response data | Zero `a`/`b` values exist. PRD §10 warns the IRT layer *"is not viable as specified"* if the pilot cannot reach `a ≥ 1.2` on 7 of 10 items |
+| **P3.2** | IRT θ estimation endpoint | M4.2 | Could | 2d | P3.1 | Returns θ, SE, CI95. Cannot be built on uncalibrated parameters |
+| **P3.3** | CAT simulation and validation | M4.4 | Could | 3d | P3.1 | Needs a calibrated item bank to simulate against |
+| **P3.4** | ASR pronunciation scoring | M5.3 | Should | 5d | P1.13 | Requires rendered audio (`PRD.md` §9 M3) |
+| **P3.5** | Shadow CAT mode | M5.4 | Could | 2d | P3.1 | `shadow-only` items excluded from scoring |
+| **P3.6** | Curriculum graph admin API | M2.5 | Should | 2d | P1.1 | Author CRUD over modules and lessons |
+| **P3.7** | Cold-start priors per skill | M3.6 | Should | 1d | P1.4, P1.1 | Population priors derived from the graph |
+| **P3.8** | Model versioning and A/B framework | M3.7 | Could | 3d | P1.6 | Swap model versions per learner cohort |
+| **P3.9** | **Legacy pack migration (115 packs)** | TD-001 | **Must** | 20d | — | **Reclassified from tech debt.** `verify-integrity.py` warns on this on **every run**; a release gate that blocks is an obligation, not debt. Largest single item here |
+| **P3.10** | Mutation testing in CI | TD-004 | Could | 2d | P0.1 | Monthly on release branches; `CONSTITUTION.md` §4.8 sets ≥ 85% |
+| **P3.11** | Chaos engineering | TD-005 | Could | 10d | P2.3, P2.7 | Pod kill, network partition, latency injection |
+| **P3.12** | OpenTelemetry — non-core paths | TD-003 (rest) | Should | 6d | P2.6 | Remainder of the instrumentation sweep |
+| **P3.13** | ADR-013 Q2: IdP evaluation | — | Should | 2d | ADR-013 closure | Blocked behind Q1 by design. Managed vs self-hosted, incl. LGPD posture |
+| ~~P3.14~~ | ~~Content submodule workflow automation~~ | TD-002 | — | ~~5d~~ | **Removed** | ADR-010 is `Accepted` but was never implemented — no `.gitmodules` exists. There is nothing to automate. Delete this row or implement ADR-010 first |
+
+**P3 = 65d** (`5+2+3+5+2+2+1+3+20+2+10+6+2`)
 
 ---
 
-## M2: Curriculum Graph Service
+## Effort summary
 
-| ID | Title | Type | Priority | Est. | Dependencies | Acceptance Criteria |
-|---|---|---|---|---|---|---|
-| M2.1 | DAG loader from curriculum-graph-spec.md | S | Must | 2d | M1.1 | Loads 18 modules, 123 lessons, prerequisites; validates acyclic |
-| M2.2 | Mastery gate enforcement | S | Must | 2d | M2.1, M3.1 | BKT ≥ 0.85 required for prerequisite traversal |
-| M2.3 | Next-activity selector (i+1) | S | Must | 3d | M2.1, M2.2, M3.1 | Returns valid lesson/pack/review; respects prereqs, spaced review |
-| M2.4 | Start-node mapping (diagnostic → curriculum) | S | Must | 2d | M2.1, M4.1 | θ → lesson mapping per diagnostic-spec.md §4 |
-| M2.5 | Graph admin API (CRUD modules/lessons) | S | Should | 2d | M2.1 | Author can add/edit modules/lessons via API |
+Arithmetic is shown because `CONSTITUTION.md` §2 forbids asserted numbers.
 
----
+| Phase | Stories | Effort | In MVP |
+|---|---|---|---|
+| **P0** — stack migration | 9 | 12d | ✅ |
+| **P1** — MVP core | 18 | 42d | ✅ |
+| **P2** — MVP release | 12 | 34d | ✅ |
+| **P3** — deferred | 13 + 1 removed | 65d | ❌ |
+| **MVP total** | **39** | **88d** | |
+| **Grand total** | 52 | 153d | |
 
-## M3: Adaptive Engine (BKT/IRT/FSRS)
+### Reconciliation against the previous version
 
-| ID | Title | Type | Priority | Est. | Dependencies | Acceptance Criteria |
-|---|---|---|---|---|---|---|
-| M3.1 | BKT engine (vectorized NumPy) | S | Must | 3d | ADR-002 | `update_mastery()` vectorized; 10k updates < 50ms p95 |
-| M3.2 | IRT 2PL calibration (PyMC/EM) | S | Must | 5d | ADR-002 | CAT diagnostic; θ CI95 narrows with evidence |
-| M3.3 | FSRS-4.5 scheduler | S | Must | 3d | ADR-002 | `next_interval()` monotonic; stability ≥ 0 |
-| M3.4 | AdaptiveEngine orchestrator | S | Must | 2d | M3.1-3.3 | Coordinates BKT/IRT/FSRS; emits events |
-| M3.5 | Celery tasks (priority queues) | S | Must | 2d | ADR-005 | `update_bkt_mastery` (priority), `schedule_fsrs` (standard) |
-| M3.6 | Cold-start priors per skill | S | Should | 1d | M3.1 | Population priors from curriculum graph |
-| M3.7 | Model versioning + A/B framework | T | Could | 3d | M3.4 | Can swap model versions per learner cohort |
+| | Previous | Now | Δ |
+|---|---|---|---|
+| Scheduled work | 97d (M1–M7) | 88d (P0+P1+P2) | −9d |
+| Sprint capacity asserted | 400d | **none** | removed |
+| Average sprint utilisation | 18% | n/a | no capacity model to misreport against |
+| Stories in no sprint | 11 | **0** | fixed |
+| Stories scheduled twice | 1 (M3.4) | **0** | fixed |
+| Stories covering the stack migration | 0 | 9 | added |
+| Story for PRD RF-002 (blocks the statistical layer) | 0 | 1 | added |
+| Deferred, with a stated blocker | 0 | 13 | added |
 
----
-
-## M4: Diagnostic Service
-
-| ID | Title | Type | Priority | Est. | Dependencies | Acceptance Criteria |
-|---|---|---|---|---|---|---|
-| M4.1 | Diagnostic blueprint executor | S | Must | 3d | M3.2, M2.4 | Administers items per diagnostic-spec.md §2; stops at SE < 0.3 |
-| M4.2 | IRT θ estimation endpoint | S | Must | 2d | M3.2, M4.1 | Returns θ, SE, CI95, start_node |
-| M4.3 | Placement result persistence | S | Must | 1d | M4.2 | Stores in `diagnostic_results` + `diagnostic_responses` |
-| M4.4 | CAT simulation + validation | S | Should | 3d | M4.1 | Simulated learners place at expected CEFR (r ≥ 0.7) |
+The MVP total is **9 days smaller** than the old scheduled figure while absorbing 34 days of
+Python work that must be redone, 27 days of previously-unscheduled stories, and 9 days of
+newly-found gaps. The reduction comes entirely from deferring work that **cannot currently
+be done** — 34d of IRT/CAT that requires `a`/`b` parameters no story produced — not from
+optimism. `CONSTITUTION.md` §2 is satisfied by the arithmetic above rather than by a
+capacity assertion.
 
 ---
 
-## M5: Listening Service
+## Critical path
 
-| ID | Title | Type | Priority | Est. | Dependencies | Acceptance Criteria |
-|---|---|---|---|---|---|---|
-| M5.1 | Dialogue + slots API | S | Must | 2d | M1.4 | Returns only Status=shipped; Q-L2 ≥ 45s validated |
-| M5.2 | Audio streaming (signed URLs) | S | Must | 2d | M5.1, ADR-005 | 5min TTL; KMS encryption; consent check |
-| M5.3 | ASR integration (pronunciation) | S | Should | 5d | M5.2 | Celery task → ASR → BKT update |
-| M5.4 | Shadow CAT mode | T | Could | 2d | M5.1 | `shadow-only` items excluded from scoring |
+```
+P0 (12d)  ──▶  P1.8 pilot bank (4d)  ──▶  P1.9 fixed blueprint (3d)  ──▶  P1.10 placement
+```
 
----
+Everything else in P1 either runs parallel to this or consumes its output. **P1.8 is the
+story to protect.** PRD §9: *"Everything statistical depends on M2, and M2 depends on M1 —
+which is why RF-002 (the pilot bank) is High and RF-009 (the application) is Low despite
+being the most visible work in the project."*
 
-## M6: Authoring Guard + Security (M6)
-
-| ID | Title | Type | Priority | Est. | Dependencies | Acceptance Criteria |
-|---|---|---|---|---|---|---|
-| M6.1 | Pre-publish license check | S | Must | 2d | ADR-001, ADR-006 | Blocks `adapt_*` on restricted sources; Kong plugin |
-| M6.2 | JWT auth + PKCE + refresh rotation | S | Must | 3d | ADR-001, ADR-006 | 15m access, 30d refresh, device binding |
-| M6.3 | Kong rate limiting (Redis) | S | Must | 2d | ADR-006 | Per-learner 100/min; per-IP 1000/min |
-| M6.4 | PostgreSQL RLS policies | S | Must | 2d | ADR-003 | All learner-scoped tables; 403 on cross-learner access |
-| M6.5 | Consent management (LGPD) | S | Must | 2d | ADR-001 | Granular consents; withdrawal = data deletion |
-| M6.6 | Audit log (immutable) | S | Should | 2d | ADR-003 | Hash-chained; WORM; queryable |
-| M6.7 | Data export / erasure (LGPD Art. 18) | S | Should | 3d | M6.5 | `GET /me/data-export`, `DELETE /me` in < 30 days |
+Note the tension with `PRD.md` risk **RF-009** ("build the learner-facing application"),
+which is rated `Low` but is the work most likely to be started first, because it is the
+part that is visible. Starting P1.12 before P1.8 yields an application that displays a
+mastery probability with no calibrated confidence interval behind it — the exact failure
+`diagnostic-spec.md` §3.6 records as a defect in a worked example.
 
 ---
 
-## M7: MVP Release + Operations
+## Bugs
 
-| ID | Title | Type | Priority | Est. | Dependencies | Acceptance Criteria |
-|---|---|---|---|---|---|---|
-| M7.1 | Helm chart + ArgoCD (dev/staging/prod) | S | Must | 3d | ADR-008 | `helm install`; ArgoCD auto-sync dev, manual prod |
-| M7.2 | pgBackRest + DR (cross-region) | S | Must | 3d | ADR-009 | RPO < 1min, RTO < 2h; weekly restore test |
-| M7.3 | Observability stack (Prom/Grafana/Loki/Tempo) | S | Must | 3d | ADR-007 | Metrics, logs, traces; SLO dashboards |
-| M7.4 | Load test (1k concurrent) | S | Must | 2d | All above | p95 < 200ms; error rate < 0.1% |
-| M7.5 | Security audit (OWASP ASVS L2) | S | Must | 5d | M6.1-6.4 | Zero critical/high; documented medium |
-| M7.6 | Runbook + on-call rotation | S | Must | 2d | M7.3 | Runbook covers P1-P4; 4-week rotation |
-| M7.7 | Documentation (API, architecture, runbook) | S | Should | 3d | All | `docs/` complete; OpenAPI examples |
-
----
-
-## Technical Debt / Refactoring (Ongoing)
-
-| ID | Title | Type | Priority | Est. | Notes |
-|---|---|---|---|---|---|
-| TD-001 | Legacy pack migration (115 packs) | E | Should | 20d | Per post-lesson-practice-spec.md §12 |
-| TD-002 | Content submodule workflow automation | E | Could | 5d | Bot PRs, auto-merge on green |
-| TD-003 | OpenTelemetry full instrumentation | E | Should | 10d | Traces, metrics, logs unified |
-| TD-004 | Mutation testing in CI (adaptive engine) | T | Could | 2d | Monthly on release branches |
-| TD-005 | Chaos engineering (Litmus/Gremlin) | E | Could | 10d | Pod kill, network partition, latency injection |
-
----
-
-## Bugs (Template)
-
-| ID | Title | Severity | Status | Sprint |
+| ID | Title | Severity | Status | Phase |
 |---|---|---|---|---|
-| B-001 | [Description] | P1/P2/P3 | Open/In Progress/Done | — |
-
----
-
-## Sprint Planning (Template)
-
-| Sprint | Goal | Stories | Capacity | Velocity |
-|---|---|---|---|---|
-| 1 | M1: Content Pipeline | M1.1-M1.5 | 5 devs × 10d = 50d | — |
-| 2 | M2: Curriculum Graph | M2.1-M2.3 | 5 devs × 10d = 50d | — |
-| 3 | M3: Adaptive Engine (BKT/FSRS) | M3.1, M3.3, M3.4, M3.5 | 5 devs × 10d = 50d | — |
-| 4 | M3: Adaptive Engine (IRT) | M3.2, M3.4 | 5 devs × 10d = 50d | — |
-| 5 | M4: Diagnostic | M4.1-M4.3 | 5 devs × 10d = 50d | — |
-| 6 | M5: Listening + M6: Security | M5.1, M6.1-M6.4 | 5 devs × 10d = 50d | — |
-| 7 | M7: MVP Release | M7.1-M7.4 | 5 devs × 10d = 50d | — |
-| 8 | Hardening + M7.5-M7.7 | M7.5-M7.7 | 5 devs × 10d = 50d | — |
+| B-001 | [Description] | P1/P2/P3 | Open / In Progress / Done | — |
 
 ---
 
 ## Definition of Ready (DoR)
 
-- [ ] Story has clear acceptance criteria
-- [ ] Dependencies identified and available
-- [ ] UX/UI designs done (if applicable)
-- [ ] Contract tests written (for new endpoints)
-- [ ] Estimated by team
+- [ ] Acceptance criteria are testable and name the spec or ADR they satisfy
+- [ ] Every dependency is `Done` or explicitly waived in the PR description
+- [ ] Contract tests written for new endpoints
+- [ ] Estimated, and the estimate's basis stated
 
 ## Definition of Done (DoD)
 
-- [ ] Code complete + self-reviewed
-- [ ] Unit tests pass (≥ 90% coverage for new code)
-- [ ] Integration tests pass
-- [ ] Contract tests pass
-- [ ] BDD scenarios pass (if applicable)
-- [ ] Code reviewed + approved
-- [ ] Deployed to staging + smoke tested
-- [ ] Documentation updated
-- [ ] No P1/P2 bugs open
+Aligned with `CONSTITUTION.md` §4.8. **The previous version of this list said "≥ 90%
+coverage for new code", which was weaker than §4.8 on algorithms and silent about three
+mandatory layers** — a standard that weakened without being declared, contrary to §9 step 3.
+
+- [ ] Code complete and self-reviewed
+- [ ] **Domain isolation holds** — no `typeorm` or `@nestjs/*` import under `src/domain/` (P0.2 check green)
+- [ ] Unit tests ≥ **95%** for algorithms; ≥ **90%** for parsers and loaders (§4.8)
+- [ ] Integration tests ≥ 80%; run against the driver this story requires (PGlite or PostgreSQL — ADR-014)
+- [ ] **Contract tests pass for 100% of the endpoints touched**
+- [ ] **BDD scenarios pass for the PRD milestone this story serves**
+- [ ] Lint, format, typecheck, and `spectral` clean
+- [ ] No PII in log output — verified, not assumed (§4.6)
+- [ ] Reviewed and approved
+- [ ] Documentation updated; ADR added if §5 applies
+- [ ] No open P1/P2 bugs
+
+**Removed from this list:** *"Deployed to staging + smoke tested"*. Deployment is a
+release-level gate under §6.3, not a per-story one; requiring it per story made the DoD
+depend on infrastructure that is not ready until P2.3.
+
+---
+
+*Restructured 2026-10-04. Defects D1–D6 and the two corrections are recorded above so the
+change is auditable — a restructure that cannot state what was wrong is indistinguishable
+from a preference.*

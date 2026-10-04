@@ -21,12 +21,17 @@ info:
     url: https://example.com/license
 
 servers:
-  - url: https://api.its.example.com/v1
+  # CONSTITUTION.md §4.4 — URL path versioning is mandatory: /api/v1.
+  # `app.setGlobalPrefix('api')` + `enableVersioning({ type: VersioningType.URI })`.
+  - url: https://api.its.example.com/api/v1
     description: Production
-  - url: https://staging-api.its.example.com/v1
+  - url: https://staging-api.its.example.com/api/v1
     description: Staging
-  - url: http://localhost:8000/v1
-    description: Local development
+  # CONSTITUTION.md §4.5 — TLS 1.3 is mandatory for all external traffic.
+  # This loopback URL is the single declared exception. Port 3000 is the NestJS default,
+  # replacing FastAPI's uvicorn port 8000 per ADR-012.
+  - url: http://localhost:3000/api/v1
+    description: Local development (loopback exception to the TLS rule)
 
 tags:
   - name: placement
@@ -358,7 +363,7 @@ components:
                 type: string
             meta_button:
               type: boolean
-              description: "Por que?" button for metalinguistic explanation
+              description: '"Por que?" button for metalinguistic explanation'
         fase4:
           type: object
           description: Formative Check — low-stakes assessment
@@ -592,7 +597,58 @@ components:
     # ============================================================
     # Errors
     # ============================================================
+    # CONSTITUTION.md §4.3 — RFC 9457 Problem Details for HTTP APIs.
+    # Media type: application/problem+json
+    #
+    # MIGRATION NOTE: the 9 published endpoints still declare `ErrorResponse`
+    # ({error, message, request_id}), which is not RFC 9457. `Problem` is the
+    # §4.3-mandated shape and is the target; converting the existing error
+    # responses is a BREAKING CHANGE under §4.4 and is therefore deferred and
+    # tracked as BACKLOG.md P1 (see CONSTITUTION.md §2.0.0 "What weakens").
+    # Do not add new endpoints using ErrorResponse.
+    Problem:
+      type: object
+      description: RFC 9457 Problem Details.
+      required: [type, title, status]
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          default: about:blank
+          description: |
+            URI reference identifying the problem type. `about:blank` means the type is
+            not further specified; the default when omitted by RFC 9457.
+        title:
+          type: string
+          description: |
+            Short, human-readable summary of the problem type. MUST NOT change between
+            occurrences of the same problem type — it is not a per-instance message.
+        status:
+          type: integer
+          minimum: 100
+          maximum: 599
+          description: The HTTP status code, repeated for client convenience.
+        detail:
+          type: string
+          description: |
+            Human-readable explanation specific to THIS occurrence. Never contains a
+            stack trace or internal message — CONSTITUTION.md §4.3.
+        instance:
+          type: string
+          format: uri-reference
+          description: URI reference identifying this specific occurrence.
+        # --- RFC 9457 permits extension members. The two below are required
+        # --- by CONSTITUTION.md §4.6 (Correlation-ID) and §4.3 (RFC 9457).
+        request_id:
+          type: string
+          format: uuid
+          description: Correlation-ID. CONSTITUTION.md §4.6 requires one on every response.
+
     ErrorResponse:
+      deprecated: true
+      description: |
+        DEPRECATED — retained for the 9 published endpoints pending migration to `Problem`.
+        Use `Problem` for all new responses.
       type: object
       required: [error, message, request_id]
       properties:
@@ -850,10 +906,32 @@ paths:
     post:
       tags: [auth]
       summary: Refresh access token
+      description: |
+        **OUT OF MVP SCOPE — blocked on ADR-013. Do not implement.**
+
+        An endpoint returning `access_token` is Authorization Server behaviour. The MVP
+        operates as a Resource Server only: it validates JWTs issued by an external IdP and
+        does not mint tokens (CONSTITUTION.md §4.5, ADR-013).
+
+        This path is retained rather than deleted because removing a published path is a
+        breaking change under §4.4, and ADR-013 does not authorise one. It is annotated so
+        that an implementer reading this contract does not quietly build an IdP.
+
+        Implementing this endpoint requires ADR-013 to be resolved first.
       operationId: refreshToken
+      x-mvp-scope: excluded
+      x-blocked-by: ADR-013
       security:
         - RefreshToken: []
       responses:
+        '501':
+          description: |
+            Not implemented. The MVP is a Resource Server and does not issue tokens.
+            See ADR-013.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
         '200':
           description: New access token
           content:
@@ -871,6 +949,22 @@ paths:
 ---
 
 ## Notes
+
+- **URL versioning** is `/api/v1` (`CONSTITUTION.md` §4.4). Header and query-parameter
+  versioning are prohibited. NestJS: `app.setGlobalPrefix('api')` +
+  `enableVersioning({ type: VersioningType.URI, defaultVersion: '1' })`.
+- **Naming:** fixed path segments are `kebab-case`; JSON properties and query parameters
+  are `camelCase`; **content identifiers are `snake_case` and immutable** — `{learner_id}`,
+  `{lesson_id}`, `{pack_id}`, `{dialogue_id}` and the `les_*` / `pack_*` / `lst_*` ids they
+  carry are data-integrity keys governed by `verify-integrity.py` checks [1], [2], [8], [11],
+  **not** style choices. Renaming one is prohibited without amending
+  `Curso-de-Ingles/specs/curriculum-graph-spec.md` §4.3.
+- **Errors:** `Problem` (RFC 9457) is the §4.3-mandated shape and serves
+  `application/problem+json`. `ErrorResponse` is deprecated but still referenced by the 9
+  published endpoints; converting those is a breaking change tracked in `BACKLOG.md` P1.
+- **`/auth/refresh` is out of MVP scope** and must not be implemented — the platform is a
+  Resource Server (`ADR-013`, `CONSTITUTION.md` §4.5). It is annotated, not deleted, because
+  deletion is a breaking change under §4.4.
 
 - **All schemas** are derived from specs in `Curso-de-Ingles/specs/`:
   - `item_id` prefix ↔ skill namespace → `assessment-item-spec.md` §1.2

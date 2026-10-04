@@ -10,7 +10,7 @@
 
 | ID | Title | Status | Date | Supersedes |
 |---|---|---|---|---|
-| [001](001-use-fastapi.md) | Use FastAPI for API services | Accepted | 2026-10-03 | — |
+| [001](001-use-fastapi.md) | Use FastAPI for API services | **Superseded** by 012 | 2026-10-03 | — |
 | [002](002-bkt-irt-hybrid.md) | Hybrid BKT/IRT/FSRS for adaptive engine | Accepted | 2026-10-03 | — |
 | [003](003-postgresql-rls.md) | PostgreSQL Row-Level Security for multi-tenancy | Accepted | 2026-10-03 | — |
 | [004](004-two-pack-schemas.md) | Support two pack schemas (canonical + legacy) | Accepted | 2026-10-03 | — |
@@ -21,6 +21,23 @@
 | [009](009-pgbackrest-backup.md) | pgBackRest for PostgreSQL backup | Accepted | 2026-10-03 | — |
 | [010](010-content-submodule.md) | Curso-de-Ingles as Git submodule | Accepted | 2026-10-03 | — |
 | [011](011-message-broker-selection.md) | Message Broker Selection for ITS Platform | Accepted | 2026-10-04 | — |
+| [012](012-migrate-api-layer-to-nestjs.md) | Migrate API layer from FastAPI to NestJS + TypeORM | Accepted | 2026-10-04 | 001 |
+| [013](013-auth-architecture-resource-vs-authorization-server.md) | Auth architecture — Resource Server vs Authorization Server, and IdP selection | **Proposed** — open | 2026-10-04 | — |
+| [014](014-datastore-pglite-dev-postgres-prod.md) | Datastore driver — PostgreSQL 16; PGlite as dev/test driver | Accepted | 2026-10-04 | — |
+
+### Open ADRs — read before implementing
+
+**[013](013-auth-architecture-resource-vs-authorization-server.md) is `Proposed` and blocks
+one thing:** the platform must not implement token issuance. `/auth/refresh` is published in
+`docs/api-spec.openapi.yaml` but is annotated as out of MVP scope. Building it without
+closing 013 would make the platform an Authorization Server, which no accepted record
+authorises. The IdP question inside 013 is deliberately unanswered.
+
+**[012](012-migrate-api-layer-to-nestjs.md)** and **[014](014-datastore-pglite-dev-postgres-prod.md)**
+carry constraints that are easy to lose in implementation and are enforced by CI:
+
+- 012 — a file under `src/domain/` importing `typeorm` or `@nestjs/*` fails the build. TypeORM's default decorates the domain; the CI check is the only thing standing between that default and `CONSTITUTION.md` §4.2.
+- 014 — RLS, `SET LOCAL`, role-switching, and concurrency tests **cannot** run on PGlite (single exclusive connection). They require real PostgreSQL, and a PR that only passes on PGlite has not verified multi-tenancy.
 
 ---
 
