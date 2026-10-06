@@ -20,6 +20,7 @@
 | Python tree | ✅ ainda presente (`src/its_platform/`) — deleção é P0.9 | `find src -type f` |
 | ERD derivado (P0.3a) | ✅ `its-platform/docs/data-model.erd.md` **v1.0.0 — 1048 linhas, 33 tabelas** | conta: 33 × `CREATE TABLE` |
 | ORM entities (P0.3) | ✅ **33 entidades TypeORM** em `src/infrastructure/entities/` + 9 agregados de domínio + 9 mappers bidirecionais | typecheck/build/test/domain:check verdes; zero `@Entity()` fora de `entities/`; `gate_passed` ausente |
+| Schema migration (P0.4) | ✅ **`src/migrations/1791331200000-create-schema.ts`** (33 tabelas + 4 enums + 26 índices + 4 triggers + roles/RLS/grants) | `scripts/migration-check.mjs`: **PGlite 10/10, Postgres 16 real 13/13** (incl. RLS isolation, X-3 WORM, I-2 coluna id); CI job `rls-integration` |
 | Cross-refs | ✅ `domain-model.md` §8 e ADR-018 (2 checkboxes) atualizados | grep |
 
 **Gates (baseline — valores esperados, não defeito):**
@@ -72,6 +73,21 @@ Corrigido: todos `[ ]` + bloco "Status audit (2026-10-06)" no topo do Implementa
 ganhou bloco de nota do achado (runbook §5.2 também cita deployments legados inexistentes —
 reescrita em P2.11/P2.6).
 
+### 2.7 P0.4 — schema migration + RLS em PostgreSQL real (2026-10-06)
+`src/migrations/1791331200000-create-schema.ts`: **um único artefato DDL** (`SCHEMA_STATEMENTS`)
+consumido pela classe `CreateSchema1791331200000 implements MigrationInterface` **e** pelo gate.
+33 tabelas, 4 enums nomeados (ADR-019: `its_event_type`, `its_item_lifecycle_state`,
+`its_fsrs_review_state`, `its_pack_layer`), 26 índices, 4 triggers (I-3 distinctness, D-5 deferred
+≥2 speakers, G-8 skill_theta.state, hash-chain WORM com `pg_advisory_xact_lock`), roles
+NOLOGIN, RLS nas 15 tabelas (DO block; predicate com `current_setting(..., true)` missing_ok —
+desvio documentado: GUC ausente = fail-closed), grants com X-3/X-1 (sem UPDATE/DELETE em
+`append_only_events`/`consent_records`) e I-2 (`REVOKE DELETE` + `UPDATE (id)` em `items`).
+`scripts/migration-check.mjs` (ESM puro): PGlite por default, PostgreSQL real via `DATABASE_URL`;
+asserts estruturais (33/4/15/45/4) + comportamentais. **Verificado localmente: PGlite 10/10,
+Postgres 16 real (Docker) 13/13** — RLS isolamento SET LOCAL, X-3, I-2 apenas no driver real
+(ADR-014). CI ganhou job `rls-integration` (`services: postgres:16-alpine`) + wiring no `summary`.
+A decisão «PostgreSQL real na CI» (pendência #2) está **resolvida** — opção recomendada do plano.
+
 ---
 
 ## 3. Avaliação crítica
@@ -97,7 +113,7 @@ reescrita em P2.11/P2.6).
 ### 3.3 Riscos (qualitativos)
 
 1. **P0.3 é o maior bloco restante do P0** (3d) e o ERD tem `items` com ~45 colunas — o port ORM mais arriscado é `items`/`item_options` (CHECKs não são expressíveis em decorators; vão para migrations — DDL duplicado em dois lugares, risco de drift). Mitigação: contract tests + a §11 do ERD.
-2. **RLS (correção 16) só se prova em PostgreSQL real** — ADR-014 é explícito: PGlite não exercita `SET LOCAL`/GUC. P0.4 precisa de decisão pendente #2 (postgres service no CI ou nightly) — sem ela, a correção mais cara do ERD fica sem verificação.
+2. **RLS (correção 16) só se prova em PostgreSQL real** — ADR-014 é explícito: PGlite não exercita `SET LOCAL`/GUC. **RESOLVIDO 2026-10-06**: job CI `rls-integration` com `services: postgres:16-alpine` + gate `scripts/migration-check.mjs` (verificado local: Postgres 16 real 13/13). A suite cross-learner completa (403, concorrência) permanece P2.1.
 3. **Drift futuro**: `verify-integrity.py` [2] recalcula o Status da §4.3 — a split `authoring_state` (correção 12) obriga loader + check + spec a moverem juntos (ADR-018 Negative). Se um mover só, o gate cai silenciosamente.
 4. **Baseline do release depende de decisões do usuário**: signatários da §9 (passo 5) para o floor de invariantes ficar ratificado no CONSTITUTION — hoje o ADR-018 está Accepted como ADR, mas a alteração constitucional está `PROPOSED`.
 
@@ -128,7 +144,7 @@ reescrita em P2.11/P2.6).
 | # | Pendência | Dono | Bloqueia |
 |---|---|---|---|
 | P1 | Signatários para CONSTITUTION §9 passo 5 (Tech Lead, Security Lead, Director) — ratificar invariant floor (hoje `PROPOSED`) | **Usuário** | Ratificação do floor |
-| P2 | PostgreSQL real no CI: `services: postgres:16` ou job nightly | **Usuário** | P0.4 (RLS) |
+| P2 | PostgreSQL real no CI ~~: `services: postgres:16` ou job nightly~~ | **Usuário** | ✅ **Decidido 2026-10-06: job `rls-integration` com `services: postgres:16-alpine`** — implementado e verde |
 | P3 | Nome da tag do piloto | **Usuário** | P1.16 tag |
 | P4 | Tamanho da coorte (20? 50?) | **Usuário** | P2.2 |
 | P5 | D1: `.gitignore` + D2: commit checkpoint | Tech Lead / eu no próximo passo | Higiene do repo |
@@ -149,7 +165,9 @@ reescrita em P2.11/P2.6).
 ## 7. Próximos passos (ordem)
 
 1. **~~P0.3~~** (3d) — ~~portar §6 do ERD → entidades TypeORM em `src/infrastructure/entities/` + entidades de domínio + mappers bidirecionais~~ **CONCLUÍDO 2026-10-06** (33 entidades + 9 agregados + 9 mappers; gates verdes).
-2. **P0.4** (2d) — migration TypeORM em PGlite **e** PostgreSQL real; 4 enums nomeados do §7; triggers `[db]` (I-3, D-5, G-8); `CREATE POLICY` nas 15 tabelas (§9); trigger hash-chain em `append_only_events`. Exige decisão P2.
+2. **~~P0.4~~** (1d) — ~~migration TypeORM em PGlite e PostgreSQL real; 4 enums nomeados; triggers I-3/D-5/G-8; `CREATE POLICY` nas 15 tabelas; hash-chain~~ **CONCLUÍDO 2026-10-06** (`src/migrations/1791331200000-create-schema.ts` + `scripts/migration-check.mjs`; PGlite 10/10, Postgres 16 real 13/13; job CI `rls-integration`; ADR-019; pendência #2 resolvida).
+3. **P0.5** (2d) — port content loads (lessons, packs, listening) usando TypeORM repository; passar o check [4] (`check_json`) do `verify-integrity.py`; packs conforme ADR-004.
+4. **P0.6–P0.9** — ValidationPipe/Problem filter → JwtAuthGuard → OpenTelemetry → contract tests green + **deletar Python tree** (`src/its_platform/`, `pyproject.toml`) e trocar job legado `bdd-tests`.
 3. **P0.5–P0.8** — loaders de conteúdo (packs → `packs`; `authoring_state` == `**Status:**` do arquivo), contract tests.
 4. **P0.9** — deletar `src/its_platform/` + `pyproject.toml` (e resolver P6).
 5. **P1 (Pilot A)** — stories do BACKLOG com gates G1, G2, G5 parcial (Trivy+bandit); effort incremental 9d após P1.
@@ -174,4 +192,4 @@ reescrita em P2.11/P2.6).
 
 ---
 
-*Atualizado 2026-10-06 (P0.3 concluído; achado ADR-009 registrado). Próxima atualização: após P0.4 (migração + RLS) ou na primeira decisão P1–P4.*
+*Atualizado 2026-10-06 (P0.3 concluído; achado ADR-009 registrado; P0.4 concluído + ADR-019; pendência #2 resolvida). Próxima atualização: após P0.5 (content loaders) ou na primeira decisão P1–P4.*
