@@ -1,7 +1,7 @@
 ---
 description: API Developer for ITS Platform - designs and implements REST endpoints, OpenAPI contracts, FastAPI
 mode: subagent
-model: anthropic/claude-sonnet-4-5
+model: opencode/big-pickle
 color: "#6f42c1"
 ---
 # API Developer — ITS Platform

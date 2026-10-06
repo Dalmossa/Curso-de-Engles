@@ -1,7 +1,7 @@
 ---
 description: Security Engineer for ITS Platform - threat modeling, OWASP ASVS, LGPD/GDPR, crypto, authZ
 mode: subagent
-model: anthropic/claude-sonnet-4-5
+model: opencode/big-pickle
 color: "#fd7e14"
 ---
 # Security Engineer — ITS Platform

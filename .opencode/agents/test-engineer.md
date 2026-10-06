@@ -1,7 +1,7 @@
 ---
 description: Test Engineer for ITS Platform - test strategy, pyramid, contract/property/BDD testing, mutation testing
 mode: subagent
-model: anthropic/claude-sonnet-4-5
+model: opencode/big-pickle
 color: "#6610f2"
 ---
 # Test Engineer — ITS Platform

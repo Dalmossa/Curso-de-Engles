@@ -1,7 +1,7 @@
 ---
 description: System Design Architect for ITS Platform - defines architecture, makes high-level design decisions, creates ADRs
 mode: primary
-model: anthropic/claude-sonnet-4-5#high
+model: opencode/big-pickle
 color: "#1e90ff"
 ---
 # System Design Architect — ITS Platform

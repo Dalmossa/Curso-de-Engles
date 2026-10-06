@@ -24,6 +24,25 @@
 | [012](012-migrate-api-layer-to-nestjs.md) | Migrate API layer from FastAPI to NestJS + TypeORM | Accepted | 2026-10-04 | 001 |
 | [013](013-auth-architecture-resource-vs-authorization-server.md) | Auth architecture — Resource Server vs Authorization Server, and IdP selection | **Proposed** — open | 2026-10-04 | — |
 | [014](014-datastore-pglite-dev-postgres-prod.md) | Datastore driver — PostgreSQL 16; PGlite as dev/test driver | Accepted | 2026-10-04 | — |
+| [015](015-domain-model-bounded-contexts.md) | Domain model — eight bounded contexts, aggregate roots, single-tenant MVP | Accepted | 2026-10-05 | — |
+| [016](016-canonical-identifier-registry.md) | Canonical identifier registry, alias migration, and the CI gate | Accepted | 2026-10-05 | — |
+| [017](017-mvp-adaptive-scope.md) | MVP adaptive scope — Stage-1 IRT only, fixed-form diagnostic, ordinal routing | Accepted | 2026-10-05 | — |
+| [018](018-persistence-derived-from-specs.md) | Persistence derived from the specs, and the invariant floor | Accepted | 2026-10-05 | — |
+
+### Read before writing any persistence code — ADR-015…018
+
+Four records dated 2026-10-05 change what the rest of this directory says. Read them before
+opening `docs/data-model.erd.md`, `db/models.py`, or a migration.
+
+| ADR | What it invalidates | What it requires |
+|---|---|---|
+| [015](015-domain-model-bounded-contexts.md) | `ms_`/`diag_` graph nodes (zero instances, four node kinds declared), `learners.streak_days`, `learners.xp`. Closes `ITS-ARCHITECTURE.md` §12 item 4 | three entities that had no id, no schema, no write path: `ErrorLogEntry`, `SkillPrerequisite`, `AffectiveSignal`; `AppendOnlyEvent` promoted to artefact class #8 in `SDD.md` §1 |
+| [016](016-canonical-identifier-registry.md) | five coexisting `skill_id` forms; `item_id` indistinguishable from `skill_id` in Family-B packs | one canonical form per class, `identifier_aliases`, and `scripts/verify-identifiers.py` in **both** repos' CI |
+| [017](017-mvp-adaptive-scope.md) | `PRD.md` vs `BACKLOG.md` on CAT priority — resolved against the PRD's dependency claim, but with the CAT **out** of the MVP | Stage-1 `(a,b)` with declared SE; 12-item fixed form; conservative ordinal routing; `placement_provisional` derived, never stored |
+| [018](018-persistence-derived-from-specs.md) | **all 28 tables** of `docs/data-model.erd.md`, and the 9 invariants; `bkt_transition`; `pgvector`; `mastery.gate_passed` | the invariant floor (no stored rule weaker than its predicate), 16 corrections, the L1 pack formula, RLS on every learner-scoped table |
+
+**`docs/data-model.erd.md` is superseded** and its header's stated source (`ITS-ARCHITECTURE.md §7`
+— a twenty-line sketch) is why. `BACKLOG.md` P0.3a re-derives it from the six specs.
 
 ### Open ADRs — read before implementing
 

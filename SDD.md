@@ -34,7 +34,7 @@ finding; it is the finding, and it has an owner.
 
 ---
 
-## 1. ARTEFACT TAXONOMY — 7 classes, 7 gates
+## 1. ARTEFACT TAXONOMY — 8 classes, 8 gates
 
 | # | Artefact | Naming rule | Gate | Verifier |
 |---|----------|-------------|------|----------|
@@ -45,9 +45,25 @@ finding; it is the finding, and it has an owner.
 | 5 | Dialogue | `dlg_<level>_<nn>_<slug>` | §3.3 below | [5] [10] |
 | 6 | Assessment item | `item_id` prefix ↔ skill namespace (§1.2 of `assessment-item-spec.md`) | id unique across **both** pack schemas; `note:` on every distractor; no option repeated | [9] [11c]–[11e] |
 | 7 | Spec section | `§<n>.<m>` | numbered; every internal `§` reference resolves | [10] |
+| 8 | **Audio clip / render manifest** *(ADR-016)* | `clip_<dialogue>_<NNN>`, `take_<clip>_<NN>` | Q-L1 unambiguous render · **Q-L6: minimal-pair clips by the same voice at the same rate, or the item is void** · Q-L7 ear check (100 % L2, 20 % sample L1) · every `take` records `voice_id`, `rate`, `duration_s` | [5] [Q-L6] I-6 |
 
 **A class with no gate is a class that drifts.** Every row above names the check that catches
 its failure mode; a new artefact class may not be added without one.
+
+**Class 8 exists because the corpus already references an entity that has no class.** The listening
+corpus carries `v_take_03`, and `DEF-13`'s remedy is *"a second render on panel voices"* — but a
+take has no manifest, no naming rule and no gate, so `assessment` §7's requirement that a retired
+item stay auditable is unsatisfiable: `b` was estimated against **one** render and there is no way
+to know which. Voice is load-bearing rather than incidental —
+`listening-corpus-spec.md` §2.1 makes within-dialogue voice ≡ speaker identity, and
+`lst_lexical_007` is *solvable because of it*. A nuisance variable inside the object a difficulty
+estimate is anchored to needs a gate like any other.
+
+**Scope note.** This taxonomy governs **content artefacts only** — files in this repository, read
+by `verify-integrity.py`. Platform runtime artefacts are out of its scope: `AppendOnlyEvent`
+(ADR-015 §5) is a table in `its-platform`, gated by `CONSTITUTION.md` §4.6, OWASP ASVS
+`v4.0.3-7.3.3` and `BACKLOG.md` P2.2. Registering it here would be a category error — a content gate
+that cannot read a database table gives false coverage, not coverage.
 
 ---
 

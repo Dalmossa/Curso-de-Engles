@@ -1,0 +1,34 @@
+# Dependencies (NestJS scaffold)
+node_modules/
+
+# Build output (TypeScript/NestJS)
+dist/
+build/
+
+# Test coverage
+coverage/
+coverage.*
+*.lcov
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Python legacy tree (until P0.9 deletes src/its_platform/)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+*.swp

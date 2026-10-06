@@ -5,6 +5,11 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  schedule:
+    # Weekly, Monday 03:00 UTC. Exists so the §4.8 mutation gate can run at all — see the
+    # mutation-test job, which was previously conditioned on a schedule that did not exist.
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
 
 env:
   PYTHON_VERSION: "3.11"
@@ -19,17 +24,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           submodules: recursive
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Poetry
-        uses: snok/install-poetry@v1
+        uses: snok/install-poetry@a783c322200f0519c7926aa6faa857c4e23e9263 # v1
         with:
           version: ${{ env.POETRY_VERSION }}
 
@@ -39,7 +44,7 @@ jobs:
           poetry config installer.max-workers 10
 
       - name: Cache Poetry dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: its-platform/.venv
           key: poetry-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
@@ -71,17 +76,45 @@ jobs:
   # ------------------------------------------------------------------
   # Content Integrity Verification
   # ------------------------------------------------------------------
+
+  # ------------------------------------------------------------------
+  # Domain Isolation Check (ADR-014, P0.2)
+  # ------------------------------------------------------------------
+  domain-isolation:
+    name: Domain Isolation Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          submodules: recursive
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: its-platform/package-lock.json
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: npm ci
+
+      - name: Run domain isolation check
+        working-directory: its-platform
+        run: npm run domain:check
+
   content-integrity:
     name: Content Integrity Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           submodules: recursive
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
@@ -93,6 +126,30 @@ jobs:
         working-directory: .
         run: python3 prd-score.py
 
+      # CONSTITUTION.md §6.3 release-gate report.
+      #
+      # `continue-on-error: true` is deliberate and is NOT the `|| true` defect fixed in the
+      # security-scan job on 2026-10-05. The difference is what the step is asserting:
+      #
+      #   * bandit — a property of the code under test. It can and must fail the build.
+      #   * this   — a report of platform readiness. It is expected to exit 1 until the MVP
+      #              lands, and failing every CI run on that fact would train the team to
+      #              ignore the job, which is how §6.3 stopped meaning anything.
+      #
+      # The gate is blocking at `make release-check`, which is what a release is cut from.
+      # This step exists so the seven gates are visible on every run and so a newly-broken
+      # gate — a CI trigger that stops matching its branch, a scanner that stops propagating
+      # its exit status — turns red here the day it happens.
+      - name: Release gate report (CONSTITUTION.md §6.3)
+        working-directory: .
+        continue-on-error: true
+        run: |
+          pip install pyyaml
+          python3 its-platform/scripts/verify-release-gates.py --verbose | tee release-gates.txt
+          echo "---"
+          echo "Summary of the seven release gates:"
+          grep -E '^\[FAIL\]|^RESULT:' release-gates.txt || echo "  (no failures reported)"
+
   # ------------------------------------------------------------------
   # Contract Testing (OpenAPI Spec Validation)
   # ------------------------------------------------------------------
@@ -101,12 +158,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           submodules: recursive
 
       - name: Set up Node.js for spectral
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "20"
 
@@ -139,22 +196,22 @@ jobs:
     needs: lint
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           submodules: recursive
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Poetry
-        uses: snok/install-poetry@v1
+        uses: snok/install-poetry@a783c322200f0519c7926aa6faa857c4e23e9263 # v1
         with:
           version: ${{ env.POETRY_VERSION }}
 
       - name: Cache Poetry dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: its-platform/.venv
           key: poetry-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
@@ -171,7 +228,7 @@ jobs:
           poetry run pytest tests/unit -v --cov=its_platform --cov-report=xml --cov-report=term-missing --cov-fail-under=95
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4
         with:
           files: its-platform/coverage.xml
           flags: unit
@@ -203,17 +260,17 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           submodules: recursive
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Poetry
-        uses: snok/install-poetry@v1
+        uses: snok/install-poetry@a783c322200f0519c7926aa6faa857c4e23e9263 # v1
         with:
           version: ${{ env.POETRY_VERSION }}
 
@@ -237,24 +294,52 @@ jobs:
   # ------------------------------------------------------------------
   # Mutation Testing (adaptive engine)
   # ------------------------------------------------------------------
+  # CONSTITUTION.md §4.8 sets a mutation-score threshold of >= 85%.
+  #
+  # This job was dead: `if:` tested `github.repository == 'owner/its-platform'`, a
+  # placeholder that is not this repository, and `github.event_name == 'schedule'`, which
+  # could never be true because the workflow declared no `schedule` trigger. It therefore
+  # never ran, and the §4.8 threshold was enforcement of nothing.
+  #
+  # It now has a schedule and a manual trigger, so it can actually run — and when it does it
+  # fails with the named blocker rather than silently skipping.
   mutation-test:
     name: Mutation Testing (Adaptive Engine)
     runs-on: ubuntu-latest
     needs: unit-tests
-    if: github.event_name == 'schedule' || github.repository == 'owner/its-platform'
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           submodules: recursive
 
+      - name: Assert the mutation target exists
+        run: |
+          set -euo pipefail
+          if [ ! -d its-platform/src/its_platform/adaptive ]; then
+            echo "[FAIL] CONSTITUTION.md §4.8 mutation gate: target module absent"
+            echo "  expected: its-platform/src/its_platform/adaptive/"
+            echo "  present:  $(ls its-platform/src/its_platform/ | tr '\n' ' ')"
+            echo
+            echo "Blocker: the adaptive engine is BACKLOG.md P1.3/P1.4 (Next-activity"
+            echo "selector, BKT engine) and has never been written. ADR-012 supersedes"
+            echo "this Python tree with NestJS, so mutating it would measure code that is"
+            echo "scheduled for deletion."
+            echo
+            echo "§4.8's >= 85% threshold is therefore NOT enforced today. Re-point this"
+            echo "job at src/domain/ after P0.3 lands, per ADR-012's CI domain-isolation check."
+            exit 1
+          fi
+          echo "  ok   mutation target present"
+
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Poetry
-        uses: snok/install-poetry@v1
+        uses: snok/install-poetry@a783c322200f0519c7926aa6faa857c4e23e9263 # v1
         with:
           version: ${{ env.POETRY_VERSION }}
 
@@ -277,17 +362,17 @@ jobs:
     needs: integration-tests
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           submodules: recursive
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Poetry
-        uses: snok/install-poetry@v1
+        uses: snok/install-poetry@a783c322200f0519c7926aa6faa857c4e23e9263 # v1
         with:
           version: ${{ env.POETRY_VERSION }}
 
@@ -310,12 +395,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           submodules: recursive
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           scan-type: 'fs'
           scan-ref: 'its-platform'
@@ -323,15 +408,32 @@ jobs:
           output: 'trivy-results.sarif'
 
       - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@1190a975f95ce23525efb6a3fc21ea29567c1b52 # v3
         with:
           sarif_file: 'trivy-results.sarif'
 
+      # One scanner invocation per report format; the SARIF step no longer re-runs the
+      # scanner just to reformat output the previous step already had.
       - name: Run bandit (Python security lint)
         working-directory: its-platform
         run: |
           pip install bandit[toml]
-          bandit -r src/ -f json -o bandit-results.json || true
+          bandit -r src/ -f json  -o bandit-results.json
+          bandit -r src/ -f sarif -o bandit-results.sarif
+          bandit -r src/ -f txt
+
+      - name: Upload bandit SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@1190a975f95ce23525efb6a3fc21ea29567c1b52 # v3
+        with:
+          sarif_file: 'its-platform/bandit-results.sarif'
+
+      # Threshold lives in scripts/bandit-gate.py so CI and `make security-scan` cannot
+      # drift apart. See that file for why it is HIGH (plus MEDIUM at HIGH confidence) and
+      # not "any finding": a gate that cannot fail is worse than no gate, and a gate that
+      # always fails is a gate that gets disabled — which is how `|| true` arrived.
+      - name: Fail on HIGH bandit findings
+        working-directory: its-platform
+        run: python3 scripts/bandit-gate.py bandit-results.json
 
   # ------------------------------------------------------------------
   # Build & Push Docker Image
@@ -343,15 +445,15 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           submodules: recursive
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
 
       - name: Build image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@ca052bb54ab0790a636c9b5f226502c73d547a25 # v5
         with:
           context: its-platform
           push: false
@@ -367,22 +469,65 @@ jobs:
   # ------------------------------------------------------------------
   # Deploy to Staging (ArgoCD)
   # ------------------------------------------------------------------
+  # Gate CONSTITUTION.md §6.3 "Staging Deployed" (owner: Platform Lead).
+  #
+  # This job used to `echo "Update iac/argocd/applications/its-platform-staging.yaml"`
+  # and pass. That is a gate that cannot fail, which is worse than no gate: it occupies the
+  # place where the check belongs and silences the alarm. It now asserts the preconditions
+  # and fails, naming the blocker.
+  #
+  # Runs on `always()` so the missing-IaC fact is surfaced even when an upstream job is red.
   deploy-staging:
-    name: Deploy to Staging
+    name: Staging IaC Preconditions
     runs-on: ubuntu-latest
     needs: [build-image, integration-tests, bdd-tests]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: always()
     environment: staging
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           submodules: recursive
 
-      - name: Update ArgoCD Application image tag
+      - name: Assert the staging deploy path exists
         run: |
-          echo "Update iac/argocd/applications/its-platform-staging.yaml with new image tag"
-          # This would be done via Kustomize or Helm values update in practice
+          set -euo pipefail
+          missing=()
+          [ -d its-platform/iac ] || missing+=("its-platform/iac/ (directory)")
+          chart=$(find its-platform -name Chart.yaml -not -path '*/node_modules/*' 2>/dev/null | head -1 || true)
+          [ -n "$chart" ] || missing+=("Chart.yaml (Helm chart)")
+          app=$(find its-platform/iac -path '*argocd*' -name '*staging*.y*ml' 2>/dev/null | head -1 || true)
+          [ -n "$app" ] || missing+=("iac/**/argocd/**/*staging*.y*ml (ArgoCD Application)")
+
+          if [ ${#missing[@]} -ne 0 ]; then
+            echo "[FAIL] gate §6.3 'Staging Deployed' cannot be satisfied:"
+            for m in "${missing[@]}"; do echo "  - $m"; done
+            echo
+            echo "Blocker: ADR-008 (ArgoCD GitOps) is Accepted and BACKLOG.md P2.5"
+            echo "('Helm chart + ArgoCD (dev/staging/prod)') is Must — neither exists."
+            echo "docs/iac-spec.md describes the target; iac/ does not implement it."
+            echo
+            echo "Until then there is no staging environment and 'CI Green' is the only"
+            echo "signal this repository emits. Do not mark this gate satisfied by hand."
+            exit 1
+          fi
+          echo "  ok   staging IaC present: chart=$chart app=$app"
+
+      - name: Sync ArgoCD staging application
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          set -euo pipefail
+          # GitOps: the image tag is committed, never pushed to a cluster by hand
+          # (CONSTITUTION.md §2 "GitOps", ADR-008). This step verifies the committed
+          # Application points at the SHA just built and lets ArgoCD reconcile.
+          sha="${GITHUB_SHA}"
+          app="$(find its-platform/iac -path '*argocd*' -name '*staging*.y*ml' | head -1)"
+          grep -q "$sha" "$app" || {
+            echo "[FAIL] $app does not reference the built SHA $sha"
+            echo "The image tag must be committed by a bump PR, not written by CI."
+            exit 1
+          }
+          echo "  ok   $app references $sha"
 
   # ------------------------------------------------------------------
   # Summary
@@ -403,6 +548,10 @@ jobs:
           echo "BDD Tests: ${{ needs.bdd-tests.result }}"
           echo "Security Scan: ${{ needs.security-scan.result }}"
 
+      # security-scan was listed in `needs` and reported below, but was NOT in the failing
+      # set — because it could not fail: bandit ran with `|| true`. §6.3 names "Security
+      # Scan" as a release gate, so a scan that cannot fail must not be exempt from the
+      # aggregate. Now that bandit can fail, the exemption would be the defect.
       - name: Fail if any required job failed
         if: |
           needs.lint.result != 'success' ||
@@ -410,5 +559,6 @@ jobs:
           needs.contract-test.result != 'success' ||
           needs.unit-tests.result != 'success' ||
           needs.integration-tests.result != 'success' ||
-          needs.bdd-tests.result != 'success'
+          needs.bdd-tests.result != 'success' ||
+          needs.security-scan.result != 'success'
         run: exit 1

@@ -1,7 +1,7 @@
 ---
 description: Senior Software Engineer for ITS Platform - implements features, writes clean code, follows TDD/BDD
 mode: primary
-model: anthropic/claude-sonnet-4-5
+model: opencode/big-pickle
 color: "#28a745"
 ---
 # Senior Software Engineer — ITS Platform

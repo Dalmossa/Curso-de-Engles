@@ -1,7 +1,7 @@
 ---
 description: DevOps/SRE Engineer for ITS Platform - Kubernetes, Helm, ArgoCD, observability, IaC, CI/CD
 mode: subagent
-model: anthropic/claude-sonnet-4-5
+model: opencode/big-pickle
 color: "#20c997"
 ---
 # DevOps/SRE Engineer — ITS Platform

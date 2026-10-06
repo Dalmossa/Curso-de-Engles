@@ -328,7 +328,7 @@ Any change to a spec in `Curso-de-Ingles/` that affects the ITS contract:
 | 1 | Audio storage: S3 vs. local MinIO vs. CDN? | M5 |
 | 2 | Real-time θ updates: WebSocket vs. polling? | M3 |
 | 3 | Offline-first: service worker + IndexedDB for lessons? | M7 |
-| 4 | Multi-tenant (schools) vs. single-tenant (B2C)? | M1 |
+| 4 | ~~Multi-tenant (schools) vs. single-tenant (B2C)?~~ | **CLOSED 2026-10-05 — [ADR-015 §2](its-platform/docs/adr/015-domain-model-bounded-contexts.md): single-tenant B2C.** No `tenant_id`; RLS keeps the ADR-003 per-learner predicate. It was due at M1 and was still open while P0.3 was about to port a `learners` table whose aggregate boundary was undetermined — which is a `Organization` aggregate sitting above `LearnerAccount`, changing every query, every repository signature and every FK. Reopening is a **MAJOR** version bump (`CONSTITUTION.md` §6.1) and a policy rewrite on every learner-scoped table |
 | 5 | LLM integration for free-form production scoring? | Post-MVP |
 | 6 | Telemetry schema for learning analytics export? | M4 |
 

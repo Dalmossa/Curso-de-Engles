@@ -194,12 +194,19 @@ spec:
 
 ## Implementation Plan
 
-- [x] Add pgBackRest sidecar to PostgreSQL StatefulSet
-- [x] Configure S3 repo with KMS encryption
-- [x] Set up continuous WAL archiving (`archive_command`)
-- [x] Schedule full (daily) + differential (6h) backups
-- [x] Configure retention: 30d full / 7d diff / 7d WAL
-- [x] Implement weekly automated restore test in CI
+> **Status audit (2026-10-06): none of the boxes below reflect deployed infrastructure.**
+> The checkboxes previously marked `[x]` recorded design approval, not delivery: there is no
+> PostgreSQL cluster, no sidecar, no S3 repo, no WAL archiving and no restore test in the
+> repository, and the IaC directory is empty (ADR-008 P2.5 blocker). Everything listed here
+> is P2.6 work. Checkboxes were corrected to reflect reality — no box is checked until the
+> artefact exists and is verified.
+
+- [ ] Add pgBackRest sidecar to PostgreSQL StatefulSet
+- [ ] Configure S3 repo with KMS encryption
+- [ ] Set up continuous WAL archiving (`archive_command`)
+- [ ] Schedule full (daily) + differential (6h) backups
+- [ ] Configure retention: 30d full / 7d diff / 7d WAL
+- [ ] Implement weekly automated restore test in CI
 - [ ] Cross-region replication to us-west-2 (repo2)
 - [ ] Document PITR runbook in `runbook.md` §5.2.1
 - [ ] Alert on: backup failure, WAL lag > 5min, repo size growth

@@ -27,6 +27,7 @@ This Constitution establishes the **technical governance** for the ITS Platform 
 |---|---|
 | **Spec-First** | No implementation without a spec (`specs/*.md`, `docs/api-spec.openapi.yaml`). Contract tests enforce compliance. |
 | **Derivation over Assertion** | Every number in code/docs names its derivation (function, spec section, command). "Magic numbers" are forbidden. |
+| **Invariant Floor** | No persisted invariant may be **weaker** than the predicate it materialises. A stored constraint that drops a conjunct of its governing predicate is not a simplification — it is an undeclared weakening, rejected under §9 step 3. Where the predicate cannot be evaluated at the storage layer, it is **derived in the domain layer and never stored at all**: it is not approximated in the database. A cached projection carries the id of what it was derived from and the instant it was derived. *(ADR-018 §1)* |
 | **Defense in Depth** | Security at every layer: network (Istio), gateway (Kong), application (RLS, JWT), data (encryption). |
 | **Observability by Default** | Every service emits metrics, logs, traces. No "black box" services. |
 | **GitOps** | Desired state in Git → ArgoCD → Cluster. No manual `kubectl apply` in prod. |
@@ -390,6 +391,14 @@ Alert → Acknowledge (15m) → Diagnose → Mitigate → Resolve → Postmortem
 |---|---|---|
 | 1.0.0 | 2026-10-03 | Initial ratification per `ITS-ARCHITECTURE.md` governance section |
 | 2.0.0 | 2026-10-04 | `STRATEGIC-REALIGNMENT` — ADR-012 (FastAPI → NestJS), ADR-013 (`Proposed`), ADR-014 (PGlite/PostgreSQL). **See "What weakens" below.** |
+| **2.1.0** | **2026-10-05** | **PROPOSED — awaiting §9 step 5 approval (Tech Lead + Security Lead + Director).** Adds **§2 `Invariant Floor`** per ADR-018 §1. Defect: `docs/data-model.erd.md:408` materialises `gate_passed = (mastery >= 0.85)`, dropping the `CI₉₅_lower(P) > 0.70` conjunct and the ≥3-obs / ≥2-days / ≥1-spaced evidence clause that `PRD.md` §6.6, `post-lesson` §7.1 and `curriculum-graph` §6.1 all require — and `BACKLOG.md` P1.2 then carried it as an acceptance criterion, where a third document would have asserted it. **Nothing weakens**: additive, strengthens §2, supersedes no section, changes no version-gated behaviour |
+
+### 2.1.0 — Proposed, not yet ratified
+
+`ADR-018` §1 is **operative regardless of this amendment's ratification status**, because it is an
+accepted ADR and `docs/domain-model.md` invariant `L-2` is enforced in `src/domain/` either way.
+What is pending is only the promotion of the rule from one record into the standing constitution,
+so that the next data model does not have to rediscover it.
 
 ### 2.0.0 — What weakens
 
