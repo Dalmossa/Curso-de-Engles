@@ -140,6 +140,14 @@ async function main() {
     if (rows.length !== 4) throw new Error(`expected 4 triggers, got ${rows.length}`);
   });
 
+  await it('27 named indexes exist (ERD §6.9: 25 CREATE INDEX + 2 UNIQUE)', async () => {
+    const rows = await q(
+      `SELECT count(*)::int AS n FROM pg_indexes
+       WHERE schemaname='public' AND (indexname LIKE 'idx\\_%' OR indexname LIKE 'uq\\_%')`,
+    );
+    if (rows[0].n !== 27) throw new Error(`expected 27 named indexes, got ${rows[0].n}`);
+  });
+
   // ---- 3. Fixtures (content tables the behavioural asserts need) ----
   await q("INSERT INTO cefr_levels (code,label,sort_order) VALUES ('A1','A1',1),('A2','A2',2)");
   await q("INSERT INTO domains (id,label,tracked) VALUES ('grammar','Grammar',true)");

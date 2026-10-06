@@ -20,7 +20,7 @@
 | Python tree | ✅ ainda presente (`src/its_platform/`) — deleção é P0.9 | `find src -type f` |
 | ERD derivado (P0.3a) | ✅ `its-platform/docs/data-model.erd.md` **v1.0.0 — 1048 linhas, 33 tabelas** | conta: 33 × `CREATE TABLE` |
 | ORM entities (P0.3) | ✅ **33 entidades TypeORM** em `src/infrastructure/entities/` + 9 agregados de domínio + 9 mappers bidirecionais | typecheck/build/test/domain:check verdes; zero `@Entity()` fora de `entities/`; `gate_passed` ausente |
-| Schema migration (P0.4) | ✅ **`src/migrations/1791331200000-create-schema.ts`** (33 tabelas + 4 enums + 26 índices + 4 triggers + roles/RLS/grants) | `scripts/migration-check.mjs`: **PGlite 10/10, Postgres 16 real 13/13** (incl. RLS isolation, X-3 WORM, I-2 coluna id); CI job `rls-integration` |
+| Schema migration (P0.4) | ✅ **`src/migrations/1791331200000-create-schema.ts`** (33 tabelas + 4 enums + 27 índices + 4 triggers + roles/RLS/grants) | `scripts/migration-check.mjs`: **PGlite 10/10, Postgres 16 real 13/13** (incl. RLS isolation, X-3 WORM, I-2 coluna id); CI job `rls-integration` |
 | Cross-refs | ✅ `domain-model.md` §8 e ADR-018 (2 checkboxes) atualizados | grep |
 
 **Gates (baseline — valores esperados, não defeito):**
@@ -77,7 +77,7 @@ reescrita em P2.11/P2.6).
 `src/migrations/1791331200000-create-schema.ts`: **um único artefato DDL** (`SCHEMA_STATEMENTS`)
 consumido pela classe `CreateSchema1791331200000 implements MigrationInterface` **e** pelo gate.
 33 tabelas, 4 enums nomeados (ADR-019: `its_event_type`, `its_item_lifecycle_state`,
-`its_fsrs_review_state`, `its_pack_layer`), 26 índices, 4 triggers (I-3 distinctness, D-5 deferred
+`its_fsrs_review_state`, `its_pack_layer`), 27 índices, 4 triggers (I-3 distinctness, D-5 deferred
 ≥2 speakers, G-8 skill_theta.state, hash-chain WORM com `pg_advisory_xact_lock`), roles
 NOLOGIN, RLS nas 15 tabelas (DO block; predicate com `current_setting(..., true)` missing_ok —
 desvio documentado: GUC ausente = fail-closed), grants com X-3/X-1 (sem UPDATE/DELETE em
@@ -87,6 +87,13 @@ asserts estruturais (33/4/15/45/4) + comportamentais. **Verificado localmente: P
 Postgres 16 real (Docker) 13/13** — RLS isolamento SET LOCAL, X-3, I-2 apenas no driver real
 (ADR-014). CI ganhou job `rls-integration` (`services: postgres:16-alpine`) + wiring no `summary`.
 A decisão «PostgreSQL real na CI» (pendência #2) está **resolvida** — opção recomendada do plano.
+
+**Achado de auditoria (2026-10-06, pós-commit 9a0a787):** a contagem de índices do P0.4 foi
+publicada como *26* (MEMORY + mensagem do commit) mas a verdade é **27** — ERD §6.9 lista 25
+`CREATE INDEX` + 2 UNIQUE inline (`uq_item_options_one_key`, `uq_append_only_events_event_id`);
+a migração cria 27 e o ERD concorda (sem drift). O gate não contava índices — lacuna fechada:
+`scripts/migration-check.mjs` agora asserta **27 named indexes** (idx_%/uq_%). Números corrigidos
+nesta linha e na tabela de resumo.
 
 ---
 
