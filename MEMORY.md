@@ -1,27 +1,61 @@
 # MEMORY.md — Estado e Avaliação do ITS Platform
 
-> Arquivo de memória — estado consolidado do trabalho de produção até 2026-10-05 e avaliação
-> crítica do que foi feito. Próxima sessão: comece por aqui antes de `AGENTS.md`.
+> **Arquivo de memória** — o que foi feito, em que status está, e onde cada artefato vive.
+> Próxima sessão: comece por **§1 (Snapshot)** e pelo **Índice** abaixo antes de `AGENTS.md`.
 > Fonte de verdade de planos: `/home/dalmo/.opencode/plan/pilot-a.md`.
 
 ---
 
-## 1. Snapshot do estado (verificado 2026-10-05)
+## Índice (busca rápida)
+
+| Seção | Conteúdo | Como achar |
+|---|---|---|
+| [§1 Snapshot do estado](#1-snapshot-do-estado) | **Status atual de tudo** — portas P0.x, commits, CI, gates | `grep -n "Snapshot"` |
+| [§2 Corpo de trabalho analisado](#2-corpo-de-trabalho-analisado) | Histórico de execução P0.1→P0.4 + achados de auditoria (ADR-009, índices 27) | `grep -n "P0\."` · `grep -n "Achado de auditoria"` |
+| [§3 Avaliação crítica](#3-avaliação-crítica) | Forças, defeitos abertos (D1–D4), riscos | `grep -n "^| D[0-9]"` |
+| [§4 Decisões duráveis](#4-decisões-duráveis-não-reabrir-sem-adr) | Não reabrir sem ADR (9 itens) | `grep -n "Decisões duráveis"` |
+| [§5 Pendências com dono](#5-pendências-com-dono) | O que precisa de decisão do usuário (P1–P7) | `grep -n "Pendências com dono"` |
+| [§6 Baseline dos gates](#6-baseline-dos-gates) | Valores **esperados** (exit 1 do release-gates NÃO é bug) | `grep -n "baseline"` |
+| [§7 Próximos passos](#7-próximos-passos-ordem) | Ordem de execução: P0.5 → P0.6–P0.9 → P1... | `grep -n "Próximos passos"` |
+| [§8 Mapa de arquivos](#8-mapa-de-arquivos-onde-vive-o-quê) | Onde vive cada artefato (plano, ERD, ADRs, gates, CI) | `grep -n "Mapa de arquivos"` |
+
+> `grep -n "^## " MEMORY.md` lista todas as seções de uma vez.
+> **Convenção de status usada no arquivo:** ✅ concluído · ⏳ em andamento · ❌ pendente/bloqueado.
+> **Convenção de datas:** `YYYY-MM-DD` — busque `grep -n "2026-10-0"` para ver o que mudou hoje.
+
+---
+
+## 1. Snapshot do estado (verificado 2026-10-06)
 
 | Item | Estado | Evidência |
 |---|---|---|
 | Branch | `main` (renomeada de `master`) | `git rev-parse --abbrev-ref HEAD` |
-| Commits | **NADA commitado** — 9 arquivos modificados, ~20 untracked | `git status --short` |
-| `.gitignore` | **NÃO EXISTE** — `node_modules/`, `dist/` aparecem como untracked | `ls .gitignore` |
-| CI | 12 jobs (`lint`, `domain-isolation`, `content-integrity`, `contract-test`, `unit-tests`, `integration-tests`, `mutation-test`, `bdd-tests`, `security-scan`, `build-image`, `deploy-staging`, `summary`) — ações pinadas por SHA; gates reais, sem no-op | `.github/workflows/ci.yml` |
+| Commits | **3 checkpoints, working tree limpo**: `2fda791` (P0.3 + ADR-009 audit), `9a0a787` (P0.4 migrate+RLS), `1c477df` (auditoria 26→27 índices + gate) | `git log --oneline -5` |
+| `.gitignore` | ✅ criado (node_modules, dist, coverage, .env, __pycache__) | `ls .gitignore` |
+| CI | **13 jobs** (12 legado + `rls-integration`) — ações pinadas por SHA; gates reais, sem no-op | `.github/workflows/ci.yml` |
 | NestJS scaffold (P0.1) | ✅ typecheck, lint, format, build | `npm run typecheck` exit 0 |
 | Testes | ✅ 2/2 (health controller) | `npm test` |
 | Domain isolation (P0.2) | ✅ `scripts/domain-isolation-check.mjs` verde (9 arquivos de domínio, 0 violações) | `npm run domain:check` |
-| Python tree | ✅ ainda presente (`src/its_platform/`) — deleção é P0.9 | `find src -type f` |
+| Python tree | ⏳ ainda presente (`src/its_platform/`) — deleção é **P0.9** | `find src -type f` |
 | ERD derivado (P0.3a) | ✅ `its-platform/docs/data-model.erd.md` **v1.0.0 — 1048 linhas, 33 tabelas** | conta: 33 × `CREATE TABLE` |
 | ORM entities (P0.3) | ✅ **33 entidades TypeORM** em `src/infrastructure/entities/` + 9 agregados de domínio + 9 mappers bidirecionais | typecheck/build/test/domain:check verdes; zero `@Entity()` fora de `entities/`; `gate_passed` ausente |
-| Schema migration (P0.4) | ✅ **`src/migrations/1791331200000-create-schema.ts`** (33 tabelas + 4 enums + 27 índices + 4 triggers + roles/RLS/grants) | `scripts/migration-check.mjs`: **PGlite 10/10, Postgres 16 real 13/13** (incl. RLS isolation, X-3 WORM, I-2 coluna id); CI job `rls-integration` |
+| Schema migration (P0.4) | ✅ **`src/migrations/1791331200000-create-schema.ts`** (33 tabelas + 4 enums + 27 índices + 4 triggers + roles/RLS/grants) | `scripts/migration-check.mjs`: **PGlite 11/11, Postgres 16 real 14/14** (incl. RLS isolation, X-3 WORM, I-2 coluna id); CI job `rls-integration`; ADR-019 |
 | Cross-refs | ✅ `domain-model.md` §8 e ADR-018 (2 checkboxes) atualizados | grep |
+
+**Status por frente de trabalho (matriz rápida):**
+
+| Frente | Status | Entregue em | Commit(s) |
+|---|---|---|---|
+| P0.1 Scaffold NestJS | ✅ | 2026-10-05 | — |
+| P0.2 TypeORM + domain isolation | ✅ | 2026-10-05 | — |
+| P0.3a ERD derivado v1.0.0 (33 tabelas) | ✅ | 2026-10-05 | — |
+| P0.3 ORM entities + domínio + mappers | ✅ | 2026-10-06 | `2fda791` |
+| ADR-009 audit (checkboxes falsos) | ✅ | 2026-10-06 | `2fda791` |
+| P0.4 migration + RLS + CI `rls-integration` | ✅ | 2026-10-06 | `9a0a787` |
+| Auditoria 26→27 índices (gate fechado) | ✅ | 2026-10-06 | `1c477df` |
+| Decisão P2 (PostgreSQL real na CI) | ✅ resolvida | 2026-10-06 | `9a0a787` |
+| P0.5 content loaders | ⏳ **próximo** | — | — |
+| P0.6–P0.9 (guards/OTel/contracts/deletar Python) | ❌ pendente | — | — |
 
 **Gates (baseline — valores esperados, não defeito):**
 
@@ -29,8 +63,10 @@
 |---|---|---|
 | `python3 verify-integrity.py` | **PASS — 0 failures, 1 warning** | warning = 115/122 packs em schema legacy (migração §12) |
 | `python3 prd-score.py` | **96.1% PASS** (threshold 80%) | |
-| `python3 its-platform/scripts/verify-release-gates.py` | **FAIL — 12 failures, 4 warnings, exit 1** | **ESPERADO** — repo não releasable até G1–G7; ver §7 abaixo |
+| `python3 its-platform/scripts/verify-release-gates.py` | **FAIL — 12 failures, 4 warnings, exit 1** | **ESPERADO** — repo não releasable até G1–G7; ver §6 abaixo |
 | `npm run typecheck` / `domain:check` / `test` | ✅ 0 / 0 / 2 | |
+| `node scripts/migration-check.mjs` (PGlite) | ✅ **11/11** | ver §2.7 |
+| `node scripts/migration-check.mjs` (Postgres 16 real) | ✅ **14/14** | via `DATABASE_URL`; RLS só aqui (ADR-014) |
 
 ---
 
@@ -83,8 +119,8 @@ NOLOGIN, RLS nas 15 tabelas (DO block; predicate com `current_setting(..., true)
 desvio documentado: GUC ausente = fail-closed), grants com X-3/X-1 (sem UPDATE/DELETE em
 `append_only_events`/`consent_records`) e I-2 (`REVOKE DELETE` + `UPDATE (id)` em `items`).
 `scripts/migration-check.mjs` (ESM puro): PGlite por default, PostgreSQL real via `DATABASE_URL`;
-asserts estruturais (33/4/15/45/4) + comportamentais. **Verificado localmente: PGlite 10/10,
-Postgres 16 real (Docker) 13/13** — RLS isolamento SET LOCAL, X-3, I-2 apenas no driver real
+asserts estruturais (33/4/15/45/4/27) + comportamentais. **Verificado localmente: PGlite 11/11,
+Postgres 16 real (Docker) 14/14** — RLS isolamento SET LOCAL, X-3, I-2 apenas no driver real
 (ADR-014). CI ganhou job `rls-integration` (`services: postgres:16-alpine`) + wiring no `summary`.
 A decisão «PostgreSQL real na CI» (pendência #2) está **resolvida** — opção recomendada do plano.
 
@@ -172,13 +208,12 @@ nesta linha e na tabela de resumo.
 ## 7. Próximos passos (ordem)
 
 1. **~~P0.3~~** (3d) — ~~portar §6 do ERD → entidades TypeORM em `src/infrastructure/entities/` + entidades de domínio + mappers bidirecionais~~ **CONCLUÍDO 2026-10-06** (33 entidades + 9 agregados + 9 mappers; gates verdes).
-2. **~~P0.4~~** (1d) — ~~migration TypeORM em PGlite e PostgreSQL real; 4 enums nomeados; triggers I-3/D-5/G-8; `CREATE POLICY` nas 15 tabelas; hash-chain~~ **CONCLUÍDO 2026-10-06** (`src/migrations/1791331200000-create-schema.ts` + `scripts/migration-check.mjs`; PGlite 10/10, Postgres 16 real 13/13; job CI `rls-integration`; ADR-019; pendência #2 resolvida).
-3. **P0.5** (2d) — port content loads (lessons, packs, listening) usando TypeORM repository; passar o check [4] (`check_json`) do `verify-integrity.py`; packs conforme ADR-004.
-4. **P0.6–P0.9** — ValidationPipe/Problem filter → JwtAuthGuard → OpenTelemetry → contract tests green + **deletar Python tree** (`src/its_platform/`, `pyproject.toml`) e trocar job legado `bdd-tests`.
-3. **P0.5–P0.8** — loaders de conteúdo (packs → `packs`; `authoring_state` == `**Status:**` do arquivo), contract tests.
-4. **P0.9** — deletar `src/its_platform/` + `pyproject.toml` (e resolver P6).
-5. **P1 (Pilot A)** — stories do BACKLOG com gates G1, G2, G5 parcial (Trivy+bandit); effort incremental 9d após P1.
-6. **P1.15→P1.16→P2.1→P2.2** — fechamento do piloto fechado (<50 usuários, tag e coorte = P3/P4).
+2. **~~P0.4~~** (1d) — ~~migration TypeORM em PGlite e PostgreSQL real; 4 enums nomeados; triggers I-3/D-5/G-8; `CREATE POLICY` nas 15 tabelas; hash-chain~~ **CONCLUÍDO 2026-10-06** (`src/migrations/1791331200000-create-schema.ts` + `scripts/migration-check.mjs`; PGlite 11/11, Postgres 16 real 14/14; job CI `rls-integration`; ADR-019; pendência #2 resolvida).
+3. **P0.5** (2d) — **PRÓXIMO** — port content loads (lessons, packs, listening) usando TypeORM repository; passar o check [4] (`check_json`) do `verify-integrity.py`; packs conforme ADR-004.
+4. **P0.6–P0.8** — ValidationPipe/Problem filter → JwtAuthGuard → OpenTelemetry → contract tests green.
+5. **P0.9** — deletar `src/its_platform/` + `pyproject.toml` (e resolver P6: trocar job legado `bdd-tests`).
+6. **P1 (Pilot A)** — stories do BACKLOG com gates G1, G2, G5 parcial (Trivy+bandit); effort incremental 9d após P1.
+7. **P1.15→P1.16→P2.1→P2.2** — fechamento do piloto fechado (<50 usuários, tag e coorte = P3/P4).
 
 ---
 
@@ -189,14 +224,20 @@ nesta linha e na tabela de resumo.
 | Plano Pilot A (dependency graph, gates, riscos) | `/home/dalmo/.opencode/plan/pilot-a.md` |
 | ERD v1.0.0 (33 tabelas, 16 correções, RLS) | `its-platform/docs/data-model.erd.md` |
 | Decisão de persistência (invariant floor, 16 correções) | `its-platform/docs/adr/018-persistence-derived-from-specs.md` |
+| Migração + RLS P0.4 (4 enums, triggers, hash-chain) | `its-platform/docs/adr/019-p0.4-schema-migration.md` |
 | Contextos, entidades, invariantes `[domain]`/`[db]` | `its-platform/docs/domain-model.md` |
 | Verifier de gates de release | `its-platform/scripts/verify-release-gates.py` (fonte: CONSTITUTION §6.3) |
 | Isolamento de domínio (ADR-014) | `its-platform/scripts/domain-isolation-check.mjs` |
+| Gate de migração + RLS (PGlite / Postgres real) | `its-platform/scripts/migration-check.mjs` |
+| DDL único do schema (33 tabelas + enum + triggers + RLS) | `its-platform/src/migrations/1791331200000-create-schema.ts` |
 | Gate bandit (limiar) | `its-platform/scripts/bandit-gate.py` |
-| CI (12 jobs) | `its-platform/.github/workflows/ci.yml` |
+| CI (13 jobs, incl. `rls-integration`) | `its-platform/.github/workflows/ci.yml` |
 | DataSource TypeORM + módulo | `its-platform/src/infrastructure/database/` |
+| Entidades TypeORM (33) | `its-platform/src/infrastructure/entities/` |
+| Agregados de domínio (9) | `its-platform/src/domain/entities/` |
+| Mappers bidirecionais (9) | `its-platform/src/infrastructure/mappers/` |
 | Six specs (fonte de verdade) | `Curso-de-Ingles/specs/*.md` |
 
 ---
 
-*Atualizado 2026-10-06 (P0.3 concluído; achado ADR-009 registrado; P0.4 concluído + ADR-019; pendência #2 resolvida). Próxima atualização: após P0.5 (content loaders) ou na primeira decisão P1–P4.*
+*Atualizado 2026-10-06 (P0.3 concluído; achado ADR-009 registrado; P0.4 concluído + ADR-019; pendência #2 resolvida; auditoria 26→27 índices + gate fechado; MEMORY reformado com índice de busca). Próxima atualização: após P0.5 (content loaders) ou na primeira decisão P1–P4.*
