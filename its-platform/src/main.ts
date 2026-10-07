@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module.js';
+import { ProblemExceptionFilter } from './common/filters/problem-exception.filter.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,8 @@ async function bootstrap() {
       },
     }),
   );
+
+  app.useGlobalFilters(new ProblemExceptionFilter());
 
   app.enableCors({
     origin: (process.env['CORS_ORIGIN'] ?? 'http://localhost:3000').split(','),

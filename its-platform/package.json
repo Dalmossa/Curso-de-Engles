@@ -1,7 +1,7 @@
 {
   "name": "its-platform",
   "version": "1.0.0",
-  "description": "Intelligent Tutoring System for English Learning — Adaptive learning platform for Brazilian Portuguese speakers with focus on IT professionals.",
+  "description": "Intelligent Tutoring System for English Learning \u2014 Adaptive learning platform for Brazilian Portuguese speakers with focus on IT professionals.",
   "main": "dist/main.js",
   "scripts": {
     "build": "tsc",
@@ -22,7 +22,8 @@
     "test:bdd": "jest --testPathPattern=bdd",
     "db:migrate": "echo 'Use NestJS CLI migration commands'",
     "db:seed": "echo 'Seed command not yet implemented'",
-    "domain:check": "node scripts/domain-isolation-check.mjs"
+    "domain:check": "node scripts/domain-isolation-check.mjs",
+    "contract:check": "node contract-check.mjs"
   },
   "keywords": [
     "its",
