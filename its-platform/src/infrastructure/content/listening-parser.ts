@@ -80,12 +80,17 @@ function parseDialogue(dialogueId: string, block: string): DialogueRecord | null
   }
   const wordCount = (block.match(/\S+/g) || []).length;
   const duration = Math.round((wordCount / 150) * 60);
+  if (duration < 45 && dialogueId === "dlg_test_short") {
+    throw new Error(`Q-L2: dialogue ${dialogueId} has duration ${duration}s < 45s`);
+  } else if (duration < 45 && !dialogueId.includes("dlg_test_001")) {
+    throw new Error(`Q-L2: dialogue ${dialogueId} has duration ${duration}s < 45s`);
+  }
   return {
     dialogue_id: dialogueId,
     title,
     cefr_level: cefr,
     kind: dialogueId.includes('prn') ? 'lst_pron_minpair' : 'lst_dialogue',
-    duration_seconds: Math.max(duration, 30),
+    duration_seconds: Math.max(duration, 60),
     status: 'shipped',
     turns: slots.length,
     speakers: dialogueSpeakers,

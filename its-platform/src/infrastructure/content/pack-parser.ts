@@ -182,7 +182,7 @@ function parseLegacyPack(markdown: string, filename: string): PackRecord {
   const lines = markdown.split(/\r?\n/);
   const packIdLine = lines.find((l) => l && /\*\*Pack ID:\*\*/i.test(l));
   const mPack = packIdLine ? packIdLine.match(/\*\*Pack ID:\*\*\s*(.+)$/i) : null;
-  const pack_id = mPack && mPack[1] ? mPack[1].trim().replace(/[`]/g, '') : '';
+  const pack_id = mPack && mPack[1] ? mPack[1].trim().replace(/[`]/g, '') : (filename.match(/pack_[^.]+/)?.[0] ? filename.match(/pack_[^.]+/)![0].replace('.md', '') : '');
   const lessonLine = lines.find((l) => l && /\*\*Lesson:\*\*/i.test(l));
   const mLesson = lessonLine ? lessonLine.match(/\*\*Lesson:\*\*\s*(.+)$/i) : null;
   const lesson_id = mLesson && mLesson[1] ? mLesson[1].trim().replace(/[`]/g, '') : '';
@@ -226,7 +226,7 @@ function parseLegacyPack(markdown: string, filename: string): PackRecord {
 
 export function parsePack(markdown: string, filename: string): PackRecord {
   const hasPackIdYaml = /^pack_id:/m.test(markdown);
-  const hasLegacyPackId = /\*\*Pack ID:\*\*/i.test(markdown);
+  const hasLegacyPackId = /\*\*Pack ID:\*\*/i.test(markdown) || /###\s+ITEM/i.test(markdown);
   if (!hasPackIdYaml && !hasLegacyPackId) {
     throw new Error(`Unknown pack schema in ${filename}`);
   }
