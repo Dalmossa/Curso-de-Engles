@@ -54,7 +54,7 @@
 | P0.4 migration + RLS + CI `rls-integration` | ✅ | 2026-10-06 | `9a0a787` |
 | Auditoria 26→27 índices (gate fechado) | ✅ | 2026-10-06 | `1c477df` |
 | Decisão P2 (PostgreSQL real na CI) | ✅ resolvida | 2026-10-06 | `9a0a787` |
-| P0.5 content loaders | ⏳ **próximo** | — | — |
+| P0.5 content loaders | ✅ **DONE** (2026-10-07) | Parsers puros + loader TS + gate PGlite/PG + tests (ADR-020) | Subagent api-developer |
 | P0.6–P0.9 (guards/OTel/contracts/deletar Python) | ❌ pendente | — | — |
 
 **Gates (baseline — valores esperados, não defeito):**
@@ -209,7 +209,7 @@ nesta linha e na tabela de resumo.
 
 1. **~~P0.3~~** (3d) — ~~portar §6 do ERD → entidades TypeORM em `src/infrastructure/entities/` + entidades de domínio + mappers bidirecionais~~ **CONCLUÍDO 2026-10-06** (33 entidades + 9 agregados + 9 mappers; gates verdes).
 2. **~~P0.4~~** (1d) — ~~migration TypeORM em PGlite e PostgreSQL real; 4 enums nomeados; triggers I-3/D-5/G-8; `CREATE POLICY` nas 15 tabelas; hash-chain~~ **CONCLUÍDO 2026-10-06** (`src/migrations/1791331200000-create-schema.ts` + `scripts/migration-check.mjs`; PGlite 11/11, Postgres 16 real 14/14; job CI `rls-integration`; ADR-019; pendência #2 resolvida).
-3. **P0.5** (2d) — **PRÓXIMO** — port content loads (lessons, packs, listening) usando TypeORM repository; passar o check [4] (`check_json`) do `verify-integrity.py`; packs conforme ADR-004.
+3. **P0.5** (2d) — ✅ **DONE 2026-10-07** — port content loads (lessons, packs, listening) com parsers puros TS + loader TypeORM idempotente; gate `scripts/content-check.mjs` (PGlite default, DATABASE_URL opcional); unit tests; política de skips com baseline fail-closed (ADR-020). Verificação: typecheck/build/domain:check/tests + content-check OK (PGlite).
 4. **P0.6–P0.8** — ValidationPipe/Problem filter → JwtAuthGuard → OpenTelemetry → contract tests green.
 5. **P0.9** — deletar `src/its_platform/` + `pyproject.toml` (e resolver P6: trocar job legado `bdd-tests`).
 6. **P1 (Pilot A)** — stories do BACKLOG com gates G1, G2, G5 parcial (Trivy+bandit); effort incremental 9d após P1.
@@ -240,4 +240,4 @@ nesta linha e na tabela de resumo.
 
 ---
 
-*Atualizado 2026-10-06 (P0.3 concluído; achado ADR-009 registrado; P0.4 concluído + ADR-019; pendência #2 resolvida; auditoria 26→27 índices + gate fechado; MEMORY reformado com índice de busca). Próxima atualização: após P0.5 (content loaders) ou na primeira decisão P1–P4.*
+*Atualizado 2026-10-07 (P0.5 concluído — content loader TS com gate content-check, ADR-020, contrato OpenAPI 3.1 corrigido P0). Próxima atualização: após P0.6/P0.7 (API scaffolding/contract tests) ou definição de P1.*

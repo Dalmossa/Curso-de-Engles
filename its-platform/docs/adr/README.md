@@ -29,6 +29,7 @@
 | [017](017-mvp-adaptive-scope.md) | MVP adaptive scope — Stage-1 IRT only, fixed-form diagnostic, ordinal routing | Accepted | 2026-10-05 | — |
 | [018](018-persistence-derived-from-specs.md) | Persistence derived from the specs, and the invariant floor | Accepted | 2026-10-05 | — |
 | [019](019-p0.4-schema-migration.md) | P0.4 schema migration — named enum types, [db] triggers, RLS on real PostgreSQL, WORM hash chain | Accepted | 2026-10-06 | — |
+| [020](020-content-loader-port.md) | P0.5 content loader — parsers over real markdown formats, upsert idempotency, PGlite/Postgres gate | Accepted | 2026-10-06 | — |
 
 ### Read before writing any persistence code — ADR-015…018
 
