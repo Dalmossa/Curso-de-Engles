@@ -93,7 +93,7 @@ The catalog is **both tracks**. No learner walks all 118 lessons. The IT track *
 | `les_a2_introducing_others` | Apresentando Colegas e Stakeholders | Grammar, Vocab | Speaking | `les_a2_greetings_intro` | `frases-ingles-trabalho.md` Ch 2 + `apostila...` 2.2 | possessive_pronouns, relative_clauses_basic, roles_vocab |
 | `les_a2_meeting_open` | Abrindo Reunião: Pauta, Objetivos, Papéis | Grammar, Vocab, Listening, Reading | Speaking | `les_a2_small_talk` | `frases-ingles-trabalho.md` Ch 4 | imperative, modal_verbs_can_need, meeting_vocab |
 | `les_a2_meeting_participate` | Participando: Opinar, Concordar, Discordar | Grammar, Vocab, Listening | Speaking | `les_a2_meeting_open` | `frases-ingles-trabalho.md` Ch 4 | agreement_phrases, hedging, turn_taking |
-| `les_a2_email_basics` | E-mails Profissionais: Estrutura, Anexos, Follow-up | Vocab, Reading, Writing* | Writing | `les_a2_greetings_intro` | `frases-ingles-trabalho.md` Ch 5 | email_register, fixed_phrases, polite_requests |
+| `les_a2_email_basics` | E-mails Profissionais: Estrutura, Anexos, Follow-up | Vocab, Reading, Writing* | Writing | `les_a2_meeting_participate` | `frases-ingles-trabalho.md` Ch 5 | email_register, fixed_phrases, polite_requests |
 
 > *Writing is a tracking skill only for lessons with explicit writing practice (email, chat). Most lessons: 4 tracking skills (Grammar, Vocab, Listening, Pronunciation/Reading).
 

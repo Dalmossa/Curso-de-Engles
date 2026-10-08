@@ -216,7 +216,8 @@ nesta linha e na tabela de resumo.
 5. **P0.7** (1d) — ✅ **DONE 2026-10-07** — test harness (PGlite helpers), integration tests (loader idempotency), expanded contract tests, parser unit tests.
 6. **P0.8** (1d) — ✅ **DONE 2026-10-07** — CI hardening: `content-loader` (PGlite seed+asserts), `contract-check` (OpenAPI lint+smoke), summary wired.
 7. **P0.9** — ✅ **DONE 2026-10-08** — deletar `src/its_platform/` + `pyproject.toml` + Python tests; CI: remover job `bdd-tests`; `verify-release-gates.py` atualizado (mutation gate target removido). Todos os gates core verdes.
-8. **P1 (Pilot A)** — stories do BACKLOG com gates G1, G2, G5 parcial (Trivy+bandit); effort incremental 9d após P1.
+8. **P1.1** — ✅ **DONE 2026-10-08** — DAG loader do curriculum-graph-spec.md §4.3 (18 módulos, 123 lessons, 5 remediation, 164 edges). Parsers: module catalog (§3), lesson registry (§4.3), cross-module edges (last lesson → first lesson of successors). Gates: acyclicity, CEFR monotonicity, reachability (all 123 lessons reachable via entry points + prerequisite + cross-module edges), module/lesson/remediation counts. Graph: 141 nodes, 164 edges.
+9. **P1 (Pilot A)** — stories do BACKLOG com gates G1, G2, G5 parcial (Trivy+bandit); effort incremental 9d após P1.
 7. **P1.15→P1.16→P2.1→P2.2** — fechamento do piloto fechado (<50 usuários, tag e coorte = P3/P4).
 
 ---
@@ -244,4 +245,4 @@ nesta linha e na tabela de resumo.
 
 ---
 
-*Atualizado 2026-10-08 (P0.9 concluído — Python legacy removido, CI sem bdd-tests, todos gates core verdes; P0.1–P0.9 DONE). Próxima atualização: P1 (Pilot A).*
+*Atualizado 2026-10-08 (P1.1 concluído — DAG loader curriculum-graph-spec §4.3: 18 módulos, 123 lessons, 5 remediation, 164 edges; all gates PASS). Próxima atualização: P1.2 (Mastery gate enforcement).*
