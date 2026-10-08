@@ -217,7 +217,9 @@ nesta linha e na tabela de resumo.
 6. **P0.8** (1d) — ✅ **DONE 2026-10-07** — CI hardening: `content-loader` (PGlite seed+asserts), `contract-check` (OpenAPI lint+smoke), summary wired.
 7. **P0.9** — ✅ **DONE 2026-10-08** — deletar `src/its_platform/` + `pyproject.toml` + Python tests; CI: remover job `bdd-tests`; `verify-release-gates.py` atualizado (mutation gate target removido). Todos os gates core verdes.
 8. **P1.1** — ✅ **DONE 2026-10-08** — DAG loader do curriculum-graph-spec.md §4.3 (18 módulos, 123 lessons, 5 remediation, 164 edges). Parsers: module catalog (§3), lesson registry (§4.3), cross-module edges (last lesson → first lesson of successors). Gates: acyclicity, CEFR monotonicity, reachability (all 123 lessons reachable via entry points + prerequisite + cross-module edges), module/lesson/remediation counts. Graph: 141 nodes, 164 edges.
-9. **P1 (Pilot A)** — stories do BACKLOG com gates G1, G2, G5 parcial (Trivy+bandit); effort incremental 9d após P1.
+9. **P1.2** — ✅ **DONE 2026-10-08** — Mastery gate enforcement (four-clause gate per ADR-018 §1–2, curriculum-graph-spec.md §6.1). Domain service `MasteryGateService` com: gate numérico (p≥0.85), CI₉₅_lower(P)>0.70 com n_eff por domínio (λ: vocab=0.02, grammar=0.005, pron=0.03), n_obs≥3, distinct_days≥2, spaced_obs≥1. Module gate (§6.2) e acceleration gate (§6.3). Property tests 18/18 pass.
+10. **P1.3** — Próximo — Next-activity selector (i+1) usando DAG + mastery gate + BKT + FSRS.
+11. **P1 (Pilot A)** — stories do BACKLOG com gates G1, G2, G5 parcial (Trivy+bandit); effort incremental 9d após P1.
 7. **P1.15→P1.16→P2.1→P2.2** — fechamento do piloto fechado (<50 usuários, tag e coorte = P3/P4).
 
 ---
@@ -245,4 +247,4 @@ nesta linha e na tabela de resumo.
 
 ---
 
-*Atualizado 2026-10-08 (P1.1 concluído — DAG loader curriculum-graph-spec §4.3: 18 módulos, 123 lessons, 5 remediation, 164 edges; all gates PASS). Próxima atualização: P1.2 (Mastery gate enforcement).*
+*Atualizado 2026-10-08 (P1.2 concluído — Mastery gate enforcement four-clause gate com n_eff por domínio, module/acceleration gates, 18 property tests PASS). Próxima atualização: P1.3 (Next-activity selector).*
