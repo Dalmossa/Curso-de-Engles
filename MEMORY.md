@@ -54,8 +54,10 @@
 | P0.4 migration + RLS + CI `rls-integration` | ✅ | 2026-10-06 | `9a0a787` |
 | Auditoria 26→27 índices (gate fechado) | ✅ | 2026-10-06 | `1c477df` |
 | Decisão P2 (PostgreSQL real na CI) | ✅ resolvida | 2026-10-06 | `9a0a787` |
-| P0.5 content loaders | ✅ **DONE** (2026-10-07) | Parsers puros + loader TS + gate PGlite/PG + tests (ADR-020) | Subagent api-developer |
-| P0.6–P0.9 (guards/OTel/contracts/deletar Python) | ❌ pendente | — | — |
+| P0.6 scaffolding + contract tests | ✅ **DONE** (2026-10-07) | NestJS modules/controllers/services + ValidationPipe + RFC 9457 + contract tests (Jest) | Subagent api-developer |
+| P0.7 test harness + integration/contract | ✅ **DONE** (2026-10-07) | Test helpers (PGlite), integration tests (loader idempotency), expanded contract tests, parser unit tests | Subagent api-developer |
+| P0.8 CI hardening (content-loader + contract-check jobs) | ✅ **DONE** (2026-10-07) | CI jobs added + summary wiring; local gates green | — |
+| P0.9 delete legacy Python tree | ❌ pendente | Remove `src/its_platform/`, `pyproject.toml`, swap `bdd-tests` job | — |
 
 **Gates (baseline — valores esperados, não defeito):**
 
@@ -210,7 +212,10 @@ nesta linha e na tabela de resumo.
 1. **~~P0.3~~** (3d) — ~~portar §6 do ERD → entidades TypeORM em `src/infrastructure/entities/` + entidades de domínio + mappers bidirecionais~~ **CONCLUÍDO 2026-10-06** (33 entidades + 9 agregados + 9 mappers; gates verdes).
 2. **~~P0.4~~** (1d) — ~~migration TypeORM em PGlite e PostgreSQL real; 4 enums nomeados; triggers I-3/D-5/G-8; `CREATE POLICY` nas 15 tabelas; hash-chain~~ **CONCLUÍDO 2026-10-06** (`src/migrations/1791331200000-create-schema.ts` + `scripts/migration-check.mjs`; PGlite 11/11, Postgres 16 real 14/14; job CI `rls-integration`; ADR-019; pendência #2 resolvida).
 3. **P0.5** (2d) — ✅ **DONE 2026-10-07** — port content loads (lessons, packs, listening) com parsers puros TS + loader TypeORM idempotente; gate `scripts/content-check.mjs` (PGlite default, DATABASE_URL opcional); unit tests; política de skips com baseline fail-closed (ADR-020). Verificação: typecheck/build/domain:check/tests + content-check OK (PGlite).
-4. **P0.6–P0.8** — ValidationPipe/Problem filter → JwtAuthGuard → OpenTelemetry → contract tests green.
+4. **P0.6** (1d) — ✅ **DONE 2026-10-07** — NestJS scaffolding API (modules/controllers/services), ValidationPipe + RFC 9457 Problem filter, contract tests (Jest + OpenAPI smoke).
+5. **P0.7** (1d) — ✅ **DONE 2026-10-07** — test harness (PGlite helpers), integration tests (loader idempotency), expanded contract tests, parser unit tests.
+6. **P0.8** (1d) — ✅ **DONE 2026-10-07** — CI hardening: `content-loader` (PGlite seed+asserts), `contract-check` (OpenAPI lint+smoke), summary wired.
+7. **P0.9** — deletar `src/its_platform/` + `pyproject.toml` (e resolver P6: trocar job legado `bdd-tests`).
 5. **P0.9** — deletar `src/its_platform/` + `pyproject.toml` (e resolver P6: trocar job legado `bdd-tests`).
 6. **P1 (Pilot A)** — stories do BACKLOG com gates G1, G2, G5 parcial (Trivy+bandit); effort incremental 9d após P1.
 7. **P1.15→P1.16→P2.1→P2.2** — fechamento do piloto fechado (<50 usuários, tag e coorte = P3/P4).
@@ -240,4 +245,4 @@ nesta linha e na tabela de resumo.
 
 ---
 
-*Atualizado 2026-10-07 (P0.5 concluído — content loader TS com gate content-check, ADR-020, contrato OpenAPI 3.1 corrigido P0). Próxima atualização: após P0.6/P0.7 (API scaffolding/contract tests) ou definição de P1.*
+*Atualizado 2026-10-07 (P0.8 concluído — CI hardening content-loader + contract-check; P0.5–P0.8 DONE). Próxima atualização: após P0.9 (Python cleanup) ou P1 (Pilot A).*
