@@ -387,6 +387,14 @@ components:
         request_id: { type: string, format: uuid }
         details: { type: object }
 
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
 security:
   - BearerAuth: []
 
@@ -442,6 +450,7 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/NextActivity' }
+        '400': { $ref: '#/components/responses/BadRequest' }
         '404': { description: Learner not found or curriculum exhausted }
 
   /learners/{learner_id}/practice:
@@ -488,6 +497,7 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/LessonContent' }
+        '400': { $ref: '#/components/responses/BadRequest' }
         '404': { description: Lesson not found }
 
   /content/packs/{pack_id}:
@@ -506,6 +516,7 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/PackContent' }
+        '400': { $ref: '#/components/responses/BadRequest' }
         '404': { description: Pack not found }
 
   /content/listening/{dialogue_id}:
@@ -524,6 +535,7 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/DialogueContent' }
+        '400': { $ref: '#/components/responses/BadRequest' }
         '404': { description: Dialogue not found or status=withdrawn }
 
   /learners/{learner_id}/profile:
@@ -542,6 +554,7 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/LearnerProfile' }
+        '400': { $ref: '#/components/responses/BadRequest' }
         '404': { description: Learner not found }
 
   /learners/{learner_id}/mastery:
@@ -568,6 +581,8 @@ paths:
                     mastery: { type: number, minimum: 0, maximum: 1 }
                     gate_passed: { type: boolean }
                     last_practice: { type: string, format: date-time }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { description: Learner not found }
 
   /auth/refresh:
     post:

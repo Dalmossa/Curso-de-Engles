@@ -61,7 +61,7 @@ export interface PackRecord {
   split: string;
   interleaved: boolean;
   reuse_basis: string;
-  schema: 'canonical' | 'legacy_v1';
+  schema: 'canonical' | 'legacy' | 'legacy_v1';
   items: PackItemRecord[];
   skip_count: number;
   skips: Array<{ item_id: string; reason: string }>;

@@ -17,8 +17,9 @@ function normalizeOptionText(text: string): string {
 }
 
 function parseCanonicalItem(block: string): PackItemRecord | null {
+  const headerMatch = block.match(/^###\s+ITEM\s+([^\s]+)$/im);
   const m1 = block.match(/\*\*item_id:\*\*\s*(.+)$/im);
-  const item_id = m1 && m1[1] ? m1[1].trim() : '';
+  const item_id = (headerMatch && headerMatch[1]) || (m1 && m1[1] ? m1[1].trim() : '');
   if (!item_id) return null;
   const tMatch = block.match(/\*\*type:\*\*\s*(.+)$/im);
   const type = tMatch && tMatch[1] ? tMatch[1].trim() : '';
@@ -29,6 +30,8 @@ function parseCanonicalItem(block: string): PackItemRecord | null {
   const dMatch = block.match(/\*\*difficulty:\*\*\s*(.+)$/im);
   const difficulty = dMatch && dMatch[1] ? parseFloat(dMatch[1]) : 0;
   const options: PackItemOptionRecord[] = [];
+  const keyMatch = block.match(/\*\*Key:\*\*\s*(.+)$/im);
+  const key = keyMatch && keyMatch[1] ? keyMatch[1].trim() : '';
   const tableRegex = /\| Slot \| Value \|[^\n]*\n[^\n]*\n((?:\|[^\n]*\n)*)/g;
   let tableMatch: RegExpExecArray | null;
   let lastTable = '';
@@ -42,15 +45,24 @@ function parseCanonicalItem(block: string): PackItemRecord | null {
       if (cols.length >= 3) {
         const slotVal = cols[1] ? cols[1].trim() : '';
         const valueVal = cols[2] ? cols[2].trim() : '';
-        if (slotVal) {
+        if (slotVal && slotVal !== 'Slot') {
           let noteStr: string | undefined;
           if (cols.length >= 4) {
             const n = cols[3] ? cols[3].trim() : '';
             noteStr = n || undefined;
           }
-          options.push({ slot: slotVal, value: valueVal, is_key: /\*\*/.test(slotVal) || slotVal.toLowerCase().includes('key'), note: noteStr } as PackItemOptionRecord);
+          const isKey = /\*\*/.test(slotVal) || normalizeOptionText(slotVal) === normalizeOptionText(key) || normalizeOptionText(valueVal) === normalizeOptionText(key);
+          options.push({ slot: slotVal, value: valueVal, is_key: isKey, note: noteStr } as PackItemOptionRecord);
         }
       }
+    }
+  } else {
+    const optRegex = /- ([A-Z])\.?\s*(.+)$/gm;
+    for (const m of block.matchAll(optRegex)) {
+      const slotVal = (m[1] || '').trim();
+      const valueVal = (m[2] || '').trim();
+      const isKey = normalizeOptionText(slotVal) === normalizeOptionText(key || '') || normalizeOptionText(valueVal) === normalizeOptionText(key || '') || normalizeOptionText(key || '') === normalizeOptionText(slotVal + '. ' + valueVal);
+      options.push({ slot: slotVal, value: valueVal, is_key: isKey } as PackItemOptionRecord);
     }
   }
   let type_mapped = type;
@@ -81,7 +93,7 @@ function parseCanonicalPack(markdown: string, filename: string): PackRecord {
         yamlEnd = i;
         break;
       }
-      if (line.trim() && !/^\s*[a-zA-Z_][a-zA-Z0-9_]*:/.test(line) && line[0] !== ' ' && line[0] !== '\t' && line[0] !== '-') {
+      if (line.trim() === '---') {
         yamlEnd = i;
         break;
       }
@@ -134,9 +146,10 @@ function parseCanonicalPack(markdown: string, filename: string): PackRecord {
 }
 
 function parseLegacyItem(block: string): PackItemRecord | null {
+  const headerMatch = block.match(/^###\s+ITEM\s+([^\s]+)$/im);
   const m1 = block.match(/\*\*item_id:\*\*\s*(.+)$/im);
   const m2 = block.match(/\*\*item_id\*\*:\s*(.+)$/im);
-  const item_id = m1 && m1[1] ? m1[1].trim() : m2 && m2[1] ? m2[1].trim() : '';
+  const item_id = (headerMatch && headerMatch[1]) || (m1 && m1[1] ? m1[1].trim() : m2 && m2[1] ? m2[1].trim() : '');
   if (!item_id) return null;
   const tMatch = block.match(/\*\*type:\*\*\s*(.+)$/im);
   const type = tMatch && tMatch[1] ? tMatch[1].trim() : '';
@@ -221,11 +234,11 @@ function parseLegacyPack(markdown: string, filename: string): PackRecord {
       }
     }
   }
-  return { pack_id, lesson_id, title: pack_id, cefr_level, time_cap, split, interleaved, reuse_basis, schema: 'legacy_v1', items, skip_count: skips.length, skips };
+  return { pack_id, lesson_id, title: pack_id, cefr_level, time_cap, split, interleaved, reuse_basis, schema: 'legacy', items, skip_count: skips.length, skips };
 }
 
 export function parsePack(markdown: string, filename: string): PackRecord {
-  const hasPackIdYaml = /^pack_id:/m.test(markdown);
+  const hasPackIdYaml = /^pack_id:/m.test(markdown) || /^---[\r\n\s]/m.test(markdown) && /pack_id:/m.test(markdown);
   const hasLegacyPackId = /\*\*Pack ID:\*\*/i.test(markdown) || /###\s+ITEM/i.test(markdown);
   if (!hasPackIdYaml && !hasLegacyPackId) {
     throw new Error(`Unknown pack schema in ${filename}`);

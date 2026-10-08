@@ -47,7 +47,15 @@ describe('OpenAPI endpoints contract - comprehensive', () => {
           // Check for common error responses
           if (responses['400'] || responses['404']) {
             expect(responses).toHaveProperty('400');
-            expect(responses['400'].content['application/json']).toBeDefined();
+            let r400 = responses['400'];
+            if (r400 && r400.$ref) {
+              const ref = r400.$ref;
+              const parts = ref.replace('#/', '').split('/');
+              let cur = spec;
+              for (const p of parts) cur = cur[p];
+              r400 = cur;
+            }
+            expect(r400.content['application/json']).toBeDefined();
           }
         }
       }

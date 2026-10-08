@@ -57,7 +57,7 @@
 | P0.6 scaffolding + contract tests | ✅ **DONE** (2026-10-07) | NestJS modules/controllers/services + ValidationPipe + RFC 9457 + contract tests (Jest) | Subagent api-developer |
 | P0.7 test harness + integration/contract | ✅ **DONE** (2026-10-07) | Test helpers (PGlite), integration tests (loader idempotency), expanded contract tests, parser unit tests | Subagent api-developer |
 | P0.8 CI hardening (content-loader + contract-check jobs) | ✅ **DONE** (2026-10-07) | CI jobs added + summary wiring; local gates green | — |
-| P0.9 delete legacy Python tree | ❌ pendente | Remove `src/its_platform/`, `pyproject.toml`, swap `bdd-tests` job | — |
+| P0.9 delete legacy Python tree | ✅ **DONE** (2026-10-08) | Removed `src/its_platform/`, `pyproject.toml`, Python tests; CI: removed `bdd-tests` job, updated `verify-release-gates.py` (mutation gate target gone); all core gates green | 1d | P0.8 | — | verify-integrity/prd-score/typecheck/build/content-check/domain/contract-check OK |
 
 **Gates (baseline — valores esperados, não defeito):**
 
@@ -215,9 +215,8 @@ nesta linha e na tabela de resumo.
 4. **P0.6** (1d) — ✅ **DONE 2026-10-07** — NestJS scaffolding API (modules/controllers/services), ValidationPipe + RFC 9457 Problem filter, contract tests (Jest + OpenAPI smoke).
 5. **P0.7** (1d) — ✅ **DONE 2026-10-07** — test harness (PGlite helpers), integration tests (loader idempotency), expanded contract tests, parser unit tests.
 6. **P0.8** (1d) — ✅ **DONE 2026-10-07** — CI hardening: `content-loader` (PGlite seed+asserts), `contract-check` (OpenAPI lint+smoke), summary wired.
-7. **P0.9** — deletar `src/its_platform/` + `pyproject.toml` (e resolver P6: trocar job legado `bdd-tests`).
-5. **P0.9** — deletar `src/its_platform/` + `pyproject.toml` (e resolver P6: trocar job legado `bdd-tests`).
-6. **P1 (Pilot A)** — stories do BACKLOG com gates G1, G2, G5 parcial (Trivy+bandit); effort incremental 9d após P1.
+7. **P0.9** — ✅ **DONE 2026-10-08** — deletar `src/its_platform/` + `pyproject.toml` + Python tests; CI: remover job `bdd-tests`; `verify-release-gates.py` atualizado (mutation gate target removido). Todos os gates core verdes.
+8. **P1 (Pilot A)** — stories do BACKLOG com gates G1, G2, G5 parcial (Trivy+bandit); effort incremental 9d após P1.
 7. **P1.15→P1.16→P2.1→P2.2** — fechamento do piloto fechado (<50 usuários, tag e coorte = P3/P4).
 
 ---
@@ -245,4 +244,4 @@ nesta linha e na tabela de resumo.
 
 ---
 
-*Atualizado 2026-10-07 (P0.8 concluído — CI hardening content-loader + contract-check; P0.5–P0.8 DONE). Próxima atualização: após P0.9 (Python cleanup) ou P1 (Pilot A).*
+*Atualizado 2026-10-08 (P0.9 concluído — Python legacy removido, CI sem bdd-tests, todos gates core verdes; P0.1–P0.9 DONE). Próxima atualização: P1 (Pilot A).*

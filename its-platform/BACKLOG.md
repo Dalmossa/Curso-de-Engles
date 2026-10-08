@@ -75,7 +75,7 @@ against the Python implementation; it is being replaced, not extended.
 | **P0.7** | Test harness + test expansion | — | Must | 1d | P0.6 | — | Expandir harness de testes (PGlite reutilizável, fixtures, helpers), integration tests para loader, contract tests ampliados, unit tests parsers, script test:all; manter gates existentes verdes | DONE (2026-10-07) |
 | **P0.8 (CI hardening)** | CI jobs: `content-loader` (PGlite seed+asserts), `contract-check` (OpenAPI lint+smoke), summary wiring | — | Must | 1d | P0.5 | ADR-020, OpenAPI | CI gates green for P0.5+P0.6; added to workflow | DONE (2026-10-07) |
 | **P0.8** | OpenTelemetry bootstrap, Correlation-ID, `/health`, `/ready` | — | Must | 1d | P0.1 | `CONSTITUTION.md` §4.6 | `traceparent` propagated; `request_id` on every error response |
-| **P0.9** | Contract tests green on both drivers; **delete the Python tree** | M1.5 | Must | 1d | P0.3–0.8 | ADR-012 | `its-platform/tests/contract/` passes; `src/its_platform/` and `pyproject.toml` gone |
+| **P0.9** | Contract tests green on both drivers; **delete the Python tree** | M1.5 | Must | 1d | P0.3–0.8 | ADR-012 | `its-platform/tests/contract/` passes; `src/its_platform/` and `pyproject.toml` gone; CI `bdd-tests` removed; verify-release-gates updated | DONE (2026-10-08) |
 
 **P0 = 14d** (`1+1+2+3+1+2+1+1+1+1` — added P0.3a at 2d; total rises from 12 to 14)
 
