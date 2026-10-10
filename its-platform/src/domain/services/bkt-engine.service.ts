@@ -402,3 +402,42 @@ export function getBktParamsForSkill(
   }
   return createBktParameters(param);
 }
+/**
+ * BKT Engine class — wraps BKT functions for use in AdaptiveEngine.
+ */
+export class BktEngine {
+  private params: BktParameters;
+
+  constructor(params: BktParameters) {
+    this.params = params;
+  }
+
+  initialize(skillId: string, learnerMastery: LearnerMastery | null, itemPGuess: number): BktState {
+    const bktSkillParam = {
+      skillId,
+      pL0: this.params.pL0,
+      pT: this.params.pT,
+      pS: this.params.pS,
+      pG: itemPGuess,
+      source: 'adaptive_engine',
+      fittedAt: null,
+      modelVersion: '1.0',
+    };
+    return initializeBktState(skillId, learnerMastery, bktSkillParam, itemPGuess);
+  }
+
+  update(state: BktState, correct: boolean): BktUpdateResult {
+    const stateBefore = { ...state };
+    const stateAfter = bktUpdate(state, correct);
+    return {
+      stateBefore,
+      stateAfter,
+      pKnowDelta: stateAfter.pKnow - stateBefore.pKnow,
+      evidenceCount: 1,
+    };
+  }
+
+  getParameters(): BktParameters {
+    return { ...this.params };
+  }
+}

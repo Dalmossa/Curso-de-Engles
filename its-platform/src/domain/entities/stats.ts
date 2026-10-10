@@ -21,6 +21,7 @@ export class BktSkillParam {
     public readonly pL0: number,
     public readonly pT: number,
     public readonly pS: number,
+    public readonly pG: number,  // Guess probability (per-item, can be overridden)
     public readonly source: string,
     public readonly fittedAt: Date | null,
     public readonly modelVersion: string | null,

@@ -14,6 +14,9 @@ export class BktSkillParamEntity {
   @Column({ name: 'p_s', type: 'numeric', precision: 4, scale: 3, default: 0.1 })
   pS!: string;
 
+  @Column({ name: 'p_g', type: 'numeric', precision: 4, scale: 3, default: 0.25 })
+  pG!: string;
+
   @Column({ name: 'source', type: 'varchar', length: 20 })
   source!: string;
 

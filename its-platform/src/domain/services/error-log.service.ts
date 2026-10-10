@@ -1,6 +1,6 @@
 /**
  * ErrorLog Service — Write path for error logging and remediation ranking.
- *
+ * 
  * Implements post-lesson-practice-spec.md §4.2:
  * - Writes {skill_id, pattern, produced_form, frequency, severity, first_seen, last_seen}
  * - Ranks by frequency × severity × recency for remediation generation
@@ -27,6 +27,9 @@ export interface ErrorLogUpsertResult {
   isNew: boolean;
   frequencyBefore: number;
   frequencyAfter: number;
+  // Additional fields for convenience
+  frequency: number;
+  severity: number;
 }
 
 export interface RemediationRankingInput {
@@ -112,6 +115,8 @@ export function upsertErrorLog(
       isNew: false,
       frequencyBefore: existing.frequency,
       frequencyAfter: newFrequency,
+      frequency: newFrequency,
+      severity: updatedEntry.severity,
     };
   } else {
     // Create new entry
@@ -134,6 +139,8 @@ export function upsertErrorLog(
       isNew: true,
       frequencyBefore: 0,
       frequencyAfter: 1,
+      frequency: 1,
+      severity: newEntry.severity,
     };
   }
 }
@@ -351,4 +358,38 @@ export function createErrorLogInput(
     severity: getDefaultSeverity(pattern),
     observedAt,
   };
+}
+
+/**
+ * ErrorLog Service class — wraps error log functions for use in AdaptiveEngine.
+ */
+export class ErrorLogService {
+  private entries: Map<string, ErrorLogEntry> = new Map();
+
+  async logError(input: ErrorLogWriteInput): Promise<ErrorLogUpsertResult & { isNewPattern: boolean; id: string; frequency: number; severity: number }> {
+    const result = upsertErrorLog(this.entries, input);
+    return {
+      ...result,
+      isNewPattern: result.isNew,
+      id: result.entry.id,
+      frequency: result.entry.frequency,
+      severity: result.entry.severity,
+    };
+  }
+
+  getEntries(): ReadonlyMap<string, ErrorLogEntry> {
+    return this.entries;
+  }
+
+  inferPattern(skillId: string, producedForm: string, correctForm: string): ErrorPattern | null {
+    return inferErrorPattern(skillId, producedForm, correctForm);
+  }
+
+  getDefaultSeverity(pattern: ErrorPattern): number {
+    return getDefaultSeverity(pattern);
+  }
+
+  generateId(learnerId: string, skillId: string, pattern: ErrorPattern, producedForm: string): string {
+    return generateErrorLogId(learnerId, skillId, pattern, producedForm);
+  }
 }

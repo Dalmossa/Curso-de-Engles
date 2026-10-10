@@ -31,6 +31,7 @@ export function bktSkillParamToDomain(e: BktSkillParamEntity): BktSkillParam {
     Number(e.pL0),
     Number(e.pT),
     Number(e.pS),
+    Number(e.pG),  // Added pG field
     e.source,
     e.fittedAt,
     e.modelVersion,
@@ -42,6 +43,7 @@ export function bktSkillParamToEntity(d: BktSkillParam): BktSkillParamEntity {
   e.pL0 = String(d.pL0);
   e.pT = String(d.pT);
   e.pS = String(d.pS);
+  e.pG = String(d.pG);  // Added pG field
   e.source = d.source;
   e.fittedAt = d.fittedAt;
   e.modelVersion = d.modelVersion;
