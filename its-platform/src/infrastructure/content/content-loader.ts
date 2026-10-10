@@ -22,6 +22,11 @@ export async function loadContent(dataSource: DataSource, contentRoot: string): 
   const qr: QueryRunner = dataSource.createQueryRunner();
   await qr.connect();
   try {
+    // The loader is all-or-nothing: `commitTransaction()` below requires an explicit
+    // `startTransaction()`, and TypeORM's PostgresQueryRunner throws
+    // `TransactionNotStartedError` otherwise. The tests never caught this because the
+    // integration harness could not connect (see tests/helpers/db.ts).
+    await qr.startTransaction();
     await seedLookups(qr);
     const curriculum = parseCurriculum(contentRoot);
     for (const mod of curriculum.modules) {

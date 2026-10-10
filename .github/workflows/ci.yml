@@ -1,23 +1,66 @@
 name: CI Pipeline
 
+# ---------------------------------------------------------------------------
+# WHY THIS FILE LIVES AT THE REPOSITORY ROOT
+# ---------------------------------------------------------------------------
+# Until 2026-10-10 the only workflow in this repository was
+#   its-platform/.github/workflows/ci.yml
+# GitHub Actions reads workflows from `<repo-root>/.github/workflows/` and
+# nowhere else; a workflow in a subdirectory is never loaded. `git log --all
+# --diff-filter=D -- .github/workflows` shows no root workflow was ever deleted
+# to move it here — it was authored in the subdirectory on 2026-10-04 (commit
+# cc5e28e, "implement M1.1 foundation - CI pipeline") and has never run.
+#
+# This matters because every "CI green" claim in BACKLOG.md / MEMORY.md for
+# P0.5, P0.8 and P0.9 was made about a pipeline that could not execute. The
+# jobs below are the same jobs, relocated and corrected:
+#
+#   * `lint` no longer installs Poetry and runs ruff/black against the Python
+#     tree that P0.9 deleted; it typechecks and lints the TypeScript tree.
+#   * `unit` and `integration` exist. They were comment-only stubs (only the
+#     `Upload coverage` step survived, absorbed into `contract-test`).
+#   * `integration` runs the PGlite suites that the content loader never had
+#     a working harness for.
+#
+# CURRENTLY RED — with the blocker named, not silently skipped
+# ---------------------------------------------------------------------------
+# `unit`         : 5 failures in tests/domain/services/next-activity-selector.spec.ts.
+#                  That suite asserts behaviour against the §7.1 worked example of
+#                  specs/curriculum-graph-spec.md (`skill_transfer` /
+#                  `new_skills_introduced`) that was designed but never materialised
+#                  for the other 122 lessons. Blocker: ADR-021 (skill-metadata source).
+# `integration`  : 4 failures. tests/helpers/db.ts now connects, which is how the real
+#                  blocker became visible: src/infrastructure/content/content-loader.ts
+#                  writes `cefr_levels (cefr_level, description)` and `modules
+#                  (module_id, ...)` whereas the P0.4 schema (ADR-019) defines
+#                  `cefr_levels (code, label, ...)` and `modules (id, ...)`. The loader
+#                  and the ERD were never reconciled. Blocker: BACKLOG P0.10.
+# `content-loader`: `scripts/content-check.mjs` used to hang and exit 0 without running
+#                  a single assertion (see the note in that file). With the harness
+#                  repaired it now runs the loader and fails on the same schema
+#                  mismatch, which is the honest signal.
+#
+# These jobs are deliberately blocking. A gate that cannot fail is worse than no
+# gate: it occupies the place where the check belongs and silences the alarm.
+# ---------------------------------------------------------------------------
+
 on:
   push:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
   schedule:
-    # Weekly, Monday 03:00 UTC. Exists so the §4.8 mutation gate can run at all — see the
-    # mutation-test job, which was previously conditioned on a schedule that did not exist.
+    # Weekly, Monday 03:00 UTC — a full run of every gate even on an idle week.
     - cron: '0 3 * * 1'
   workflow_dispatch:
 
 env:
   PYTHON_VERSION: "3.11"
-  POETRY_VERSION: "1.8.3"
+  NODE_VERSION: "20"
 
 jobs:
   # ------------------------------------------------------------------
-  # Lint & Type Check
+  # Lint & Type Check (TypeScript — the Python tree was deleted in P0.9)
   # ------------------------------------------------------------------
   lint:
     name: Lint & Type Check
@@ -28,46 +71,24 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Set up Python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install Poetry
-        uses: snok/install-poetry@a783c322200f0519c7926aa6faa857c4e23e9263 # v1
-        with:
-          version: ${{ env.POETRY_VERSION }}
-
-      - name: Configure Poetry
-        run: |
-          poetry config virtualenvs.in-project true
-          poetry config installer.max-workers 10
-
-      - name: Cache Poetry dependencies
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-        with:
-          path: its-platform/.venv
-          key: poetry-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            poetry-${{ runner.os }}-
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: its-platform/package-lock.json
 
       - name: Install dependencies
         working-directory: its-platform
-        run: poetry install --no-interaction --with dev,test
+        run: npm ci
 
-      - name: Run lint
+      - name: Typecheck (tsc --noEmit)
         working-directory: its-platform
-        run: poetry run ruff check src/ 2>&1 | tail -5 || true; poetry run black --check src/ 2>&1 | tail -2 || true
+        run: npm run typecheck
 
-      - name: Run yamlfmt (YAML format check)
+      - name: Lint (eslint)
         working-directory: its-platform
-        run: |
-          pip install yamlfmt
-          yamlfmt -c .
-
-  # ------------------------------------------------------------------
-  # Content Integrity Verification
-  # ------------------------------------------------------------------
+        run: npm run lint
 
   # ------------------------------------------------------------------
   # Domain Isolation Check (ADR-014, P0.2)
@@ -84,7 +105,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: '20'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
           cache-dependency-path: its-platform/package-lock.json
 
@@ -96,6 +117,9 @@ jobs:
         working-directory: its-platform
         run: npm run domain:check
 
+  # ------------------------------------------------------------------
+  # Content Integrity Verification
+  # ------------------------------------------------------------------
   content-integrity:
     name: Content Integrity Check
     runs-on: ubuntu-latest
@@ -111,29 +135,25 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Run verify-integrity.py
-        working-directory: .
         run: python3 verify-integrity.py
 
       - name: Run prd-score.py
-        working-directory: .
         run: python3 prd-score.py
 
       # CONSTITUTION.md §6.3 release-gate report.
       #
-      # `continue-on-error: true` is deliberate and is NOT the `|| true` defect fixed in the
-      # security-scan job on 2026-10-05. The difference is what the step is asserting:
+      # `continue-on-error: true` is deliberate and is NOT the `|| true` defect. The
+      # difference is what the step is asserting:
       #
-      #   * bandit — a property of the code under test. It can and must fail the build.
-      #   * this   — a report of platform readiness. It is expected to exit 1 until the MVP
-      #              lands, and failing every CI run on that fact would train the team to
-      #              ignore the job, which is how §6.3 stopped meaning anything.
+      #   * the steps above — properties of the content. They can and must fail the build.
+      #   * this            — a report of platform readiness. It is expected to exit 1
+      #                       until the MVP lands, and failing every CI run on that fact
+      #                       would train the team to ignore the job.
       #
       # The gate is blocking at `make release-check`, which is what a release is cut from.
       # This step exists so the seven gates are visible on every run and so a newly-broken
-      # gate — a CI trigger that stops matching its branch, a scanner that stops propagating
-      # its exit status — turns red here the day it happens.
+      # gate turns red here the day it happens.
       - name: Release gate report (CONSTITUTION.md §6.3)
-        working-directory: .
         continue-on-error: true
         run: |
           pip install pyyaml
@@ -157,7 +177,7 @@ jobs:
       - name: Set up Node.js for spectral
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: "20"
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install spectral
         run: npm install -g @stoplight/spectral-cli
@@ -180,32 +200,14 @@ jobs:
           "
 
   # ------------------------------------------------------------------
-  # Unit Tests
+  # Unit + domain + contract tests (jest, PGlite-free)
   # ------------------------------------------------------------------
-
-
-
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4
-        with:
-          files: its-platform/coverage.xml
-          flags: unit
-
-  # ------------------------------------------------------------------
-  # Integration Tests (requires services)
-  # ------------------------------------------------------------------
-
-
-
-
-  # ------------------------------------------------------------------
-  # Content Loader Gate (P0.5 — PGlite seed + verify)
-  # ------------------------------------------------------------------
-  content-loader:
-    name: Content Loader (PGlite)
+  # `NODE_OPTIONS=--experimental-vm-modules` is required: several suites exercise
+  # modules that perform dynamic ESM imports. Without the flag the run dies with
+  # ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG instead of reporting results.
+  unit:
+    name: Unit Tests
     runs-on: ubuntu-latest
-    needs: lint
     steps:
       - name: Checkout repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -215,7 +217,67 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: '20'
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: its-platform/package-lock.json
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: npm ci
+
+      - name: Run unit tests
+        working-directory: its-platform
+        env:
+          NODE_OPTIONS: --experimental-vm-modules
+        run: npx jest --ci --no-coverage --testPathIgnorePatterns /node_modules/ /tests/integration/
+
+  # ------------------------------------------------------------------
+  # Integration Tests (PGlite, in-process)
+  # ------------------------------------------------------------------
+  integration:
+    name: Integration Tests (PGlite)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          submodules: recursive
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: its-platform/package-lock.json
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: npm ci
+
+      - name: Run integration tests
+        working-directory: its-platform
+        env:
+          NODE_OPTIONS: --experimental-vm-modules
+          CONTENT_REPO_PATH: ${{ github.workspace }}
+        run: npx jest --ci --no-coverage --testPathPattern /tests/integration/
+
+  # ------------------------------------------------------------------
+  # Content Loader Gate (P0.5 — PGlite seed + assertions)
+  # ------------------------------------------------------------------
+  content-loader:
+    name: Content Loader (PGlite)
+    runs-on: ubuntu-latest
+    needs: [lint]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          submodules: recursive
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
           cache-dependency-path: its-platform/package-lock.json
 
@@ -239,7 +301,7 @@ jobs:
   contract-check:
     name: Contract Check (OpenAPI)
     runs-on: ubuntu-latest
-    needs: lint
+    needs: [lint]
     steps:
       - name: Checkout repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -249,7 +311,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: '20'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
           cache-dependency-path: its-platform/package-lock.json
 
@@ -270,7 +332,7 @@ jobs:
   rls-integration:
     name: RLS + Migration (PostgreSQL 16)
     runs-on: ubuntu-latest
-    needs: lint
+    needs: [lint]
     services:
       postgres:
         image: postgres:16-alpine
@@ -294,7 +356,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: '20'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
           cache-dependency-path: its-platform/package-lock.json
 
@@ -317,18 +379,12 @@ jobs:
   # ------------------------------------------------------------------
   # CONSTITUTION.md §4.8 sets a mutation-score threshold of >= 85%.
   #
-  # This job was dead: `if:` tested `github.repository == 'owner/its-platform'`, a
-  # placeholder that is not this repository, and `github.event_name == 'schedule'`, which
-  # could never be true because the workflow declared no `schedule` trigger. It therefore
-  # never ran, and the §4.8 threshold was enforcement of nothing.
-  #
-  # It now has a schedule and a manual trigger, so it can actually run — and when it does it
-  # fails with the named blocker rather than silently skipping.
-
-
-
-
-
+  # This job was dead twice over: `if:` tested a placeholder repository name and
+  # `github.event_name == 'schedule'`, with no `schedule` trigger declared, so it could
+  # never run. It is NOT re-added here because no mutation runner is configured: there is
+  # no stryker config and no `mutation` npm script. Re-adding the job now would mean
+  # inventing a threshold that cannot report a score. The job returns when a runner
+  # exists and can fail; until then §4.8 is unenforced and this comment is the record.
 
   # ------------------------------------------------------------------
   # Security Scan
@@ -355,17 +411,22 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
 
-      # One scanner invocation per report format; the SARIF step no longer re-runs the
-      # scanner just to reformat output the previous step already had.
-
-
   # ------------------------------------------------------------------
   # Build & Push Docker Image
   # ------------------------------------------------------------------
   build-image:
     name: Build Docker Image
     runs-on: ubuntu-latest
-    needs: [lint, content-integrity, contract-test, content-loader, contract-check]
+    needs:
+      - lint
+      - domain-isolation
+      - content-integrity
+      - contract-test
+      - unit
+      - integration
+      - content-loader
+      - contract-check
+      - rls-integration
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout repository
@@ -386,17 +447,14 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-
-
   # ------------------------------------------------------------------
   # Deploy to Staging (ArgoCD)
   # ------------------------------------------------------------------
   # Gate CONSTITUTION.md §6.3 "Staging Deployed" (owner: Platform Lead).
   #
   # This job used to `echo "Update iac/argocd/applications/its-platform-staging.yaml"`
-  # and pass. That is a gate that cannot fail, which is worse than no gate: it occupies the
-  # place where the check belongs and silences the alarm. It now asserts the preconditions
-  # and fails, naming the blocker.
+  # and pass. That is a gate that cannot fail, which is worse than no gate. It now
+  # asserts the preconditions and fails, naming the blocker.
   #
   # Runs on `always()` so the missing-IaC fact is surfaced even when an upstream job is red.
   deploy-staging:
@@ -457,30 +515,46 @@ jobs:
   summary:
     name: CI Summary
     runs-on: ubuntu-latest
-    needs: [lint, content-integrity, contract-test, rls-integration, security-scan, content-loader, contract-check]
+    needs:
+      - lint
+      - domain-isolation
+      - content-integrity
+      - contract-test
+      - unit
+      - integration
+      - content-loader
+      - contract-check
+      - rls-integration
+      - security-scan
     if: always()
     steps:
       - name: Check job statuses
         run: |
           echo "Lint: ${{ needs.lint.result }}"
+          echo "Domain Isolation: ${{ needs.domain-isolation.result }}"
           echo "Content Integrity: ${{ needs.content-integrity.result }}"
           echo "Contract Test: ${{ needs.contract-test.result }}"
-          echo "RLS + Migration: ${{ needs.rls-integration.result }}"
-          echo "Security Scan: ${{ needs.security-scan.result }}"
+          echo "Unit Tests: ${{ needs.unit.result }}"
+          echo "Integration Tests: ${{ needs.integration.result }}"
           echo "Content Loader: ${{ needs.content-loader.result }}"
           echo "Contract Check: ${{ needs.contract-check.result }}"
+          echo "RLS + Migration: ${{ needs.rls-integration.result }}"
+          echo "Security Scan: ${{ needs.security-scan.result }}"
 
-      # security-scan was listed in `needs` and reported below, but was NOT in the failing
-      # set — because it could not fail: bandit ran with `|| true`. §6.3 names "Security
-      # Scan" as a release gate, so a scan that cannot fail must not be exempt from the
-      # aggregate. Now that bandit can fail, the exemption would be the defect.
+      # Every job named in `needs` is part of the aggregate. `security-scan` was once
+      # reported here but excluded from the failing set — because bandit ran with
+      # `|| true` and could not fail. A gate that cannot fail must not be exempt from
+      # the aggregate that claims to represent it.
       - name: Fail if any required job failed
         if: |
           needs.lint.result != 'success' ||
+          needs.domain-isolation.result != 'success' ||
           needs.content-integrity.result != 'success' ||
           needs.contract-test.result != 'success' ||
-          needs.rls-integration.result != 'success' ||
-          needs.security-scan.result != 'success' ||
+          needs.unit.result != 'success' ||
+          needs.integration.result != 'success' ||
           needs.content-loader.result != 'success' ||
-          needs.contract-check.result != 'success'
+          needs.contract-check.result != 'success' ||
+          needs.rls-integration.result != 'success' ||
+          needs.security-scan.result != 'success'
         run: exit 1
