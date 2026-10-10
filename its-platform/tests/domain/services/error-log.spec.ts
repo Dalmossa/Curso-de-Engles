@@ -373,11 +373,13 @@ describe('ErrorLog Service — Property Tests', () => {
     // Use Unicode THETA (θ U+03B8) or ETH (ð U+00F0) in correct form, or ASCII 'th'
     const theta = String.fromCharCode(0x03B8); // θ
     const eth = String.fromCharCode(0x00F0);   // ð
+    // TH stopping: learner produces T/D instead of TH
+    // 'ðis' -> 'dis' (ð -> d), 'θink' -> 'tink' (θ -> t)
     expect(inferErrorPattern('pron_th_voiced', 'dis', eth + 'is')).toBe('th_stopped');
-    expect(inferErrorPattern('pron_th_unvoiced', 'sink', theta + 'ink')).toBe('th_stopped');
+    expect(inferErrorPattern('pron_th_unvoiced', 'tink', theta + 'ink')).toBe('th_stopped');
     // Also test with ASCII 'th'
     expect(inferErrorPattern('pron_th_voiced', 'dis', 'this')).toBe('th_stopped');
-    expect(inferErrorPattern('pron_th_unvoiced', 'sink', 'think')).toBe('th_stopped');
+    expect(inferErrorPattern('pron_th_unvoiced', 'tink', 'think')).toBe('th_stopped');
   });
 
   it('inferErrorPattern: detects w_v_interference', () => {
