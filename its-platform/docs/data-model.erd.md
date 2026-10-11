@@ -968,10 +968,13 @@ and wrapper from ADR-003; single-writer GUC from domain-model X-4.
 
 ```sql
 ALTER TABLE <table> ENABLE ROW LEVEL SECURITY;
+-- ADR-026 §4: the mandatory form. `missing_ok` alone is not enough — after the first SET LOCAL
+-- on a connection, `current_setting(name, true)` returns '' and `''::uuid` RAISES instead of
+-- evaluating NULL. `nullif(…, '')` restores the unset-GUC semantics on such a connection.
 CREATE POLICY learner_isolation ON <table>
   FOR ALL TO its_platform_app
-  USING      (learner_id = current_setting('app.current_learner_id')::uuid)
-  WITH CHECK (learner_id = current_setting('app.current_learner_id')::uuid);
+  USING      (learner_id = nullif(current_setting('app.current_learner_id', true), '')::uuid)
+  WITH CHECK (learner_id = nullif(current_setting('app.current_learner_id', true), '')::uuid);
 -- plus admin_bypass (TO app_admin) and worker_access (TO app_worker),
 -- exactly as ADR-003 §policies specifies.
 ```
@@ -985,9 +988,13 @@ CREATE POLICY learner_isolation ON <table>
    learner-scoped: they carry no learner column and get no policy.
 3. `append_only_events` additionally has its `UPDATE`/`DELETE` grants revoked before any
    policy is created (X-3) — RLS scopes reads; immutability is a grant, not a policy.
-4. **Verification runs on real PostgreSQL only.** PGlite cannot exercise `SET LOCAL`
-   role-switching or `current_setting` GUCs faithfully; a green PGlite run verified
-   nothing here (ADR-014; BACKLOG P0.4's post-merge note).
+4. **Verification needs the right role, not a different engine** (corrected 2026-10-11, ADR-026).
+   Earlier text here said "real PostgreSQL only … PGlite cannot exercise `SET LOCAL`
+   role-switching or `current_setting` GUCs faithfully". Measured: it can. What makes a PGlite
+   RLS test vacuous is that the harness connects as the **table owner**, and an owner is not
+   subject to its policies unless `FORCE ROW LEVEL SECURITY` is on. So a persistence test must
+   `SET ROLE its_platform_app` to exercise the policy, and then it can fail. Two sessions at
+   once — contention, pool cross-talk — remain real-PostgreSQL-only (ADR-014 items 3–4).
 
 ---
 

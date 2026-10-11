@@ -35,6 +35,7 @@
 | [023](023-diagnostic-routing-semantics.md) | Diagnostic routing semantics — ADR-017 §3's operational rule, the CEFR↔θ threshold set, the start-node table | Accepted | 2026-10-11 | — |
 | [024](024-fixed-form-executor-contract.md) | Fixed-form diagnostic executor — completeness, ordering, the §3.3a reportability lattice, the run's output contract | Accepted | 2026-10-11 | — |
 | [025](025-theta-estimation-posterior.md) | θ estimation for the fixed form — §3.4's posterior, the prior it needs, the storage contract it must respect | Accepted | 2026-10-11 | — |
+| [026](026-learner-context-app-role.md) | Learner context for the app role — the single writer of `app.current_learner_id`, its transaction scope, and what PGlite can verify | Accepted | 2026-10-11 | — |
 
 ### Read before writing any persistence code — ADR-015…018
 
@@ -63,7 +64,7 @@ authorises. The IdP question inside 013 is deliberately unanswered.
 carry constraints that are easy to lose in implementation and are enforced by CI:
 
 - 012 — a file under `src/domain/` importing `typeorm` or `@nestjs/*` fails the build. TypeORM's default decorates the domain; the CI check is the only thing standing between that default and `CONSTITUTION.md` §4.2.
-- 014 — RLS, `SET LOCAL`, role-switching, and concurrency tests **cannot** run on PGlite (single exclusive connection). They require real PostgreSQL, and a PR that only passes on PGlite has not verified multi-tenancy.
+- 014 — concurrency tests **cannot** run on PGlite (one exclusive connection): contention, a pool handing the same connection to two learners. `SET ROLE` + `SET LOCAL` + ADR-003's policies *do* run there, and a single-session cross-learner test that switches role can fail — measured, `docs/adr/026`. On PGlite the suite must `SET ROLE its_platform_app`, or it connects as the table owner and RLS is bypassed.
 
 ---
 

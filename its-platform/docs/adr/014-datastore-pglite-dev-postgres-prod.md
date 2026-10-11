@@ -97,17 +97,31 @@ Postgres, so divergence means the test is asserting something Postgres does not 
 
 ### Binding constraint: what must not run on PGlite
 
+> ⚠️ **AMENDED 2026-10-11 (ADR-026).** Items 2 and 3 are narrower than written here, and the
+> difference is what let `P1.10`'s suite connect as the **owner** and call itself verified.
+> Measured with this stack (`typeorm` 0.3.20, `@electric-sql/pglite` 0.5.8, PostgreSQL 15.17):
+> `SET ROLE its_platform_app` + `SET LOCAL` / `set_config(app.current_learner_id, …, true)` +
+> ADR-003's policy + the `WITH CHECK` rejection all behave **identically** on PGlite and on
+> Postgres in the single-session case — including a cross-learner insert being refused. So
+> item 2 does not hold as a blanket ban, and item 3's *sequential* half is testable on PGlite;
+> only its *concurrent* half needs two sessions.
+>
+> What stands: item 1 (the owner-role connection bypasses its own policies — this is the mechanism
+> of the defect), item 3's concurrency, item 4, item 5, and `BACKLOG.md` P2's coverage
+> requirement. The practical correction is one line in a test: `SET ROLE its_platform_app`, or the
+> run has verified nothing. Full measurements → **ADR-026**.
+
 Tests that exercise any of the following **must** run against real PostgreSQL:
 
 1. **RLS policies** — ADR-003's `USING (id = current_setting(...))` cannot be tested against a single connection that is already the owner role.
-2. **`SET LOCAL` / `SET ROLE` / per-request GUC assignment** — connection-scoped state.
-3. **Cross-learner isolation** — requires two concurrent sessions holding different learner identities.
+2. **`SET LOCAL` / `SET ROLE` / per-request GUC assignment** — connection-scoped state. See the amendment above: this is testable on PGlite within one session, and *only* within one session.
+3. **Cross-learner isolation** — the concurrent form requires two sessions holding different learner identities (an erased or lax policy on a *single* session is still catchable — ADR-026).
 4. **Anything asserting write concurrency** — PGlite's exclusive connection cannot exhibit contention.
 5. **pgBackRest backup and PITR** — ADR-009, external process.
 
-A PGlite test that asserts learner A cannot read learner B's rows is **not a passing test**;
-it is a test that cannot fail, and it must not be counted toward the RLS coverage that
-`BACKLOG.md` P2 requires.
+A PGlite test that asserts learner A cannot read learner B's rows **must first take the app role**;
+if it runs as the owner it is a test that cannot fail, and it must not be counted toward the RLS
+coverage that `BACKLOG.md` P2 requires.
 
 ### CI must run both
 
