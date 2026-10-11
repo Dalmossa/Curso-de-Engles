@@ -180,14 +180,15 @@ L-2's evidence clause, so the two inputs are structurally separated.
 | G-1 | Fixed form `diagnostic_form_v1`, **12 items**: Grammar 4 · Vocabulary 3 · Reading 3 · Pronunciation 2. **Listening 0** | **[domain]** |
 | G-2 | Selection is by blueprint position. **No MFI, no CAT** — three independent spec rules forbid it (ADR-017) | **[domain]** |
 | G-3 | `provenance.kind == authored` is permitted in a fixed form; G-Q7's CAT exclusion does not apply because a fixed form does not use difficulty to select | **[domain]** |
-| G-4 | `band_bounds = [θ − 1.96·SE_eff, θ + 1.96·SE_eff]`; `start_cefr` = the **lowest** CEFR band whose threshold lies inside `band_bounds`. Under-placement, never over-placement | **[domain]** |
-| G-5 | `below_scale` when `band_bounds` lies entirely below A1 → start node `les_a1_alphabet_sounds` | **[domain]** |
+| G-4 | `band_bounds = [θ − 1.96·SE_eff, θ + 1.96·SE_eff]`; `start_cefr` = the **lowest** CEFR band whose **entry** threshold (`A2 = −0.5, B1 = 0.5, B2 = 1.5`, `stats` §3.1) lies inside `band_bounds`; above the top entry → `B2`. Under-placement, never over-placement — see **ADR-023 §2** for the operational form and its two totality clauses | **[domain]** |
+| G-5 | `below_scale` = `θ + 1.96·SE_eff < −0.5`, i.e. `band_bounds` lies entirely below the A2 entry → start node `les_a1_alphabet_sounds` (ADR-023 §2) | **[domain]** |
 | G-6 | `remediation_nodes` ≤ 3 (`curriculum-graph` §6.4), derived from `bkt_priors_override` + profile | **[domain]** |
 | G-7 | `placement_provisional` is **derived** from `calibration_status != empirically_calibrated`, never stored as a boolean | **[domain]** |
 | G-8 | Per-domain reportability lattice (§3.3a), stored with an **explicit discriminator**: `point_estimate` (n ≥ 5) / `band` (n 3–4) / `insufficient_evidence` (n 0–2) | **[db]** — the three-state union has **no tag today**, so every consumer branches on key presence |
 | G-9 | The re-diagnostic is a **scheduled event**, not a user action (§2.1.1(4)). MVP has no audio, so there is no re-diagnostic and G-7 never clears | **[domain]** |
 
-Property tests required: `start_cefr` is monotone non-increasing in θ; `start_cefr ≤` every band in
+Property tests required: `start_cefr` is monotone **non-decreasing** in θ (ADR-023 corrects the
+"non-increasing" that stood here and contradicted G-4's own rule); `start_cefr ≤` every band in
 `candidate`; `start_node ∈ CurriculumGraph`; `G-1` always sums to 12.
 
 ### 3.7 `ConsentRecord` and `AppendOnlyEvent` (context 8)

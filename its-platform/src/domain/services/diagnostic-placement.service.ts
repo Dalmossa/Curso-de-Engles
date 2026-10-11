@@ -1,77 +1,183 @@
 /**
- * Diagnostic Placement Service — Fixed-form diagnostic placement
+ * Diagnostic Placement Service — ordinal, interval-based routing
  *
- * Maps overall θ estimate to CEFR level and start node per:
- * - stats-progress-evaluation-spec.md §3.1 (CEFR thresholds: A2 = -0.5, B1 = 0.5, B2 = 1.5)
- * - curriculum-graph-spec.md §5.1 (Start node mapping)
+ * `computeStartNode` implements ADR-023 Decision 2 exactly:
  *
- * Per ADR-017: Fixed-blueprint diagnostic executor (no CAT). Items are administered
- * in fixed order by blueprint position.
+ *   t_h        = 1.96 · SE_eff
+ *   band_entry = { A2: −0.5, B1: 0.5, B2: 1.5 }        # stats-progress-evaluation-spec.md §3.1
+ *   band_bounds= [θ − t_h, θ + t_h]
+ *   candidate  = { B : band_entry[B] ∈ band_bounds }   # ADR-023 "the ambiguity inside ladder 3", (a)
+ *   start_cefr = lowest(candidate)          if candidate ≠ ∅
+ *              = 'B2'                       if θ − t_h > 1.5    # bounds above the top entry
+ *              = 'A1' with below_scale=true  if θ + t_h < −0.5   # bounds entirely below the A2 entry
+ *   start_node = START_NODE_TABLE[start_cefr][track]    # curriculum-graph §5.1
+ *
+ * Two things the previous implementation got wrong and this one cannot:
+ * `seEffective` now *moves* the result (it was accepted and discarded), and the returned band
+ * is the lowest one the interval reaches — ADR-017 §3 "under-placement, never over-placement".
+ *
+ * The function is total and side-effect free: same input → same output, no `Date`, no I/O, no
+ * randomness (ADR-023 Decision 5), so P1.10 can persist exactly what was returned.
  */
 
 import type { StartNodeMapping } from '../entities/pilot-bank.js';
-import { CEFR_THRESHOLDS, START_NODE_TABLE, REMEDIATION_NODES } from '../entities/pilot-bank.js';
+import { CEFR_THRESHOLDS, START_NODE_TABLE } from '../entities/pilot-bank.js';
+
+/**
+ * The bands this bank can route to. The ladder is A1–B2 — `CEFR_THRESHOLDS` has no C1 entry
+ * and neither has the 12-item bank (ADR-023 Decision 1).
+ */
+export type CefrBand = 'A1' | 'A2' | 'B1' | 'B2';
+
+/** §5.1's `track`: the IT branch or the General one. */
+export type PlacementTrack = 'General' | 'IT';
+
+/**
+ * The single `profile` field of the diagnostic output (diagnostic-spec.md §3.6):
+ * `general`/`it`/`dev` carry the tech-context role (ADR-017 §2: 30 % of the form is IT
+ * vocabulary), `false_beginner_suspected` is the affective-filter signal §5.1 gates
+ * `les_rem_confidence_builder` on.
+ */
+export type LearnerProfile = 'general' | 'it' | 'dev' | 'false_beginner_suspected';
 
 export interface PlacementInput {
   thetaOverall: number;
   seEffective: number;
-  learnerProfile?: 'general' | 'it' | 'dev'; // tech context 30% in diagnostic
+  learnerProfile?: LearnerProfile;
+  /**
+   * Domain-level θs of the same run. The track rule of ADR-023 Decision 3 compares
+   * `vocabulary` against `grammar`, and an absent domain behaves as θ = 0 (the estimator's own
+   * starting point), which fails towards `General` rather than inventing a thumbs-up.
+   */
+  grammarTheta?: number;
+  vocabularyTheta?: number;
+  readingTheta?: number;
+  pronunciationTheta?: number;
 }
 
+/** 95 % two-sided normal quantile, i.e. the 1.96 of `t_h` in ADR-017 §3. */
+const CI_Z = 1.96;
+
+/** Remediation cap: `diagnostic_results.remediation_nodes` has `cardinality(…) <= 3`. */
+const MAX_REMEDIATION_NODES = 3;
+
+/**
+ * Band entry thresholds (the θ at which a band *begins*), ascending, as data.
+ *
+ * A1 has no entry threshold — it begins at −∞ — which is why the candidate set is built from
+ * A2 upward. The values are read from `CEFR_THRESHOLDS` so stats §3.1's boundary is stated
+ * once, in the entity, and this file restates nothing.
+ */
+const BAND_ENTRY_THRESHOLDS: ReadonlyArray<{ band: CefrBand; entry: number }> = (
+  ['A2', 'B1', 'B2'] as const
+).map((band) => ({ band, entry: CEFR_THRESHOLDS[band].min }));
+
+/** `below_scale` is defined against the first entry: A2's −0.5 (ADR-023 Decision 2). */
+const FIRST_ENTRY_THRESHOLD: number = CEFR_THRESHOLDS.A2.min;
+
+/** The clause for bounds above the top entry: θ − t_h > B2's 1.5. */
+const TOP_ENTRY_THRESHOLD: number = CEFR_THRESHOLDS.B2.min;
+
+/**
+ * Map an overall θ estimate + `SE_eff` to the CEFR band to start at and the node to start from.
+ *
+ * Pure: same input → same output (ADR-023 Decision 5).
+ */
 export function computeStartNode(input: PlacementInput): StartNodeMapping {
   const { thetaOverall, seEffective, learnerProfile = 'general' } = input;
+  const {
+    grammarTheta = 0,
+    vocabularyTheta = 0,
+    pronunciationTheta = 0,
+  } = input;
 
-  // Compute CI₉₅
-  const ci95Lower = thetaOverall - 1.96 * seEffective;
-  const ci95Upper = thetaOverall + 1.96 * seEffective;
+  const t_h = CI_Z * seEffective;
+  const bandBoundsLower = thetaOverall - t_h;
+  const bandBoundsUpper = thetaOverall + t_h;
 
-  let cefr: string;
-  let belowScale = false;
+  // Reading (a) of ADR-023's ambiguity: a band is a candidate iff its **entry threshold** lies
+  // inside band_bounds, not iff its range intersects them. `diagnostic-spec.md` §3.6 is the
+  // only worked example in the specs and reproduces only under (a): θ = −0.3, SE = 0.28 →
+  // band_bounds = [−0.849, 0.249] → candidate = {A2} → `les_a2_greetings_intro`.
+  const candidate = BAND_ENTRY_THRESHOLDS.filter(
+    ({ entry }) => entry >= bandBoundsLower && entry <= bandBoundsUpper
+  ).map(({ band }) => band);
 
-  // Determine CEFR level from θ per §3.1
-  if (thetaOverall < -2.0) {
-    cefr = 'A1';
-    belowScale = true;
-  } else if (thetaOverall < -0.5) {
-    cefr = 'A1';
-    belowScale = false;
-  } else if (thetaOverall < 0.5) {
-    cefr = 'A2';
-    belowScale = false;
-  } else if (thetaOverall < 1.5) {
-    cefr = 'B1';
-    belowScale = false;
-  } else if (thetaOverall < 2.5) {
-    cefr = 'B2';
-    belowScale = false;
+  let startCefr: CefrBand;
+  if (candidate.length > 0) {
+    // Entered in ascending order, so candidate[0] is the LOWEST band in the set: ADR-017 §3
+    // "never the highest", the same under-placement direction as `stats` §2.1's P(L₀) = 0.15.
+    startCefr = candidate[0]!;
+  } else if (bandBoundsLower > TOP_ENTRY_THRESHOLD) {
+    // Totality clause 1 (ADR-023 Decision 2): θ − t_h > 1.5, the bounds lie entirely ABOVE the
+    // top entry. Reachable — 12 items at a = 1.2 estimate θ > 2.6 for a strong learner — and
+    // reading it as "band below A1" would invert the defect this ADR exists to remove.
+    startCefr = 'B2';
   } else {
-    cefr = 'B2';
-    belowScale = true;
+    // Totality clause 2: θ + t_h < −0.5, the bounds lie entirely BELOW the A2 entry (ADR-017
+    // §3's "band below A1"). A1 is the only band left, since (§3.1) A1 begins at −∞.
+    startCefr = 'A1';
   }
 
-  // Map to start node
-  const tableEntry = START_NODE_TABLE[cefr];
-  if (!tableEntry) {
-    // Fallback to A1
-    const fallback = START_NODE_TABLE['A1'] as { general: string; it: string };
-    return {
-      startCefr: 'A1',
-      startNode: learnerProfile === 'it' || learnerProfile === 'dev' ? fallback.it : fallback.general,
-      belowScale,
-      remediationNodes: belowScale ? [...REMEDIATION_NODES] : [],
-      profile: learnerProfile,
-    };
-  }
+  // A predicate, never a stored flag (ADR-023 Decision 2). It cannot hold in the B2 case:
+  // that clause requires θ − t_h > 1.5, so θ + t_h > 1.5 > −0.5.
+  const belowScale = bandBoundsUpper < FIRST_ENTRY_THRESHOLD;
 
-  const startNode = learnerProfile === 'it' || learnerProfile === 'dev' ? tableEntry.it : tableEntry.general;
+  const track = resolveTrack(learnerProfile, { vocabularyTheta, grammarTheta });
+  const startNode = START_NODE_TABLE[startCefr]![track === 'IT' ? 'it' : 'general'];
 
   return {
-    startCefr: cefr,
+    startCefr,
     startNode,
     belowScale,
-    remediationNodes: belowScale ? [...REMEDIATION_NODES] : [],
+    // ADR-017 §3 routes `below_scale` to `les_a1_alphabet_sounds` (the A1 row), not to a
+    // remediation node: below-scale is a start-node signal, and remediation has its own
+    // triggers in §5.1 (ADR-023 Decision 4).
+    remediationNodes: resolveRemediationNodes(learnerProfile, pronunciationTheta),
     profile: learnerProfile,
   };
+}
+
+/**
+ * Curriculum-graph §5.1's track rule, evaluated on real domain θs:
+ * `IT` iff the profile is the IT/dev track **and** `vocabulary θ > grammar θ`, else `General`.
+ *
+ * The previous implementation read the profile alone, so every `dev` learner was routed to the
+ * IT nodes; the θ condition of §5.1 was never evaluated (ADR-023 Context §3).
+ */
+function resolveTrack(
+  profile: PlacementInput['learnerProfile'],
+  { vocabularyTheta, grammarTheta }: { vocabularyTheta: number; grammarTheta: number }
+): PlacementTrack {
+  const itContext = profile === 'it' || profile === 'dev';
+  return itContext && vocabularyTheta > grammarTheta ? 'IT' : 'General';
+}
+
+/**
+ * Remediation micro-lessons per `curriculum-graph-spec.md` §5.1's triggers, capped at 3.
+ *
+ * Order matters and follows §5.1: pronunciation before the affective-filter node.
+ *
+ * **`les_rem_listening_slow_clear` is never emitted here.** ADR-017 §2 removes Listening from
+ * the blueprint (0 items) and §4 forbids any placement-time trigger from reading a listening θ:
+ * with no listening item there are **0 listening observations at placement**, so §5.1's
+ * `listening ∈ weak_skills` predicate cannot be true. §4 replaces the trigger with a BKT-only
+ * one (`p_know < 0.85` on ≥3 observations), which placement cannot satisfy either, and §5.2's
+ * row showing the listening node as placement remediation is stale.
+ */
+function resolveRemediationNodes(
+  profile: PlacementInput['learnerProfile'],
+  pronunciationTheta: number
+): string[] {
+  const nodes: string[] = [];
+
+  // §5.1: `pronunciation θ < −1.0`. Strict: θ = −1.0 itself does not fire.
+  if (pronunciationTheta < -1.0) nodes.push('les_rem_pronunciation_th_vw');
+
+  // §5.1: `profile = false_beginner` — the affective filter, not a θ.
+  if (profile === 'false_beginner_suspected') nodes.push('les_rem_confidence_builder');
+
+  return nodes.slice(0, MAX_REMEDIATION_NODES);
 }
 
 /**

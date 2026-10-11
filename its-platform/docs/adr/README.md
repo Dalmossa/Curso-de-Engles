@@ -32,6 +32,7 @@
 | [020](020-content-loader-port.md) | P0.5 content loader — parsers over real markdown formats, upsert idempotency, PGlite/Postgres gate | Accepted | 2026-10-06 | — |
 | [021](021-per-lesson-skill-metadata.md) | Per-lesson skill metadata — canonical source, canonical ids, and fail-closed gating | **Proposed** — open | 2026-10-10 | — |
 | [022](022-content-loader-schema-reconciliation.md) | Content loader ↔ P0.4 schema reconciliation — persistence contract, derived-field rules, skip baseline | Accepted | 2026-10-10 | — |
+| [023](023-diagnostic-routing-semantics.md) | Diagnostic routing semantics — ADR-017 §3's operational rule, the CEFR↔θ threshold set, the start-node table | Accepted | 2026-10-11 | — |
 
 ### Read before writing any persistence code — ADR-015…018
 

@@ -179,12 +179,19 @@ export const CEFR_THRESHOLDS = {
 /**
  * Start node mapping per curriculum-graph-spec.md §5.1
  * CEFR band → (General track, IT track) entry nodes
+ *
+ * §5.1 is the authority ADR-017 §3 names, and it is authoritative here even where the ids it
+ * names are not the only ones that exist: all three ids the previous B1/IT and B2 rows carried
+ * (`les_b1_it_write_docs`, `les_b2_professional_argument`, `les_b2_it_advanced_patterns`) are
+ * real lessons, so existence does not decide a row — §5.1 does (ADR-023 Decision 3 and its
+ * Context §1). §5.1's B1/IT note is explicit that the IT entry points were repointed on
+ * 2026-09-30 (§4.4.6) once their sources were restored, so the older ids are the stale ones.
  */
 export const START_NODE_TABLE: Record<string, { general: string; it: string }> = {
   A1: { general: 'les_a1_alphabet_sounds', it: 'les_a1_alphabet_sounds' },
   A2: { general: 'les_a2_greetings_intro', it: 'les_a2_it_terms_basics' },
-  B1: { general: 'les_b1_tenses_review', it: 'les_b1_it_write_docs' },
-  B2: { general: 'les_b2_professional_argument', it: 'les_b2_it_advanced_patterns' },
+  B1: { general: 'les_b1_tenses_review', it: 'les_b1_it_architecture_vocab' },
+  B2: { general: 'les_b2_register_nuance', it: 'les_b2_it_mentoring' },
 } as const;
 
 /**

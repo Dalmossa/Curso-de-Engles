@@ -8,9 +8,9 @@
  */
 
 import type { DiagnosticForm, DiagnosticResponse, SkillTheta, DiagnosticRun } from '../entities/pilot-bank.js';
+import { CEFR_THRESHOLDS, SKILL_TO_DOMAIN } from '../entities/pilot-bank.js';
 import { createDiagnosticFormV1, validatePilotBank } from './pilot-bank.service.js';
 import { computeThetaEstimate, computeStartNode } from './diagnostic-placement.service.js';
-import { SKILL_TO_DOMAIN } from '../entities/pilot-bank.js';
 
 export interface AdministerDiagnosticInput {
   learnerId: string;
@@ -126,11 +126,33 @@ export function administerDiagnostic(input: AdministerDiagnosticInput): Diagnost
   // Compute domain-level aggregation (Grammar, Vocab, Reading, Pronunciation)
   const skillThetas: SkillTheta[] = Array.from(skillThetaMap.values());
 
+  // Domain-level θs: each response aggregated under its item's domain via SKILL_TO_DOMAIN.
+  // ADR-023 Decision 3's track rule compares vocabulary θ against grammar θ, and a skill-level
+  // θ (one item's worth) is not the quantity §5.1 describes.
+  const domainResponses = new Map<string, Array<{ correct: boolean; a: number; b: number }>>();
+  for (const response of diagnosticResponses) {
+    const domain = SKILL_TO_DOMAIN[response.skillId];
+    if (!domain) continue;
+    const item = form.items.find((it) => it.id === response.itemId);
+    const aggregated = domainResponses.get(domain) ?? [];
+    aggregated.push({ correct: response.correct, a: item?.a ?? 1.2, b: item?.b ?? 0 });
+    domainResponses.set(domain, aggregated);
+  }
+
+  const domainThetas: Record<string, number> = {};
+  for (const [domain, responses] of domainResponses) {
+    domainThetas[domain] = computeThetaEstimate(responses, 0.0).theta;
+  }
+
   // Compute placement
   const placement = computeStartNode({
     thetaOverall,
     seEffective: form.calibrationDisclosure.seEffective,
     learnerProfile: profile,
+    grammarTheta: domainThetas['grammar'] ?? 0,
+    vocabularyTheta: domainThetas['vocabulary'] ?? 0,
+    readingTheta: domainThetas['reading'] ?? 0,
+    pronunciationTheta: domainThetas['pronunciation'] ?? 0,
   });
 
   const startedAt = new Date();
@@ -169,10 +191,16 @@ export function administerDiagnostic(input: AdministerDiagnosticInput): Diagnost
   };
 }
 
+/**
+ * CEFR band of a point estimate, `stats` §3.1's thresholds as data (`CEFR_THRESHOLDS`).
+ *
+ * Per ADR-023 Decision 1 this is the ladder `< −0.5 → A1`, `< 0.5 → A2`, `< 1.5 → B1`, else
+ * `B2` — and never `C1`: `C1`/`C2` are not bands of this bank (`CEFR_THRESHOLDS` has no entry
+ * for them), and the `2.5`/`C1` this function used to carry exists in no artefact.
+ */
 function getCefrFromTheta(theta: number): string {
-  if (theta < -0.5) return 'A1';
-  if (theta < 0.5) return 'A2';
-  if (theta < 1.5) return 'B1';
-  if (theta < 2.5) return 'B2';
-  return 'C1';
+  if (theta < CEFR_THRESHOLDS.A2.min) return CEFR_THRESHOLDS.A1.label;
+  if (theta < CEFR_THRESHOLDS.B1.min) return CEFR_THRESHOLDS.A2.label;
+  if (theta < CEFR_THRESHOLDS.B2.min) return CEFR_THRESHOLDS.B1.label;
+  return CEFR_THRESHOLDS.B2.label;
 }
