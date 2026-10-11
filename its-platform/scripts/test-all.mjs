@@ -33,6 +33,8 @@ async function main() {
     await run('node', ['--experimental-vm-modules', 'node_modules/jest/bin/jest.js', '--maxTests=50000', '--maxWorkers=1', '--no-coverage']);
     console.log('\n=== Running domain-isolation-check ===');
     await run('node', ['scripts/domain-isolation-check.mjs']);
+    console.log('\n=== Running rls-context-check ===');
+    await run('node', ['scripts/rls-context-check.mjs']);
     console.log('\n=== Running content-check ===');
     await run('node', ['scripts/content-check.mjs']);
     console.log('\n=== Running contract-check ===');

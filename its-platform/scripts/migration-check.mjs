@@ -130,6 +130,31 @@ async function main() {
     if (rows[0].n !== 45) throw new Error(`expected 45 policies, got ${rows[0].n}`);
   });
 
+  await it("every learner_isolation predicate uses nullif(current_setting(...), '') (ADR-026 §4)", async () => {
+    // `qual`/`with_check` are the *deparsed* expressions, so match the function name
+    // case-insensitively: PostgreSQL 17 (PGlite) rewrites it as `NULLIF(…)`.
+    const usesNullif = /nullif\s*\(/i;
+    const rows = await q(
+      `SELECT tablename, qual, with_check FROM pg_policies
+       WHERE schemaname='public' AND policyname='learner_isolation'`,
+    );
+    if (rows.length !== 15) {
+      throw new Error(`expected 15 learner_isolation policies, got ${rows.length}`);
+    }
+    for (const row of rows) {
+      if (!row.qual || !usesNullif.test(row.qual)) {
+        throw new Error(
+          `table ${row.tablename}: USING predicate lacks nullif( — got ${row.qual ?? 'NULL'}`,
+        );
+      }
+      if (!row.with_check || !usesNullif.test(row.with_check)) {
+        throw new Error(
+          `table ${row.tablename}: WITH CHECK predicate lacks nullif( — got ${row.with_check ?? 'NULL'}`,
+        );
+      }
+    }
+  });
+
   await it('4 [db] triggers installed (I-3, D-5, G-8, hash chain)', async () => {
     const rows = await q(
       `SELECT tgname FROM pg_trigger

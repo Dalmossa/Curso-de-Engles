@@ -20,10 +20,15 @@ import type { MigrationInterface, QueryRunner } from 'typeorm';
  *    pg_advisory_xact_lock serializing concurrent appends.
  *  - RLS §9: 15 learner-scoped tables, one DO block looping the (table, predicate) pairs —
  *    ADR-003's learner_isolation / admin_bypass / worker_access on every row. The predicate
- *    uses `current_setting('app.current_learner_id', true)` (missing_ok): an unset GUC
- *    evaluates NULL — fail-closed (SELECT sees nothing, INSERT is rejected), whereas the
- *    strict two-arg form would raise a hard error and break tooling. Deviation recorded in
- *    ADR-019 §Implementation notes.
+ *    uses `current_setting('app.current_learner_id', true)` (missing_ok) wrapped in
+ *    `nullif(…, '')`. The GUC's real lifecycle has two unset-valued states, not one: it is
+ *    `NULL` on a session that never set it, and `''` on every connection after the first
+ *    transaction that did — COMMIT and ROLLBACK alike (measured, ADR-026 §4). `nullif`
+ *    collapses both to NULL, so a context-less statement is refused the same way everywhere:
+ *    fail-closed (SELECT sees nothing, INSERT is rejected). Without it the bare `::uuid` cast
+ *    on the post-transaction `''` raises `invalid input syntax for type uuid: ""`, a failure
+ *    mode that depends on how many transactions preceded it. The strict two-arg form would
+ *    raise a hard error and break tooling. Deviation recorded in ADR-019 §Implementation notes.
  *  - Grants: app = DML minus WORM tables; worker = DML minus WORM; admin = ALL.
  */
 
@@ -652,8 +657,8 @@ export const SCHEMA_STATEMENTS: string[] = [
       EXECUTE format('ALTER TABLE %I ENABLE ROW LEVEL SECURITY', t);
       EXECUTE format(
         'CREATE POLICY learner_isolation ON %I FOR ALL TO its_platform_app
-         USING (%I = current_setting(''app.current_learner_id'', true)::uuid)
-         WITH CHECK (%I = current_setting(''app.current_learner_id'', true)::uuid)',
+         USING (%I = nullif(current_setting(''app.current_learner_id'', true), '''')::uuid)
+         WITH CHECK (%I = nullif(current_setting(''app.current_learner_id'', true), '''')::uuid)',
         t, pred, pred);
       EXECUTE format(
         'CREATE POLICY admin_bypass ON %I FOR ALL TO its_platform_admin USING (true) WITH CHECK (true)',

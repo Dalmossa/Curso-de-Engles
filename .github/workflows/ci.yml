@@ -118,6 +118,38 @@ jobs:
         run: npm run domain:check
 
   # ------------------------------------------------------------------
+  # RLS Context Check (ADR-026 §3/§3b, P1.10)
+  # ------------------------------------------------------------------
+  # "One writer" is worth exactly what enforces it. `app.current_learner_id` may be named only in
+  # src/infrastructure/persistence/pg-session-context.ts (as the bind-parameter, transaction-scoped
+  # `set_config('app.current_learner_id', $1, true)`) and under src/migrations/, whose policy
+  # predicate must keep `nullif(current_setting('app.current_learner_id', true), '')` — without it
+  # the `''` placeholder raises `invalid input syntax for type uuid: ""` on a warm connection.
+  rls-context:
+    name: RLS Context Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          submodules: recursive
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: its-platform/package-lock.json
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: npm ci
+
+      - name: Run RLS context check
+        working-directory: its-platform
+        run: npm run rls:check
+
+  # ------------------------------------------------------------------
   # Content Integrity Verification
   # ------------------------------------------------------------------
   content-integrity:
@@ -374,6 +406,40 @@ jobs:
           DATABASE_URL: postgresql://its_platform_app_test:its_platform_app_test@localhost:5432/its_platform_test
         run: node scripts/migration-check.mjs
 
+      # Why this runs *after* the step above, and not before it. Two facts, both checked against a
+      # throwaway `postgres:16-alpine` rather than assumed:
+      #
+      #   * Running here is safe. `createTestDb()` in real-engine mode (`TEST_DATABASE_URL` set)
+      #     drops and recreates schema `public` on connect *and* in `cleanup()`, so the 33 migrated
+      #     tables and fixture rows `migration-check.mjs` leaves behind are gone before this spec's
+      #     `seedCatalogues()` runs. That normalisation is load-bearing, not cosmetic:
+      #     `seedCatalogues()` inserts `cefr_levels` with `sort_order` 0..5 under
+      #     `ON CONFLICT (code) DO NOTHING`, and that conflict target does not cover the *separate*
+      #     unique index `cefr_levels_sort_order_key` that migration-check has already filled with
+      #     (A1,1),(A2,2) — the spec's own `B1`/`sort_order`=2 insert then raises `duplicate key
+      #     value violates unique constraint "cefr_levels_sort_order_key"`.
+      #   * Running before it is not. `createTestDb()` leaves the three cluster-scoped roles
+      #     `its_platform_app|admin|worker` behind (`DROP SCHEMA public CASCADE` cannot remove them
+      #     and the migration has no `IF NOT EXISTS` guard — see the `cleanup()` note in
+      #     tests/helpers/db.ts), and in `SCHEMA_STATEMENTS` `CREATE ROLE` is statement 72 of 90
+      #     while every `ENABLE ROW LEVEL SECURITY`/`CREATE POLICY` is 79+. Once this spec has run
+      #     in a cluster, `migration-check.mjs` aborts its replay at statement 72: it reports 8
+      #     passed / 7 failed, starting with `role "its_platform_app" already exists` and ending
+      #     with 0 of 15 RLS tables and 0 of 45 policies — the RLS gate silently stops running.
+      #     The order is not a preference; the shared service container is why it matters.
+      #
+      # Only this one spec file is run here. It is the only suite whose second `describe` needs a
+      # real engine: it takes `SET ROLE its_platform_app` and exercises ADR-003's policy through
+      # `PgSessionContext`, which PGlite cannot express (ADR-014, narrowed by ADR-026 §5). The
+      # `integration` job keeps running the same file on PGlite; that is not duplication — the 12
+      # tests under the table owner pass on both engines, and only these 6 can tell them apart.
+      - name: Run RLS integration spec on PostgreSQL 16
+        working-directory: its-platform
+        env:
+          NODE_OPTIONS: --experimental-vm-modules
+          TEST_DATABASE_URL: postgresql://its_platform_app_test:its_platform_app_test@localhost:5432/its_platform_test
+        run: npx jest --no-coverage --testPathPattern tests/integration/diagnostic-persistence.spec.ts
+
   # ------------------------------------------------------------------
   # Mutation Testing (adaptive engine)
   # ------------------------------------------------------------------
@@ -420,6 +486,7 @@ jobs:
     needs:
       - lint
       - domain-isolation
+      - rls-context
       - content-integrity
       - contract-test
       - unit
@@ -518,6 +585,7 @@ jobs:
     needs:
       - lint
       - domain-isolation
+      - rls-context
       - content-integrity
       - contract-test
       - unit
@@ -532,6 +600,7 @@ jobs:
         run: |
           echo "Lint: ${{ needs.lint.result }}"
           echo "Domain Isolation: ${{ needs.domain-isolation.result }}"
+          echo "RLS Context: ${{ needs.rls-context.result }}"
           echo "Content Integrity: ${{ needs.content-integrity.result }}"
           echo "Contract Test: ${{ needs.contract-test.result }}"
           echo "Unit Tests: ${{ needs.unit.result }}"
@@ -549,6 +618,7 @@ jobs:
         if: |
           needs.lint.result != 'success' ||
           needs.domain-isolation.result != 'success' ||
+          needs.rls-context.result != 'success' ||
           needs.content-integrity.result != 'success' ||
           needs.contract-test.result != 'success' ||
           needs.unit.result != 'success' ||

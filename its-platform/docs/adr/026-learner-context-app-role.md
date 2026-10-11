@@ -54,7 +54,7 @@ running the probe, not by reasoning about the engines:
 (2) is the defect. (3) is the same wall as (1), which is what proves the GUC — not the role, not the
 transaction — is the whole difference between a run that stores and a run that does not.
 
-### Measured — the GUC's lifecycle, on real PostgreSQL 15.17
+### Measured — the GUC's lifecycle, on real PostgreSQL 15.17 and 16.14
 
 `docs/adr/019` and `docs/data-model.erd.md` §9 rest on one sentence: *an unset GUC evaluates NULL,
 so `missing_ok` is fail-closed and the strict two-arg form's hard error is avoided.* It is true on a
@@ -67,6 +67,12 @@ connection the GUC has never touched, and false on every connection afterwards:
 | 2 | **after `COMMIT`** | `''` — not `NULL` |
 | 3 | **after `ROLLBACK`** | `''` — not `NULL` |
 | 4 | after `set_config(…, false)` then `COMMIT` | `'99999999-…'` — **survives** |
+
+Rows 0–4 were re-run unchanged on **PostgreSQL 16.14** (`postgres:16-alpine`, the image the
+`rls-integration` CI job uses) while implementing this ADR — the target engine and the probe engine
+agree, including `''::uuid` raising `invalid input syntax for type uuid: ""`. Rows 2 and 4 are the
+two that matter: row 2 is why the `nullif` is not cosmetic, row 4 is why the third argument of
+`set_config` is a rule and not a style.
 
 The GUC becomes a *placeholder* at the end of the first transaction, and a placeholder's reset value
 is the empty string. `''::uuid` does not evaluate to `NULL`; it **raises**
@@ -146,11 +152,25 @@ impossible by construction rather than by discipline. Review rule: the third arg
 "One writer" is worth exactly what enforces it. `npm run domain:check` already fails a forbidden
 import under `src/domain/`; the GUC is the symmetrical case in `src/infrastructure/`, and it gets the
 same treatment rather than a review convention. `scripts/rls-context-check.mjs` — wired into
-`test:all` and the CI workflow — fails if the string `app.current_learner_id` appears in any file
-other than `src/infrastructure/persistence/pg-session-context.ts` and the migration, or in that file
-without `, true)`. Architecture that is only prose is re-litigated in the next PR; this repository
-has the scar for that in the P0.5 note on `content-check.mjs`, a gate that could not fail certifying
-a loader that did not work.
+`test:all` (`rls:check`) and the CI workflow — enforces three rules:
+
+- **Rule 1** — `app.current_learner_id` may appear only in
+  `src/infrastructure/persistence/pg-session-context.ts` and under `src/migrations/`. Anywhere else
+  under `src/` is reported as `file:line`.
+- **Rule 2** — the writer must contain the literal `set_config('app.current_learner_id', $1, true)`:
+  the bind parameter is not stylistic (a concatenated id is the injection §2 forbids), and the third
+  argument must never be `false`. A *missing* writer file is a failure, not "nothing to check".
+- **Rule 3** — every migration that names the GUC must carry the §4 predicate
+  (`nullif(current_setting(…, true), '')`), with one disclosed tolerance for the quote-doubling that
+  `CREATE POLICY` inside `DO $$`/`EXECUTE` forces.
+
+Rule 2 deliberately goes beyond the review rule of §3, because "contains `, true)`" is satisfied by a
+statement that interpolates the learner id. Framework rules that live only in prose are re-litigated
+in the next PR; this repository has the scar for that in the P0.5 note on `content-check.mjs`, a gate
+that could not fail certifying a loader that did not work. So the gate ships with its own failure
+evidence: it was watched rejecting a planted Rule 1 violation (`src/main.ts`), a Rule 2 flip to
+`false` in the writer, and a `nullif(` → `nullifX(` edit in the migration, and passing on the
+restored tree (`113 files scanned, 0 violations`).
 
 ### 4. The policy predicate becomes `nullif(current_setting('app.current_learner_id', true), '')::uuid`
 
@@ -235,6 +255,8 @@ refusal's *mode* is what §4 makes uniform.
   every connection instead of only a fresh one.
 - Content tables stay policy-free (ERD §9 rule 2), so the loader and `content-check.mjs` are
   unaffected by all of this.
+- `tests/helpers/db.ts` gains a second mode (`TEST_DATABASE_URL` → real PostgreSQL) but its default
+  path and its interface are unchanged: 13 call sites, none of which reads `pglite`, need no edit.
 
 ## Alternatives Considered
 
@@ -266,21 +288,42 @@ refusal's *mode* is what §4 makes uniform.
 
 ## Implementation Plan
 
-- [ ] `src/infrastructure/persistence/pg-session-context.ts` — `withLearner`, `set_config(…, true)`,
-      bind-parameter id, commit/rollback/release
-- [ ] `scripts/rls-context-check.mjs` — `app.current_learner_id` appears in exactly that file, and
-      with `, true)`; wired into `package.json` `test:all` and the CI workflow
-- [ ] `src/migrations/1791331200000-create-schema.ts` — `nullif(…, '')` in the `learner_isolation`
+- [x] `src/infrastructure/persistence/pg-session-context.ts` — `withLearner`, `set_config(…, true)`,
+      bind-parameter id, commit/rollback/release, blank id refused before a connection is opened
+- [x] `scripts/rls-context-check.mjs` — Rules 1–3 (see §3b); wired into `package.json` (`rls:check`),
+      `scripts/test-all.mjs` and the CI workflow; watched failing on three planted violations
+- [x] `src/migrations/1791331200000-create-schema.ts` — `nullif(…, '')` in the `learner_isolation`
       loop (15 tables), and the header's `missing_ok` note updated to the measured lifecycle
-- [ ] `scripts/migration-check.mjs` — assert the predicate text contains `nullif`
-- [ ] `tests/integration/diagnostic-persistence.spec.ts` — an app-role test: context-less `persist()`
-      is refused by RLS, and `withLearner(...)` persists the same run
-- [ ] `DiagnosticResultService` — persist through `withLearner`, so the production path is the tested
+- [x] `scripts/migration-check.mjs` — assert the predicate text contains `nullif` (all 15 policies,
+      `qual` and `with_check`; the count check stays)
+- [x] `tests/integration/diagnostic-persistence.spec.ts` — an app-role `describe` with 6 tests:
+      context-less `persist()` refused by RLS, `withLearner(…)` persists the same run, a foreign
+      context refused by `WITH CHECK`, the GUC gone after COMMIT, no carry-over between two
+      transactions on the connection, blank id refused
+- [x] `DiagnosticResultService` — persist through `withLearner`, so the production path is the tested
       path (not a second, untested one)
 - [x] corrected `docs/adr/README.md`'s 014 bullet, `docs/data-model.erd.md` §9 rule 4 + SQL template,
       `docs/adr/014`'s Binding constraint, `BACKLOG.md`'s "real PostgreSQL only" block and B-001
-- [ ] `@devops-engineer`: the `rls-integration` CI job runs the new app-role test against PostgreSQL 16
-      (the PGlite run is the fast gate; the service-container run is the real-engine one)
+- [x] the `rls-integration` CI job runs the new app-role test against PostgreSQL 16
+      (the PGlite run is the fast gate; the service-container run is the real-engine one).
+      `tests/helpers/db.ts` takes `TEST_DATABASE_URL` and switches to a real `DataSource`
+      (dropping/recreating schema `public` around each caller) while the default path stays PGlite.
+      The spec step runs **after** the migration step, and that order is not a preference: once a
+      spec run has left the cluster-scoped roles behind, `migration-check.mjs` aborts its replay at
+      its `CREATE ROLE` statement (statement 72 of 90) and never reaches the RLS loop (79+), so it
+      would report `0 of 15 RLS tables` and stop gating.
+
+### Measured at closure (2026-10-11)
+
+- `npx jest --testPathPattern tests/integration/diagnostic-persistence.spec.ts` → **18 passed** on
+  PGlite and **18 passed** with `TEST_DATABASE_URL` pointed at a real `postgres:16-alpine`.
+- The new negative control is not vacuous: replacing its `SET ROLE its_platform_app` with the owner
+  role makes it fail with `Received promise resolved instead of rejected`, and re-running with the
+  edit reverted restores the file byte-identically. That failure *is* B-001 — the old suite resolved
+  the same promise and called it a pass.
+- The GUC lifecycle table above reproduces on PostgreSQL 16.14 (`''` after `COMMIT`; `''::uuid`
+  raises; `set_config(…, false)` survives `COMMIT`).
+- `rls-context-check.mjs`: `113 file(s) scanned, 0 violations`.
 
 ## References
 
@@ -291,4 +334,5 @@ refusal's *mode* is what §4 makes uniform.
 - `docs/data-model.erd.md` §9 rules 1–4 · `docs/domain-model.md` §2.2 (X-4) · `CONSTITUTION.md` §4.8
 - `src/infrastructure/repositories/diagnostic-result.repository.ts` — P1.10, the first caller
 - `src/migrations/1791331200000-create-schema.ts` — the 15-table `learner_isolation` loop
+- `tests/helpers/db.ts` — the dual-mode harness (`TEST_DATABASE_URL`) · `scripts/rls-context-check.mjs`
 - `BACKLOG.md` B-001 (this defect) · `BACKLOG.md` P2.1 (the concurrent cross-learner suite)

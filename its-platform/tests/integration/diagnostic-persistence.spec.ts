@@ -20,6 +20,14 @@
  * all-wrong runs are asserted at the end of this file rather than described here. The two
  * ordinary profiles below remain (they keep exercising the mapping) and nothing about them is
  * now special.
+ *
+ * **Which role the tests run as.** The `describe` below connects as the **table owner** — `postgres`
+ * on the PGlite harness — and PostgreSQL does not apply a table's policies to its owner unless
+ * `FORCE ROW LEVEL SECURITY` is set, which neither diagnostic table sets. So none of the 12 tests
+ * below is an RLS test, and a `persist()` that never sets `app.current_learner_id` passes every one
+ * of them. ADR-026 measured exactly that and closed it: the second `describe` at the end of this
+ * file takes `SET ROLE its_platform_app` and exercises ADR-003's policy through
+ * `PgSessionContext`, the single writer of the GUC. It is the half these tests cannot see.
  */
 
 import { DataSource } from 'typeorm';
@@ -30,6 +38,10 @@ import {
   MAX_REMEDIATION_NODES,
   serializeDomainThetas,
 } from '../../src/infrastructure/repositories/diagnostic-result.repository.js';
+import {
+  PgSessionContext,
+  LearnerContextError,
+} from '../../src/infrastructure/persistence/pg-session-context.js';
 import { administerDiagnostic } from '../../src/domain/services/diagnostic-fixed-form.service.js';
 import { createDiagnosticFormV1 } from '../../src/domain/services/pilot-bank.service.js';
 import type { DiagnosticForm, DiagnosticRun } from '../../src/domain/entities/pilot-bank.js';
@@ -503,5 +515,175 @@ describe('DiagnosticResultRepository — P1.10 persistence (integration)', () =>
       expect(Number(row.se_after)).toBeGreaterThan(0);
       expect(Number(row.se_after)).toBeLessThan(999.999);
     }
+  });
+});
+
+/**
+ * ADR-026 — the same repository, as the role the application actually runs as.
+ *
+ * The `describe` above connects as the table owner, which bypasses ADR-003's `learner_isolation`
+ * policy (`relforcerowsecurity = false`), so it cannot tell a `persist()` that sets
+ * `app.current_learner_id` from one that does not. This describe can: it takes
+ * `SET ROLE its_platform_app` — the role the migration creates and grants — and drives the write
+ * through `PgSessionContext`, the single writer of the GUC.
+ *
+ * Role state is connection-scoped and the harness shares one connection, so every test restores
+ * with `RESET ROLE` in a `finally`. It is a separate database from the owner-role describe so the
+ * role switch and its fixture cannot bleed across.
+ */
+describe('DiagnosticResultRepository — ADR-003 RLS as its_platform_app (ADR-026)', () => {
+  let dataSource: DataSource;
+  let cleanup: () => Promise<void>;
+  let repository: DiagnosticResultRepository;
+  let sessionContext: PgSessionContext;
+
+  const OTHER_LEARNER_ID = '33333333-3333-4333-8333-333333333333';
+
+  beforeAll(async () => {
+    const testDb = await createTestDb();
+    dataSource = testDb.dataSource;
+    cleanup = testDb.cleanup;
+    repository = new DiagnosticResultRepository(dataSource);
+    sessionContext = new PgSessionContext(dataSource);
+
+    await dataSource.query(`INSERT INTO learners (id) VALUES ($1) ON CONFLICT (id) DO NOTHING`, [
+      LEARNER_ID,
+    ]);
+  });
+
+  afterAll(async () => {
+    await cleanup();
+  });
+
+  it('refuses a context-less persist() as the app role, writing no result row', async () => {
+    // ADR-026 probe 2 — the defect. Without the GUC the policy's WITH CHECK is false and the
+    // INSERT is refused. The count is taken as the owner (below, before/after `SET ROLE`) so the
+    // "no row written" assertion is not itself filtered by the policy.
+    const run = realRun();
+    await seedCatalogues(dataSource, run);
+
+    const [beforeRow] = await dataSource.query(`SELECT count(*)::int AS n FROM diagnostic_results`);
+
+    await dataSource.query(`SET ROLE its_platform_app`);
+    try {
+      await expect(repository.persist(run)).rejects.toThrow(/row-level security policy/);
+    } finally {
+      await dataSource.query(`RESET ROLE`);
+    }
+
+    const [afterRow] = await dataSource.query(`SELECT count(*)::int AS n FROM diagnostic_results`);
+    expect(afterRow.n).toBe(beforeRow.n);
+  });
+
+  it('persists the same run through withLearner(...) under the app role', async () => {
+    // ADR-026 probe 3: role + transaction + `set_config(..., true)` is the whole difference
+    // between a run that is refused and a run that stores. `seedCatalogues` supplies the run's FK
+    // targets, the same fixture the owner-role tests use.
+    const run = realRun();
+    await seedCatalogues(dataSource, run);
+
+    const persisted = await (async () => {
+      await dataSource.query(`SET ROLE its_platform_app`);
+      try {
+        return await sessionContext.withLearner(LEARNER_ID, async tx => {
+          const result = await repository.persist(run, tx);
+          const [row] = await tx.query(
+            `SELECT count(*)::int AS n FROM diagnostic_responses WHERE diagnostic_id = $1`,
+            [result.diagnosticId],
+          );
+          return { result, responsesInside: row.n as number };
+        });
+      } finally {
+        await dataSource.query(`RESET ROLE`);
+      }
+    })();
+
+    expect(persisted.result.responseCount).toBe(12);
+    expect(persisted.responsesInside).toBe(12);
+
+    // Read back as the owner after COMMIT: the run is really stored, not merely visible to the
+    // transaction that wrote it.
+    const [result] = await dataSource.query(
+      `SELECT learner_id, form_version FROM diagnostic_results WHERE id = $1`,
+      [persisted.result.diagnosticId],
+    );
+    expect(result).toBeDefined();
+    expect(result.learner_id).toBe(LEARNER_ID);
+    expect(result.form_version).toBe(run.formVersion);
+
+    const [responses] = await dataSource.query(
+      `SELECT count(*)::int AS n FROM diagnostic_responses WHERE diagnostic_id = $1`,
+      [persisted.result.diagnosticId],
+    );
+    expect(responses.n).toBe(12);
+  });
+
+  it('refuses a run whose learner does not match the session context (WITH CHECK)', async () => {
+    // ADR-026 probe 4 — fail-closed. A context for learner B cannot write learner A's row, so a
+    // mis-wired caller cannot reach across learners even though the role is granted on the table.
+    const run = realRun();
+    await seedCatalogues(dataSource, run);
+
+    await dataSource.query(`SET ROLE its_platform_app`);
+    try {
+      await expect(
+        sessionContext.withLearner(OTHER_LEARNER_ID, tx => repository.persist(run, tx)),
+      ).rejects.toThrow(/row-level security policy/);
+    } finally {
+      await dataSource.query(`RESET ROLE`);
+    }
+  });
+
+  it('scopes the GUC to the transaction: it is the learner inside, and gone after COMMIT', async () => {
+    // ADR-026 §3, measured on real PostgreSQL 15.17: after COMMIT the GUC is the empty-string
+    // placeholder, not NULL and not the learner's id. Either way it is not a usable context, so the
+    // assertion is "not the learner id" rather than a claim about the placeholder's exact value.
+    const observed = await (async () => {
+      await dataSource.query(`SET ROLE its_platform_app`);
+      try {
+        const inside = await sessionContext.withLearner(LEARNER_ID, async tx => {
+          const [row] = await tx.query(
+            `SELECT current_setting('app.current_learner_id', true) AS ctx`,
+          );
+          return row.ctx as string | null;
+        });
+        const [afterRow] = await dataSource.query(
+          `SELECT current_setting('app.current_learner_id', true) AS ctx`,
+        );
+        return { inside, after: afterRow.ctx as string | null };
+      } finally {
+        await dataSource.query(`RESET ROLE`);
+      }
+    })();
+
+    expect(observed.inside).toBe(LEARNER_ID);
+    expect(observed.after).not.toBe(LEARNER_ID);
+  });
+
+  it('does not carry one learner’s context into the next transaction on the connection', async () => {
+    // The pooled-connection leak ADR-026 §3 exists to make impossible: a second `withLearner` on
+    // the same connection must see its own id, never the previous transaction's.
+    const next = await (async () => {
+      await dataSource.query(`SET ROLE its_platform_app`);
+      try {
+        await sessionContext.withLearner(LEARNER_ID, async () => undefined);
+        return await sessionContext.withLearner(OTHER_LEARNER_ID, async tx => {
+          const [row] = await tx.query(
+            `SELECT current_setting('app.current_learner_id', true) AS ctx`,
+          );
+          return row.ctx as string | null;
+        });
+      } finally {
+        await dataSource.query(`RESET ROLE`);
+      }
+    })();
+
+    expect(next).toBe(OTHER_LEARNER_ID);
+  });
+
+  it('refuses a blank learner id before opening a connection', async () => {
+    await expect(sessionContext.withLearner('   ', async () => undefined)).rejects.toBeInstanceOf(
+      LearnerContextError,
+    );
   });
 });
