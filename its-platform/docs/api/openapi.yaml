@@ -191,63 +191,46 @@ components:
 
     LessonContent:
       type: object
-      required: [lesson_id, fase1, fase2, fase3, fase4, learner_model]
+      required: [lesson_id, title, cefr_level, reuse_basis, authoring_state, publication_state, phases, learner_model]
       properties:
         lesson_id: { type: string, pattern: '^les_[a-z0-9_]+$' }
         title: { type: string }
-        cefr_level: { type: string, pattern: '^A[12]|B[12]|C[12]$' }
+        cefr_level: { type: string, pattern: '^(A1|A2|B1|B2|C1|C2)$' }
         reuse_basis: { type: string, enum: [cite_only, adapt_with_attribution, adapt_requires_permission] }
-        fase1:
-          type: object
-          required: [content, media]
-          properties:
-            content: { type: string }
-            media:
-              type: array
-              items:
-                type: object
-                required: [type, url]
-                properties:
-                  type: { type: string, enum: [text, audio, video, image, interactive] }
-                  url: { type: string, format: uri }
-        fase2:
-          type: object
-          required: [exercises]
-          properties:
-            exercises:
-              type: array
-              items:
-                type: object
-                required: [type, prompt, expected_response, recast_enabled]
-                properties:
-                  type: { type: string, enum: [recognition, production, minimal_pair] }
-                  prompt: { type: string }
-                  expected_response: { type: string }
-                  recast_enabled: { type: boolean }
-        fase3:
-          type: object
-          required: [task, success_criteria]
-          properties:
-            task: { type: string }
-            success_criteria:
-              type: array
-              items: { type: string }
-            meta_button: { type: boolean }
-        fase4:
-          type: object
-          required: [items]
-          properties:
-            items:
-              type: array
-              items:
-                type: object
-                required: [item_id, skill]
-                properties:
-                  item_id: { type: string }
-                  skill: { type: string }
+        authoring_state:
+          type: string
+          enum: [authored, specified, unauthored, blocked, withdrawn]
+          description: 'The lessons row''s `authoring_state` (DDL CHECK vocabulary).'
+        publication_state:
+          type: string
+          enum: [publishable, restricted_pending_permission, not_publishable]
+          description: >-
+            The lessons row's `publication_state`. Served because P1.18 (pre-publish licence
+            check) consumes it; it is the lesson's declared value, not a new derivation.
+        phases:
+          type: array
+          minItems: 4
+          maxItems: 4
+          description: >-
+            The lesson's four authored phases, in order (ADR-027 §4). Replaces the sketch's
+            `fase1`–`fase4`, whose inner shapes were invented and one of which was
+            unsatisfiable: `fase4.items[].item_id` had no source in the lesson, the loader
+            wrote no such id, and the pack's items are not the phase's. The loader
+            materialises these into `lessons.body` and the endpoint serves them verbatim.
+            Measured: all 122 lessons yield phases [1,2,3,4].
+          items:
+            type: object
+            required: [phase, heading, markdown]
+            properties:
+              phase: { type: integer, minimum: 1, maximum: 4 }
+              heading: { type: string, description: 'The authored heading line, verbatim minus its `#`s' }
+              markdown: { type: string, description: 'The phase body, verbatim' }
         learner_model:
-          type: object
+          type: [object, 'null']
           additionalProperties: true
+          description: >-
+            The lesson's `DADOS PARA O LEARNER MODEL` JSON block, parsed; `null` when the
+            lesson declares none (1 of the 122 — `les_a2_it_internet_history`).
 
     PackOption:
       type: object
@@ -256,8 +239,16 @@ components:
         letter: { type: string, pattern: '^[A-D]$' }
         text: { type: string }
         is_key: { type: boolean }
-        br_pt_form: { type: string }
-        note: { type: string }
+        br_pt_form:
+          type: [string, 'null']
+          description: '`item_options.br_pt_form`; null on 117 of the 915 key options.'
+        note:
+          type: [string, 'null']
+          description: >-
+            The distractor rationale. Null on a key option — the parser writes
+            `note: isKey ? null : …` — and **all 915** key options in the catalogue are served
+            that way, so the published `type: string` rejected every pack and dialogue
+            response. Non-key options are the opposite extreme: 0 of 2579 has a null note.
       if:
         properties:
           is_key:
@@ -265,6 +256,12 @@ components:
         required: [is_key]
       then:
         required: [note]
+        properties:
+          note:
+            type: string
+            description: >-
+              A non-key option always carries one: `item_options` CHECK (is_key OR note IS NOT
+              NULL), and the parser falls back to a stated no-rationale marker rather than null.
 
     PackContent:
       type: object
@@ -279,28 +276,74 @@ components:
           minItems: 1
           items:
             type: object
-            required: [item_id, skill, domain, prompt, options, key]
+            required: [item_id, item_type, skill, domain, prompt, scoring, options]
             properties:
               item_id:
                 type: string
-                pattern: '^(vocab|grammar|reading|pronunciation|listening|coherence)(\.[a-z0-9_-]+)+$'
+                description: >-
+                  `items.id`. The catalog carries two generations — `vocab.meeting.standup_timebox`
+                  (771 ids, the legacy packs) and `voc_www_vs_internet_001` / `lst_gist_011`
+                  (117 ids, the canonical packs and the listening corpus). ADR-016 §2 resolves
+                  both through the alias table. **No pattern is published here:** the two files
+                  this ADR amends each carried one, they were exactly complementary, and each
+                  rejected the other's half of the catalogue.
+              item_type:
+                type: string
+                enum: [gap_fill, error_correction, form_selection, definition_match, register_selection, scanning, cloze, matching, ordering, contextual_selection, minimal_pair, production]
+                description: '`items.item_type` — the DDL CHECK vocabulary'
               skill: { type: string, enum: [grammar, vocab, reading, pronunciation, listening, coherence] }
               domain: { type: string }
-              prompt: { type: string }
+              prompt: { type: string, description: '`items.stem`' }
+              scoring:
+                type: string
+                enum: [choice, free_text, asr_phoneme_match]
+                description: >-
+                  `items.scoring`. Required reading alongside `key`: an item that is
+                  `asr_phoneme_match` carries no options and no key *by design*, and without this
+                  member its `options: []` + `key: null` is indistinguishable from a malformed
+                  item (6 of 847).
               options:
                 type: array
-                minItems: 3
+                description: >-
+                  `item_options` ordered by `position`. **No `minItems`:** ADR-004 already
+                  declares `options: List[Option]  # Empty for production/minimal-pair items`,
+                  and 6 of 847 items carry none.
                 items:
                   $ref: '#/components/schemas/PackOption'
-              key: { type: string, pattern: '^[A-D]$' }
+              key:
+                type: [string, 'null']
+                pattern: '^[A-D]$'
+                description: >-
+                  The key option's letter; `null` when there is no choice. ADR-004:
+                  `key: Optional[str]  # None for production items` — 6 of 847.
               listening_items:
                 type: array
+                description: >-
+                  ADR-004's `List[ListeningSlot] = []`, served as the empty array it declares.
+                  `post-lesson` §2.2 requires the pack manifest to record `listening_items: 0`
+                  *explicitly* rather than silently, and no pack item owns a listening slot today:
+                  all 847 loaded pack items are `modality = 'text'`, the 74 listening slots carry
+                  `dialogue_id` with `lesson_id IS NULL`, and `items.clip_ids` is never populated.
                 items:
                   type: object
                   required: [slot_id, skill]
                   properties:
                     slot_id: { type: string, pattern: '^lst_[a-z0-9_]+$' }
                     skill: { type: string }
+            if:
+              properties:
+                scoring:
+                  const: choice
+              required: [scoring]
+            then:
+              required: [key]
+              properties:
+                key:
+                  type: string
+                  description: >-
+                    `required` alone does not close this: a JSON `null` is present, so an item
+                    with `scoring: choice` and `key: null` was still valid. The type conjunct is
+                    what rejects it.
 
     DialogueContent:
       type: object
@@ -308,9 +351,20 @@ components:
       properties:
         dialogue_id: { type: string, pattern: '^dlg_[a-z0-9_]+$' }
         title: { type: string }
-        cefr_level: { type: string, pattern: '^A[12]|B[12]|C[12]$' }
-        status: { type: string, enum: [shipped, withdrawn, shadow_only] }
-        duration_seconds: { type: integer, minimum: 45 }
+        cefr_level: { type: string, pattern: '^(A1|A2|B1|B2|C1|C2)$' }
+        status:
+          type: string
+          enum: [shipped, shadow_only]
+          description: >-
+            The DDL's `dialogues.status`. `withdrawn` was published here and cannot occur: the
+            DDL CHECK admits only these two, withdrawal is an item-level state, and a withdrawn
+            dialogue's items are retired. A dialogue that is not `shipped` is not served at all
+            (the same 404 as an unknown id, ADR-027 §3); the member stays declared so the reason
+            a caller sees `shipped` is legible rather than accidental.
+        duration_seconds:
+          type: integer
+          minimum: 45
+          description: 'Q-L2 floor. The DDL CHECK is the full range: 45–120 s.'
         voices:
           type: array
           items:
@@ -327,18 +381,45 @@ components:
             required: [slot_id, skill, key, transcript]
             properties:
               slot_id: { type: string, pattern: '^lst_[a-z0-9_]+$' }
-              skill: { type: string, enum: [gist, detail, inference, lexical, pragmatic, pronunciation] }
-              key: { type: string, pattern: '^[A-D]$' }
-              transcript: { type: string }
+              skill:
+                type: string
+                enum: [gist, detail, inference, lexical, pragmatic, pronunciation]
+                description: >-
+                  `items.listening_kind` with its `lst_` prefix removed, and `lst_pron_minpair`
+                  → `pronunciation` — `listening-corpus-spec.md` §4's own type→skill table. All
+                  six occur (gist 13, detail 14, inference 11, lexical 10, pragmatic 7,
+                  pronunciation 19).
+              key:
+                type: string
+                pattern: '^[A-D]$'
+                description: >-
+                  The key option's letter. Required and satisfiable since ADR-027 §3a: 11 of the
+                  74 shipped slots mark their key with `✓ —` in the option table's trailing column
+                  rather than `✓` in the value column, and the reader now honours both.
+              transcript:
+                type: string
+                description: >-
+                  The dialogue's authored transcript (`dialogues.transcript`, ADR-027 §3b) — the
+                  artefact `clips` are derived from, so it is the only place the speaker's name and
+                  the authored line breaks survive. The same string for every slot of a dialogue:
+                  a per-slot slice would need a slot↔clip link and `items.clip_ids` is never
+                  populated.
               distractors:
                 type: array
+                description: 'The non-key options of the slot, by `position`.'
                 items:
                   type: object
-                  required: [letter, text, type]
+                  required: [letter, text]
                   properties:
                     letter: { type: string, pattern: '^[A-D]$' }
                     text: { type: string }
-                    type: { type: string, enum: [semantic_plausible, overgeneralization, phonological, lexical] }
+                    type:
+                      description: >-
+                        `item_options.distractor_type`. The DDL CHECK and
+                        `assessment-item-spec.md` §"Distractor taxonomy" declare the same six
+                        values; nullable, because 126 of the corpus's 233 non-key options carry a
+                        rationale where the type would sit.
+                      enum: [l1_transfer, overgeneralization, semantic_plausible, form_alternative, register_mismatch, negative_control, null]
 
     LearnerProfile:
       type: object
@@ -346,7 +427,7 @@ components:
       properties:
         learner_id: { type: string, format: uuid }
         created_at: { type: string, format: date-time }
-        cefr_level: { type: string, pattern: '^A[12]|B[12]|C[12]$' }
+        cefr_level: { type: string, pattern: '^(A1|A2|B1|B2|C1|C2)$' }
         mastery:
           type: object
           additionalProperties: { type: number, minimum: 0, maximum: 1 }
@@ -536,7 +617,7 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/DialogueContent' }
         '400': { $ref: '#/components/responses/BadRequest' }
-        '404': { description: Dialogue not found or status=withdrawn }
+        '404': { description: Dialogue not found, or found but not `shipped` — the same 404 body for both (ADR-027 §3) }
 
   /learners/{learner_id}/profile:
     get:

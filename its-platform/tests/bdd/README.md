@@ -121,25 +121,32 @@ And the dialogue status "shipped" is verified (not "withdrawn" or "shadow-only")
 ```gherkin
 Given learner "L1" requests lesson "les_a1_alphabet_sounds"
 When the content service fetches the lesson
-Then the response includes:
-  | phase | content_type | required |
-  | fase1 | i+1 input (text + audio) | true |
-  | fase2 | guided_practice (recognition + recast) | true |
-  | fase3 | output_task (communicative) | true |
-  | fase4 | formative_check (3+ items) | true |
-And the learner_model JSON block is valid per check_json
+Then the response carries exactly four phases, numbered 1..4 in this order
+And each phase carries the lesson's own heading (its leading ## stripped, both
+  authored header generations accepted) and that section's markdown verbatim
+  | phase | heading (the lesson's own)                    | markdown          |
+  | 1     | FASE 1 — Input (i+1) [N min]                  | the section body  |
+  | 2     | FASE 2 — Guided Practice [N min]              | that section's body |
+  | 3     | FASE 3 — Output Task [N min]                  | that section's body |
+  | 4     | FASE 4 — Shadow CAT [N min]                   | that section's body |
+And the learner_model member is the lesson's "DADOS PARA O LEARNER MODEL" JSON
+  block, parsed, or null for the one lesson that declares none
 And the reuse_basis is "cite_only"
+And authoring_state and publication_state are the lesson's declared values
 ```
 
 ### Scenario: Pack renders with canonical schema
 ```gherkin
-Given learner "L1" requests pack "pack-les-a1-greetings"
+Given learner "L1" requests pack "pack_les_a1_greetings_v1"
 When the practice service fetches the pack
 Then the response includes 7 items
-And each item has: item_id, skill, domain, prompt, options, key
+And each item has: item_id, item_type, skill, domain, prompt, scoring, options
 And item_id prefix matches skill namespace (grm_, voc_, prn_, lst_)
 And all options are distinct (case-sensitive, bold stripped)
-And exactly one option has is_key=true
+And for each item with scoring="choice": exactly one option has is_key=true and key is that option's letter
+And for each item with scoring<>"choice": options is empty and key is null (6 of 847 — ADR-004 "None for production items")
+And every non-key option carries a note (distractor rationale)
+And each item's listening_items is [] (ADR-004's declared default; post-lesson §2.2 requires the 0 to be explicit)
 ```
 
 ### Scenario: Legacy pack renders correctly
@@ -149,6 +156,7 @@ When the practice service fetches the pack
 Then the parser detects legacy schema
 And the response includes 7 items with same structure as canonical
 And the schema_version field is "legacy_v1"
+And item_id is served verbatim and not pattern-matched (two generations resolve through identifier_aliases, ADR-016 §2)
 ```
 
 ---
@@ -157,12 +165,17 @@ And the schema_version field is "legacy_v1"
 
 ### Scenario: Dialogue with shipped items only
 ```gherkin
-Given learner "L1" requests listening dialogue "dlg_a1_01_greetings"
+Given learner "L1" requests listening dialogue "dlg_a1_01_first_intro"
 When the listening service fetches the dialogue
-Then only items with Status="shipped" are included
-And items with Status="withdrawn" or "shadow-only" are excluded
-And the response includes transcript, key, distractors for each slot
-And each slot duration ≥ 45 seconds (Q-L2 floor)
+Then the dialogue is served only if status="shipped" and duration_seconds ≥ 45 (Q-L2 floor)
+And a dialogue that does not exist and a dialogue that exists but is not "shipped"
+  produce the same 404 body (ADR-027 §3 — the caller cannot tell them apart)
+And every slot has skill in {gist, detail, inference, lexical, pragmatic, pronunciation}
+And every slot has a non-null key — including the 11 slots that mark it with "✓ —"
+  in the option table's trailing column rather than "✓" in its value column
+And every slot carries the dialogue's authored transcript (dialogues.transcript, ADR-027 §3b),
+  the same string for every slot
+And each slot's distractors carry letter, text and an optional type from the six-value taxonomy
 ```
 
 ---

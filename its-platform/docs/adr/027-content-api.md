@@ -104,7 +104,17 @@ The OpenAPI files publish `required: [item_id, skill, domain, prompt, options, k
 | Items with **zero** options | **6** — all `scoring = 'asr_phoneme_match'` |
 | Items with **`key` null** | **6** — the same six; the other 841 carry exactly one key (A–D only) |
 | Items with exactly one `is_key` option | **841 / 847** |
+| `item_options` rows / of which key options | **3660** / **915** — 841 in the packs and 74 in the dialogue slots (one per shipped slot), and every item that has a choice carries exactly **four** options |
+| Key options whose `br_pt_form` is null | **117 of 915** (the other 798 carry a form) |
+| Key options whose `note` is null | **915 of 915** — and non-key options with a null `note`: **0** |
 | `skill_ids` namespaces in use | `vocab`, `grammar`, `reading`, `pronunciation` — all inside the published enum |
+
+Two of those rows are defects in their own right, and neither is visible without reading the
+served payload. `minItems: 3` does not mean "at most three are missing": it **rejects `options:
+[]`**, so the six legitimate items above are rejected precisely because they are legitimate.
+And a key option is served with `note: null`, so the published `note: {type: string}` rejects the
+response for **every pack and every dialogue in the catalogue** — the constraint was satisfiable
+by nothing the loader can write. The `br_pt_form` half is narrower but real: 117 responses.
 
 So the published `PackContent` is not a sketch that lacked a source; it is a **drift from an
 Accepted ADR**. The six items are the production/minimal-pair items `post-lesson` §2.4 and
@@ -167,8 +177,16 @@ behind it:
 | Field | Was | Becomes | Why |
 |---|---|---|---|
 | `items[].options` | `minItems: 3` | no `minItems` | ADR-004: *"Empty for production/minimal-pair items"*. 6 measured |
-| `items[].key` | required, `^[A-D]$` | `type: [string, 'null']`, `^[A-D]$`, **required when `scoring == 'choice'`** | ADR-004: *"None for production items"*. 6 measured, all `asr_phoneme_match` |
+| `items[].key` | required, `^[A-D]$` | `type: [string, 'null']`, `^[A-D]$`, **required *and* typed `string` when `scoring == 'choice'`** | ADR-004: *"None for production items"*. 6 measured, all `asr_phoneme_match`. The type conjunct is load-bearing: `required` alone is satisfied by an explicit `key: null`, which is precisely what those 6 rows serialise to — caught by validating the amended schema, not by reading it |
 | `items[].scoring`, `items[].item_type` | absent | **added**, enums of the DDL's own CHECK values | An item with `options: []` and `key: null` is uninterpretable without knowing it is phoneme-matched rather than malformed. Both are `NOT NULL` columns the loader already writes |
+| `items[].options[].br_pt_form`, `[].note` | `type: string` | `type: [string, 'null']`; `note` still required **and typed `string`** when `is_key` is false | Measured on the loaded catalogue: **all 915** key options are served with `note: null` — both parsers write `note: isKey ? null : …` — so the published `note: {type: string}` rejected the response for **every pack and every dialogue there is**. `br_pt_form` is `null` on **117** of the 915 (the other 798 carry a form), so that half rejected 117 responses. The `if is_key: false` branch needed the same type conjunct as `key`: `required: [note]` alone is satisfied by a present `note: null`, and the non-key half is satisfiable — 0 of the 2579 distractor options has a null `note` |
+
+**That the published `PackOption.note` was unsatisfiable is the same defect as the rest of this
+ADR, found the same way.** It was not visible in `content-check.mjs` (which reads the DDL, where
+`CHECK (is_key OR note IS NOT NULL)` *is* satisfied) nor in `verify-integrity.py` (which reads the
+content), because the contract was the only artefact asserting the unsatisfiable thing — and
+nothing validated a served payload against it. `tests/contract/schemas.spec.ts` did not: it
+asserted `expect(instance.fase4).toBeDefined()`.
 
 `items[].listening_items` stays in the schema and is served as **`[]`**, which is ADR-004's
 declared default (`List[ListeningSlot] = []`) and what `post-lesson` §2.2 requires be *explicit*
@@ -366,6 +384,36 @@ same change. The API is `0.1.0`, has never been released, and has no external tr
   by the shipped corpus. Both are amended together to the values above;
   `contract-check.mjs` reads only the first, so the second is checked by
   `tests/contract/schemas.spec.ts`.
+- **The drift is not limited to the three content schemas, and the two `item_id` patterns were
+  complementary.** Measured after the amendment: `ErrorResponse`, `LearnerProfile`,
+  `PlacementResult`, `PracticeSubmission` and `Problem` still differ between the two files
+  (`Problem` exists only in `api-spec`), and paths are the only structure they agree on. Those are
+  **not** P1.12's scope and are left as found — Alternative 12 records why. On the three schemas
+  this ADR owns, the constraints are now byte-equal after description stripping, including the
+  shared `PackOption` (added to `api-spec`, which had inlined it).
+- **The `item_id` pattern was the sharpest instance of the drift.** `api/openapi.yaml` published
+  `^(vocab|grammar|reading|pronunciation|listening|coherence)(\.[a-z0-9_-]+)+$` and `api-spec`
+  published `^(grm|voc|rdg|prn|lst|coh)_[a-z0-9_.-]+$`. Against the 888 distinct ids the catalog
+  actually holds, the first accepts **771** and the second **117**, **0 ids satisfy both**, and
+  neither accepts the other's half. The catalog carries two generations —
+  `vocab.meeting.standup_timebox` (771, the legacy packs) and `voc_www_vs_internet_001` /
+  `lst_gist_011` (117, the canonical packs and the listening corpus) — and ADR-016 §2 resolves
+  both through the alias table. **No pattern is published now**: a pattern this ADR cannot derive
+  from a spec, that rejects most of the catalogue, is the defect class the ADR exists to remove.
+  `tests/contract/schemas.spec.ts` validates both files against the same instances, which is the
+  comparison nothing was making.
+- **Two of the BDD scenarios this ADR amends named ids that do not exist.** *"Lesson renders with
+  FASE 1-4 structure"* cites `les_a1_alphabet_sounds` (real) but the pack scenario cited
+  `pack-les-a1-greetings` and the listening scenario `dlg_a1_01_greetings`. The catalogue holds
+  `pack_les_a1_greetings_v1` and `dlg_a1_01_first_intro`; neither published name resolves. The
+  scenarios now cite ids the loader has actually written — the same defect as the rest of this
+  ADR (an artefact asserting something no source produces), found by checking rather than reading.
+- **`item_options.distractor_type` is still not published on `PackContent`'s options** — only on
+  `DialogueContent`'s `distractors[].type`. Considered and left out: the dialogue contract already
+  declared a `type` (with a wrong vocabulary, so amending it is a correction), while `PackOption`
+  never declared one, and adding a field is a different change from repairing one. The data is
+  there for whoever needs it; the pack's consumer needs `is_key` and `scoring`, which are
+  published.
 - `migration-check.mjs`'s counts (33 tables, 4 enum types, 15 RLS tables, 45 policies, 4
   triggers, 27 indexes) are unaffected by a column on an existing table — `lessons.body` and
   `dialogues.transcript` are both columns.
@@ -415,7 +463,8 @@ same change. The API is `0.1.0`, has never been released, and has no external tr
 12. **One OpenAPI file.** Rejected for this ADR — it is the right end state, but choosing which
     of the two is canonical and rewiring `contract-check.mjs` is its own change, and doing it
     inside P1.12 would leave the API half unverifiable. Recorded here as the drift is now
-    known: the two files disagreed on two enums and nothing compared them.
+    known: the two files disagreed on two enums, on the `item_id` pattern, and on five
+    non-content schemas, and nothing compared them.
 
 ## Implementation Plan
 
@@ -425,13 +474,19 @@ same change. The API is `0.1.0`, has never been released, and has no external tr
 - [x] `content-loader.ts`: persist `body`
 - [x] `scripts/content-check.mjs`: 122 / 122×4 phases / 121 learner models
 - [x] `tests/unit/content/parsers.spec.ts`: both header generations, the throw, `learner_model`
-- [ ] `docs/data-model.erd.md` + migration + loader + types: `dialogues.transcript TEXT NOT NULL`
-- [ ] `listening-parser.ts`: the key marker's second generation (`✓` in either column)
-- [ ] `content-check.mjs`: every shipped slot has exactly one key
-- [ ] `docs/api/openapi.yaml` **and** `docs/api-spec.openapi.yaml`: the three schemas (ADR-027
-      §2–§5), the `cefr_level` pattern, and the `status`/`skill` reconciliation
+- [x] `docs/data-model.erd.md` + migration + loader + types: `dialogues.transcript TEXT NOT NULL`
+- [x] `listening-parser.ts`: the key marker's second generation (`✓` in either column)
+- [x] `content-check.mjs`: every shipped slot has exactly one key
+- [x] `docs/api/openapi.yaml` **and** `docs/api-spec.openapi.yaml`: the three schemas (ADR-027
+      §2–§5), the `cefr_level` pattern, the `status`/`skill`/`distractor_type` reconciliation,
+      the `item_id` patterns withdrawn (Neutral, measured 771/117/0-both), and `PackOption`'s
+      `br_pt_form`/`note` made `null`-able (915 key options served `note: null`, 117 a null
+      `br_pt_form`; the counts measured on the loaded catalogue, not estimated);
+      constraints verified byte-equal between the two files with descriptions stripped
+- [x] `tests/bdd/README.md`: the three content scenarios rewritten to the amended contract, and
+      the two ids they cited that do not exist replaced with ids the loader writes
+- [x] `CHANGELOG.md`: the breaking change, with its migration path
 - [ ] `src/modules/content/`: real `ContentService`, Controller 404s, `ContentModule` wiring
-- [ ] `CHANGELOG.md`: the breaking change, with its migration path
 - [ ] `tests/`: parser unit, service integration against the real migration, contract shape
 - [ ] `CHANGELOG`/`BACKLOG`/`MEMORY` updated; all gates green; committed
 
