@@ -18,6 +18,11 @@
  *
  * The function is total and side-effect free: same input → same output, no `Date`, no I/O, no
  * randomness (ADR-023 Decision 5), so P1.10 can persist exactly what was returned.
+ *
+ * `computeThetaEstimate` (below) is the second exported function of this module and implements
+ * `diagnostic-spec.md` §3.4 as ADR-025 decides it — a bounded, monotone, deterministic posterior
+ * mode with a `N(θ₀, 1)` prior. It replaced a fixed-point iteration that was not §3.4's formula
+ * at any step size and produced un-storable `se` values; see the function's own docstring.
  */
 
 import type {
@@ -197,48 +202,104 @@ function resolveRemediationNodes(
 }
 
 /**
- * Simple 2PL IRT scoring for fixed form (no CAT)
- * logit = a*(θ - b)
- * P(correct) = 1 / (1 + exp(-a*(θ - b)))
+ * `diagnostic-spec.md` §3.4's θ estimate for the fixed form (ADR-025 Decision 1–3).
+ *
+ *   θ₀ = initialTheta, σ = 1                       # P(θ) = N(θ₀, σ²)
+ *   logPosterior(θ) = −(θ − θ₀)² / (2σ²) + Σ_i log p_i(x_i | θ; a_i, b_i)
+ *   θ̂ = argmax over { θ₀ + k·GRID_STEP : k ∈ [−600, +600] }     # 1201 points, ties → smallest θ
+ *   se = 1 / √( Σ_i aᵢ²·pᵢ(1−pᵢ) ) evaluated at θ̂                # §3.4's second line, literally
+ *
+ * The 2PL log-likelihood is evaluated in its numerically stable log-sigmoid form, so no term
+ * overflows for any finite `z = aᵢ(θ − bᵢ)`:
+ *
+ *   correct   : log p = log σ(z)   = −log1p(exp(−z))
+ *   incorrect : log p = log(1−σ(z)) = −log1p(exp(+z))
+ *
+ * **`initialTheta` is the prior mean θ₀, not a warm start.** The executor calls this function
+ * twice per run in two documented modes (ADR-025 Decision 2): with `0.0` for the run's *overall*
+ * estimate, and with the running θ for each successive response, which is a §3.4 posterior given
+ * the prefix of responses — a sequential update, **not** twelve independent estimates. The
+ * previous implementation read `initialTheta` as a Newton-Raphson anchor and drifted away from
+ * it (+0.1·Σa per iteration once the information term collapsed); θ ≥ 0 in all 4096 patterns and
+ * `se` reached 1.8 × 10⁷, so 2509 of them could not be stored in `NUMERIC(6,3)`.
+ *
+ * Bounded by construction (ADR-025 E1): |θ̂ − θ₀| ≤ 6. `se = Infinity` for an empty response
+ * vector — §3.4's own ΣI = 0 limit — and never a substituted finite value (Decision 3): an
+ * estimator may not fabricate precision at the one point where it has none.
  */
-export function computeThetaEstimate(responses: Array<{ correct: boolean; a: number; b: number }>, initialTheta = 0.0): {
-  theta: number;
-  se: number;
-} {
-  // Simple maximum likelihood estimate (EAP-like approximation for fixed form)
-  // For the pilot, use a simple Newton-Raphson with few iterations
-  let theta = initialTheta;
-  const maxIter = 20;
-  const lr = 0.1;
+export function computeThetaEstimate(
+  responses: Array<{ correct: boolean; a: number; b: number }>,
+  initialTheta = 0.0
+): { theta: number; se: number } {
+  const theta0 = initialTheta;
+  const twoSigmaSquared = 2 * THETA_PRIOR_SIGMA * THETA_PRIOR_SIGMA;
 
-  for (let iter = 0; iter < maxIter; iter++) {
-    let sumInfo = 0;
-    let sumScore = 0;
+  // The grid scan is the "numerical quadrature" of §3.4 in its discrete form. Strict `>` and
+  // an ascending scan resolve a tie to the SMALLEST θ (ADR-025 Decision 1), and the index is
+  // tracked as an integer so the result is exactly reproducible.
+  let bestIndex = -THETA_GRID_HALF_STEPS;
+  let bestLogPosterior = -Infinity;
+
+  for (let k = -THETA_GRID_HALF_STEPS; k <= THETA_GRID_HALF_STEPS; k++) {
+    const theta = theta0 + k * THETA_GRID_STEP;
+    const deviation = theta - theta0;
+    // The prior, evaluated as the first factor of §3.4's expression. Its curvature is what
+    // bounds the estimate on an all-correct (monotone-likelihood) response set.
+    let logPosterior = -(deviation * deviation) / twoSigmaSquared;
 
     for (const r of responses) {
-      if (r.correct) {
-        sumScore += r.a;
-      }
-      // Fisher information approximation for 2PL
-      const p = 1 / (1 + Math.exp(-r.a * (theta - r.b)));
-      sumInfo += r.a * r.a * p * (1 - p);
+      const z = r.a * (theta - r.b);
+      logPosterior += r.correct ? logSigmoid(z) : logOneMinusSigmoid(z);
     }
 
-    // Gradient approximation
-    const gradient = sumScore - sumInfo * (theta - initialTheta);
-    theta += lr * gradient;
-
-    // Convergence check
-    if (Math.abs(lr * gradient) < 1e-4) break;
+    if (logPosterior > bestLogPosterior) {
+      bestLogPosterior = logPosterior;
+      bestIndex = k;
+    }
   }
 
-  // Compute SE from Fisher information
-  let info = 0;
+  const theta = theta0 + bestIndex * THETA_GRID_STEP;
+
+  // §3.4's `SE(θ) = 1 / √(Σ I_i(θ))`, summed at the posterior mode with no prior term.
+  let information = 0;
   for (const r of responses) {
-    const p = 1 / (1 + Math.exp(-r.a * (theta - r.b)));
-    info += r.a * r.a * p * (1 - p);
+    const p = sigmoid(r.a * (theta - r.b));
+    information += r.a * r.a * p * (1 - p);
   }
-  const se = info > 0 ? 1 / Math.sqrt(info) : 1.0;
 
-  return { theta, se };
+  return { theta, se: information > 0 ? 1 / Math.sqrt(information) : Infinity };
+}
+
+/** `N(θ₀, σ²)`'s σ: the scale the rest of the ladder is expressed in (ADR-025 Decision 1). */
+const THETA_PRIOR_SIGMA = 1.0;
+
+/** Grid spacing and half-range: `θ₀ ± 600·0.01 = θ₀ ± 6` (ADR-025 Decision 1, E1). */
+const THETA_GRID_STEP = 0.01;
+const THETA_GRID_HALF_STEPS = 600;
+
+/**
+ * `log σ(z) = −log1p(exp(−z))`, the correct-answer 2PL term, evaluated branch-stably.
+ *
+ * Both halves are bounded: `exp` never receives a positive argument large enough to overflow,
+ * and `log1p` keeps full precision as `z → ±∞`.
+ */
+function logSigmoid(z: number): number {
+  return z >= 0 ? -Math.log1p(Math.exp(-z)) : z - Math.log1p(Math.exp(z));
+}
+
+/** `log(1 − σ(z)) = log σ(−z)`, the incorrect-answer 2PL term, branch-stable for the same reason. */
+function logOneMinusSigmoid(z: number): number {
+  return z <= 0 ? -Math.log1p(Math.exp(z)) : -z - Math.log1p(Math.exp(-z));
+}
+
+/**
+ * `σ(z) = 1 / (1 + exp(−z))`, branch-stable so `exp` never overflows for `|z| → ∞`.
+ *
+ * Used only for §3.4's Fisher information at θ̂ (`p_i(1 − p_i)`), where the same argument
+ * applies as for the log forms above.
+ */
+function sigmoid(z: number): number {
+  if (z >= 0) return 1 / (1 + Math.exp(-z));
+  const expZ = Math.exp(z);
+  return expZ / (1 + expZ);
 }

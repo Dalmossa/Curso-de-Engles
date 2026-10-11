@@ -8,10 +8,12 @@
  * Two things about the instrument are load-bearing for reading these tests and are recorded
  * here rather than discovered:
  *
- * 1. `computeThetaEstimate` (P1.9 does not change it) returns `θ = 0` for an all-wrong set and
- *    diverges for an all-correct one, and it can never return `θ < 0`. Every assertion below is
- *    therefore about *shape and derivation* — the lattice, the intervals, the routing identity —
- *    and none depends on the estimator being a good estimator.
+ * 1. `computeThetaEstimate` is the instrument, and it is now `diagnostic-spec.md` §3.4's
+ *    posterior mode under an `N(θ₀, 1)` prior (ADR-025): bounded (`|θ̂ − θ₀| ≤ 6`), signed
+ *    (0/12 ⇒ θ̂ < 0), finite `se`, deterministic. Its acceptance is
+ *    `tests/domain/services/theta-estimator.spec.ts`; every assertion below is about *shape and
+ *    derivation* — the lattice, the intervals, the routing identity — and none is a claim that
+ *    the estimator is a good estimator.
  * 2. `§3.3a`'s floor is 5 items per domain and this form has 4/3/3/2/0, so **no** domain is
  *    reportable. That is the ADR's intended outcome (its Consequences, "Negative" 1), not a
  *    bug: the honest report is "three bands and two gaps".
@@ -28,6 +30,7 @@ import {
   STOPPING_RULE_FIXED_FORM,
 } from '../../../src/domain/services/diagnostic-fixed-form.service.js';
 import { computeStartNode } from '../../../src/domain/services/diagnostic-placement.service.js';
+import { CEFR_THRESHOLDS } from '../../../src/domain/entities/pilot-bank.js';
 import { createDiagnosticFormV1 } from '../../../src/domain/services/pilot-bank.service.js';
 
 /** The real form, once. Every test administers this one. */
@@ -388,6 +391,19 @@ describe('diagnostic-fixed-form.service — ADR-024 D7: §3.3a\'s lattice', () =
   });
 
   it('11. cefr is never C1/C2 — the ladder is A1–B2 and total', () => {
+    // ADR-025: `cefr` is the band of `thetaOverall` under `CEFR_THRESHOLDS` (stats §3.1), so
+    // the band MUST be recomputable from the run's own θ. This replaces the magnitude assertion
+    // `expect(extreme.thetaOverall).toBeGreaterThan(1.5)`: that assertion encoded the broken
+    // estimator (all-correct used to estimate θ = 30.6; ADR-025's honest value is 1.46, because
+    // the form's hardest item has b = 0.1, so 12 items cannot evidence B2). The ladder's
+    // totality over the run — not the size of the estimate — is the acceptance.
+    const bandOf = (theta: number): string => {
+      if (theta < CEFR_THRESHOLDS.A2.min) return CEFR_THRESHOLDS.A1.label;
+      if (theta < CEFR_THRESHOLDS.B1.min) return CEFR_THRESHOLDS.A2.label;
+      if (theta < CEFR_THRESHOLDS.B2.min) return CEFR_THRESHOLDS.B1.label;
+      return CEFR_THRESHOLDS.B2.label;
+    };
+
     const responseSets = [
       answer(true),
       answer(false),
@@ -400,13 +416,37 @@ describe('diagnostic-fixed-form.service — ADR-024 D7: §3.3a\'s lattice', () =
       expect(['A1', 'A2', 'B1', 'B2']).toContain(result.cefr);
       expect(['C1', 'C2']).not.toContain(result.cefr);
       expect(['A1', 'A2', 'B1', 'B2']).toContain(result.startCefr);
+      // The reported band is exactly the band of the run's own θ — one ladder, not two.
+      expect(result.cefr).toBe(bandOf(result.thetaOverall));
     }
 
-    // The extreme the ladder must still bound: an all-correct run estimates θ ≫ 1.5, and the
-    // answer is B2 (the top band of this bank), never a fabricated C1.
+    // Totality over the form: sweep the response patterns and assert the ladder closes for every
+    // one. A stride is used because one `run()` is ~17 grid scans (~40 ms) — all 4096 would be
+    // ~3 minutes — and the *exhaustive* 4096-pattern sweep already runs in theta-estimator.spec
+    // .ts, where it proves the storage bound. Here the property is only "the band is total".
+    const STRIDE = 32;
+    for (let bits = 0; bits < 4096; bits += STRIDE) {
+      const result = run({
+        responses: FORM.items.map((item, index) => ({
+          itemId: item.id,
+          correct: (bits & (1 << index)) !== 0,
+          responseTimeMs: 1000 + index,
+        })),
+      });
+      expect(['A1', 'A2', 'B1', 'B2']).toContain(result.cefr);
+      expect(['C1', 'C2']).not.toContain(result.cefr);
+      expect(result.cefr).toBe(bandOf(result.thetaOverall));
+      expect(result.startCefr).not.toBe('C1');
+      expect(result.startCefr).not.toBe('C2');
+    }
+
+    // The extreme the ladder must still bound, at the honest value: an all-correct run estimates
+    // θ above the B1 entry (1.5 is out of reach on this bank — ADR-025 §6), and the answer is
+    // B1, never a fabricated B2/C1 from a divergence.
     const extreme = run({ responses: answer(true) });
-    expect(extreme.thetaOverall).toBeGreaterThan(1.5);
-    expect(extreme.cefr).toBe('B2');
+    expect(extreme.thetaOverall).toBeGreaterThan(CEFR_THRESHOLDS.B1.min);
+    expect(extreme.cefr).toBe('B1');
+    expect(extreme.cefr).toBe(bandOf(extreme.thetaOverall));
   });
 });
 
@@ -422,7 +462,9 @@ describe('diagnostic-fixed-form.service — ADR-024 D8: profile is the §4 diagn
   });
 
   it('12b. a neutral run yields no §4 diagnosis and no confidence node', () => {
-    const neutral = run({ responses: answer(false) }); // Δ = 0, pronunciation θ = 0
+    // ADR-025 measures this run instead of pinning it to 0: Δ = −0.12 (below the 1.0 trigger)
+    // and pronunciation θ = −0.72 (above the −1.0 trigger), so still no diagnosis and no node.
+    const neutral = run({ responses: answer(false) });
 
     expect(neutral.profile).toBeNull();
     expect(neutral.remediationNodes).not.toContain('les_rem_confidence_builder');

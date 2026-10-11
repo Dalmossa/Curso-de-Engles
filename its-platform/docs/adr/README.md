@@ -34,6 +34,7 @@
 | [022](022-content-loader-schema-reconciliation.md) | Content loader ↔ P0.4 schema reconciliation — persistence contract, derived-field rules, skip baseline | Accepted | 2026-10-10 | — |
 | [023](023-diagnostic-routing-semantics.md) | Diagnostic routing semantics — ADR-017 §3's operational rule, the CEFR↔θ threshold set, the start-node table | Accepted | 2026-10-11 | — |
 | [024](024-fixed-form-executor-contract.md) | Fixed-form diagnostic executor — completeness, ordering, the §3.3a reportability lattice, the run's output contract | Accepted | 2026-10-11 | — |
+| [025](025-theta-estimation-posterior.md) | θ estimation for the fixed form — §3.4's posterior, the prior it needs, the storage contract it must respect | Accepted | 2026-10-11 | — |
 
 ### Read before writing any persistence code — ADR-015…018
 

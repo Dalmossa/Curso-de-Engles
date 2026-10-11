@@ -185,6 +185,41 @@ SE(θ) = 1 / √(Σ I_i(θ))
 ```
 Implementation: Numerical quadrature (Gauss-Hermite, 31 points) or Metropolis-Hastings.
 
+> ⚠️ **AMENDED (ADR-025, 2026-10-11).** Two defects in the block above, both of them invisible to
+> a reader who trusts one half of it.
+>
+> 1. **The label and the formula disagree.** It says `EAP (Expected A Posteriori)` — the posterior
+>    **mean** — and writes `argmax_θ [...]`, the posterior **mode**. The operator is the executable
+>    text; the abbreviation is a name for a different functional. (ADR-023 resolved the same class
+>    of conflict in ADR-017 §3 by the same rule.)
+> 2. **`P(θ)` was never defined anywhere.** Without it the expression is unbounded: for an
+>    all-correct response set the likelihood is strictly increasing in θ, so its argmax is `+∞`. A
+>    fixed-form estimator therefore **cannot exist** without a stated prior, and the implementation
+>    that omitted one drifted `+0.1·Σa` per iteration.
+>
+> **Binding reading — implemented in `computeThetaEstimate`, `src/domain/services/diagnostic-placement.service.ts`:**
+>
+> ```
+> θ₀ = initialTheta,  P(θ) = N(θ₀, 1)
+> logPosterior(θ) = −(θ − θ₀)²/2σ² + Σ_i log p_i(x_i | θ; a_i, b_i)   # stable log1p log-sigmoid
+> θ̂ = argmax over { θ₀ + k·0.01 : k ∈ [−600, +600] }     # 1201 points, ties → smallest θ
+>                                         # bounded: |θ̂ − θ₀| ≤ 6
+> se = 1/√(Σ_i I_i(θ̂))                    # as the second line already wrote; Infinity if ΣI = 0
+> ```
+>
+> `θ₀ = initialTheta` (default `0`) gives the existing parameter a real meaning: the run's *overall*
+> estimate uses `θ₀ = 0`, and each response's estimate uses the running θ — a documented
+> **sequential** update, not 12 independent estimates. `se = Infinity` for an empty response vector
+> is the formula's own `ΣI = 0` limit; a substituted finite fallback (the previous `: 1.0` branch)
+> fabricates precision at the one point where there is none. **Metropolis-Hastings is not
+> admissible here** — ADR-024 D4 makes the executor a pure function of its inputs, and a sampler's
+> output is a function of a seed nobody passes.
+>
+> **Retained alternative, not chosen:** the Gauss-Hermite 31-point *posterior mean* is the reading
+> the abbreviation names. Adopting it would report a marginally different number; it is now an
+> explicit, nameable change instead of a silent re-reading. Full comparison, rejected options and
+> measured consequences (`cefr = B2` unreachable on the current 12-item form) → **ADR-025**.
+
 ### 3.5 Stopping Rules (ANY triggers stop)
 > ⚠️ **AMENDED (X4 + correction X12).** Two problems in the original table.
 >
