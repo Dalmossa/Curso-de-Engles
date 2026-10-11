@@ -1,4 +1,8 @@
-import { parseLesson } from '../../../src/infrastructure/content/lesson-parser.js';
+import {
+  extractLearnerModel,
+  extractPhases,
+  parseLesson,
+} from '../../../src/infrastructure/content/lesson-parser.js';
 import { parsePack } from '../../../src/infrastructure/content/pack-parser.js';
 import {
   parseListeningCorpus,
@@ -12,9 +16,34 @@ import {
  * `listening_slots` table.
  */
 
+/**
+ * ADR-027 §5: `parseLesson` now fails closed unless `extractPhases` yields exactly
+ * 1,2,3,4, so every fixture carries the four `FASE` headings the real lessons have.
+ */
+const PHASES = `## FASE 1 — Input (i+1) [4 min]
+
+Phase one body.
+
+## FASE 2 — Guided Practice [5 min]
+
+Phase two body.
+
+## FASE 3 — Output Task [4 min]
+
+Phase three body.
+
+## FASE 4 — Shadow CAT [2 min]
+
+Phase four body.
+`;
+
 describe('Lesson parser', () => {
   it('reads the JSON learner-model block and derives the ADR-019 state columns', () => {
     const markdown = `# Test
+
+${PHASES}
+## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+
 \`\`\`json
 {
   "lesson_id": "les_a1_test",
@@ -37,12 +66,20 @@ describe('Lesson parser', () => {
     expect(result.authoring_state).toBe('authored');
     expect(result.publication_state).toBe('publishable');
     expect(result.permission_state).toBe('not_required');
+    // ADR-027 §5: the four phases and the learner model land on `lessons.body`.
+    expect(result.body.phases.map(p => p.phase)).toEqual([1, 2, 3, 4]);
+    expect(result.body.phases[0]?.heading).toBe('FASE 1 — Input (i+1) [4 min]');
+    expect(result.body.learner_model).toEqual(
+      expect.objectContaining({ lesson_id: 'les_a1_test' }),
+    );
   });
 
   it('takes the declared id over the filename and resolves the module from the §4.3 registry', () => {
     const markdown = `**Lesson ID:** \`les_a2_greetings_intro\`
 **Reuse basis:** \`adapt_requires_permission\`
 **Source Markdown:** \`Ingles-basico.md\`
+
+${PHASES}
 \`\`\`json
 {
   "lesson_id": "les_a2_greetings_intro",
@@ -76,6 +113,7 @@ describe('Lesson parser', () => {
 | **CEFR Level** | B1 (threshold) |
 | --- | --- |
 
+${PHASES}
 \`\`\`json
 { "lesson_id": "les_b1_standup", "cefr_level": "A2+" }
 \`\`\`
@@ -84,6 +122,85 @@ describe('Lesson parser', () => {
     // which is not a CEFR code; the metadata table wins.
     const result = parseLesson(markdown, 'lesson-b1-standup.md');
     expect(result.cefr_level).toBe('B1');
+  });
+});
+
+describe('Lesson phases and learner model (ADR-027 §5)', () => {
+  it('extracts the four phases verbatim, spanning both header generations', () => {
+    const generationA = `## FASE 1 — Input (i+1) [4 min]
+a1
+## FASE 2 — Guided Practice [5 min]
+a2
+## FASE 3 — Output Task [4 min]
+a3
+## FASE 4 — Shadow CAT [2 min]
+a4
+`;
+    const a = extractPhases(generationA);
+    expect(a.map(p => p.phase)).toEqual([1, 2, 3, 4]);
+    expect(a[0]?.heading).toBe('FASE 1 — Input (i+1) [4 min]');
+    expect(a[0]?.markdown).toBe('a1');
+    expect(a[3]?.markdown).toBe('a4');
+
+    const generationB = `## 📥 FASE 1: INPUT COMPREENSÍVEL (i+1) — 4 min
+b1
+## 🛠 FASE 2: GUIDED PRACTICE — 5 min
+b2
+## 🎭 FASE 3: OUTPUT TASK (Communicative) — 4 min
+b3
+## ✅ FASE 4: FORMATIVE CHECK — 2 min
+b4
+`;
+    const b = extractPhases(generationB);
+    expect(b.map(p => p.phase)).toEqual([1, 2, 3, 4]);
+    // `heading` is verbatim: emoji, case and the `:` separator are preserved.
+    expect(b[0]?.heading).toBe('📥 FASE 1: INPUT COMPREENSÍVEL (i+1) — 4 min');
+    expect(b[3]?.heading).toBe('✅ FASE 4: FORMATIVE CHECK — 2 min');
+  });
+
+  it('does not read a FASE heading inside a fenced block', () => {
+    const markdown = `## FASE 1 — Input (i+1) [4 min]
+one
+\`\`\`
+## FASE 2 — not a heading
+\`\`\`
+## FASE 2 — Guided Practice [5 min]
+two
+## FASE 3 — Output Task [4 min]
+three
+## FASE 4 — Shadow CAT [2 min]
+four
+`;
+    const phases = extractPhases(markdown);
+    expect(phases.map(p => p.phase)).toEqual([1, 2, 3, 4]);
+    expect(phases[1]?.heading).toBe('FASE 2 — Guided Practice [5 min]');
+    expect(phases[1]?.markdown).toBe('two');
+    // The fenced line stays inside phase 1's body, verbatim.
+    expect(phases[0]?.markdown).toContain('## FASE 2 — not a heading');
+  });
+
+  it('fails closed when the headings are not exactly 1,2,3,4', () => {
+    expect(() =>
+      extractPhases('## FASE 1 — A [1 min]\n\n## FASE 3 — C [1 min]\n'),
+    ).toThrow(/1,2,3,4/);
+    expect(() => extractPhases('# Nothing here\n')).toThrow(/1,2,3,4/);
+  });
+
+  it('reads the learner-model JSON from its section, or null when absent', () => {
+    expect(extractLearnerModel('# Nothing here\n')).toBeNull();
+    const withModel = `## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+
+\`\`\`json
+{ "lesson_id": "les_a1_test" }
+\`\`\`
+`;
+    expect(extractLearnerModel(withModel)).toEqual({ lesson_id: 'les_a1_test' });
+    // A malformed fence still throws (the loader names the file).
+    expect(() =>
+      extractLearnerModel(
+        '## 📊 DADOS PARA O LEARNER MODEL\n\n```json\n{ not valid json }\n```\n',
+      ),
+    ).toThrow(/Invalid JSON/);
   });
 });
 
@@ -220,7 +337,41 @@ describe('Listening parser', () => {
     expect(result.dialogues[0]!.items[0]!.stem).toBe('What is this conversation mainly about?');
     expect(result.dialogues[0]!.items[0]!.options.length).toBe(2);
     expect(result.dialogues[0]!.items[0]!.key).toBe('B');
-    expect(result.dialogues[0]!.items[0]!.options[1]!.is_key).toBe(true);
+    expect(result.dialogues[0]!.items[0]!.options.filter(o => o.is_key).length).toBe(1);
+  });
+
+  // ADR-027 §3b: the authored transcript is the artefact `clips` are derived from — a clip
+  // keeps one turn's text plus a `speaker_id`, so the speaker's name and the authored line
+  // structure survive only in `dialogues.transcript`.
+  it('keeps the authored transcript verbatim (ADR-027 §3b)', () => {
+    const d = parseListeningCorpus(corpus).dialogues[0]!;
+    expect(d.transcript).toBe('> **Ana:** Hello there.\n> **Ben:** Hi Ana.');
+  });
+
+  // ADR-027 §3a: the key marker has two generations in `corpus/listening-corpus.md` — 76 rows
+  // put `✓` in the value column, 11 put `✓ —` in the trailing column where the distractor type
+  // would sit. Reading only the value column loaded those 11 shipped slots with `key = null`
+  // and every option `is_key = false`, i.e. unscorable.
+  const corpusWithTrailingKey = corpus.replace(
+    `| Slot | Value |
+|------|-------|
+| A | A greeting |
+| B | **A first meeting** ✓ |`,
+    `| Slot | Value | Distractor type |
+|------|-------|-----------------|
+| A | A greeting | semantic_plausible |
+| B | **A first meeting** | ✓ — |`,
+  );
+
+  it('reads the key marker from the trailing column too, and still exactly one key', () => {
+    const item = parseListeningCorpus(corpusWithTrailingKey).dialogues[0]!.items[0]!;
+    expect(item.key).toBe('B');
+    expect(item.options.filter(o => o.is_key).length).toBe(1);
+    expect(item.options[1]!.option_text).toContain('A first meeting');
+    expect(item.options[1]!.is_key).toBe(true);
+    // The key row's own column carries the marker, not a distractor type.
+    expect(item.options[0]!.note).toBe('semantic_plausible');
+    expect(item.options[1]!.note).toBeNull();
   });
 
   it('models duration at 150 wpm — the Q-L2 floor is the DDL CHECK, not a throw', () => {

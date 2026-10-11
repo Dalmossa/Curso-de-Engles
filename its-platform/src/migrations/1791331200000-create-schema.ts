@@ -101,6 +101,7 @@ export const SCHEMA_STATEMENTS: string[] = [
     permission_state  VARCHAR(20) NOT NULL
       CHECK (permission_state IN ('not_required','requested','granted','refused')),
     source_ref        TEXT,
+    body              JSONB NOT NULL DEFAULT '{"phases":[],"learner_model":null}',  -- ADR-027 §5: the lesson's four authored phases + learner model
     created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at        TIMESTAMPTZ NOT NULL DEFAULT now()
   )`,
@@ -155,6 +156,7 @@ export const SCHEMA_STATEMENTS: string[] = [
     cefr_level       VARCHAR(3) NOT NULL REFERENCES cefr_levels(code),
     status           VARCHAR(20) NOT NULL CHECK (status IN ('shipped','shadow_only')),
     duration_seconds INT NOT NULL CHECK (duration_seconds BETWEEN 45 AND 120),
+    transcript       TEXT NOT NULL,  -- ADR-027 §3b: the authored transcript block; clips are derived from it
     created_at       TIMESTAMPTZ NOT NULL DEFAULT now()
   )`,
 

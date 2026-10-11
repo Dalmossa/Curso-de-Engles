@@ -1,4 +1,4 @@
-import type { LessonRecord } from './content-types.js';
+import type { LessonBody, LessonPhase, LessonRecord } from './content-types.js';
 
 /**
  * Optional context the loader supplies so the parser can honour ADR-022 §3's
@@ -30,6 +30,125 @@ function cleanTitle(h1: string): string {
   t = t.replace(/^(Lesson|Lição de 15 Minutos)\s*:\s*/i, '').trim();
   t = t.replace(/^["“]/, '').replace(/["”]$/, '').trim();
   return t;
+}
+
+/**
+ * A `FASE` heading, tolerant across the two generations measured in the content
+ * (ADR-027 §3): level 1–3, an optional emoji/pictograph run, then `FASE`, optional
+ * spaces, a digit. The separator (`—` vs `:`) and the `[N min]` suffix are not
+ * required — the heading is otherwise read verbatim.
+ */
+const PHASE_HEADING =
+  /^#{1,3}[ \t]+(?:\p{Extended_Pictographic}[\uFE0F\u200D\p{Extended_Pictographic}]*[ \t]+)*FASE[ \t]*(\d)/u;
+
+/** `## 📊 DADOS PARA O LEARNER MODEL …` — the section that carries the JSON block. */
+const LEARNER_MODEL_HEADING =
+  /^#{1,3}[ \t]+(?:\p{Extended_Pictographic}[\uFE0F\u200D\p{Extended_Pictographic}]*[ \t]+)*DADOS PARA O LEARNER MODEL/iu;
+
+/**
+ * The lesson's four authored `FASE` blocks, verbatim and in `phase` order
+ * (ADR-027 §5). **Fence-aware**: a `FASE` line inside a ``` or ~~~ fenced block is
+ * not a heading. Returns exactly four entries.
+ *
+ * Throws when the headings are not exactly `1,2,3,4`: the same fail-fast stance the
+ * strict `JSON.parse` on the learner-model block takes (ADR-022 §2). The loader
+ * names the offending file; the message names the offending values.
+ */
+export function extractPhases(markdown: string): LessonPhase[] {
+  const lines = markdown.split(/\r?\n/);
+  const found: Array<{ phase: number; heading: string; lineIndex: number }> = [];
+
+  let inFence = false;
+  let fenceChar: string | null = null;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line === undefined) continue;
+
+    const fence = line.match(/^\s*(`{3,}|~{3,})/);
+    if (fence && fence[1]) {
+      const ch = fence[1][0] ?? '';
+      if (!inFence) {
+        inFence = true;
+        fenceChar = ch;
+      } else if (ch === fenceChar) {
+        inFence = false;
+        fenceChar = null;
+      }
+      continue;
+    }
+    if (inFence) continue;
+
+    const m = line.match(PHASE_HEADING);
+    if (!m || !m[1]) continue;
+    found.push({
+      phase: Number(m[1]),
+      heading: line.replace(/^#{1,3}[ \t]*/, '').trim(),
+      lineIndex: i,
+    });
+  }
+
+  const numbers = found.map(f => f.phase);
+  if (numbers.join(',') !== '1,2,3,4') {
+    throw new Error(
+      `lesson FASE headings must be exactly 1,2,3,4 in order; got [${numbers.join(',')}]`,
+    );
+  }
+
+  return found.map((f, idx) => {
+    const next = found[idx + 1];
+    const bodyEnd = next ? next.lineIndex : lines.length;
+    return {
+      phase: f.phase,
+      heading: f.heading,
+      // The section body: from the line after the heading to the line before the next
+      // FASE heading (or EOF), heading excluded, trailing whitespace trimmed.
+      markdown: lines
+        .slice(f.lineIndex + 1, bodyEnd)
+        .join('\n')
+        .replace(/\s+$/, ''),
+    };
+  });
+}
+
+/**
+ * The parsed JSON of the `## 📊 DADOS PARA O LEARNER MODEL` section's ```json fence,
+ * or `null` when the lesson has no such section (ADR-027 §5; measured: 121/122).
+ * The parse stays strict — a malformed fence throws (the loader names the file).
+ */
+export function extractLearnerModel(markdown: string): unknown | null {
+  const lines = markdown.split(/\r?\n/);
+
+  let headingIndex = -1;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line !== undefined && LEARNER_MODEL_HEADING.test(line)) {
+      headingIndex = i;
+      break;
+    }
+  }
+  if (headingIndex === -1) return null;
+
+  for (let i = headingIndex + 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (line === undefined || !/^\s*```json/.test(line)) continue;
+    let end = -1;
+    for (let j = i + 1; j < lines.length; j++) {
+      const l2 = lines[j];
+      if (l2 !== undefined && l2.trim().startsWith('```')) {
+        end = j;
+        break;
+      }
+    }
+    if (end === -1) {
+      throw new Error('Unterminated JSON fence in the learner model block');
+    }
+    try {
+      return JSON.parse(lines.slice(i + 1, end).join('\n')) as unknown;
+    } catch (e) {
+      throw new Error(`Invalid JSON in learner model block: ${(e as Error).message}`);
+    }
+  }
+  return null;
 }
 
 export function parseLesson(
@@ -143,6 +262,14 @@ export function parseLesson(
     ? prereqRaw.filter((p): p is string => typeof p === 'string')
     : [];
 
+  // The persisted `lessons.body` (ADR-027 §5). Extraction comes after the inline
+  // learner-model scan above so a malformed `json` fence still throws the original,
+  // file-named error rather than the section-scoped one.
+  const body: LessonBody = {
+    phases: extractPhases(markdown),
+    learner_model: extractLearnerModel(markdown),
+  };
+
   return {
     id,
     module_id,
@@ -153,6 +280,7 @@ export function parseLesson(
     publication_state,
     permission_state,
     source_ref: declaredSource,
+    body,
     prereq_lessons,
   };
 }

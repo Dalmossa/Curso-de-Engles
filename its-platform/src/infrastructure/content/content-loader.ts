@@ -170,12 +170,13 @@ export async function loadContent(dataSource: DataSource, contentRoot: string): 
           }
           await qr.query(
             `INSERT INTO lessons (id, module_id, title, cefr_level, reuse_basis,
-                                  authoring_state, publication_state, permission_state, source_ref)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                                  authoring_state, publication_state, permission_state,
+                                  source_ref, body)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
              ON CONFLICT (id) DO UPDATE SET
                module_id = $2, title = $3, cefr_level = $4, reuse_basis = $5,
                authoring_state = $6, publication_state = $7, permission_state = $8,
-               source_ref = $9, updated_at = now()`,
+               source_ref = $9, body = $10, updated_at = now()`,
             [
               lesson.id,
               lesson.module_id,
@@ -186,6 +187,7 @@ export async function loadContent(dataSource: DataSource, contentRoot: string): 
               lesson.publication_state,
               lesson.permission_state,
               lesson.source_ref,
+              JSON.stringify(lesson.body),
             ],
           );
           lessonIds.add(lesson.id);
@@ -289,11 +291,12 @@ export async function loadContent(dataSource: DataSource, contentRoot: string): 
 
         for (const dlg of corpus.dialogues) {
           await qr.query(
-            `INSERT INTO dialogues (id, title, cefr_level, status, duration_seconds)
-             VALUES ($1, $2, $3, $4, $5)
+            `INSERT INTO dialogues (id, title, cefr_level, status, duration_seconds, transcript)
+             VALUES ($1, $2, $3, $4, $5, $6)
              ON CONFLICT (id) DO UPDATE SET
-               title = $2, cefr_level = $3, status = $4, duration_seconds = $5`,
-            [dlg.id, dlg.title, dlg.cefr_level, dlg.status, dlg.duration_seconds],
+               title = $2, cefr_level = $3, status = $4, duration_seconds = $5,
+               transcript = $6`,
+            [dlg.id, dlg.title, dlg.cefr_level, dlg.status, dlg.duration_seconds, dlg.transcript],
           );
           report.dialogues += 1;
 

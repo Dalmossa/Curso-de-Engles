@@ -231,8 +231,9 @@ async function main() {
   await it('D-5 [db]: single-speaker dialogue rejected at commit (deferred)', async () => {
     await q("INSERT INTO voices (id,label,accent,gender) VALUES ('v_a','A','US','M'),('v_b','B','US','F')");
     await q("INSERT INTO speakers (id,display_name) VALUES ('sp_a','A'),('sp_b','B')");
+    // `transcript` is NOT NULL (ADR-027 §3b) — every writer supplies it.
     await q(
-      "INSERT INTO dialogues (id,title,cefr_level,status,duration_seconds) VALUES ('dlg_test','T','A1','shipped',60)",
+      "INSERT INTO dialogues (id,title,cefr_level,status,duration_seconds,transcript) VALUES ('dlg_test','T','A1','shipped',60,'> **A:** hello')",
     );
 
     // One speaker alone, committed → deferred D-5 must raise at commit.

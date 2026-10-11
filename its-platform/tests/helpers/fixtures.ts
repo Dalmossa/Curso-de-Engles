@@ -7,6 +7,8 @@ export function createLessonFixture(contentRoot: string, cefr: 'a1'|'a2'|'b1'|'b
   const dir = path.join(contentRoot, 'lessons', cefr);
   fs.mkdirSync(dir, { recursive: true });
   const file = path.join(dir, `${lessonId}.md`);
+  // The lesson carries its four `FASE` blocks and a learner-model section: ADR-027 §5
+  // makes `parseLesson` fail closed unless `extractPhases` yields exactly 1,2,3,4.
   const markdown = `---
 title: "Test Lesson"
 module_id: "mod_${cefr}_foundation"
@@ -19,6 +21,24 @@ source_references: []
 # Test Lesson
 
 Content here...
+
+## FASE 1 — Input (i+1) [4 min]
+
+Fixture phase 1.
+
+## FASE 2 — Guided Practice [5 min]
+
+Fixture phase 2.
+
+## FASE 3 — Output Task [4 min]
+
+Fixture phase 3.
+
+## FASE 4 — Shadow CAT [2 min]
+
+Fixture phase 4.
+
+## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
 
 \`\`\`json
 {

@@ -1,6 +1,7 @@
 /**
  * Record shapes for the content loader, reconciled with the ADR-019 DDL
- * (`src/migrations/1791331200000-create-schema.ts`) per ADR-022.
+ * (`src/migrations/1791331200000-create-schema.ts`) per ADR-022; `lessons.body`
+ * is ADR-027 §5's addition to that DDL.
  *
  * These are *parser* shapes, not TypeORM entities: the loader sits in
  * `src/infrastructure/content/` and writes rows with raw SQL through a
@@ -10,6 +11,23 @@
  * `listening_slots` table, no `lessons.source_markdown`/`prereq_lessons`/
  * `skill_items`, and no `packs.publication_state` (ADR-022 §1).
  */
+
+/** One authored `FASE` block: its heading line (verbatim minus `#`s) and its body. */
+export interface LessonPhase {
+  phase: number;
+  heading: string;
+  markdown: string;
+}
+
+/**
+ * `lessons.body` (ADR-027 §5): the lesson's four authored phases, verbatim, and
+ * the parsed `DADOS PARA O LEARNER MODEL` block (`null` for the one lesson whose
+ * file has none — `lessons/a2/les_a2_it_internet_history.md`).
+ */
+export interface LessonBody {
+  phases: LessonPhase[];
+  learner_model: unknown | null;
+}
 
 export interface LessonRecord {
   id: string;
@@ -21,6 +39,8 @@ export interface LessonRecord {
   publication_state: string;
   permission_state: string;
   source_ref: string | null;
+  /** The four phases + learner model, persisted to `lessons.body` (ADR-027 §5). */
+  body: LessonBody;
   /** Declared `prereq_lessons` (JSON learner-model block). */
   prereq_lessons: string[];
 }
@@ -119,6 +139,8 @@ export interface DialogueRecord {
   cefr_level: string;
   status: 'shipped' | 'shadow_only';
   duration_seconds: number;
+  /** ADR-027 §3b: the authored `> **Speaker:** …` block, verbatim (`dialogues.transcript`). */
+  transcript: string;
   speakers: DialogueSpeakerRecord[];
   clips: ClipRecord[];
   items: CorpusItemRecord[];

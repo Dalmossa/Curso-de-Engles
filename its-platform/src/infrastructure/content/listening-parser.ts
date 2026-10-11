@@ -108,10 +108,15 @@ function parseSlotTable(block: string): ParsedOption[] {
     const letter = (cells[0] ?? '').replace(/\*/g, '').trim();
     if (letter.length !== 1 || !LETTERS.includes(letter)) continue;
     const rawValue = cells[1] ?? '';
-    const isKey = rawValue.includes('✓');
-    const text = rawValue.replace(/✓/g, '').trim();
     const rawNote = (cells[2] ?? '').trim();
-    const note = rawNote === '' || rawNote === '—' || rawNote === '✓' ? null : rawNote;
+    // ADR-027 §3a: the key marker `✓` has two generations in `corpus/listening-corpus.md` —
+    // 76 rows put it in the value column (`| C | … ✓ |`), 11 put `✓ —` in the trailing column
+    // (`| C | … | ✓ — |`), where the type would otherwise sit. Reading only the value column
+    // loaded those 11 shipped slots with `items.key = NULL` and every option `is_key = false`,
+    // i.e. unscorable. `verify-integrity.py` [9]/[11d]/[11e] glob `packs/`, so nothing saw it.
+    const isKey = rawValue.includes('✓') || rawNote.includes('✓');
+    const text = rawValue.replace(/✓/g, '').trim();
+    const note = /^[✓—\s]*$/.test(rawNote) ? null : rawNote;
     options.push({ letter, text, isKey, note });
   }
   return options;
@@ -366,6 +371,9 @@ function parseDialogue(raw: RawDialogue): { dialogue: DialogueRecord; skips: Cor
       cefr_level: cefr,
       status: 'shipped',
       duration_seconds: duration,
+      // ADR-027 §3b: the authored `> **Speaker:** …` block, verbatim. Stored because `clips`
+      // are derived from it and keep neither the speaker's name nor the authored line breaks.
+      transcript: raw.transcript,
       speakers: dialogueSpeakers,
       clips,
       items,

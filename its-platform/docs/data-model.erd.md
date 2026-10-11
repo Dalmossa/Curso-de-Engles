@@ -81,6 +81,8 @@ specs at all. Each names the rule that forces it.
 |---|---|
 | `item_options` stays **relational** (not folded into `items` as JSONB) | ADR-018 Neutral gives the fold criterion: write-once *unless DIF analysis needs to query it*. `assessment` §5.3 (distractor analysis at refit), §5.4 (DIF) and §2.2 (key-position balance ≤40 %) are all per-option queries — the second branch of the criterion applies |
 | `packs.item_ids TEXT[]` + `packs.manifest JSONB` — **no `pack_items` table** | The manifest is write-once authored content (`post-lesson` §8.1), which is the first branch of the same fold criterion. Array order = manifest order; referential integrity of `item_ids` is the P0.5 loader gate, not an FK |
+| `lessons.body` **JSONB** (the four `FASE` blocks + learner model) — **no `lesson_phases` table** | The same fold criterion as `packs.manifest` above: the four blocks are write-once authored content, read whole by one endpoint and never queried per phase. `domain-model` §2.1 already assigns them — *"ACL: ContentLoader — FASE 1–4 blocks → internal model"* — and ADR-027 §5 materialises the assignment: the API's `LessonContent.required` (`api-spec.openapi.yaml`, amended by ADR-027 §4) names `phases[]` + `learner_model`, and the content carries them — measured 122/122 lessons with four `FASE` headings, 121/122 with the learner-model block |
+| `dialogues.transcript` **TEXT** | ADR-027 §3b. `listening-corpus` §2.1 authors one transcript per dialogue, and `clips` are **derived** from it (`clips.utterance_text` keeps a single turn and drops the speaker's name). The API's `DialogueContent.slots[].transcript` is required and no column answered it, so the source is stored instead of the derived rows being re-joined. Same fold criterion as `packs.manifest`: read whole, never queried per turn |
 | `practice_attempts.pack_layer` + nullable `pack_id` | ADR-018 *"What weakens"* row 4: L2/L3 packs are generated per learner (`post-lesson` §3.4 resampling, §4.2 error-log query) and have no stored pack row. `CHECK ((pack_layer='L1') = (pack_id IS NOT NULL))` |
 | `items.pack_id` **removed** | `assessment` §1.2: *"Pack-slot placement belongs in the pack manifest."* v0.1.0 made every item a child of one pack |
 | `cefr_levels.theta_threshold` (nullable) | `stats` §3.1 gives θ* only for A2 (−0.5), B1 (0.5), B2 (1.5); ADR-017 §3's `band_bounds` routing reads it. A1/C1/C2 are unspecified in every spec → `NULL`, never invented (§10) |
@@ -249,6 +251,10 @@ CREATE TABLE lessons (
         CHECK (permission_state IN ('not_required','requested','granted','refused')),
                       -- external-sources §7.0 (permission-request lifecycle); ADR-018 §6
     source_ref        TEXT,
+    -- ADR-027 §5: the lesson's four authored `FASE` blocks, verbatim, plus its parsed
+    -- learner-model JSON (`null` for the one lesson whose file has none). ADR-018 §1's
+    -- fold criterion: read whole by one endpoint, never queried per phase.
+    body              JSONB NOT NULL DEFAULT '{"phases":[],"learner_model":null}',
     created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at        TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -324,6 +330,12 @@ CREATE TABLE dialogues (
     status           VARCHAR(20) NOT NULL CHECK (status IN ('shipped','shadow_only')),
     -- domain-model D-2 [db]: 45–120 s (Q-L2 floor 45 s; §2.1 120 s ceiling).
     duration_seconds INT NOT NULL CHECK (duration_seconds BETWEEN 45 AND 120),
+    -- ADR-027 §3b: the dialogue's authored `> **Speaker:** …` transcript, verbatim. It is the
+    -- source `clips` are derived from (each clip keeps only one turn's text + its speaker), so
+    -- it is stored rather than re-joined from them. `DialogueContent.slots[].transcript`
+    -- serves it; a per-slot slice would need a slot↔clip link, which does not exist
+    -- (`items.clip_ids` is never populated).
+    transcript       TEXT NOT NULL,
     created_at       TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
