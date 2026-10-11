@@ -77,7 +77,7 @@ async function run() {
       const failed = assertReport(report);
       if (failed) process.exit(1);
       console.log('PASS');
-      await ds.destroy();
+      if (ds.isInitialized) await ds.destroy();
       return;
     }
 
@@ -131,7 +131,8 @@ async function run() {
         skips: (report.skips || []).length,
       }),
     );
-    await ds.destroy();
+    console.log('PASS');
+    if (ds.isInitialized) await ds.destroy();
   } catch (err) {
     console.error('FAIL:', err);
     process.exit(1);

@@ -1,1 +1,0 @@
-          options.push({ slot, value, is_key: isKey, note: note || undefined, br_pt_form: br_pt });

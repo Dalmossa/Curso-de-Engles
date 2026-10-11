@@ -13,7 +13,7 @@ describe('Loader integration tests', () => {
       expect(report.lessons).toBe(1);
       const rows = await dataSource.query('SELECT * FROM lessons');
       expect(rows.length).toBe(1);
-      expect(rows[0].lesson_id).toContain('les_a1');
+      expect(rows[0].id).toContain('les_a1');
     } finally {
       cleanup();
       cleanupTempDir(contentRoot);

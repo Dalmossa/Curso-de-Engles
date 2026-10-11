@@ -1,119 +1,35 @@
+/**
+ * Record shapes for the content loader, reconciled with the ADR-019 DDL
+ * (`src/migrations/1791331200000-create-schema.ts`) per ADR-022.
+ *
+ * These are *parser* shapes, not TypeORM entities: the loader sits in
+ * `src/infrastructure/content/` and writes rows with raw SQL through a
+ * `QueryRunner`. Parser code must not import TypeORM/NestJS.
+ *
+ * Every field below names a real column of a real table. There is no
+ * `listening_slots` table, no `lessons.source_markdown`/`prereq_lessons`/
+ * `skill_items`, and no `packs.publication_state` (ADR-022 §1).
+ */
+
 export interface LessonRecord {
   id: string;
-  title: string;
-  cefr_level: string;
-  source_markdown: string;
-  reuse_basis: string;
-  module_id?: string;
-  module_title?: string;
-  module_cefr?: string;
-  prereq_lessons: string[];
-  skill_items: Array<{
-    skill: string;
-    domain: string;
-    theta_reportable: boolean;
-    objective: string;
-    min_theta: number;
-  }>;
-  learner_model: any;
-}
-
-export interface PackItemOptionRecord {
-  option_id?: string;
-  slot: string;
-  value: string;
-  note?: string;
-  is_key: boolean;
-  br_pt_form?: string;
-  br_pt_form_state?: string;
-  distractor_type?: string | null;
-}
-
-export interface PackItemRecord {
-  item_id: string;
-  type: string;
-  type_mapped?: string;
-  question?: string;
-  instructions?: string;
-  scoring?: string;
-  difficulty?: number;
-  words_target?: number;
-  clear_response?: boolean;
-  confidence?: boolean;
-  options: PackItemOptionRecord[];
-  stem_from_table?: boolean;
-  source_provenance?: string;
-  is_scannable?: boolean;
-  asr_target?: string;
-  p_random?: number;
-  max_words?: number;
-  accept_punct?: boolean;
-  accept_case?: boolean;
-  require_exact_match?: boolean;
-}
-
-export interface PackRecord {
-  pack_id: string;
-  lesson_id: string;
-  title: string;
-  cefr_level: string;
-  time_cap: number;
-  split: string;
-  interleaved: boolean;
-  reuse_basis: string;
-  schema: 'canonical' | 'legacy' | 'legacy_v1';
-  items: PackItemRecord[];
-  skip_count: number;
-  skips: Array<{ item_id: string; reason: string }>;
-}
-
-export interface ClipRecord {
-  clip_id: string;
-  dialogue_id: string;
-  speaker_id: string;
-  sort_index: number;
-  text: string;
-  time_start?: number;
-  time_end?: number;
-}
-
-export interface SlotRecord {
-  slot_id: string;
-  dialogue_id: string;
-  sequence: number;
-  speaker_id: string;
-  status: string;
-  expected_response?: string;
-  rubric?: string;
-  assessment_item_id?: string;
-  clip_ids: string[];
-}
-
-export interface DialogueRecord {
-  dialogue_id: string;
-  title: string;
-  cefr_level: string;
-  kind: string;
-  duration_seconds: number;
-  status: string;
-  setting?: string;
-  register?: string;
-  turns: number;
-  speakers: Array<{ speaker_id: string; voice_id: string; role?: string }>;
-  slots: SlotRecord[];
-  clips: ClipRecord[];
-}
-
-export interface CorpusRecord {
-  dialogues: DialogueRecord[];
-  voices: Array<{ voice_id: string; gender: string; description?: string }>;
-  speakers: Array<{ speaker_id: string; voice_label: string; display_name?: string }>;
-}
-
-export interface ModuleRecord {
   module_id: string;
   title: string;
   cefr_level: string;
+  reuse_basis: string;
+  authoring_state: string;
+  publication_state: string;
+  permission_state: string;
+  source_ref: string | null;
+  /** Declared `prereq_lessons` (JSON learner-model block). */
+  prereq_lessons: string[];
+}
+
+export interface ModuleRecord {
+  id: string;
+  title: string;
+  cefr_level: string;
+  /** `General` | `IT` | `Both` — the DDL CHECK vocabulary (ADR-022 §3). */
   track: string;
   source_markdowns: string[];
   sort_order: number;
@@ -122,6 +38,110 @@ export interface ModuleRecord {
 
 export interface CurriculumRecord {
   modules: ModuleRecord[];
+  /** lesson id → module id, from `curriculum-graph-spec.md` §4.3. */
+  lesson_modules: Record<string, string>;
+}
+
+export interface ItemOptionRecord {
+  /** `item_options.position`: slot letter A→1 … F→6. */
+  position: number;
+  option_text: string;
+  is_key: boolean;
+  distractor_type: string | null;
+  br_pt_form: string | null;
+  note: string | null;
+}
+
+export interface PackItemRecord {
+  item_id: string;
+  skill_ids: string[];
+  domain_id: string;
+  item_type: string;
+  scoring: string;
+  stem: string;
+  /** The key option's slot letter, or null for a no-option (production) item. */
+  key: string | null;
+  p_random: number;
+  br_pt_form_state: string;
+  options: ItemOptionRecord[];
+}
+
+export interface PackSkipRecord {
+  item_id: string;
+  reason: string;
+}
+
+export interface PackRecord {
+  id: string;
+  lesson_id: string;
+  schema_version: 'canonical' | 'legacy_v1';
+  reuse_basis: string;
+  title: string;
+  time_cap: number;
+  split: string;
+  interleaved: boolean;
+  items: PackItemRecord[];
+  skips: PackSkipRecord[];
+}
+
+export interface ClipRecord {
+  id: string;
+  dialogue_id: string;
+  speaker_id: string;
+  sort_index: number;
+  utterance_text: string;
+}
+
+export interface CorpusItemRecord {
+  item_id: string;
+  dialogue_id: string;
+  /** 1-based ordinal of the admitted slot within its dialogue. */
+  slot_number: number;
+  listening_kind: string;
+  listening_tier: 'L1' | 'L2';
+  stem: string;
+  key: string | null;
+  p_random: number;
+  options: ItemOptionRecord[];
+  status: string;
+}
+
+export interface DialogueSpeakerRecord {
+  speaker_id: string;
+  display_name: string;
+  gender: string | null;
+  voice_id: string;
+}
+
+export interface DialogueRecord {
+  id: string;
+  title: string;
+  cefr_level: string;
+  status: 'shipped' | 'shadow_only';
+  duration_seconds: number;
+  speakers: DialogueSpeakerRecord[];
+  clips: ClipRecord[];
+  items: CorpusItemRecord[];
+}
+
+export interface SpeakerRecord {
+  id: string;
+  display_name: string;
+  gender: string | null;
+}
+
+export interface VoiceRecord {
+  id: string;
+  label: string;
+  accent: string;
+  gender: string | null;
+}
+
+export interface CorpusRecord {
+  dialogues: DialogueRecord[];
+  voices: VoiceRecord[];
+  speakers: SpeakerRecord[];
+  skips: Array<{ ref_id: string; reason: string }>;
 }
 
 export interface LoadReport {
