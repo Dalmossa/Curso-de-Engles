@@ -20,8 +20,14 @@
  * randomness (ADR-023 Decision 5), so P1.10 can persist exactly what was returned.
  */
 
-import type { StartNodeMapping } from '../entities/pilot-bank.js';
+import type {
+  FalseBeginnerProfile,
+  LearnerRole,
+  StartNodeMapping,
+} from '../entities/pilot-bank.js';
 import { CEFR_THRESHOLDS, START_NODE_TABLE } from '../entities/pilot-bank.js';
+
+export type { FalseBeginnerProfile, LearnerRole };
 
 /**
  * The bands this bank can route to. The ladder is A1–B2 — `CEFR_THRESHOLDS` has no C1 entry
@@ -33,17 +39,23 @@ export type CefrBand = 'A1' | 'A2' | 'B1' | 'B2';
 export type PlacementTrack = 'General' | 'IT';
 
 /**
- * The single `profile` field of the diagnostic output (diagnostic-spec.md §3.6):
- * `general`/`it`/`dev` carry the tech-context role (ADR-017 §2: 30 % of the form is IT
- * vocabulary), `false_beginner_suspected` is the affective-filter signal §5.1 gates
- * `les_rem_confidence_builder` on.
+ * ADR-024 D8: `learnerProfile` conflated two different quantities and is **split**.
+ *
+ * - `role` (`general`|`it`|`dev`) is the track input of §5.1 / ADR-023 Decision 3.
+ * - `profile` (`false_beginner_suspected`|`null`) is the §4 diagnosis of
+ *   `diagnostic-spec.md` §4.1 — the only value §5.1's confidence-builder trigger keys on.
+ *
+ * A default of `role: 'general'`/`profile: null` is deliberate: an absent domain then fails
+ * `vocabulary θ > grammar θ` and yields `General`, and an absent diagnosis yields no
+ * remediation node, rather than inventing an IT route or an affective-filter signal.
  */
-export type LearnerProfile = 'general' | 'it' | 'dev' | 'false_beginner_suspected';
-
 export interface PlacementInput {
   thetaOverall: number;
   seEffective: number;
-  learnerProfile?: LearnerProfile;
+  /** The track input (ADR-024 D8). */
+  role?: LearnerRole;
+  /** The §4 diagnosis (ADR-024 D8). */
+  profile?: FalseBeginnerProfile;
   /**
    * Domain-level θs of the same run. The track rule of ADR-023 Decision 3 compares
    * `vocabulary` against `grammar`, and an absent domain behaves as θ = 0 (the estimator's own
@@ -84,7 +96,7 @@ const TOP_ENTRY_THRESHOLD: number = CEFR_THRESHOLDS.B2.min;
  * Pure: same input → same output (ADR-023 Decision 5).
  */
 export function computeStartNode(input: PlacementInput): StartNodeMapping {
-  const { thetaOverall, seEffective, learnerProfile = 'general' } = input;
+  const { thetaOverall, seEffective, role = 'general', profile = null } = input;
   const {
     grammarTheta = 0,
     vocabularyTheta = 0,
@@ -123,7 +135,7 @@ export function computeStartNode(input: PlacementInput): StartNodeMapping {
   // that clause requires θ − t_h > 1.5, so θ + t_h > 1.5 > −0.5.
   const belowScale = bandBoundsUpper < FIRST_ENTRY_THRESHOLD;
 
-  const track = resolveTrack(learnerProfile, { vocabularyTheta, grammarTheta });
+  const track = resolveTrack(role, { vocabularyTheta, grammarTheta });
   const startNode = START_NODE_TABLE[startCefr]![track === 'IT' ? 'it' : 'general'];
 
   return {
@@ -133,23 +145,27 @@ export function computeStartNode(input: PlacementInput): StartNodeMapping {
     // ADR-017 §3 routes `below_scale` to `les_a1_alphabet_sounds` (the A1 row), not to a
     // remediation node: below-scale is a start-node signal, and remediation has its own
     // triggers in §5.1 (ADR-023 Decision 4).
-    remediationNodes: resolveRemediationNodes(learnerProfile, pronunciationTheta),
-    profile: learnerProfile,
+    remediationNodes: resolveRemediationNodes(profile, pronunciationTheta),
+    // The §4 diagnosis, passed through — NOT the `role` above (ADR-024 D8). `profile` is what
+    // ADR-023 Decision 4's confidence-builder trigger reads, and it is derived, not supplied
+    // as the track.
+    profile,
   };
 }
 
 /**
  * Curriculum-graph §5.1's track rule, evaluated on real domain θs:
- * `IT` iff the profile is the IT/dev track **and** `vocabulary θ > grammar θ`, else `General`.
+ * `IT` iff the **role** is IT/dev **and** `vocabulary θ > grammar θ`, else `General`.
  *
- * The previous implementation read the profile alone, so every `dev` learner was routed to the
- * IT nodes; the θ condition of §5.1 was never evaluated (ADR-023 Context §3).
+ * The previous implementation read the conflated profile alone, so every `dev` learner was
+ * routed to the IT nodes and §5.1's θ condition was never evaluated (ADR-023 Context §3);
+ * ADR-024 D8 splits the two quantities this function now reads exactly one of.
  */
 function resolveTrack(
-  profile: PlacementInput['learnerProfile'],
+  role: LearnerRole,
   { vocabularyTheta, grammarTheta }: { vocabularyTheta: number; grammarTheta: number }
 ): PlacementTrack {
-  const itContext = profile === 'it' || profile === 'dev';
+  const itContext = role === 'it' || role === 'dev';
   return itContext && vocabularyTheta > grammarTheta ? 'IT' : 'General';
 }
 
@@ -166,7 +182,7 @@ function resolveTrack(
  * row showing the listening node as placement remediation is stale.
  */
 function resolveRemediationNodes(
-  profile: PlacementInput['learnerProfile'],
+  profile: FalseBeginnerProfile,
   pronunciationTheta: number
 ): string[] {
   const nodes: string[] = [];

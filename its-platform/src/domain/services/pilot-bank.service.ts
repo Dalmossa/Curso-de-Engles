@@ -49,7 +49,11 @@ export function createDiagnosticFormV1(): DiagnosticForm {
 
   return {
     formVersion: 'diagnostic_form_v1',
-    formId: `diag_form_v1_${Date.now()}`,
+    // Deterministic (ADR-024 D4): the previous `diag_form_v1_${Date.now()}` gave the "pinned
+    // form" a different identity on every call, so nothing about the run was reproducible.
+    // Deriving it from the ordered item ids makes the identity a function of what is
+    // administered — the same set in the same order is the same form.
+    formId: `diag_form_v1_${items.map(item => item.id).join('_')}`,
     items,
     totalItems: 12,
     domains: {

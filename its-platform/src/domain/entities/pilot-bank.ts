@@ -110,23 +110,50 @@ export interface CalibrationDisclosure {
   readonly disclosureText: string;
 }
 
+/**
+ * The §4 diagnosis, never the input track (ADR-024 D8).
+ *
+ * It used to be the role (`general`/`it`/`dev`), which meant
+ * `diagnostic_results.profile` could never take its §3.6 value and ADR-023 Decision 4's
+ * `les_rem_confidence_builder` trigger was unreachable code.
+ */
+export type FalseBeginnerProfile = 'false_beginner_suspected' | null;
+
+/** The track input (§5 of `diagnostic-spec.md`, ADR-023 Decision 3). */
+export type LearnerRole = 'general' | 'it' | 'dev';
+
 export interface DiagnosticRun {
   readonly formVersion: string;
   readonly formId: string;
   readonly learnerId: string;
   readonly sessionId: string;
+  /** The track input. `role` drives ADR-023 Decision 3's IT rule; `profile` is the §4 diagnosis. */
+  readonly role: LearnerRole;
+  /** From the caller, never `new Date()` (ADR-024 D4). */
   readonly startedAt: Date;
-  readonly completedAt: Date | null;
+  /** From the caller. Not nullable: an incomplete run is an error, never a placement (ADR-024 D3). */
+  readonly completedAt: Date;
   readonly responses: DiagnosticResponse[];
   readonly thetaOverall: number;
+  /** The run's *realised* statistical SE (ADR-024 D6) — §3.6's `overall.se`. */
+  readonly seOverall: number;
+  /** The bank's *declared* disclosure values (ADR-017 §1) — never the realised `seOverall`. */
   readonly seStatistical: number;
   readonly seParameter: number;
   readonly seEffective: number;
+  /** Declared disclosure label, e.g. `provisional` (§3.6). */
+  readonly precisionLabel: string;
   readonly cefr: string;
+  /** `thetaOverall ± 1.96·seOverall` — §3.6 `overall.ci_95`. */
   readonly ci95Lower: number;
   readonly ci95Upper: number;
-  readonly skillThetas: SkillTheta[];
-  readonly profile: string;
+  /** `thetaOverall ± 1.96·seEffective` — the interval `band_bounds`/`start_cefr` is derived from. */
+  readonly placementCi95Lower: number;
+  readonly placementCi95Upper: number;
+  /** One entry per domain of the blueprint + Listening, always all 5 (§3.3a, ADR-024 D7). */
+  readonly domainThetas: DomainTheta[];
+  /** The §4 false-beginner diagnosis, derived — never the input track (ADR-024 D8). */
+  readonly profile: FalseBeginnerProfile;
   readonly recommendedStartNode: string;
   readonly calibrationDisclosure: CalibrationDisclosure;
   readonly skillThetaReportable: Record<string, boolean>;
@@ -136,6 +163,11 @@ export interface DiagnosticRun {
   readonly startNode: string;
   readonly belowScale: boolean;
   readonly remediationNodes: string[];
+  /**
+   * NOT NULL on `diagnostic_results`, and constant for a fixed form (ADR-024 D5):
+   * `fixed_form_12_items`. §3.5's SE-based rules are CAT rules and cannot apply here.
+   */
+  readonly stoppingRule: string;
 }
 
 export interface DiagnosticResponse {
@@ -147,22 +179,60 @@ export interface DiagnosticResponse {
   readonly seAfter: number;
 }
 
-export interface SkillTheta {
-  readonly skillId: string;
-  readonly theta: number;
-  readonly se: number;
-  readonly cefr: string;
-  readonly reportable: boolean;
+/**
+ * §3.3a's reportability lattice, as an explicit discriminator (domain-model G-8 / ERD correction
+ * 15: "§3.3a's three-state lattice under an explicit `state` discriminator", ADR-024 D7).
+ *
+ * | items administered in the domain | state |
+ * |---|---|
+ * | ≥ 5 | `point_estimate` (+ `theta`/`se`/`cefr`) |
+ * | 3–4 | `band` — `cefrBand` only, **never** a point estimate |
+ * | 0–2 | `insufficient_evidence`, excluded from the profile |
+ */
+export type DomainState = 'point_estimate' | 'band' | 'insufficient_evidence';
+
+/**
+ * The domains of the §3.3a lattice: the four blueprint domains of ADR-017 §2 plus Listening
+ * (§2.1 removed it from the blueprint; §3.3a still requires it to be reported as a gap).
+ */
+export type DomainId = 'grammar' | 'vocabulary' | 'reading' | 'pronunciation' | 'listening';
+
+/**
+ * A domain's §3.3a report, keyed by domain.
+ *
+ * The union of the three states is carried *under* `state` rather than as optional
+ * `skillThetas`-style entries, because the previous shape (`theta` + `reportable: n >= 2`)
+ * reported a point estimate for a 2-item domain and had no way to say "band".
+ */
+export interface DomainTheta {
+  readonly domain: DomainId;
   readonly itemsAdministered: number;
-  readonly note?: string;
+  readonly state: DomainState;
+  // point_estimate only (n ≥ 5, §3.3a)
+  readonly theta?: number;
+  readonly se?: number;
+  readonly cefr?: string;
+  // band only (n = 3–4): the span of CEFR bands covered by θ_d ± 1.96·SE_d, e.g. "A1–A2"
+  readonly cefrBand?: string;
+  // insufficient_evidence only (n = 0–2)
+  readonly reason?: string;
 }
+
+/** The stable order `domainThetas` is always emitted in (ADR-024 D7). */
+export const DIAGNOSTIC_DOMAINS = [
+  'grammar',
+  'vocabulary',
+  'reading',
+  'pronunciation',
+  'listening',
+] as const satisfies readonly DomainId[];
 
 export interface StartNodeMapping {
   readonly startCefr: string;
   readonly startNode: string;
   readonly belowScale: boolean;
   readonly remediationNodes: string[];
-  readonly profile: string;
+  readonly profile: FalseBeginnerProfile;
 }
 
 /**

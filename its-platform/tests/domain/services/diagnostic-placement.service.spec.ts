@@ -184,11 +184,13 @@ describe('diagnostic-placement.service (ADR-023)', () => {
   });
 
   it('7d. false_beginner_suspected emits the confidence node, after pronunciation', () => {
-    const beginner = at(-0.3, { learnerProfile: 'false_beginner_suspected' });
+    // ADR-024 D8: `false_beginner_suspected` is the `profile` (the §4 diagnosis), never a
+    // `role`. The assertion is the same one it always was.
+    const beginner = at(-0.3, { profile: 'false_beginner_suspected' });
     expect(beginner.remediationNodes).toEqual(['les_rem_confidence_builder']);
 
     const both = at(-0.3, {
-      learnerProfile: 'false_beginner_suspected',
+      profile: 'false_beginner_suspected',
       pronunciationTheta: -2.0,
     });
     expect(both.remediationNodes).toEqual([
@@ -200,10 +202,20 @@ describe('diagnostic-placement.service (ADR-023)', () => {
   it('7e. never emits a listening node and never exceeds the cap of 3', () => {
     const violations: Array<{ reason: string }> = [];
 
-    for (const learnerProfile of ['general', 'it', 'dev', 'false_beginner_suspected'] as const) {
+    // The same four values the old single `learnerProfile` carried, spelled as the two
+    // quantities `PlacementInput` now has (ADR-024 D8). Not an added case and not a removed
+    // one: `general`/`it`/`dev` are the three roles, `false_beginner_suspected` the profile.
+    const profiles: ReadonlyArray<Pick<PlacementInput, 'role' | 'profile'>> = [
+      { role: 'general' },
+      { role: 'it' },
+      { role: 'dev' },
+      { role: 'general', profile: 'false_beginner_suspected' },
+    ];
+
+    for (const learnerProfile of profiles) {
       for (const pronunciationTheta of [-4, -1.01, -1, -0.99, 0, 2]) {
         for (const thetaOverall of [-4, -1.6, -0.3, 0.2, 0.7, 3]) {
-          const { remediationNodes } = at(thetaOverall, { learnerProfile, pronunciationTheta });
+          const { remediationNodes } = at(thetaOverall, { ...learnerProfile, pronunciationTheta });
 
           if (remediationNodes.length > 3) violations.push({ reason: `cap: ${thetaOverall}` });
           if (remediationNodes.includes('les_rem_listening_slow_clear')) {
@@ -218,9 +230,9 @@ describe('diagnostic-placement.service (ADR-023)', () => {
   });
 
   it('8a. dev/it with vocabulary θ > grammar θ routes to the IT node', () => {
-    for (const learnerProfile of ['dev', 'it'] as const) {
+    for (const role of ['dev', 'it'] as const) {
       const { startCefr, startNode } = at(0.9, {
-        learnerProfile,
+        role,
         grammarTheta: -0.4,
         vocabularyTheta: 0.6,
       });
@@ -233,7 +245,7 @@ describe('diagnostic-placement.service (ADR-023)', () => {
 
   it('8b. general routes to the General node even when vocabulary θ > grammar θ', () => {
     const { startCefr, startNode } = at(0.9, {
-      learnerProfile: 'general',
+      role: 'general',
       grammarTheta: -0.4,
       vocabularyTheta: 0.6,
     });
@@ -247,7 +259,7 @@ describe('diagnostic-placement.service (ADR-023)', () => {
       [0.4, 0.4],
     ] as const) {
       const { startCefr, startNode } = at(0.9, {
-        learnerProfile: 'dev',
+        role: 'dev',
         vocabularyTheta,
         grammarTheta,
       });
@@ -281,8 +293,8 @@ describe('diagnostic-placement.service — start_node ∈ CurriculumGraph (ADR-0
 
   it('every routed start_node is a real lesson of the registry, for both tracks', () => {
     const tracks: Array<{ name: string; input: Partial<PlacementInput> }> = [
-      { name: 'IT', input: { learnerProfile: 'dev', grammarTheta: -0.8, vocabularyTheta: 0.9 } },
-      { name: 'General', input: { learnerProfile: 'general' } },
+      { name: 'IT', input: { role: 'dev', grammarTheta: -0.8, vocabularyTheta: 0.9 } },
+      { name: 'General', input: { role: 'general' } },
     ];
 
     const violations: Array<{ theta: number; track: string; startNode: string }> = [];
@@ -309,10 +321,17 @@ describe('diagnostic-placement.service — start_node ∈ CurriculumGraph (ADR-0
     const emitted = new Set<string>();
     const violations: string[] = [];
 
-    for (const learnerProfile of ['general', 'it', 'dev', 'false_beginner_suspected'] as const) {
+    const inputs: ReadonlyArray<Pick<PlacementInput, 'role' | 'profile'>> = [
+      { role: 'general' },
+      { role: 'it' },
+      { role: 'dev' },
+      { role: 'general', profile: 'false_beginner_suspected' },
+    ];
+
+    for (const learnerProfile of inputs) {
       for (const thetaOverall of sweep(-4, 4, 0.1)) {
         for (const pronunciationTheta of [-2, -1.01, -0.5, 0, 1]) {
-          for (const node of at(thetaOverall, { learnerProfile, pronunciationTheta })
+          for (const node of at(thetaOverall, { ...learnerProfile, pronunciationTheta })
             .remediationNodes) {
             emitted.add(node);
           }
