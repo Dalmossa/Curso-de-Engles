@@ -65,7 +65,7 @@
 | A | Agreement reached |
 | B | **Neither side will move / impasse** |
 | C | One side wins |
-| C | Quick agreement |
+| D | Quick agreement |
 **Key:** B
 **br_pt_form:** "impasse / ponto morto"
 

@@ -73,7 +73,7 @@
 | A | **Ability to handle growth** |
 | B | Number of servers |
 | C | Response time |
-| C | Error rate |
+| D | Error rate |
 **Key:** A
 **br_pt_form:** "escalabilidade / capacidade de crescer"
 

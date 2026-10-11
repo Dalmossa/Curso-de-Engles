@@ -61,7 +61,7 @@
 | A | Delete it |
 | B | **Move it to the next sprint** |
 | C | Assign to someone else |
-| C | Close as wontfix |
+| D | Close as wontfix |
 **Key:** B
 **br_pt_form:** "levar para a próxima sprint"
 
