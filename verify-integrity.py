@@ -940,6 +940,31 @@ PACK_FILES = list(PACK_PATHS.keys())
 # check currently carries. Full analysis and the ordered migration: post-lesson-practice-spec.md §12.
 LEGACY_PACK_PATHS = {p.name: p for p in sorted(ROOT.rglob("pack_les_*_v1.md"))}
 LEGACY_PACKS = list(LEGACY_PACK_PATHS.keys())
+# Baseline: number of legacy packs at rest. Stored in the script's global state via a
+# _legacy_packs_baseline.txt file deposited alongside the repo; if absent, the first run
+# sets the baseline and every subsequent run warns if the count exceeds it.
+import json, pathlib
+_BASELINE_PATH = pathlib.Path(__file__).resolve().parent / "_legacy_packs_baseline.json"
+if not _BASELINE_PATH.exists():
+    # First run: record the baseline
+    _BASELINE = {"count": len(LEGACY_PACKS), "first_seen": pathlib.Path.cwd().resolve().name}
+    _BASELINE_PATH.write_text(json.dumps(_BASELINE, ensure_ascii=False, indent=2))
+else:
+    baseline = json.loads(_BASELINE_PATH.read_text())
+    _BASELINE = baseline
+    if len(LEGACY_PACKS) > _BASELINE["count"]:
+        # Baseline exceeded — more legacy packs appeared than recorded
+        warn("pack legacy baseline",
+             f"CATRACA: {len(LEGACY_PACKS)} legacy packs (baseline was {_BASELINE['count']}; "
+             f"first seen in {_BASELINE['first_seen']}). Legados não devem aumentar.")
+    elif len(LEGACY_PACKS) < _BASELINE["count"]:
+        # Fewer legacy packs — reset baseline (someone cleaned up)
+        _BASELINE = {"count": len(LEGACY_PACKS), "first_seen": pathlib.Path.cwd().resolve().name}
+        _BASELINE_PATH.write_text(json.dumps(_BASELINE, ensure_ascii=False, indent=2))
+    else:
+        # Count unchanged — no warning needed beyond the normal one
+        pass
+
 if LEGACY_PACKS:
     n_items = sum(len(re.findall(r"^### ITEM ", LEGACY_PACK_PATHS[fn].read_text(), re.M)) for fn in LEGACY_PACKS)
     n_noreuse = sum(1 for fn in LEGACY_PACKS if "**Reuse basis:**" not in LEGACY_PACK_PATHS[fn].read_text())

@@ -1,0 +1,63 @@
+==============================================================================
+ITS Platform — release gates (CONSTITUTION.md §6.3)
+==============================================================================
+  ok   §6.3 registry — 7 declared == 7 checked
+
+[G1] Code Complete  ·  owner Tech Lead
+     criteria: All stories Done, no P1/P2 bugs
+  ok   stories parsed — 54 total, 40 in MVP scope (P0+P1+P2)
+  ok   P0.1 scaffold — package.json present
+
+[G2] CI Green  ·  owner CI System
+     criteria: All pipelines pass (unit, integration, contract, BDD)
+
+[G3] Staging Deployed  ·  owner Platform Lead
+     criteria: ArgoCD synced, health checks pass
+  ok   iac present — 1 file(s)
+
+[G4] Integration Tests  ·  owner QA Lead
+     criteria: Contract + BDD pass on staging
+  ok   contract tests — 3 file(s)
+  ok   integration tests — 8 file(s)
+
+[G5] Security Scan  ·  owner Security Lead
+     criteria: Trivy, Snyk, OWASP ZAP clean
+
+[G6] Load Test  ·  owner SRE
+     criteria: 1k concurrent, p95 < 200ms, error < 0.1%
+
+[G7] Prod Approval  ·  owner Tech Lead + Director
+     criteria: Manual ArgoCD sync + Director sign-off
+
+--- additional constitutional assertions (not §6.3 gates) ---
+
+[X1] §4.8 mutation threshold has a target
+
+[X2] §4.9 protected branch matches the repository
+
+[X3] third-party actions pinned by SHA
+
+[X4] Makefile parses and its recipes address reachable paths
+  ok   Makefile parses — `make -n help` exit 0
+  ok   recipe paths — no recipe descends from the Makefile's own directory
+  ok   embedded python — 14 line(s) compile
+
+==============================================================================
+[WARN] Integration Tests: criteria are 'on staging', which does not exist (see the Staging Deployed gate), so this gate cannot be well-formed before that one. Ordering matters: staging first, then integration.
+[FAIL] Code Complete: BACKLOG.md has no per-story status field (4 story table(s) lack it), so 'All stories Done' has no source of truth. The §6.3 gate cannot be evaluated against the document it names: all 40 MVP stories are unmeasurable by construction — not by omission, but because the column does not exist. (The Bugs table has a Status column; that is not the same table.)
+[FAIL] Code Complete: 3 open P1/P2 bug(s): B-001 [P1] **A learner-scoped write cannot run as `; B-002 [P1] **The RLS integration suite never ran — ; B-003 [P1] **`items.id` immutability (I-2) was not 
+[FAIL] CI Green: its-platform/.github/workflows/ci.yml does not exist
+[FAIL] Staging Deployed: no Chart.yaml anywhere under its-platform/. ADR-008 (ArgoCD GitOps) is Accepted; BACKLOG.md P2.5 ('Helm chart + ArgoCD (dev/staging/prod)') is Must. docs/iac-spec.md describes the target and iac/ does not implement it.
+[FAIL] Staging Deployed: no ArgoCD Application manifest for staging under iac/**/argocd/**/*staging*.y*ml
+[FAIL] Integration Tests: tests/bdd/ contains no .feature file and no step definition — only a README. The gate's 'BDD pass' has nothing to pass.
+[FAIL] Security Scan: cannot read the workflow; scanner presence is unevaluated
+[FAIL] Load Test: no load-test artefact exists under its-platform/ (no k6 script, no Locust file, no load-test directory), so '1k concurrent' is an asserted number with no measurement behind it. CONSTITUTION.md §2 forbids asserted numbers.
+[FAIL] Prod Approval: no job declares a `production` environment, so there is nothing for a manual ArgoCD sync to be performed against and no protection rule to attach approval to. Environments found: none
+[FAIL] Prod Approval: no release-approval record exists (docs/release-approvals.md and equivalents absent). 'Director sign-off' is currently an assertion in a table. §6.3 names the Tech Lead and the Director as co-owners; neither the signature nor the identity of the signatory is stored anywhere.
+[FAIL] §4.9 protected branch: §4.9's workflow diagram names `main` as the protected branch but the repository's branch is `fix/auditoria`. (Corrected 2026-10-05 by the rename.)
+==============================================================================
+RESULT: FAIL — 11 failures, 1 warning
+
+§6.3 requires all seven gates to pass. This repository is not releasable.
+This script does not decide which gate to work on next; that is the Tech Lead's
+call, and the ordering matters — see `docs/domain-model.md` and `BACKLOG.md`.

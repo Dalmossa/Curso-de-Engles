@@ -1,0 +1,5 @@
+
+> its-platform@1.0.0 domain:check
+> node scripts/domain-isolation-check.mjs
+
+✓ Domain isolation check passed — 23 file(s) scanned, 0 violations
