@@ -155,14 +155,15 @@ async function main() {
     }
   });
 
-  await it('4 [db] triggers installed (I-3, D-5, G-8, hash chain)', async () => {
+  await it('6 [db] triggers installed (I-3, D-5, G-8, hash chain, append-only guard, item-id immutable)', async () => {
     const rows = await q(
       `SELECT tgname FROM pg_trigger
        WHERE NOT tgisinternal AND tgname IN
          ('trg_item_options_distinct','trg_dialogue_min_two_speakers',
-          'trg_diagnostic_skill_theta_state','trg_append_only_hash_chain')`,
+          'trg_diagnostic_skill_theta_state','trg_append_only_hash_chain',
+          'trg_append_only_guard','trg_item_id_immutable')`,
     );
-    if (rows.length !== 4) throw new Error(`expected 4 triggers, got ${rows.length}`);
+    if (rows.length !== 6) throw new Error(`expected 6 triggers, got ${rows.length}`);
   });
 
   await it('27 named indexes exist (ERD §6.9: 25 CREATE INDEX + 2 UNIQUE)', async () => {
@@ -377,21 +378,61 @@ async function main() {
       }
     });
 
-    await it('RLS: app role cannot UPDATE items.id (I-2 column grant)', async () => {
+    await it('RLS: items.id is immutable via trigger, for app role AND owner (I-2, ADR-029)', async () => {
+      // ADR-029: this assertion's previous form ran
+      //   UPDATE items SET id = 'it_test_2' WHERE id = 'it_test_1'
+      // and expected *an* error — but the error was
+      //   update or delete on table "items" violates foreign key constraint
+      //   "item_options_item_id_fkey" (the I-3 fixture above seeds its own options rows
+      //   under it_test_1). An RI violation is not a permission proof. This version seeds a
+      //   fresh item with no item_options children and asserts the trigger's own message —
+      //   first under its_platform_app, then under the connection owner (superuser), which
+      //   no REVOKE-based grant design could ever block; only the trigger can.
+      await q(
+        `INSERT INTO items (id, skill_ids, cefr_level, domain_id, item_type, modality, p_random, stem, provenance_kind)
+         VALUES ('it_i2_probe', '{grammar.be}', 'A1', 'grammar', 'gap_fill', 'text', 0.25, 'stem', 'authored')
+         ON CONFLICT (id) DO NOTHING`,
+      );
+
+      // App-role half (the GUC is irrelevant for items — it is not learner-scoped — but the
+      // BEGIN/SET LOCAL wrapper is kept for uniformity with the other RLS assertions).
       await db.query('SET ROLE its_platform_app');
       try {
         await db.query('BEGIN');
         await db.query(`SET LOCAL app.current_learner_id = '${learnerA}'`);
         const err = await db
-          .query("UPDATE items SET id = 'it_test_2' WHERE id = 'it_test_1'")
+          .query("UPDATE items SET id = 'it_i2_hacked' WHERE id = 'it_i2_probe'")
           .then(
             () => null,
             (e) => e.message,
           );
         await db.query('ROLLBACK');
-        if (!err) throw new Error('expected permission denied on UPDATE items.id');
+        if (!err || !/immutable/.test(err)) {
+          throw new Error(
+            err
+              ? `expected trigger error matching /immutable/ as its_platform_app, got: ${err}`
+              : 'expected trigger error on UPDATE items.id as its_platform_app',
+          );
+        }
       } finally {
         await db.query('RESET ROLE');
+      }
+
+      // Owner half: the harness connects as superuser (table owner), so no grant or revoke
+      // can refuse this UPDATE — only the trigger can. This is the proof the control lives
+      // in PL/pgSQL, not in the ACLs.
+      const ownerErr = await db
+        .query("UPDATE items SET id = 'it_i2_hacked' WHERE id = 'it_i2_probe'")
+        .then(
+          () => null,
+          (e) => e.message,
+        );
+      if (!ownerErr || !/immutable/.test(ownerErr)) {
+        throw new Error(
+          ownerErr
+            ? `expected trigger error matching /immutable/ as connection owner, got: ${ownerErr}`
+            : 'expected trigger error on UPDATE items.id as connection owner',
+        );
       }
     });
   }

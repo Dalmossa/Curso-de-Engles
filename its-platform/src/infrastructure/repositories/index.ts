@@ -18,3 +18,6 @@ export type {
   DialogueSlotRow,
   DialogueRows,
 } from './content.repository.js';
+
+export { AuditRepository, AUDIT_EVENT_TYPES } from './audit.repository.js';
+export type { AuditEventInput, AuditEventType, AuditAppendResult } from './audit.repository.js';

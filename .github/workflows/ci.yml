@@ -411,8 +411,9 @@ jobs:
       #
       #   * Running here is safe. `createTestDb()` in real-engine mode (`TEST_DATABASE_URL` set)
       #     drops and recreates schema `public` on connect *and* in `cleanup()`, so the 33 migrated
-      #     tables and fixture rows `migration-check.mjs` leaves behind are gone before this spec's
-      #     `seedCatalogues()` runs. That normalisation is load-bearing, not cosmetic:
+      #     tables and fixture rows `migration-check.mjs` leaves behind are gone before
+      #     `diagnostic-persistence`'s `seedCatalogues()` runs. That normalisation is load-bearing,
+      #     not cosmetic:
       #     `seedCatalogues()` inserts `cefr_levels` with `sort_order` 0..5 under
       #     `ON CONFLICT (code) DO NOTHING`, and that conflict target does not cover the *separate*
       #     unique index `cefr_levels_sort_order_key` that migration-check has already filled with
@@ -422,23 +423,51 @@ jobs:
       #     `its_platform_app|admin|worker` behind (`DROP SCHEMA public CASCADE` cannot remove them
       #     and the migration has no `IF NOT EXISTS` guard — see the `cleanup()` note in
       #     tests/helpers/db.ts), and in `SCHEMA_STATEMENTS` `CREATE ROLE` is statement 72 of 90
-      #     while every `ENABLE ROW LEVEL SECURITY`/`CREATE POLICY` is 79+. Once this spec has run
+      #     while every `ENABLE ROW LEVEL SECURITY`/`CREATE POLICY` is 79+. Once either spec has run
       #     in a cluster, `migration-check.mjs` aborts its replay at statement 72: it reports 8
       #     passed / 7 failed, starting with `role "its_platform_app" already exists` and ending
       #     with 0 of 15 RLS tables and 0 of 45 policies — the RLS gate silently stops running.
       #     The order is not a preference; the shared service container is why it matters.
       #
-      # Only this one spec file is run here. It is the only suite whose second `describe` needs a
-      # real engine: it takes `SET ROLE its_platform_app` and exercises ADR-003's policy through
-      # `PgSessionContext`, which PGlite cannot express (ADR-014, narrowed by ADR-026 §5). The
-      # `integration` job keeps running the same file on PGlite; that is not duplication — the 12
-      # tests under the table owner pass on both engines, and only these 6 can tell them apart.
-      - name: Run RLS integration spec on PostgreSQL 16
+      # Two spec files are run here, and no others, because each has a second `describe` that needs
+      # a real engine. `diagnostic-persistence.spec.ts` takes `SET ROLE its_platform_app` and
+      # exercises ADR-003's policy through `PgSessionContext`; `rls-isolation.spec.ts` drives two
+      # `pg` connections at one database to prove cross-learner isolation and contention. PGlite
+      # cannot express either — it is one connection, one session, no lock contention (ADR-014,
+      # narrowed by ADR-026 §5). The `integration` job keeps running both files on PGlite; that is
+      # not duplication — `diagnostic-persistence`'s 12 owner-role tests pass on both engines, and
+      # only its 6 app-role tests and `rls-isolation`'s real-engine `describe` (not entered when
+      # `TEST_DATABASE_URL` is unset) can tell them apart. The rest of `tests/integration/` needs
+      # no real engine, so naming the two files keeps them out of a step where each extra
+      # DB-touching spec is another one that must be serialised, and another one that can trip the
+      # cluster-scoped role replay described above.
+      #
+      # One step, two DB-touching specs, one shared service container — so the pattern is run with
+      # `--runInBand`, and that flag is evidence, not style. `createTestDb()` in real mode drops and
+      # recreates `public` on connect *and* in `cleanup()`; jest's default scheduling puts test
+      # files in separate worker processes against the same database, so one worker's `DROP SCHEMA
+      # public CASCADE` deletes the other's tables mid-test. Measured on a throwaway
+      # `postgres:16-alpine`, running this pattern with a duplicate of `diagnostic-persistence.spec.ts`
+      # standing in for the second real-mode file: without the flag, 2 suites failed and 23 of 36
+      # tests reported `relation "cefr_levels" does not exist`; with it, 2 suites and 36 tests
+      # passed — both with an empty cluster and after a `migration-check.mjs` replay in the same
+      # cluster. A single-file step hid this; a two-file one does not.
+      #
+      # Serialising is also the ordering guarantee above, read in the other direction: the migration
+      # replay must not share a cluster with a live `createTestDb()` caller, so nothing in this step
+      # may run concurrently with the step above, and this step may not move above it. Reproduced
+      # for this change on a throwaway `postgres:16-alpine`: once one real-mode spec had run, the
+      # same `migration-check.mjs` aborted at `role "its_platform_app" already exists` and reported
+      # 0 of 15 RLS tables and 0 of 45 policies.
+      #
+      # The pattern is single-quoted because it is a regex alternation: unquoted, bash parses `(` as
+      # a syntax error and `|` as a pipe before jest is ever handed the argument.
+      - name: Run RLS integration specs on PostgreSQL 16
         working-directory: its-platform
         env:
           NODE_OPTIONS: --experimental-vm-modules
           TEST_DATABASE_URL: postgresql://its_platform_app_test:its_platform_app_test@localhost:5432/its_platform_test
-        run: npx jest --no-coverage --testPathPattern tests/integration/diagnostic-persistence.spec.ts
+        run: npx jest --no-coverage --runInBand --testPathPattern 'tests/integration/(diagnostic-persistence|rls-isolation)\.spec\.ts'
 
   # ------------------------------------------------------------------
   # Mutation Testing (adaptive engine)

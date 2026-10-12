@@ -629,9 +629,37 @@ export const SCHEMA_STATEMENTS: string[] = [
   END;
   $$ LANGUAGE plpgsql`,
 
+  `CREATE FUNCTION fn_append_only_guard() RETURNS trigger AS $$
+  BEGIN
+    RAISE EXCEPTION 'append_only_events is immutable: % operation not allowed', TG_OP;
+  END;
+  $$ LANGUAGE plpgsql`,
+
+  `CREATE TRIGGER trg_append_only_guard
+    BEFORE UPDATE OR DELETE ON append_only_events
+    FOR EACH ROW EXECUTE FUNCTION fn_append_only_guard()`,
+
   `CREATE TRIGGER trg_append_only_hash_chain
     BEFORE INSERT ON append_only_events
     FOR EACH ROW EXECUTE FUNCTION fn_append_only_hash_chain()`,
+
+  // I-2: identifiers immutable — enforced by trigger, not grant (ADR-029). A column-level REVOKE
+  // cannot carve a column back out of a table-level GRANT (PostgreSQL ACLs have no negative
+  // entries), so the old `REVOKE UPDATE (id) ON items` was inert; the trigger below covers every
+  // role — table owner and its_platform_admin included — which no REVOKE can express. (See also
+  // the section-12 comment for the same reason the column REVOKE is absent there.)
+  `CREATE FUNCTION fn_item_id_immutable() RETURNS trigger AS $$
+    BEGIN
+      IF NEW.id IS DISTINCT FROM OLD.id THEN
+        RAISE EXCEPTION 'items.id is immutable: % operation not allowed', TG_OP;
+      END IF;
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql`,
+
+  `CREATE TRIGGER trg_item_id_immutable
+    BEFORE UPDATE ON items
+    FOR EACH ROW EXECUTE FUNCTION fn_item_id_immutable()`,
 
   // ------------------------------------------------------------------
   // 11. Roles (ADR-003)
@@ -646,9 +674,12 @@ export const SCHEMA_STATEMENTS: string[] = [
   // X-3 first: immutability is a grant, not a policy — WORM before the policies exist.
   `REVOKE UPDATE, DELETE ON append_only_events FROM its_platform_app, its_platform_worker`,
   `REVOKE UPDATE, DELETE ON consent_records FROM its_platform_app, its_platform_worker`,
-  // I-2: identifiers immutable — no UPDATE on items.id (column-level), no DELETE on items.
+  // I-2: identifiers immutable — no DELETE on items (table-level revoke; holds). There is
+  // deliberately no column-level REVOKE on items.id: PostgreSQL ACLs have no negative entries,
+  // so a column-level REVOKE cannot carve a column back out of a table-level GRANT (it was
+  // inert — ADR-029). items.id immutability is enforced by trg_item_id_immutable (above), for
+  // every role.
   `REVOKE DELETE ON items FROM its_platform_app, its_platform_worker`,
-  `REVOKE UPDATE (id) ON items FROM its_platform_app, its_platform_worker`,
 
   `DO $$
   DECLARE
@@ -686,7 +717,6 @@ export const SCHEMA_STATEMENTS: string[] = [
   `REVOKE UPDATE, DELETE ON append_only_events FROM its_platform_app, its_platform_worker`,
   `REVOKE UPDATE, DELETE ON consent_records FROM its_platform_app, its_platform_worker`,
   `REVOKE DELETE ON items FROM its_platform_app, its_platform_worker`,
-  `REVOKE UPDATE (id) ON items FROM its_platform_app, its_platform_worker`,
   `GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO its_platform_worker`,
   `GRANT ALL ON ALL TABLES IN SCHEMA public TO its_platform_admin`,
   `GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO its_platform_app, its_platform_worker`,
