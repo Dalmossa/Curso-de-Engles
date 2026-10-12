@@ -375,7 +375,13 @@ CREATE TABLE clip_renders (
     uri            TEXT NOT NULL,
     ear_checked_at TIMESTAMPTZ,                 -- D-7: per-clip ear check, 100% of L2 clips (§2.3)
     ear_checked_by TEXT,
-    UNIQUE (clip_id, take)
+    UNIQUE (clip_id, take),
+    -- ADR-028 §6: a catalogue render lives under `catalog/`, never `audio/` (the prefix
+    -- `iac-spec.md` §2.4 expires in 30 days) and never `temp/` (1 day). The mistake would be
+    -- invisible for 30 days and then delete the listening catalogue, so the database refuses it
+    -- at insert rather than a convention document warning against it.
+    CONSTRAINT clip_renders_uri_catalog_only
+        CHECK (uri NOT LIKE 'audio/%' AND uri NOT LIKE 'temp/%')
 );
 ```
 

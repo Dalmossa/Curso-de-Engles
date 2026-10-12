@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import type { LessonPhase } from '../../infrastructure/content/content-types.js';
 import {
   ContentRepository,
   type ItemOptionRow,
   type PackRows,
 } from '../../infrastructure/repositories/content.repository.js';
+import { AUDIO_URL_SIGNER } from '../../infrastructure/audio/audio-url-signer.js';
+import type { AudioUrlSigner } from '../../infrastructure/audio/audio-url-signer.js';
 
 /**
  * P1.12 — the three `/content/*` payloads, read from the persisted catalog and nothing else
@@ -149,12 +151,38 @@ export interface DialogueContent {
   slots: DialogueSlotContent[];
 }
 
+/** One signed render in a dialogue's playlist (ADR-028 §2 / §7). */
+export interface DialogueAudioClipContent {
+  clip_id: string;
+  sort_index: number;
+  speaker_id: string;
+  voice_id: string;
+  take: number;
+  /** `clip_renders.rate`, converted from NUMERIC's string to the number the contract publishes. */
+  rate: number;
+  /** `clip_renders.duration_s`, same conversion. */
+  duration_s: number;
+  url: string;
+  expires_at: string;
+}
+
+export interface DialogueAudioContent {
+  dialogue_id: string;
+  cefr_level: string;
+  /** The TTL the signer actually used, so a client never has to know the policy (ADR-028 §7). */
+  ttl_seconds: number;
+  clips: DialogueAudioClipContent[];
+}
+
 /** The Q-L2 floor (ADR-027 §3); the DDL's own CHECK is the full 45–120 s range. */
 const MIN_DIALOGUE_SECONDS = 45;
 
 @Injectable()
 export class ContentService {
-  constructor(private readonly contentRepository: ContentRepository) {}
+  constructor(
+    private readonly contentRepository: ContentRepository,
+    @Inject(AUDIO_URL_SIGNER) private readonly audioUrlSigner: AudioUrlSigner,
+  ) {}
 
   /**
    * The lesson, its four phases and its learner model — all from `lessons`, and `phases`
@@ -260,6 +288,48 @@ export class ContentService {
             type: option.distractor_type,
           })),
       })),
+    };
+  }
+
+  /**
+   * The dialogue's audio playlist, or `null` for every refusal (P1.13, ADR-028).
+   *
+   * The *admission* decision is entirely `ContentRepository.findDialogueAudio`'s SQL (§3): this
+   * method only assembles and signs, so "unknown id", "not shipped", "no complete take" and
+   * "L2 not ear-checked" all arrive here as the same `null` and leave as the same 404 body.
+   *
+   * `rate` and `duration_s` are converted with `Number(...)` because the driver returns
+   * `NUMERIC` as a string. Publishing `"1.00"` where the schema says `type: number` is the
+   * defect class ADR-027 §2 had to repair in `PackOption.note`, and ADR-028 §2 names it here.
+   */
+  async getDialogueAudio(id: string, rate: number): Promise<DialogueAudioContent | null> {
+    const rows = await this.contentRepository.findDialogueAudio(id, rate);
+    if (!rows) return null;
+
+    const clips = rows.clips.map(clip => {
+      const signed = this.audioUrlSigner.sign({
+        clipId: clip.clip_id,
+        take: clip.take,
+        rate: Number(clip.rate),
+      });
+      return {
+        clip_id: clip.clip_id,
+        sort_index: clip.sort_index,
+        speaker_id: clip.speaker_id,
+        voice_id: clip.voice_id,
+        take: clip.take,
+        rate: Number(clip.rate),
+        duration_s: Number(clip.duration_s),
+        url: signed.url,
+        expires_at: signed.expiresAt,
+      };
+    });
+
+    return {
+      dialogue_id: rows.dialogue_id,
+      cefr_level: rows.cefr_level,
+      ttl_seconds: this.audioUrlSigner.defaultTtlSeconds,
+      clips,
     };
   }
 }

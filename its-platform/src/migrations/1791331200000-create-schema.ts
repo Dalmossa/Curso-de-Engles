@@ -188,7 +188,13 @@ export const SCHEMA_STATEMENTS: string[] = [
     uri            TEXT NOT NULL,
     ear_checked_at TIMESTAMPTZ,
     ear_checked_by TEXT,
-    UNIQUE (clip_id, take)
+    UNIQUE (clip_id, take),
+    -- ADR-028 §6: catalogue renders live under 'catalog/', never 'audio/' (the prefix
+    -- iac-spec.md §2.4 expires in 30 days) and never 'temp/' (1 day). The consequence of
+    -- getting this wrong is silent deletion with nothing to see at the time, so the database —
+    -- the one place the application cannot bypass — refuses it at insert.
+    CONSTRAINT clip_renders_uri_catalog_only
+      CHECK (uri NOT LIKE 'audio/%' AND uri NOT LIKE 'temp/%')
   )`,
 
   // ------------------------------------------------------------------

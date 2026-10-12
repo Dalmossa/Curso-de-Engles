@@ -15,6 +15,7 @@ describe('OpenAPI endpoints contract - comprehensive', () => {
     { path: '/content/lessons/{lesson_id}', methods: ['get'] },
     { path: '/content/packs/{pack_id}', methods: ['get'] },
     { path: '/content/listening/{dialogue_id}', methods: ['get'] },
+    { path: '/content/listening/{dialogue_id}/audio', methods: ['get'] },
     { path: '/learners/{learner_id}/placement', methods: ['post'] },
     { path: '/learners/{learner_id}/next', methods: ['get'] },
     { path: '/learners/{learner_id}/practice', methods: ['post'] },
@@ -67,6 +68,7 @@ describe('OpenAPI endpoints contract - comprehensive', () => {
       '/content/lessons/{lesson_id}',
       '/content/packs/{pack_id}',
       '/content/listening/{dialogue_id}',
+      '/content/listening/{dialogue_id}/audio',
       '/learners/{learner_id}/profile',
       '/learners/{learner_id}/mastery',
     ];

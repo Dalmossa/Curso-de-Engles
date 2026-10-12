@@ -115,6 +115,37 @@ export interface DialogueRows {
   options: ItemOptionRow[];
 }
 
+/**
+ * One selected render of a dialogue's audio playlist, narrowed to the columns
+ * `DialogueAudioClip` serves (P1.13, ADR-028 §2).
+ *
+ * `rate` and `duration_s` are typed `string` on purpose: both are `NUMERIC`, and `pg`/TypeORM
+ * hand `NUMERIC` back as a **string**. The published contract says `type: number`, so the
+ * conversion belongs to the mapper — `ContentService.getDialogueAudio` — not here, and making
+ * the row type `string` is what stops the service compiling if it forgets (ADR-028 §2's
+ * implementation note, the defect class ADR-027 had to repair in `PackOption.note`).
+ */
+export interface DialogueAudioClipRow {
+  clip_id: string;
+  sort_index: number;
+  /** `clips.speaker_id`; `dialogue_speakers` maps it to the render's `voice_id`. */
+  speaker_id: string;
+  /** The voice `dialogue_speakers` pins to that speaker (ADR-028 §2), not the render's own. */
+  voice_id: string;
+  take: number;
+  /** `clip_renders.rate` — NUMERIC. */
+  rate: string;
+  /** `clip_renders.duration_s` — NUMERIC. */
+  duration_s: string;
+}
+
+export interface DialogueAudioRows {
+  dialogue_id: string;
+  cefr_level: string;
+  clips: DialogueAudioClipRow[];
+}
+
+
 /** A `jsonb`/`json` column may arrive parsed or as text, depending on the driver. */
 function asJson(value: unknown): unknown {
   return typeof value === 'string' ? (JSON.parse(value) as unknown) : value;
@@ -227,5 +258,108 @@ export class ContentRepository {
           )) as ItemOptionRow[]);
 
     return { dialogue, voices, slots, options };
+  }
+
+  /**
+   * The source of `GET /content/listening/{dialogue_id}/audio`'s playlist, or `null` when
+   * ADR-028 §3 refuses the request.
+   *
+   * All four admission conditions are **SQL**, not post-filtering (ADR-028 §Implementation
+   * Plan B). The query returns rows only when every one of them holds, so "not admitted" and
+   * "unknown id" are the same empty result — the property the controller turns into one 404
+   * body.
+   *
+   * 1. `status = 'shipped'` (§3.1), and the 45 s Q-L2 floor ADR-027 §3 fixed;
+   * 2. every clip of the dialogue has at least one render (§3.2), and
+   * 3. the highest `take` complete for the whole dialogue is served (§3.3 / §2);
+   * 4. if any item of the dialogue is `listening_tier = 'L2'`, every selected render carries
+   *    both `ear_checked_at` and `ear_checked_by` (§3.4, `Q-L7`).
+   *
+   * **Take completeness is per `rate`.** `UNIQUE (clip_id, take)` means one `(clip, take)` row
+   * carries one `rate`, so a global take cannot serve two rates; the requested rate is a
+   * filter before completeness is computed, and a partially-rendered *higher* take at that rate
+   * is ignored in favour of the highest *complete* one. §2 does not spell this out and it is
+   * recorded in the ADR follow-up report rather than guessed silently: it is the only reading
+   * under which the served `rate` and `duration_s` are the selected render's own.
+   *
+   * The playlist is also dropped whole when its length is not the dialogue's clip count — a clip
+   * whose speaker has no `dialogue_speakers` row would otherwise yield a shorter, silently
+   * incomplete playlist. That guard is **not** in ADR-028 §3; it is the same all-or-nothing
+   * stance, applied to the one join the schema does not constrain by foreign key.
+   */
+  async findDialogueAudio(id: string, rate: number): Promise<DialogueAudioRows | null> {
+    const rows = (await this.dataSource.query(
+      `WITH clips_of AS (
+         SELECT c.id AS clip_id, c.sort_index, c.speaker_id, d.id AS dialogue_id, d.cefr_level
+           FROM clips c
+           JOIN dialogues d ON d.id = c.dialogue_id
+          WHERE d.id = $1
+            AND d.status = 'shipped'
+            AND d.duration_seconds >= 45
+       ),
+       render_takes AS (
+         SELECT r.clip_id, r.take
+           FROM clip_renders r
+           JOIN clips_of co ON co.clip_id = r.clip_id
+          WHERE r.rate = $2
+       ),
+       complete_takes AS (
+         SELECT rt.take
+           FROM render_takes rt
+          GROUP BY rt.take
+         HAVING count(DISTINCT rt.clip_id) = (SELECT count(*) FROM clips_of)
+       ),
+       chosen AS (
+         SELECT (SELECT max(take) FROM complete_takes) AS take,
+                (SELECT count(*) FROM clips_of)         AS clip_count
+       ),
+       has_l2 AS (
+         SELECT EXISTS (
+           SELECT 1 FROM items i WHERE i.dialogue_id = $1 AND i.listening_tier = 'L2'
+         ) AS value
+       ),
+       playlist AS (
+         SELECT co.clip_id, co.sort_index, co.speaker_id, co.dialogue_id, co.cefr_level,
+                ds.voice_id, r.take, r.rate, r.duration_s,
+                r.ear_checked_at, r.ear_checked_by
+           FROM clips_of co
+           JOIN chosen ON chosen.take IS NOT NULL
+           JOIN clip_renders r
+             ON r.clip_id = co.clip_id AND r.take = chosen.take AND r.rate = $2
+           JOIN dialogue_speakers ds
+             ON ds.dialogue_id = $1 AND ds.speaker_id = co.speaker_id
+       )
+       SELECT p.clip_id, p.sort_index, p.speaker_id, p.dialogue_id, p.cefr_level,
+              p.voice_id, p.take, p.rate, p.duration_s
+         FROM playlist p
+         CROSS JOIN has_l2
+         CROSS JOIN chosen
+        WHERE (
+                NOT has_l2.value
+                OR NOT EXISTS (
+                     SELECT 1 FROM playlist q
+                      WHERE q.ear_checked_at IS NULL OR q.ear_checked_by IS NULL
+                   )
+              )
+          AND (SELECT count(*) FROM playlist) = chosen.clip_count
+        ORDER BY p.sort_index`,
+      [id, rate],
+    )) as Array<DialogueAudioClipRow & { dialogue_id: string; cefr_level: string }>;
+
+    const first = rows[0];
+    if (!first) return null;
+    return {
+      dialogue_id: first.dialogue_id,
+      cefr_level: first.cefr_level,
+      clips: rows.map(row => ({
+        clip_id: row.clip_id,
+        sort_index: row.sort_index,
+        speaker_id: row.speaker_id,
+        voice_id: row.voice_id,
+        take: row.take,
+        rate: row.rate,
+        duration_s: row.duration_s,
+      })),
+    };
   }
 }

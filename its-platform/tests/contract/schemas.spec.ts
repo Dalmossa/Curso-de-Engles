@@ -13,8 +13,9 @@
  * There is no dependency on `ajv` or `jsonschema`: a hand-written validator covers the exact
  * keywords these schemas use — `$ref`, `type` (including the `[T, 'null']` arrays), `required`,
  * `properties`, `items`, `enum`, `const`, `pattern`, `minItems`, `maxItems`, `minimum`,
- * `maximum`, `if`/`then`/`else`, and `additionalProperties`. Adding a schema keyword means
- * extending `validate` here, which keeps the validator's reach visible instead of implicit.
+ * `maximum`, `exclusiveMinimum`, `if`/`then`/`else`, and `additionalProperties`. Adding a schema
+ * keyword means extending `validate` here, which keeps the validator's reach visible instead of
+ * implicit.
  *
  * The instances are real: every value was read out of the loaded catalogue (PGlite, `loadContent`
  * over the content repo) rather than invented. `describeContract` runs each one against both
@@ -155,6 +156,14 @@ function validateAssertions(
   const minimum = schema['minimum'];
   if (typeof minimum === 'number' && typeof value === 'number' && value < minimum) {
     errors.push(`${path}: ${value} < minimum ${minimum}`);
+  }
+  const exclusiveMinimum = schema['exclusiveMinimum'];
+  if (
+    typeof exclusiveMinimum === 'number' &&
+    typeof value === 'number' &&
+    value <= exclusiveMinimum
+  ) {
+    errors.push(`${path}: ${value} <= exclusiveMinimum ${exclusiveMinimum}`);
   }
   const maximum = schema['maximum'];
   if (typeof maximum === 'number' && typeof value === 'number' && value > maximum) {
@@ -515,6 +524,79 @@ const DIALOGUE_WRONG: Json = {
   slots: [{ slot_id: 'lst_gist_999', skill: 'gist', transcript: 'x', distractors: [] }],
 };
 
+/**
+ * P1.13 — `dlg_a1_01_first_intro`'s audio playlist, two of its six clips (ADR-028 §2/§7).
+ *
+ * The load-bearing assertion is the **type** of `rate` and `duration_s`, not their presence:
+ * `clip_renders.rate`/`duration_s` are `NUMERIC`, `pg` returns `NUMERIC` as a string, and a
+ * mapper that passes the row through would publish `"1.00"` here. `rate: 1` (a number) is
+ * therefore the case that matters, and `DIALOGUE_AUDIO_BAD_RATE` below is its negative.
+ */
+const AUDIO_CLIP_A: Json = {
+  clip_id: 'clp_dlg_a1_01_first_intro_1',
+  sort_index: 1,
+  speaker_id: 'sp_ana',
+  voice_id: 'v_a',
+  take: 2,
+  rate: 1,
+  duration_s: 4.25,
+  url: 'https://audio.its.example.com/catalog/render/clp_dlg_a1_01_first_intro_1/take-2.opus?rate=1&exp=1760000000&sig=0f8a',
+  expires_at: '2026-10-11T12:34:56Z',
+};
+
+const AUDIO_CLIP_B: Json = {
+  clip_id: 'clp_dlg_a1_01_first_intro_2',
+  sort_index: 2,
+  speaker_id: 'sp_ben',
+  voice_id: 'v_b',
+  take: 2,
+  rate: 1,
+  duration_s: 3.5,
+  url: 'https://audio.its.example.com/catalog/render/clp_dlg_a1_01_first_intro_2/take-2.opus?rate=1&exp=1760000000&sig=1b2c',
+  expires_at: '2026-10-11T12:34:56.789Z',
+};
+
+const DIALOGUE_AUDIO: Json = {
+  dialogue_id: 'dlg_a1_01_first_intro',
+  cefr_level: 'A1',
+  ttl_seconds: 300,
+  clips: [AUDIO_CLIP_A, AUDIO_CLIP_B],
+};
+
+/** The `0.75` accommodation: a different `take` at the lower rate, longer per clip. */
+const DIALOGUE_AUDIO_075: Json = {
+  ...(DIALOGUE_AUDIO as Record<string, unknown>),
+  clips: [
+    {
+      ...(AUDIO_CLIP_A as Record<string, unknown>),
+      take: 4,
+      rate: 0.75,
+      duration_s: 5.67,
+      url: 'https://audio.its.example.com/catalog/render/clp_dlg_a1_01_first_intro_1/take-4.opus?rate=0.75&exp=1760000000&sig=2d3e',
+    },
+  ],
+};
+
+/** The `NUMERIC`-as-string defect: `rate` is the string `"1.00"`, which `type: number` rejects. */
+const DIALOGUE_AUDIO_BAD_RATE: Json = {
+  ...(DIALOGUE_AUDIO as Record<string, unknown>),
+  clips: [{ ...(AUDIO_CLIP_A as Record<string, unknown>), rate: '1.00' }],
+};
+
+/** A zero-length render; `exclusiveMinimum: 0` is the only thing that rejects it. */
+const DIALOGUE_AUDIO_BAD_DURATION: Json = {
+  ...(DIALOGUE_AUDIO as Record<string, unknown>),
+  clips: [{ ...(AUDIO_CLIP_A as Record<string, unknown>), duration_s: 0 }],
+};
+
+/** RFC 3339 without the `Z` the pattern requires — `format` would not have caught it. */
+const DIALOGUE_AUDIO_BAD_EXPIRY: Json = {
+  ...(DIALOGUE_AUDIO as Record<string, unknown>),
+  clips: [
+    { ...(AUDIO_CLIP_A as Record<string, unknown>), expires_at: '2026-10-11T12:34:56+00:00' },
+  ],
+};
+
 interface ContractCase {
   schema: string;
   label: string;
@@ -569,6 +651,39 @@ const CASES: ContractCase[] = [
     valid: false,
     becauseOf: 'is not in the enum',
   },
+  {
+    schema: 'DialogueAudio',
+    label: 'a playlist at rate 1 with numeric rate and duration_s',
+    instance: DIALOGUE_AUDIO,
+    valid: true,
+  },
+  {
+    schema: 'DialogueAudio',
+    label: 'the 0.75 accommodation playlist',
+    instance: DIALOGUE_AUDIO_075,
+    valid: true,
+  },
+  {
+    schema: 'DialogueAudio',
+    label: 'a playlist whose rate is the NUMERIC string "1.00"',
+    instance: DIALOGUE_AUDIO_BAD_RATE,
+    valid: false,
+    becauseOf: 'is not "number"',
+  },
+  {
+    schema: 'DialogueAudio',
+    label: 'a playlist with a zero-length render',
+    instance: DIALOGUE_AUDIO_BAD_DURATION,
+    valid: false,
+    becauseOf: 'exclusiveMinimum',
+  },
+  {
+    schema: 'DialogueAudio',
+    label: 'a playlist whose expires_at is not Z-suffixed',
+    instance: DIALOGUE_AUDIO_BAD_EXPIRY,
+    valid: false,
+    becauseOf: 'does not match',
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -594,10 +709,17 @@ describe('Content API response schemas (P1.12 contract)', () => {
     });
   }
 
-  it('the two files define the three content schemas identically (drift guard)', () => {
+  it('the two files define the six content schemas identically (drift guard)', () => {
     const [first, second] = SPECS;
     if (!first || !second) throw new Error('expected two spec files');
-    for (const name of ['LessonContent', 'PackOption', 'PackContent', 'DialogueContent']) {
+    for (const name of [
+      'LessonContent',
+      'PackOption',
+      'PackContent',
+      'DialogueContent',
+      'DialogueAudio',
+      'DialogueAudioClip',
+    ]) {
       expect(withoutAnnotations(schemaOf(second.doc, name))).toEqual(
         withoutAnnotations(schemaOf(first.doc, name)),
       );

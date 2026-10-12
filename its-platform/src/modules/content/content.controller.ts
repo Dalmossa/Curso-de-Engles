@@ -1,8 +1,24 @@
-import { Controller, Get, Param, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Param, Query, BadRequestException, NotFoundException } from '@nestjs/common';
 // Value import, not `import type`: `emitDecoratorMetadata` needs the class at runtime for
 // Nest's constructor injection (the same reason `placement.controller.ts` imports its service).
 import { ContentService } from './content.service.js';
-import type { DialogueContent, LessonContent, PackContent } from './content.service.js';
+import type {
+  DialogueAudioContent,
+  DialogueContent,
+  LessonContent,
+  PackContent,
+} from './content.service.js';
+
+/**
+ * `dlg_…`, the same id shape `/content/listening/{dialogue_id}` publishes. A malformed value is
+ * a `400` on the audio route (ADR-028 §7); the other two routes let the repository answer `null`
+ * for anything, but this endpoint validates its own input.
+ */
+const DIALOGUE_ID_PATTERN = /^dlg_[a-z0-9_]+$/;
+
+/** ADR-028 §2's accommodation pair. No other rate is rendered, so no other rate is accepted. */
+const SUPPORTED_RATES: readonly number[] = [1, 0.75];
+const DEFAULT_RATE = 1;
 
 /**
  * P1.12 — the three `/content/*` reads (ADR-027 §1). Every response is the persisted catalogue,
@@ -60,6 +76,50 @@ export class ContentController {
       });
     }
     return dialogue;
+  }
+
+  /**
+   * P1.13 — the signed playlist of a dialogue's renders (ADR-028 §1/§3). The 10th published
+   * path, and a resource of its own because a signed URL has a 300 s lifetime that a cacheable
+   * catalog read (`DialogueContent`) must not carry.
+   *
+   * Two refusals are distinguished, and the ADR fixes which is which: a **malformed
+   * `dialogue_id`** and an **unsupported `rate`** are `400`s (the caller is wrong about the
+   * request), while every *admission* failure — unknown id, not `shipped`, no complete take, an
+   * L2 render without an ear check — is the **same 404 body** as the sibling routes, so
+   * "not admitted" cannot be probed for (ADR-028 §3).
+   */
+  @Get('listening/:dialogue_id/audio')
+  async getDialogueAudio(
+    @Param('dialogue_id') dialogue_id: string,
+    @Query('rate') rate?: string,
+  ): Promise<DialogueAudioContent> {
+    if (!DIALOGUE_ID_PATTERN.test(dialogue_id)) {
+      throw new BadRequestException({
+        error: 'bad_request',
+        message: 'Malformed dialogue_id',
+        request_id: cryptoRandom(),
+      });
+    }
+
+    const requested = rate === undefined ? DEFAULT_RATE : Number(rate);
+    if (!SUPPORTED_RATES.includes(requested)) {
+      throw new BadRequestException({
+        error: 'bad_request',
+        message: 'Unsupported rate; expected 1 or 0.75',
+        request_id: cryptoRandom(),
+      });
+    }
+
+    const audio = await this.contentService.getDialogueAudio(dialogue_id, requested);
+    if (!audio) {
+      throw new NotFoundException({
+        error: 'not_found',
+        message: 'Dialogue audio not found',
+        request_id: cryptoRandom(),
+      });
+    }
+    return audio;
   }
 }
 

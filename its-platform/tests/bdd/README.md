@@ -178,6 +178,58 @@ And every slot carries the dialogue's authored transcript (dialogues.transcript,
 And each slot's distractors carry letter, text and an optional type from the six-value taxonomy
 ```
 
+### Scenario: Dialogue audio is signed, per-speaker and per-complete-take
+```gherkin
+Given dialogue "dlg_a1_01_first_intro" is "shipped", 60 s long, with 9 clips in sort_index order
+And every clip has a take-2 render and 3 of them also have a stale take 1
+And the dialogue_speakers table pins Ana to "v_a" and Ben to "v_b"
+When the learner requests GET /content/listening/dlg_a1_01_first_intro/audio
+Then the response carries 9 clips in sort_index order, all at take 2 (the highest
+  take complete for every clip — a partial take is never mixed into a dialogue)
+And each clip's voice_id is the voice pinned to that clip's speaker
+And each clip's url matches '^https?://' and expires at expires_at, ttl_seconds=300
+And each clip carries clip_id, speaker_id, take, rate and duration_s, so the client can
+  fill slot_responses.clip_id and slot_responses.voice_id from what it played
+And rate and duration_s are JSON numbers, not strings (clip_renders stores NUMERIC,
+  which pg returns as a string — ADR-028 §2)
+And no learner identifier appears anywhere in the URL
+```
+
+### Scenario: Rate accommodation is a query parameter, signed and echoed
+```gherkin
+Given dialogue "dlg_a1_01_first_intro" also has renders at rate 0.75
+When the learner requests the audio with rate=0.75
+Then every clip's rate is 0.75 (a number)
+And each url is signed over the 0.75 object, not the 1.00 one
+And ttl_seconds is still 300
+When the learner requests the audio with rate=1.5
+Then the response is 400 Bad Request
+And the body names the supported rates (1 and 0.75)
+```
+
+### Scenario: Audio of a not-admitted dialogue is indistinguishable from an unknown dialogue
+```gherkin
+Given dialogue "dlg_a1_01_first_intro" is "shipped" and has a complete render take
+And one of its items has listening_tier "L2"
+And its selected renders have NOT been ear-checked (ear_checked_at/by are null)
+When the learner requests its audio
+Then the response is 404 Not Found
+And the body is byte-identical to the 404 for a dialogue id that does not exist
+And no clip, take, voice or signature is disclosed by the refusal
+When the renders are ear-checked (ear_checked_at and ear_checked_by both set)
+Then the same request is served with the full playlist
+```
+
+### Scenario: No render pass, no audio
+```gherkin
+Given dialogue "dlg_a2_04_bug_report" is "shipped" with clips
+And take 2 exists for 3 of its clips but take 1 for all of them
+When the learner requests its audio
+Then the response is 404 Not Found (no take is complete for the whole dialogue — ADR-028 §3.3)
+When every clip is re-rendered at take 3
+Then the response is served at take 3, and no clip is served from take 1 or 2
+```
+
 ---
 
 ## Feature: Security & Compliance (M6)
@@ -249,5 +301,6 @@ pytest tests/bdd/ --html=report/bdd.html --self-contained-html
 | Practice Submission | `test_bkt_update_bounds` | `stats-progress-evaluation-spec.md` §2 |
 | Content Delivery | `test_lesson_fase_structure` | `post-lesson-practice-spec.md` §3 |
 | Listening Delivery | `test_shipped_items_only` | `listening-corpus-spec.md` §4 |
+| Signed Audio Delivery | `test_dialogue_audio_admission_gate` | `adr/028-audio-delivery.md` §3, `security-spec.md` §4 |
 | Security | `test_rls_isolation` | `security-spec.md` §2.3 |
 | Authoring Guard | `test_restricted_adapt_blocked` | `external-sources.md` §0.5.1 |

@@ -281,6 +281,43 @@ async function main() {
     }
   });
 
+  // ---- 6b. ADR-028 §6: a catalogue render cannot live in an expiring prefix ----
+  await it('ADR-028 §6 [db]: clip_renders.uri outside catalog/ rejected', async () => {
+    const constraint = await q(
+      `SELECT conname FROM pg_constraint
+        WHERE conrelid = 'clip_renders'::regclass
+          AND contype = 'c'
+          AND conname = 'clip_renders_uri_catalog_only'`,
+    );
+    if (constraint.length !== 1) {
+      throw new Error(
+        `expected the named CHECK clip_renders_uri_catalog_only, found ${constraint.length}`,
+      );
+    }
+
+    await q(
+      `INSERT INTO clips (id, dialogue_id, speaker_id, sort_index, utterance_text)
+       VALUES ('clp_test_1', 'dlg_test', 'sp_a', 1, 'Hi.')`,
+    );
+
+    // Negative control: `audio/` is the prefix `iac-spec.md` §2.4 expires in 30 days.
+    const badUri = await q(
+      `INSERT INTO clip_renders (clip_id, take, voice_id, duration_s, uri)
+       VALUES ('clp_test_1', 1, 'v_a', 3.50, 'audio/render/clp_test_1/take-1.opus')`,
+    ).then(
+      () => null,
+      (e) => e.message,
+    );
+    expectSqlError(badUri);
+
+    // The same row under `catalog/` is accepted: the rule is a namespace rule, not a refusal to
+    // record renders. (This is also the row the second half of the negative control removes.)
+    await q(
+      `INSERT INTO clip_renders (clip_id, take, voice_id, duration_s, uri)
+       VALUES ('clp_test_1', 1, 'v_a', 3.50, 'catalog/render/clp_test_1/take-1.opus')`,
+    );
+  });
+
   // ---- 7. G-8 [db]: skill_theta.state discriminator validated ----
   await it('G-8 [db]: invalid skill_theta.state rejected', async () => {
     const good = {

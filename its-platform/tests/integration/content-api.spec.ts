@@ -35,8 +35,17 @@ import {
   type DialogueRow,
 } from '../../src/infrastructure/repositories/content.repository.js';
 import { ContentService } from '../../src/modules/content/content.service.js';
+import { HmacAudioUrlSigner } from '../../src/infrastructure/audio/hmac-audio-url-signer.js';
 
 const CONTENT_ROOT = process.env['CONTENT_REPO_PATH'] ?? join(process.cwd(), '..');
+
+/**
+ * The signer `ContentService` now requires (P1.13, ADR-028 §5). A literal here and not a mock:
+ * `sign` is a pure function of the key and the clock, so there is nothing to stub.
+ */
+function testSigner(): HmacAudioUrlSigner {
+  return new HmacAudioUrlSigner({ signingKey: 'test-signing-key', baseUrl: 'https://audio.test' });
+}
 
 /**
  * ADR-027 §3a's 11 slots, grouped by the dialogue that owns them. Before the fix each loaded
@@ -70,7 +79,7 @@ describe('ContentService.getDialogue — the serving policy, against a stubbed r
     const repository = {
       findDialogue: async () => ({ dialogue: row, voices: [], slots: [], options: [] }),
     } as unknown as ContentRepository;
-    return new ContentService(repository);
+    return new ContentService(repository, testSigner());
   }
 
   it('serves a shipped dialogue at exactly 45 s', async () => {
@@ -88,7 +97,7 @@ describe('ContentService.getDialogue — the serving policy, against a stubbed r
 
   it('returns null when the row does not exist', async () => {
     const repository = { findDialogue: async () => null } as unknown as ContentRepository;
-    await expect(new ContentService(repository).getDialogue('dlg_nope')).resolves.toBeNull();
+    await expect(new ContentService(repository, testSigner()).getDialogue('dlg_nope')).resolves.toBeNull();
   });
 });
 
@@ -102,7 +111,7 @@ describe('Content API over the real catalogue (P1.12)', () => {
     // The loader reports per-file failures instead of aborting the transaction (ADR-022 §6);
     // an empty `errors[]` is the precondition for everything below.
     expect(report.errors).toEqual([]);
-    service = new ContentService(new ContentRepository(context.dataSource));
+    service = new ContentService(new ContentRepository(context.dataSource), testSigner());
   }, 300_000);
 
   afterAll(async () => {

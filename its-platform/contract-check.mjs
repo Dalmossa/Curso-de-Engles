@@ -14,6 +14,7 @@ const required = [
   '/content/lessons/{lesson_id}',
   '/content/packs/{pack_id}',
   '/content/listening/{dialogue_id}',
+  '/content/listening/{dialogue_id}/audio',
   '/learners/{learner_id}/placement',
   '/learners/{learner_id}/next',
   '/learners/{learner_id}/practice',
