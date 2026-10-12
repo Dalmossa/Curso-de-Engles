@@ -248,5 +248,12 @@ nesta linha e na tabela de resumo.
 
 ---
 
-*Atualizado 2026-10-09 (P1.3 concluído — Next-activity selector com remediação: i+1 scoring + mastery gaps + FSRS due + track/CEFR affinity + remediation priority 100k bonus. 3 testes remediação PASS. Bugs corrigidos: Map forEach iteration, descending sort, getTotalScore remediation bonus, threshold <=0.3, entry point via thetaEstimates). Próxima atualização: P1.4 (BKT engine + ErrorLogEntry).
+*Atualizado 2026-10-09 (P1.3 concluído — Next-activity selector com remediação: i+1 scoring + mastery gaps + FSRS due + track/CEFR affinity + remediation priority 100k bonus. 3 testes remediação PASS. Bugs corrigidos: Map forEach iteration, descending sort, getTotalScore remediation bonus, threshold <=0.3, entry point via thetaEstimates). - P2.4: Security audit (OWASP ASVS 4.0.3 L2) — verificação code-review baseada + gates (typecheck/lint/content-check/contract-check/verify-integrity/prd-score). Zero critical/high; 5 hall médios documentados com donos (F1-F5, ver `docs/security-audit.md`). Auditoria satisfaz ASVS L2 §7 (log imutável P2.2, rate limiting P2.3). `docs/security-audit.md` criado. DONE 2026-10-12.
+
+Próxima atualização: P1.4 (BKT engine + ErrorLogEntry).
 - P2.3: Kong rate limiting (Redis-backed) — ADR-030 que define três camadas `policy: redis` (per-IP 1000/min service-wide, per-IP 5/min em `/auth` por S-03, per-learner 100/min em `/learners` com `limit_by: consumer`, declarada agora e efectiva quando a auth pousar em P1.15–P1.17/ADR-013). Configuração declarativa em `its-platform/iac/kong/kong.yml`, gate `npm run kong:check` (= `scripts/kong-config-check.mjs` com 9 asserções), números reconciliados face ao ADR-006 (exemplo derrubado, hour caps e "bloqueio de 15 min" removidos). Correcção do ADR-006 (6 checkboxes `[x]` falsos, precedente ADR-009). `kong:check` verde, todos os gates pós-commit verdes.*
+## F2 — BACKLOG.md e PRD.md
+- **Concluído**: Todos os defeitos B1–B12 resolvidos
+- **BACKLOG.md**: Totais P0–P3 recalculados, P0.8s renumerado, P3.14 unificado, stories RF-003–008 adicionadas, tabelas corrigidas
+- **PRD.md**: Parâmetros IRT 12/ancorados, banco pilot 12 itens, RF-002 atualizado, partição de reuse basis documentada
+- **Gates**: verify-integrity.py (0 fail, 1 warn), prd-score.py (92.6% >= 80%)

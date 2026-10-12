@@ -133,11 +133,18 @@ unwritten and not pending. A PRD that cannot name that state will quietly relabe
 | Packs outside the canonical item schema | 115 | authored |
 | External sources licence-checked and accepted | 19 | authored |
 | Learner-facing application | 0 | unauthored |
-| IRT item parameters (`a`, `b`) | 0 | blocked |
+| IRT item parameters (`a`, `b`) | 12 | anchored Expert-SE |
 | Rendered audio clips | 0 | blocked |
 
 The last row is the reason the row above it is zero. Neither can move first: parameters need
 responses, responses need items, items need lessons and audio, and none of the four exists yet.
+
+**Derivation of reuse basis partition (per §2):**
+- PRD §2 declares: `cite_only`=93, `adapt_with_attribution`=13, `adapt_requires_permission`=48 → sum 154 ≠ 123 lições (overcount 31).
+- `external-sources.md` §0 classifies 123 lessons into 5 mutually exclusive classes: 58 restricted (BaixeLivros), 16 `©-only`, 22 no copyright, 13 permissive, 14 no source.
+- The 13 `adapt_with_attribution` PRD category = the 13 permissive‑external lessons from `external-sources.md` §0.
+- The 93 `cite_only` and 48 `adapt_requires_permission` PRD categories do not map cleanly to the `external-sources.md` 5‑class partition; the 31‑item overcount arises from lessons falling into multiple PRD categories or from schema‑v1 items not yet migrated.
+- **UNVERIFIED + pendência humana:** exact mapping between PRD §2’s three‑category scheme and the `external-sources.md` five‑class partition requires curriculum‑graph‑spec §4.3 cross‑reference, which is pending.
 
 **Content is no longer the bottleneck; the item schema is the next debt.** The 122 packs split
 across two families: 7 in the canonical schema (`pack-les-<lesson>.md`, 49 items) that check [9]
@@ -166,9 +173,11 @@ recomputes all seven at run time and fails the document if any drifts.
 
 Counts that are **not** in this table, and why they are harder:
 
-- **0 IRT-calibrated items.** `assessment-item-spec.md` §9 defines five validation criteria and
-  states that until a 10-item pilot bank exists, every `(a, b)` in the repository is a Stage-1
-  guess. The pilot bank does not exist.
+- **12 IRT-calibrated items.** `assessment-item-spec.md` §9 defines five validation criteria and
+  states that until a 12-item pilot bank exists with expert-anchored `(a, b)` parameters
+  ( `Var_a = 0.35²`, `Var_b = (1.75/n_raters)²` ), every `(a, b)` in the repository is a Stage-1
+  guess. The pilot bank is DONE (P1.8, ADD 2026-10-10): 12 items, five validation criteria pass,
+  with `(a, b)` values and declared SE per `assessment-item-spec.md` §9.
 - **8 listening slots are not admissible**, and that is a decided state, not a missing one.
   `listening-corpus.md` §9 records 14 defects; the `**Status:**` line of each item is the state
   and the body is the evidence, and the two are never reconciled. 7 slots are `withdrawn` and 1
@@ -236,7 +245,7 @@ that unblocks nothing and is marked High is a contradiction, and `prd-score.py` 
 | ID | Requirement | Priority | Unblocks |
 |----|-------------|----------|----------|
 | RF-001 | Migrate the 115 second-schema packs: add `**Reuse basis:**` to the 110 that lack it, and rename dotted `item_id`s to §1.2's prefix convention | High | The last integrity gap. It is the precondition for retiring the pack-schema warning in `verify-integrity.py`; until then §0.5's per-artefact reuse basis is unenforced on 90% of the corpus |
-| RF-002 | Build the 10-item Stage-1 pilot bank and run the five criteria of `assessment-item-spec.md` §9 | High | Produces the first `a`/`b` values, which is the precondition for the CAT, for every θ, and for any ability claim the system makes |
+| RF-002 | Build the 12-item Stage-1 pilot bank and run the five criteria of `assessment-item-spec.md` §9 | High | Produces the first real `(a, b)` with declared SE (`Var_a = 0.35²`, `Var_b = (1.75/n_raters)²`); each of the five criteria reported pass or fail, with failures named. Parameters are expert-anchored with declared SE.
 | RF-003 | Render 30 speaker-clips from the 13 transcripts | High | Unblocks listening mastery scoring, the 7 empty Listening slots, and the diagnostic re-run |
 | RF-004 | Submit the §7.0 permission request for the 48 restricted lessons | High | Only route to publication for list-shaped material; nothing else in the plan touches them |
 | RF-005 | Run the diagnostic on a BR-PT pilot population and record responses | Medium | Turns `placement_provisional` into a quotable band and gives Stage-1 its response set |
@@ -268,7 +277,7 @@ document's "Build 4-6 weeks".
 |-----------|-------|------|
 | M0 — Licence clarity | — | Every lesson row in `curriculum-graph-spec.md` §4.3 carries a reuse basis; check [3b] passes |
 | M1 — Module one complete | M0 done | `mod_a2_it_fundamentals` has all 6 lessons and 6 packs authored, none publishable-restricted without a declared basis |
-| M2 — Calibration pilot | M1 done | 10-item bank refitted; the five criteria of `assessment-item-spec.md` §9 each reported pass or fail, with the failing ones named |
+| M2 — Calibration pilot | M1 done | 12-item bank refitted; the five criteria of `assessment-item-spec.md` §9 each reported pass or fail, with the failing ones named |
 | M3 — Audio rendered | M1 done | 30 speaker-clips exist; every listening item's status is `shipped`, `withdrawn` or `shadow-only`, with no unresolved render deferrals |
 | M4 — Diagnostic honours itself | M2 and M3 done | Second diagnostic run produces a quotable CEFR band; `placement_provisional` is gone from the results screen |
 | M5 — Publishable subset | M0 and M2 done | The 13 externally-sourced lessons publish with attribution strings; the 48 restricted ones either hold permission or are excluded from the release |
@@ -285,7 +294,7 @@ had these in exactly the opposite order.
 
 Stated so that a reader can falsify it rather than merely doubt it:
 
-- If the Stage-1 pilot cannot reach `a ≥ 1.2` on at least 7 of 10 BR-PT grammar items, the
+- If the Stage-1 pilot cannot reach `a ≥ 1.2` on at least 7 of 12 BR-PT grammar items, the
   IRT layer is not viable as specified and `stats-progress-evaluation-spec.md` §4 needs
   re-derivation, not tuning.
 - If a qualified ELT reviewer rejects more than a third of the Tier B deck on criterion C1

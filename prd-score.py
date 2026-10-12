@@ -13,7 +13,11 @@ the script is broken, not the document.
 
 The criteria are not generic "is it well written" checks. Each one exists because this
 repository has already recorded a defect of that class, in the DEF log of
-`listening-corpus.md` §9 or in the check table of `AGENTS.md`:
+`listening-corpus.md` §9 or in the check table of `AGENTS.md`.
+
+The rubric contains hardcoded pattern lists (KNOWN_FALSE, DECISIONS) that capture
+defects previously recorded in the repository. Every numerical threshold derives from
+the repository at run time; the rubric re-fails when the corpus grows or patterns change.
 
   C1  licence safety            — DEF-11: `content-map.md` §11.1 was headed
                                   "source-derived, zero authoring" while reproducing a
@@ -106,6 +110,7 @@ CANON = {
     "admissible": (("admiss", "public", "publicavel"), "admissible"),
     "authored lessons": (("authored", "autor"), "authored_lessons"),
     "packs": (("pack", "pratica", "prática"), "packs"),
+    "practice items": (("pratica", "prática", "practice", "items"), "practice_items"),
 }
 
 # values the previous PRD asserted and the repository contradicts
@@ -308,9 +313,33 @@ def c2(prd: str, truth: dict) -> None:
     # (d) known-false values must be gone
     present = [why for rx, why in KNOWN_FALSE if re.search(rx, prd)]
     if present:
+        # retracteada(s) ainda presentes no PRD — cada uma vale ~1,0 ponto
+        got -= min(3.0, len(present) * 1.0)
         notes.append(f"(d) retracted claims still present: {present}")
     else:
         got += 0.0   # already counted; recorded for the report only
+
+    # (e) arithmetic: every declared partition must sum to the total
+    # Check reuse basis: cite_only + adapt_with_attribution + adapt_requires_permission
+    # should equal the total number of authored lessons
+    import re as _re
+    rb_match = _re.search(
+        r'(cite_only).*?(\d+).*?(adapt_with_attribution).*?(\d+).*?(adapt_requires_permission).*?(\d+)',
+        prd, _re.I)
+    if rb_match:
+        cite_only = int(rb_match.group(2))
+        adapt_att = int(rb_match.group(4))
+        adapt_req = int(rb_match.group(6))  # group 6 is adapt_requires_permission count
+        total_lessons = truth.get("authored_lessons", 0)
+        expected_sum = cite_only + adapt_att + adapt_req
+        if expected_sum != total_lessons:
+            got -= 3.0
+            notes.append(f"(e) reuse basis partition drift: {cite_only} + {adapt_att} + {adapt_req} = "
+                         f"{expected_sum}, but authored_lessons = {total_lessons}")
+        else:
+            notes.append(f"(e) reuse basis partition OK: {cite_only} + {adapt_att} + {adapt_req} = {total_lessons}")
+    else:
+        notes.append("(e) no reuse basis partition found — skipping arithmetic check")
     record("C2", "Numbers are derived, not asserted", got, 12.0, notes)
 
 
@@ -710,6 +739,7 @@ def main(argv: list[str]) -> int:
     if gate:
         print("LICENCE GATE FAILED — a gated criterion scored zero; fix C1 before reading "
               "the percentage as meaningful.")
+        return 1
     if pct >= THRESHOLD:
         print(f"PASS — {pct:.1f}% >= {THRESHOLD}%")
         return 0
