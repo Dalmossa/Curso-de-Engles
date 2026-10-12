@@ -25,7 +25,8 @@
     "db:seed": "echo 'Seed command not yet implemented'",
     "domain:check": "node scripts/domain-isolation-check.mjs",
     "rls:check": "node scripts/rls-context-check.mjs",
-    "contract:check": "node contract-check.mjs"
+    "contract:check": "node contract-check.mjs",
+    "kong:check": "node scripts/kong-config-check.mjs"
   },
   "keywords": [
     "its",

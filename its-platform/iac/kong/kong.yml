@@ -1,0 +1,104 @@
+# ===========================================================================
+# ITS Platform — Kong declarative configuration (DB-less mode)
+# ===========================================================================
+# Decision records: ADR-030 (rate-limiting layering + numbers) over ADR-006
+# (gateway choice). Acceptance (BACKLOG P2.3): per-learner 100/min, per-IP
+# 1000/min, enforced at the gateway.
+#
+# The three upstreams sketched in ADR-006's example (curriculum-service /
+# adaptive-engine / auth-service) do not exist: ADR-012 replaced them with a
+# NestJS monolith. A service entry exists only for what the controllers in
+# src/main.ts actually expose.
+#
+# Secrets: this file carries none. redis_username / redis_password are
+# ${KONG_REDIS_*} placeholders resolved by deck at sync time (P2.5). All
+# other values are literal so the file stays a reviewable contract.
+# ---------------------------------------------------------------------------
+_format_version: "3.0"
+_transform: true
+
+services:
+  - name: its-platform-api
+    url: http://its-platform-api:3000
+    connect_timeout: 5000
+    read_timeout: 30000
+    write_timeout: 30000
+    routes:
+      # Probes — P0.8 /health /ready (src/health/health.controller.ts)
+      - name: health-route
+        paths: ["/health"]
+        strip_path: false
+      - name: ready-route
+        paths: ["/ready"]
+        strip_path: false
+
+      # Auth — POST /auth/refresh (501 until P1.15–P1.17). S-03 credential
+      # stuffing: 5 req/min per IP (threat-model.md S-03; BDD "6th -> 429").
+      - name: auth-route
+        paths: ["/auth"]
+        strip_path: false
+        plugins:
+          - name: rate-limiting
+            config:
+              minute: 5
+              policy: redis
+              limit_by: ip
+              fault_tolerant: true
+              headers: true
+              error_message: "Too many requests — auth limit 5/min per IP (S-03)"
+              redis_host: redis-cluster
+              redis_port: 6379
+              redis_database: 2
+              redis_username: "${KONG_REDIS_USERNAME}"
+              redis_password: "${KONG_REDIS_PASSWORD}"
+
+      # Content — GET /content/lessons/{lesson_id}, /packs/{pack_id},
+      # /listening/{dialogue_id}, /listening/{dialogue_id}/audio
+      - name: content-route
+        paths: ["/content"]
+        strip_path: false
+
+      # Learners — POST /learners/{id}/placement, GET /learners/{id}/next,
+      # POST /learners/{id}/practice, GET /learners/{id}/profile,
+      # GET /learners/{id}/mastery. P2.3 acceptance — per-learner 100/min.
+      # limit_by: consumer keys on the authenticated consumer (JWT); effective
+      # when authentication lands (P1.15–P1.17, ADR-013). Until then Kong falls
+      # back to the IP key and the service-wide per-IP 1000/min still bounds
+      # every client, so the latent limit is never the looser one.
+      - name: learners-route
+        paths: ["/learners"]
+        strip_path: false
+        plugins:
+          - name: rate-limiting
+            config:
+              minute: 100
+              policy: redis
+              limit_by: consumer
+              fault_tolerant: true
+              headers: true
+              error_message: "Too many requests — learner limit 100/min (P2.3)"
+              redis_host: redis-cluster
+              redis_port: 6379
+              redis_database: 2
+              redis_username: "${KONG_REDIS_USERNAME}"
+              redis_password: "${KONG_REDIS_PASSWORD}"
+
+    # Global — P2.3 acceptance, per-IP 1000/min (threat-model.md D-06 flood).
+    # Applies to every route of the service; the route-level plugins compose
+    # additively, so the tighter window on /auth and /learners trips first.
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 1000
+          policy: redis
+          limit_by: ip
+          fault_tolerant: true
+          headers: true
+          error_message: "Too many requests — IP limit 1000/min (D-06)"
+          redis_host: redis-cluster
+          redis_port: 6379
+          redis_database: 2
+          redis_username: "${KONG_REDIS_USERNAME}"
+          redis_password: "${KONG_REDIS_PASSWORD}"
+
+# Consumers and jwt land with P1.15–P1.17 — none defined here (ADR-013 open).

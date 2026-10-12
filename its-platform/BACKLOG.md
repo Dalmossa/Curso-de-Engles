@@ -178,6 +178,18 @@ Listed in **execution order**. Ids are sequential within the phase.
 > `runbook.md` §5.2 also cites legacy deployments (`api-gateway`, `curriculum-service`,
 > `adaptive-engine`) that do not exist in the current stack — that section is rewritten as
 > part of P2.11/P2.6, not before.
+>
+> **Audit finding 2026-10-12 — ADR-006 carried false `[x]` checkboxes too (corrected by P2.3 /
+> ADR-030).** Six items ("Kong Helm chart", "Create `kong/kong.yml` declarative config", "deck
+> in CI", "Redis-backed rate limiting", "Prometheus plugin + ServiceMonitor", "correlation-id
+> plugin") were marked done although **no Kong artefact existed anywhere in the repository** —
+> `iac/` held only empty directories, a grep of the non-doc tree for `kong|declarative|deck`
+> had zero matches, and the ADR's own example YAML routed to three upstreams
+> (`curriculum-service`, `adaptive-engine`, `auth-service`) that ADR-012 eliminated. ADR-030
+> (P2.3) delivers the declaration (`iac/kong/kong.yml`), its machine gate (`npm run
+> kong:check`), and the correction of the ADR; the five remaining boxes stay unchecked until
+> their artefacts exist. Same disease as ADR-009 — the second instance found by grepping for
+> it, not by reading.
 | **P2.7** | Observability stack (Prom/Grafana/Loki/Tempo) + SLO dashboards | M7.3 | Must | 3d | P0.8, P2.2 | ADR-007 | Metrics, logs, traces; `/health` + `/ready` are the bound probes; log ingestion consumes the P2.2 audit trail |
 | **P2.8** | OpenTelemetry instrumentation, core request path | TD-003 (part) | Must | 4d | P2.7 | `CONSTITUTION.md` §4.6 | Traces, metrics, logs unified; remainder → P3.12 |
 | **P2.9** | Resilience patterns on outbound calls | — | Must | 3d | P0.8 | `CONSTITUTION.md` §4.6 | Circuit breaker (closed→open→half-open); retry with **exponential backoff + jitter on idempotent calls only**; documented fallback; explicit timeout on every call |

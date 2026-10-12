@@ -256,8 +256,16 @@ And the consent check runs before signed URL generation
 Given an attacker attempts 100 login requests in 1 minute
 When the 6th request arrives
 Then Kong returns 429 Too Many Requests
-And the IP is blocked for 15 minutes
+And the response carries Retry-After
+And the window rolls at the minute boundary
 ```
+
+> **Correction 2026-10-12 (ADR-030):** the previous final line claimed the IP is *"blocked
+> for 15 minutes"*. The chosen stack's built-in `rate-limiting` plugin has no block-and-release
+> control — its windows are second/minute/hour/day/month/year — so the claim was not
+> achievable and is struck. Auth per-IP is `5/min` (threat-model S-03), hence *"6th → 429"`;
+> the window rolls at the minute boundary and `Retry-After` tells the client when. A 15-minute
+> ban (custom plugin or WAF) is out of scope — see ADR-030 §D4 and ADR-006's plan.
 
 ---
 

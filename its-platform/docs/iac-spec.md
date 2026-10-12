@@ -48,6 +48,8 @@ its-platform/
 │   │           ├── postgresql-12.1.0.tgz
 │   │           ├── redis-17.0.0.tgz
 │   │           └── kong-2.20.0.tgz
+│   ├── kong/
+│   │   └── kong.yml          # Declarative gateway config (ADR-006, ADR-030)
 │   └── argocd/
 │       ├── applications/
 │       │   ├── its-platform-dev.yaml

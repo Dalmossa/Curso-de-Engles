@@ -118,6 +118,12 @@ plugins:
       message: "Service temporarily unavailable"
 ```
 
+> **Note (2026-10-12, ADR-030):** the config example above predates ADR-012 — its three
+> upstreams (`curriculum-service`, `adaptive-engine`, `auth-service`) no longer exist; the
+> API layer is a NestJS monolith. The live declarative config is `iac/kong/kong.yml` (one
+> service `its-platform-api`), whose rate-limiting numbers supersede the example's
+> per-service split — see ADR-030 §D1–D3.
+
 ### Kong Ingress Controller (KIC)
 
 ```yaml
@@ -172,16 +178,24 @@ ingressController:
 
 ## Implementation Plan
 
-- [x] Add Kong Helm chart to `iac/helm/its-platform/charts/kong-2.20.0.tgz`
-- [x] Create `kong/kong.yml` declarative config
-- [x] Add `deck` to CI pipeline: `deck sync --state kong/kong.yml`
-- [x] Configure Redis-backed rate limiting (shared with Celery)
-- [x] Add Prometheus plugin + ServiceMonitor
-- [x] Add correlation-id plugin for distributed tracing
-- [ ] Custom plugin: `reuse-basis-check` (validates `Reuse basis` header)
-- [ ] Custom plugin: `content-license` (blocks `adapt_*` on restricted content)
-- [ ] WAF rules: OWASP Core Rule Set via `kong-plugin-waf`
-- [ ] Canary deployment via `deck` weight-based routing
+> **Audit finding 2026-10-12 — ADR-006 carried false `[x]` checkboxes (corrected by P2.3 /
+> ADR-030).** Six items below were marked done although **no Kong artefact existed anywhere
+> in the repository** — no `kong.yml`, no Helm chart, no `deck` step, no plugin config;
+> `iac/` held only empty directories and a grep of the non-doc tree for `kong|declarative|deck`
+> had zero matches. The checkboxes recorded design approval, not delivery — the same disease
+> ADR-009 was corrected for on 2026-10-06. The two items P2.3 actually delivers keep their
+> checkmark; the rest stay unchecked until their artefacts exist.
+
+- [ ] Add Kong Helm chart to `iac/helm/its-platform/charts/kong-2.20.0.tgz` — **no chart exists; P2.5**
+- [x] Create `iac/kong/kong.yml` declarative config — **P2.3 2026-10-12 (ADR-030)** *(the plan said `kong/kong.yml`; the repo's infra root is `iac/`, so the config lives at `iac/kong/kong.yml`)*
+- [ ] Add `deck` to CI pipeline: `deck sync --state iac/kong/kong.yml` — **P2.5**
+- [x] Configure Redis-backed rate limiting (shared with Celery) — **P2.3 2026-10-12 (ADR-030): three layers, `policy: redis`**
+- [ ] Add Prometheus plugin + ServiceMonitor — **P2.7**
+- [ ] Add correlation-id plugin for distributed tracing — **P0.8/P2.8**
+- [ ] Custom plugin: `reuse-basis-check` (validates `Reuse basis` header) — P3
+- [ ] Custom plugin: `content-license` (blocks `adapt_*` on restricted content) — P3
+- [ ] WAF rules: OWASP Core Rule Set via `kong-plugin-waf` — P3
+- [ ] Canary deployment via `deck` weight-based routing — P3
 
 ## References
 

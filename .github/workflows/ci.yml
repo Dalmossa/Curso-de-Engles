@@ -150,6 +150,33 @@ jobs:
         run: npm run rls:check
 
   # ------------------------------------------------------------------
+  # Kong Config Check
+  # ------------------------------------------------------------------
+  kong-check:
+    name: Kong Config Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          submodules: recursive
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: its-platform/package-lock.json
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: npm ci
+
+      - name: Run Kong config check
+        working-directory: its-platform
+        run: npm run kong:check
+
+  # ------------------------------------------------------------------
   # Content Integrity Verification
   # ------------------------------------------------------------------
   content-integrity:
@@ -615,6 +642,7 @@ jobs:
       - lint
       - domain-isolation
       - rls-context
+      - kong-check
       - content-integrity
       - contract-test
       - unit
@@ -630,6 +658,7 @@ jobs:
           echo "Lint: ${{ needs.lint.result }}"
           echo "Domain Isolation: ${{ needs.domain-isolation.result }}"
           echo "RLS Context: ${{ needs.rls-context.result }}"
+          echo "Kong Config: ${{ needs.kong-check.result }}"
           echo "Content Integrity: ${{ needs.content-integrity.result }}"
           echo "Contract Test: ${{ needs.contract-test.result }}"
           echo "Unit Tests: ${{ needs.unit.result }}"
@@ -648,6 +677,7 @@ jobs:
           needs.lint.result != 'success' ||
           needs.domain-isolation.result != 'success' ||
           needs.rls-context.result != 'success' ||
+          needs.kong-check.result != 'success' ||
           needs.content-integrity.result != 'success' ||
           needs.contract-test.result != 'success' ||
           needs.unit.result != 'success' ||
