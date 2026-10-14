@@ -1,6 +1,6 @@
 # ITS Platform — Constitution
 
-**Version:** 2.0.0 · **Status:** Ratified
+**Version:** 2.2.0 · **Status:** Ratified · **Pending:** 2.1.0 (see §9 changelog)
 **Governance:** This document governs all technical decisions, processes, and standards for the ITS Platform.
 **Target stack:** NestJS · TypeScript · PostgreSQL (see ADR-012, ADR-014). Supersedes the Python/FastAPI prototype.
 **Amendment:** See §9 (mirrors `Curso-de-Ingles/SDD.md` §9)
@@ -119,7 +119,7 @@ This Constitution establishes the **technical governance** for the ITS Platform 
 | **Current** | `/api/v1` — see `docs/api-spec.openapi.yaml` `servers` |
 | **Breaking change** | Removing or renaming a route or field · changing a field's type or semantics · tightening validation so previously valid input is rejected · changing a success status code · changing an error code that clients branch on · removing a required enum value. |
 | **Non-breaking** | New endpoint · new optional field · new enum value **with** a documented fallback · loosening validation · new optional query parameter. |
-| **Deprecation** | A deprecated version emits `Deprecation: true` and `Sunset: <HTTP-date>` (RFC 8594). Minimum notice: **90 days** for security and correctness fixes, **180 days** for feature retirement. |
+| **Deprecation** | A deprecated resource emits `Deprecation: <sf-date>` — RFC 9745 §2.1, whose value MUST be a Date per RFC 9651 §3.3.7, serialised as `@<unix-seconds>` (e.g. `@1688169599`). The boolean form `Deprecation: true` is **retired**: it was the pre-publication draft form and is not a valid Date. `Sunset: <HTTP-date>` (RFC 8594) accompanies it and **MUST NOT be earlier** than the `Deprecation` date (RFC 9745 §4); the two fields use different date formats, by design. The field applies to the **resource in the response's context** (RFC 9745 §2.2); a wider scope — a whole version, say — emits the field per resource **and documents the increased scope in `CHANGELOG.md`**, because an increased scope is invisible to a consumer that has not read this policy. A `Link: <…>; rel="deprecation"` pointing at the migration guide is permitted (RFC 9745 §3). Minimum notice: **90 days** for security and correctness fixes, **180 days** for feature retirement. |
 | **Retirement gate** | A version is removed only after its `Sunset` date **and** after Kong/ADR-006 access logs show no external traffic to that prefix for 30 consecutive days. This metric must exist before a version is deprecated, not after. |
 | **Changelog** | Every breaking change is recorded in `CHANGELOG.md` with the migration path before the change merges. |
 
@@ -392,6 +392,38 @@ Alert → Acknowledge (15m) → Diagnose → Mitigate → Resolve → Postmortem
 | 1.0.0 | 2026-10-03 | Initial ratification per `ITS-ARCHITECTURE.md` governance section |
 | 2.0.0 | 2026-10-04 | `STRATEGIC-REALIGNMENT` — ADR-012 (FastAPI → NestJS), ADR-013 (`Proposed`), ADR-014 (PGlite/PostgreSQL). **See "What weakens" below.** |
 | **2.1.0** | **2026-10-05** | **PROPOSED — awaiting §9 step 5 approval (Tech Lead + Security Lead + Director).** Adds **§2 `Invariant Floor`** per ADR-018 §1. Defect: `docs/data-model.erd.md:408` materialises `gate_passed = (mastery >= 0.85)`, dropping the `CI₉₅_lower(P) > 0.70` conjunct and the ≥3-obs / ≥2-days / ≥1-spaced evidence clause that `PRD.md` §6.6, `post-lesson` §7.1 and `curriculum-graph` §6.1 all require — and `BACKLOG.md` P1.2 then carried it as an acceptance criterion, where a third document would have asserted it. **Nothing weakens**: additive, strengthens §2, supersedes no section, changes no version-gated behaviour |
+| **2.2.0** | **2026-10-14** | **Ratified.** Amends **§4.4 `Deprecation`** to the RFC 9745 form; see *"2.2.0 — What weakens"* below. Defect: §4.4 mandated `Deprecation: true`, a value the standard does not define — RFC 9745 §2.1 requires a Date (RFC 9651 §3.3.7) — so the only form the constitution permitted was one no client could parse as a date. Identifier: **H-1** (`reports/api/fase-1.md` §5.1), carried as **ADR-033 D2**. Found by the A1 audit, then reproduced by `npm run contract:gate` refusing the boolean form **while §4.4 still mandated it** — a gate enforcing a `Proposed` ADR against a live clause. **What weakens: two things, recorded below.** |
+
+**Version numbers are assigned in the order they were written, not the order they were ratified.** The
+`2.2.0` row does **not** imply that `2.1.0` was ratified: the row's status text, not the number, carries
+that. Only `Status: Ratified` in the header above is the document's standing version.
+
+### 2.2.0 — What weakens
+
+Per §9 step 3. This amendment moves §4.4 from a value the standard does not define to the one it does,
+so most of it tightens — but two things move the other way, and they are recorded here rather than left
+in a commit message.
+
+| Direction | Before | After | Why accepted |
+|---|---|---|---|
+| **Weakened — client-side checkability** | `Deprecation: true` is a boolean: presence and value are one comparison, and a substring search finds it | `Deprecation: @<unix-seconds>` is a Structured Field Date: a client must parse the field to read the date | The boolean carried **no date**, so it could not answer the only question a deprecation raises — *when*. `Sunset` answers it for removal, not for deprecation. There was strictly less information before, at a lower parsing cost; the cost is now paid where the information is used |
+| **Weakened — granularity by construction** | *"**A deprecated version** emits …"* — version-granularity was implied by the wording, because it was the only shape allowed | The field applies to the **resource in the response's context**, so a whole-version deprecation now additionally requires a **documented** increased scope | This is a real loss of tightness. RFC 9745 §2.2 is explicit that an increased scope is *invisible* to a consumer that has not read the policy, so the obligation moves from the header's shape to a documentation requirement in `CHANGELOG.md` — checkable by reading, not by parsing |
+| **Strengthened** | *(nothing said about ordering)* | `Sunset` **MUST NOT be earlier** than `Deprecation` (RFC 9745 §4) | The rule was absent and is mechanical: two headers, one comparison |
+| **Strengthened** | `Deprecation: true` and `<HTTP-date>`, with RFC 8594 cited once for the pair | Each field is pinned to its own standard and format: `Deprecation` → RFC 9745 §2.1 → RFC 9651 §3.3.7 (`@<unix-seconds>`); `Sunset` → RFC 8594 (HTTP-date) | The old row cited RFC 8594 for both. RFC 8594 defines `Sunset` alone, and RFC 9745 §4 says so explicitly *("for historical reasons the Sunset HTTP header field uses a different data format")* |
+
+**Explicitly not changed:** the 90/180-day minimum notice, the retirement gate (Sunset passed **and** 30
+consecutive days with no external traffic to the prefix), the URL-path versioning strategy, and §4.4's
+requirement that the metric exist **before** deprecation. **The retirement gate still has no
+instrument** — `iac/kong/kong.yml` configures no access-log, metrics or correlation plugin, so a
+deprecation can be announced and cannot be retired on evidence (ADR-033 D4). That is a gap in the
+implementation of a rule, not in the rule.
+
+**§9 step 5 (Review & Approve — Tech Lead + Security Lead + Director):** the ratification was given by
+the repository's decision authority on 2026-10-14 as **H-1**. Where those three roles are held by
+distinct people, their individual sign-off is **not** recorded here, and ADR-033's frontmatter
+`deciders` stays `unassigned` — a handle written there would assert that a person approved it, which
+this document cannot know.
+
 
 ### 2.1.0 — Proposed, not yet ratified
 
