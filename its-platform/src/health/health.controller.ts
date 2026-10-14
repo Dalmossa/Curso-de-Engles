@@ -1,6 +1,10 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, VERSION_NEUTRAL } from '@nestjs/common';
 
-@Controller()
+// VERSION_NEUTRAL: for URI versioning this omits the version segment, so the
+// probes stay at /health and /ready. They are liveness/readiness endpoints for
+// the orchestrator and the gateway (P0.8), not a versioned API surface, and
+// `src/main.ts` excludes them from the global prefix for the same reason.
+@Controller({ version: VERSION_NEUTRAL })
 export class HealthController {
   @Get('health')
   health(): { status: string; timestamp: string } {

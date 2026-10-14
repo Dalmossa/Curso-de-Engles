@@ -113,9 +113,23 @@ function extractRoutes(dir) {
     const text = readFileSync(file, 'utf8')
       .replace(/\/\*[\s\S]*?\*\//g, '') // block comments
       .replace(/^[ \t]*\/\/.*$/gm, ''); // line comments
-    const controller = text.match(/@Controller\s*\(\s*(?:'([^']*)'|"([^"]*)")?\s*\)/);
-    if (!controller) continue;
-    const prefix = controller[1] ?? controller[2] ?? '';
+    const controllerMatch = text.match(/@Controller\s*\(([^)]*)\)/);
+    if (!controllerMatch) continue;
+    // `@Controller()`, `@Controller('auth')` and `@Controller({ version:
+    // VERSION_NEUTRAL })` are all legal. Reading only the string form — as this
+    // did until A2 — silently drops every route of an object-form controller,
+    // and a dropped route does not fail the gate: it turns the route into a
+    // "stale exemption". A gate that under-reads the implementation reports an
+    // agreement it never checked.
+    const args = controllerMatch[1];
+    let prefix = '';
+    const stringArg = args.match(/^\s*(?:'([^']*)'|"([^"]*)")/);
+    if (stringArg) {
+      prefix = stringArg[1] ?? stringArg[2] ?? '';
+    } else {
+      const pathProperty = args.match(/\bpath\s*:\s*(?:'([^']*)'|"([^"]*)")/);
+      prefix = pathProperty ? (pathProperty[1] ?? pathProperty[2] ?? '') : '';
+    }
     const decoratorRe = /@(Get|Post|Put|Patch|Delete)\s*\(\s*(?:'([^']*)'|"([^"]*)")?\s*\)/g;
     let match;
     while ((match = decoratorRe.exec(text)) !== null) {
@@ -344,6 +358,30 @@ function main(doc) {
   for (const [key, exemption] of exemptions) {
     if (!implemented.has(key)) {
       fail('stale exemption', `${exemption.path} is exempted but no controller implements it`);
+    }
+  }
+
+  // --- §4.4 as applied by the application itself ---------------------------
+  // The spec's `servers` carry /api/v1, and the route comparison above is
+  // deliberately prefix-agnostic (spec paths are relative to `servers`). That
+  // leaves one way for the contract to be true on paper and false in
+  // production: the application stops mounting the prefix. Assert it here.
+  const mainFile = join(SRC_DIR, 'main.ts');
+  if (!existsSync(mainFile)) {
+    fail('prefix', `main.ts not found under ${SRC_DIR}`);
+  } else {
+    const main = readFileSync(mainFile, 'utf8');
+    if (!/setGlobalPrefix\s*\(\s*'api'/.test(main)) {
+      fail('prefix', `main.ts does not call setGlobalPrefix('api') (CONSTITUTION §4.4)`);
+    }
+    if (!/enableVersioning\s*\(/.test(main) || !/VersioningType\.URI/.test(main)) {
+      fail(
+        'prefix',
+        'main.ts does not enable URI versioning (CONSTITUTION §4.4 prohibits header and query versioning)',
+      );
+    }
+    if (!/defaultVersion\s*:\s*'1'/.test(main)) {
+      fail('prefix', `main.ts does not declare defaultVersion '1' (§4.4 defines /api/v1)`);
     }
   }
 

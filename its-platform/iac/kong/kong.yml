@@ -10,6 +10,14 @@
 # NestJS monolith. A service entry exists only for what the controllers in
 # src/main.ts actually expose.
 #
+# Paths: CONSTITUTION.md §4.4 makes `/api/v1` the only permitted surface, so
+# every API route below is declared under that prefix and `strip_path: false`
+# is load-bearing — the gateway must forward the version segment, which is part
+# of the contract, not strip it. The two probes are the declared exception: they
+# are VERSION_NEUTRAL and excluded from the global prefix in src/main.ts, so
+# they stay at the root. `scripts/kong-config-check.mjs` assertions 6 and 7
+# enforce both halves.
+#
 # Secrets: this file carries none. redis_username / redis_password are
 # ${KONG_REDIS_*} placeholders resolved by deck at sync time (P2.5). All
 # other values are literal so the file stays a reviewable contract.
@@ -24,7 +32,9 @@ services:
     read_timeout: 30000
     write_timeout: 30000
     routes:
-      # Probes — P0.8 /health /ready (src/health/health.controller.ts)
+      # Probes — P0.8 /health /ready (src/health/health.controller.ts).
+      # VERSION_NEUTRAL and excluded from the global prefix: these stay at the
+      # root, which is the single declared exception to /api/v1 above.
       - name: health-route
         paths: ["/health"]
         strip_path: false
@@ -32,10 +42,10 @@ services:
         paths: ["/ready"]
         strip_path: false
 
-      # Auth — POST /auth/refresh (501 until P1.15–P1.17). S-03 credential
+      # Auth — POST /api/v1/auth/refresh (501 until P1.15–P1.17). S-03 credential
       # stuffing: 5 req/min per IP (threat-model.md S-03; BDD "6th -> 429").
       - name: auth-route
-        paths: ["/auth"]
+        paths: ["/api/v1/auth"]
         strip_path: false
         plugins:
           - name: rate-limiting
@@ -52,13 +62,13 @@ services:
               redis_username: "${KONG_REDIS_USERNAME}"
               redis_password: "${KONG_REDIS_PASSWORD}"
 
-      # Content — GET /content/lessons/{lesson_id}, /packs/{pack_id},
+      # Content — GET /api/v1/content/lessons/{lesson_id}, /packs/{pack_id},
       # /listening/{dialogue_id}, /listening/{dialogue_id}/audio
       - name: content-route
-        paths: ["/content"]
+        paths: ["/api/v1/content"]
         strip_path: false
 
-      # Learners — POST /learners/{id}/placement, GET /learners/{id}/next,
+      # Learners — POST /api/v1/learners/{id}/placement, GET /learners/{id}/next,
       # POST /learners/{id}/practice, GET /learners/{id}/profile,
       # GET /learners/{id}/mastery. P2.3 acceptance — per-learner 100/min.
       # limit_by: consumer keys on the authenticated consumer (JWT); effective
@@ -66,7 +76,7 @@ services:
       # back to the IP key and the service-wide per-IP 1000/min still bounds
       # every client, so the latent limit is never the looser one.
       - name: learners-route
-        paths: ["/learners"]
+        paths: ["/api/v1/learners"]
         strip_path: false
         plugins:
           - name: rate-limiting

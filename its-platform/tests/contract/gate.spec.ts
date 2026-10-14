@@ -71,6 +71,15 @@ function mutatedSrc(removeRelativePath: string): string {
   return dir;
 }
 
+/** Copies `src/` and rewrites `main.ts` with `rewrite`. */
+function mutatedMainSrc(rewrite: (main: string) => string): string {
+  const dir = join(tempDir(), 'src');
+  cpSync(SRC, dir, { recursive: true });
+  const mainPath = join(dir, 'main.ts');
+  writeFileSync(mainPath, rewrite(readFileSync(mainPath, 'utf8')));
+  return dir;
+}
+
 afterAll(() => {
   for (const dir of tempDirs) rmSync(dir, { recursive: true, force: true });
 });
@@ -209,5 +218,23 @@ describe('contract gate — negative controls (each must FAIL)', () => {
     );
     expect(code).toBe(1);
     expect(out).toMatch(/^FAIL: pin/m);
+  });
+
+  it('N-16 (§4.4): the application stops applying the /api prefix', () => {
+    const { code, out } = runGate(
+      SPEC,
+      mutatedMainSrc((main) => main.replace(/app\.setGlobalPrefix\([\s\S]*?\);/, '')),
+    );
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: prefix/m);
+  });
+
+  it('N-17 (§4.4): header versioning instead of URI versioning', () => {
+    const { code, out } = runGate(
+      SPEC,
+      mutatedMainSrc((main) => main.replace('VersioningType.URI', 'VersioningType.HEADER')),
+    );
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: prefix/m);
   });
 });

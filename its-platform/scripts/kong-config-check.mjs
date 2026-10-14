@@ -18,11 +18,16 @@
  *       active YAML — service names, urls, plugin config — must never reference
  *       it. The raw text is therefore scanned with comment lines excluded.
  *   5.  Exactly one upstream — the NestJS monolith `its-platform-api` (D1).
- *   6.  Every route keeps `strip_path: false` — the API has no global prefix
- *       and @Controller() paths are served as-is (D1).
+ *   6.  Every API route is declared under §4.4's `/api/v1` prefix and keeps
+ *       `strip_path: false` — the version segment is part of the contract and
+ *       the gateway must forward it. The /health + /ready probes are the
+ *       declared exception: they are VERSION_NEUTRAL and excluded from the
+ *       global prefix in src/main.ts, so they stay at the root (D1; ADR-031 D1,
+ *       ADR-033 D1).
  *   7.  Route coverage derives from docs/api/openapi.yaml: every first path
- *       segment must be served by some route, and the /health + /ready probes
- *       must exist (D1, D7 — P0.8).
+ *       segment must be served by some route — compared after removing the
+ *       version prefix, since the spec's paths are relative to its `servers`
+ *       — and the /health + /ready probes must exist (D1, D7 — P0.8).
  *   8.  The three layers exist with the exact limit_by/minute (D2, D3):
  *       service per-IP 1000/min (D-06), /learners per-consumer 100/min (P2.3
  *       acceptance, latent until auth lands), /auth per-IP 5/min (S-03).
@@ -119,12 +124,36 @@ function main() {
 
   const routes = Array.isArray(svc.routes) ? svc.routes : [];
 
-  // ---- 6. Every route is prefix-less -------------------------------------
+  /**
+   * A route path with §4.4's prefix removed, for segment comparisons: spec paths
+   * are relative to `servers`, which already carries /api/v1.
+   */
+  const stripVersionPrefix = (path) =>
+    path.startsWith('/api/v1/') ? path.slice('/api/v1'.length) : path;
+  const servesSegment = (route, segment) =>
+    (route.paths ?? []).map(stripVersionPrefix).includes(segment);
+
+  // ---- 6. §4.4 prefix on every API route; probes at the root --------------
+  // `strip_path: false` is load-bearing rather than incidental: the /api/v1
+  // segment is part of the contract, so the gateway must forward it untouched.
+  // The probes are Version-Neutral and prefix-excluded in src/main.ts, so they
+  // are the single declared exception (ADR-040; ADR-031/033 D1).
+  const PROBE_PATHS = new Set(['/health', '/ready']);
+  const API_PREFIX = '/api/v1';
   for (const route of routes) {
     if (route.strip_path !== false) {
       fail(
         `route ${JSON.stringify(route.name)} strip_path is ${JSON.stringify(route.strip_path)}, expected false (ADR-030 D1)`,
       );
+    }
+    for (const path of route.paths ?? []) {
+      if (PROBE_PATHS.has(path)) continue;
+      if (path !== API_PREFIX && !path.startsWith(`${API_PREFIX}/`)) {
+        fail(
+          `route ${JSON.stringify(route.name)} path ${JSON.stringify(path)} is not under ${API_PREFIX} ` +
+            '(CONSTITUTION §4.4 requires /api/v1; only the probes are exempt)',
+        );
+      }
     }
   }
 
@@ -141,7 +170,16 @@ function main() {
     const match = /^  (\/(?:[a-zA-Z0-9_-]+))/.exec(line);
     if (match) segments.add(match[1]);
   }
-  const routePaths = new Set(routes.flatMap((route) => route.paths ?? []));
+  // Spec paths are relative to `servers`, which already carries /api/v1, so the
+  // prefix is removed before the comparison (assertion 6 has just proved it is
+  // there). Without this the two halves of the same contract would disagree
+  // about where the version segment lives.
+  const routePaths = new Set();
+  for (const route of routes) {
+    for (const path of route.paths ?? []) {
+      routePaths.add(stripVersionPrefix(path));
+    }
+  }
   for (const segment of segments) {
     if (!routePaths.has(segment)) {
       fail(`no kong route covers openapi first segment "${segment}" (ADR-030 D7)`);
@@ -166,7 +204,7 @@ function main() {
     );
   }
 
-  const learnersRoute = routes.find((route) => (route.paths ?? []).includes('/learners'));
+  const learnersRoute = routes.find((route) => servesSegment(route, '/learners'));
   const learnersLayer = (learnersRoute?.plugins ?? []).find(
     (plugin) => isRateLimit(plugin) && plugin.config?.limit_by === 'consumer' && plugin.config?.minute === 100,
   );
@@ -176,7 +214,7 @@ function main() {
     );
   }
 
-  const authRoute = routes.find((route) => (route.paths ?? []).includes('/auth'));
+  const authRoute = routes.find((route) => servesSegment(route, '/auth'));
   const authLayer = (authRoute?.plugins ?? []).find(
     (plugin) => isRateLimit(plugin) && plugin.config?.limit_by === 'ip' && plugin.config?.minute === 5,
   );
