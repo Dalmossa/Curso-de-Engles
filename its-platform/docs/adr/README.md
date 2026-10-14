@@ -52,7 +52,7 @@
 | [037](037-async-jobs.md) | Trabalho assíncrono como recurso — 202, Location, `/jobs/{id}` | **Proposed** — open | 2026-10-14 | — |
 | [038](038-authz-scopes-and-object-level-404.md) | Autenticação, escopos e autorização por objeto — 404, não 403 | **Proposed** — open | 2026-10-14 | — |
 | [039](039-rate-limit-response-shape.md) | Rate limiting — forma da resposta, headers e a proibição de inventar números | **Proposed** — open | 2026-10-14 | — |
-| [040](040-canonical-http-contract.md) | Fonte de verdade do contrato HTTP — um único OpenAPI, parseável | **Proposed** — open | 2026-10-14 | — |
+| [040](040-canonical-http-contract.md) | Fonte de verdade do contrato HTTP — um único OpenAPI, parseável, e o gate que o valida — **concluído**: o canônico é `docs/api-spec.openapi.yaml`, o gate é `npm run contract:gate`, e o segundo documento saiu em A3 (D3) com os seus leitores repontados ou retirados | Accepted | 2026-10-14 | — |
 | [041](041-h1-catalog-write-surface.md) | **H1** — superfície de escrita do catálogo: somente leitura ou autoria? | **Proposed** — open | 2026-10-14 | — |
 | [042](042-h2-erasure-vs-append-only-log.md) | **H2** — direito à eliminação (LGPD art. 18) × log append-only imutável | **Proposed** — open | 2026-10-14 | — |
 | [043](043-h3-theta-cors-sdk.md) | **H3** — exposição de θ, política de CORS e publicação de SDK | **Proposed** — open | 2026-10-14 | — |
@@ -87,12 +87,13 @@ v2.2.0 on 2026-10-14 (the `Deprecation` amendment, H-1), which was D2's only blo
 **Two bookkeeping facts a reader will otherwise trip over.**
 
 1. **`Proposed` does not mean "not used".** Several of these ADRs carry decisions that were
-   **ratified and implemented** while the frontmatter still says `Proposed` — e.g. ADR-040's D2
-   (canonical document), D4–D7 (gate, pin, order) were executed in A2 (`reports/api/fase-2.md`), and
-   ADR-031/033 D1 (the `/api/v1` prefix) is live in `src/main.ts`. The status field tracks the
-   *record's* approval, not the work's existence; where the two disagree, the report and the commit
-   are the evidence. Flipping 040 is left to the A3 phase, whose checklist is its last unchecked item
-   (D3, removing the obsolete `docs/api/openapi.yaml`).
+   **ratified and implemented** while the frontmatter still says `Proposed` — e.g. ADR-031/033 D1
+   (the `/api/v1` prefix) is live in `src/main.ts`, and ADR-040's D2 and D4–D7 ran through A2 while
+   its status stayed `Proposed` until A3, because the flip was tied to its last unchecked item (D3,
+   removing the obsolete `docs/api/openapi.yaml`) and D3 closed in A3 (`reports/api/fase-3.md`). The
+   status field tracks the *record's* approval, not the work's existence; where the two disagree, the
+   report and the commit are the evidence. ADR-040 is now the worked example of the **flip** rather
+   than of the disagreement.
 2. **ADR-018's §1 amendment (Constitution 2.1.0) is still pending §9 step 5** and is operative anyway,
    because it is an accepted ADR enforced in `src/domain/` — see `CONSTITUTION.md` §9.
 

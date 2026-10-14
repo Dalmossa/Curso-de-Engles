@@ -17,9 +17,11 @@ strip a fence by hand or fail. ADR-040 D2 split the two: the document became
 Do not re-embed the document in a fence here. A fenced copy is how the canonical spec became
 unparseable in the first place, and a second copy is a second thing to drift.
 
-`docs/api/openapi.yaml` is the **deprecated predecessor** (9 of its 14 schemas, `servers` without
-the §4.4 `/api/v1` prefix, no `Problem`). The five consumers that still read it are enumerated in
-ADR-040; removing it is ADR-040 D3.
+`docs/api/openapi.yaml` was the **deprecated predecessor** (9 of its 14 schemas, `servers` without
+the §4.4 `/api/v1` prefix, no `Problem`). Its readers were repointed or retired and the file was
+**removed in A3 (2026-10-14)** under ADR-040 D3; `CHANGELOG.md` ("Removed") carries the migration
+path, and `git log -- docs/api/openapi.yaml` the file itself. A reference to it anywhere outside a
+dated report is stale.
 
 ---
 

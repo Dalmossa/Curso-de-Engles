@@ -26,7 +26,9 @@ YAML block — alongside `docs/api-spec.openapi.yaml` and the deprecated
 forbids (this platform is a Resource Server, `CONSTITUTION.md` §4.5), and it
 asserted a media type and a schema that no longer existed. A document in three
 places is a document that disagrees with itself; ADR-040 D4 removed this copy
-for the same reason D3 is removing the second one.
+and A3 removed the second one (D3), each for the same reason. What is left is
+one document, so the heading above is now a statement about the repository
+rather than a rule to aspire to.
 
 **Read the canonical file. Do not restate it.** If something here and the
 canonical file disagree, the file wins and this page is wrong.
@@ -42,6 +44,7 @@ canonical file disagree, the file wins and this page is wrong.
 | No boolean `Deprecation` header | RFC 9745 §2.1 defines a **date** (RFC 9651 §3.3.7, `@<unix-seconds>`); `true` is the retired draft form. `CONSTITUTION.md` §4.4 **v2.2.0** mandates the date form, so the gate and the constitution agree |
 | `Problem` has `type`/`title`/`status` | §4.3 — errors are RFC 9457 |
 | 4xx/5xx serve only `application/problem+json` | §4.3, ADR-034 D4 |
+| Every 4xx/5xx response's schema resolves to `Problem` | §4.3 makes it the **sole** error shape, and a legal media type over a different schema is invisible to the media-type check alone. Its only previous owner was `tests/contract/endpoints.spec.ts`, retired in A3; the obligation moved into the gate with negative control N-18 |
 | `GET` on a path with a parameter declares `404` | R6 — another learner's object is 404, never 403 (ADR-038) |
 | Spec ↔ routes agree **in both directions**, method by method | The drift no gate saw: 12 implemented × 10 published (A0) |
 | `info.x-contract-provenance.spec-blobs` matches `git hash-object` | D6 — without the pin, drift between a spec and the contract is undetectable |

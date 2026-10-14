@@ -1,7 +1,7 @@
 ---
 adr: 040
 title: Fonte de verdade do contrato HTTP — um único OpenAPI, parseável, e o que o gate deve validar
-status: Proposed
+status: Accepted
 date: 2026-10-14
 authors: [@api-lead]
 deciders: [unassigned]
@@ -9,6 +9,16 @@ consulted: [@backend-lead, @sre-lead]
 informed: [@team]
 tags: [api, openapi, contract, drift, gate, adr-027, adr-016, breaking-change]
 ---
+
+## Status
+
+**Accepted — 2026-10-14.** D1–D8 estão implementados: D1/D2/D4/D6 em A2; D5 em A2 (com a sua
+obrigação 7) e ampliado em A3; D3 em A3; D7 é a ordem de ADR-033, seguida; D8 é a leitura do próprio
+ADR. O que faltava para virar o frontmatter era o **último item do checklist** — D3 —, e é por isso
+que o status ficou `Proposed` enquanto D2/D4/D5/D6 já rodavam (`docs/adr/README.md` registra esse
+ponto). `deciders` permanece `unassigned` de propósito: a ratificação veio da autoridade de decisão
+do projeto nas fases A2/A3 (`reports/api/fase-2.md` §10, `reports/api/fase-3.md`), e nomear um
+aprovador que não assinou seria inventar um registro.
 
 ## Context
 
@@ -179,20 +189,75 @@ permanecem válidas e agora têm um único destino.
 
 ## Implementation Plan
 
-- [ ] A2 — D2: extrair o bloco para `docs/api-spec.openapi.yaml` (YAML) e criar `docs/api-spec.md`
-      com o preâmbulo; **validar parse** antes de qualquer outra mudança.
-- [ ] A2 — D5: gate novo (parse + `spectral` + rotas × controllers + `servers` + `Problem` +
-      método por path), com os **quatro** controles negativos de A0/`§D5` como casos de teste.
-- [ ] A2 — D4: substituir a cópia em `.opencode/skills/openapi-spec/SKILL.md` por referência.
-- [ ] A2 — D6: campo de pin da revisão de spec de origem.
-- [ ] A3 — D3: deprecar e remover `docs/api/openapi.yaml`, **depois** de repontar os **cinco**
+- [x] A2 — D2: extrair o bloco para `docs/api-spec.openapi.yaml` (YAML) e criar `docs/api-spec.md`
+      com o preâmbulo; **validar parse** antes de qualquer outra mudança. — feito em A2.
+- [x] A2 — D5: gate novo (parse + `spectral` + rotas × controllers + `servers` + `Problem` +
+      método por path), com os **quatro** controles negativos de A0/`§D5` como casos de teste. —
+      feito em A2, com a substituição do `spectral` registrada no adendo abaixo; ampliado em A3
+      (uma obrigação a mais, que vivia só em `endpoints.spec.ts`).
+- [x] A2 — D4: substituir a cópia em `.opencode/skills/openapi-spec/SKILL.md` por referência. —
+      feito em A2.
+- [x] A2 — D6: campo de pin da revisão de spec de origem. — feito em A2.
+- [x] A3 — D3: deprecar e remover `docs/api/openapi.yaml`, **depois** de repontar os **cinco**
       leitores: `contract-check.mjs:5`, `scripts/contract-check-full.mjs:6`,
       `scripts/kong-config-check.mjs:48` (com a asserção 6 de ADR-033 D7),
       `tests/contract/endpoints.spec.ts:9` e `tests/contract/openapi.spec.ts:6`; e reduzir
-      `SPEC_PATHS` (`tests/contract/schemas.spec.ts:250`) a um elemento (D5.1).
-- [ ] A2 — corrigir `tests/contract/endpoints.spec.ts:59` (`application/json` → o media type de
-      ADR-034) e adicionar a asserção 7 de D5.
-- [ ] A2 — `CHANGELOG.md` com a entrada de D3 antes do merge (§4.4).
+      `SPEC_PATHS` (`tests/contract/schemas.spec.ts:250`) a um elemento (D5.1). — feito em A3; a
+      disposição **medida** de cada leitor está no adendo abaixo (dois já haviam sido repontados
+      em A2, três foram retirados em A3).
+- [x] A2 — corrigir `tests/contract/endpoints.spec.ts:59` (`application/json` → o media type de
+      ADR-034) e adicionar a asserção 7 de D5. — feito em A2 (a asserção 7 foi para o gate), e o
+      arquivo `endpoints.spec.ts` inteiro saiu em A3, subsumido, depois de a sua única obrigação
+      própria migrar para o gate.
+- [x] A2 — `CHANGELOG.md` com a entrada de D3 antes do merge (§4.4). — feito em **A3**, não em A2:
+      o item estava escrito para o merge de A2 e o merge aconteceu sem ele. Desvio de calendário,
+      não de conteúdo — a entrada existe, com o caminho de migração, antes de o arquivo sair.
+
+## Post-acceptance amendment — 2026-10-14, at the close of A3
+
+The plan above was written before A2 ran, so it predicts. This section records what the execution
+**measured**, and where it differed.
+
+**D3 — the five readers, as found.** A0 counted files; A2 repointed two of them on the way, so at the
+start of A3 the obsolete document had **three** live readers, not five:
+
+| reader, as found in A0 | disposition |
+|---|---|
+| `scripts/kong-config-check.mjs:48` | repointed to the canonical in A2 (`npm run kong:check` covers it) |
+| `tests/contract/endpoints.spec.ts:9` | repointed to the canonical in A2 |
+| `contract-check.mjs:5` — wired: `npm run contract:check`, CI job `contract-check`, `scripts/test-all.mjs` | **retired** in A3 (D5.1): 31 lines of `String.includes` over the obsolete document, a subset of what the gate checks |
+| `scripts/contract-check-full.mjs:6` — not wired anywhere | **retired** in A3 |
+| `tests/contract/openapi.spec.ts:6` | **retired** in A3 as subsumed by the gate; the one assertion only it carried — every 4xx/5xx resolves to `Problem` — moved into the gate, with negative control **N-18** in `tests/contract/gate.spec.ts` |
+
+`SPEC_PATHS` is now a single path, and the second reading went with the second document.
+
+**D5.1 — the prediction held, and it was checkable.** It said the schema validator would "break the
+drift guard the moment the obsolete file is removed (D3)". It did: with one document there is nothing
+to compare. The guard was removed **while green** (measured immediately before the edit: 27/27 tests
+in that file), so nothing was hidden by its removal. The obligation it covered — *the contract does
+not drift from its sources* — is D6's provenance pin, which the gate re-hashes with `git hash-object`
+against `specs/*.md`. A guard between a document and itself verifies nothing; the pin is the guard
+that has two sides.
+
+**D5 — the one obligation no other check owned.** Measured block by block over the four contract
+suites (68 tests): `openapi.spec.ts`'s 8 `toContain` are a subset of `endpoints.spec.ts`'s paths, which
+are a subset of the gate's two-way spec × routes check, and the gate already owns the 404-on-a-
+parameterised-GET rule. The single exception was that every 4xx/5xx response must resolve to
+`components.schemas.Problem` — measured before the change: **14 of 14** error responses do, all in
+`application/problem+json`. That obligation moved into the gate in the same commit that removed the
+files, so no commit in between had one obligation fewer and a green gate to hide it.
+
+**D5 — `spectral` was not adopted locally.** The gate resolves `$ref` by itself, so the `spectral`
+step in D5's list is the one part of D5 that did not land in `scripts/contract-gate.mjs`. The CI job
+`contract-test` still runs `spectral` against the canonical document, so the ruleset is enforced,
+once per pipeline rather than per commit. Registered as a deviation in `reports/api/fase-2.md` §10;
+recorded here because D5's list names it and D5.1 takes precedence in wording.
+
+**The line numbers in this ADR's References now cite deleted files.** `contract-check.mjs`,
+`scripts/contract-check-full.mjs`, `tests/contract/openapi.spec.ts` and
+`tests/contract/endpoints.spec.ts` do not exist after A3. The citations are kept as the record of what
+was measured when the ADR was written — the ADR is dated, and rewriting its citations to point at
+files that did not exist then would falsify the measurement. `git log -- <path>` recovers the files.
 
 ## References
 
