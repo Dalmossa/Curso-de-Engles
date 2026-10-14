@@ -6,7 +6,10 @@ describe('OpenAPI endpoints contract - comprehensive', () => {
   let spec: any;
   
   beforeAll(() => {
-    const specPath = join(process.cwd(), 'docs', 'api', 'openapi.yaml');
+    // Re-pointed to the canonical document in A2 (ADR-040). This file used to
+    // validate `docs/api/openapi.yaml`, the deprecated predecessor, so its
+    // assertions described the document nobody publishes.
+    const specPath = join(process.cwd(), 'docs', 'api-spec.openapi.yaml');
     const specContent = readFileSync(specPath, 'utf8');
     spec = yaml.parse(specContent);
   });
@@ -39,28 +42,37 @@ describe('OpenAPI endpoints contract - comprehensive', () => {
     });
   });
 
-  it('should have 400 error response schemas defined', () => {
-    const paths = spec.paths;
-    for (const path of Object.keys(paths)) {
-      for (const method of Object.keys(paths[path])) {
-        if (['get', 'post', 'put', 'patch', 'delete'].includes(method)) {
-          const responses = paths[path][method].responses;
-          // Check for common error responses
-          if (responses['400'] || responses['404']) {
-            expect(responses).toHaveProperty('400');
-            let r400 = responses['400'];
-            if (r400 && r400.$ref) {
-              const ref = r400.$ref;
-              const parts = ref.replace('#/', '').split('/');
-              let cur = spec;
-              for (const p of parts) cur = cur[p];
-              r400 = cur;
-            }
-            expect(r400.content['application/json']).toBeDefined();
+  // Every error response must carry a `Problem` body (RFC 9457, CONSTITUTION §4.3).
+  //
+  // This replaces a block that asserted the opposite: it required
+  // `content['application/json']` on the 400 response, which is how the defect
+  // ADR-034 D4 fixes stayed protected by a test. It also asserted
+  // `expect(responses).toHaveProperty('400')` inside a branch guarded by
+  // `responses['400'] || responses['404']`, so any path publishing only a 404
+  // failed on a 400 that was never required.
+  //
+  // The media type itself (`application/problem+json`) is enforced by
+  // `scripts/contract-gate.mjs` (ADR-040 D5.7). It is deliberately NOT asserted
+  // again here: a second copy of one obligation is the failure mode ADR-040
+  // exists to remove (D5.1).
+  it('should reference the Problem schema from every error response', () => {
+    const verbs = ['get', 'post', 'put', 'patch', 'delete'];
+    let checked = 0;
+    for (const [path, item] of Object.entries<any>(spec.paths)) {
+      for (const [method, operation] of Object.entries<any>(item)) {
+        if (!verbs.includes(method)) continue;
+        for (const [status, response] of Object.entries<any>(operation.responses ?? {})) {
+          if (!/^[45]\d\d$/.test(status)) continue;
+          const mediaTypes = Object.values<any>(response.content ?? {});
+          expect(mediaTypes.length).toBeGreaterThan(0);
+          for (const mediaType of mediaTypes) {
+            expect(mediaType.schema?.$ref).toBe('#/components/schemas/Problem');
           }
+          checked += 1;
         }
       }
     }
+    expect(checked).toBeGreaterThan(0);
   });
 
   it('should have 404 error responses for resource endpoints', () => {
