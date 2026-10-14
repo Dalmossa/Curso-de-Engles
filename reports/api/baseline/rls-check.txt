@@ -1,0 +1,1 @@
+✓ RLS context check passed — 120 file(s) scanned, 0 violations (single writer: src/infrastructure/persistence/pg-session-context.ts, set_config(…, true))

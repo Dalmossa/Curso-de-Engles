@@ -1,0 +1,67 @@
+==============================================================================
+PRD rubric — PRD.md
+==============================================================================
+repository truth, derived at run time:
+  modules              18
+  lessons              123
+  dialogues            13
+  slots                82
+  admissible           74
+  authored_lessons     122
+  packs                122
+  practice_items       855
+
+  C1 Licence safety                          14.0/ 14.0  (100.0%)
+      (a) licensing section states that no local source is permissively licensed
+      (b) all 7 source filenames that appear, appear only in a licence context
+      (c) no requirement line writes exercises into or out of the source corpus
+
+~ C2 Numbers are derived, not asserted        8.5/ 12.0  ( 70.8%)
+      (a) NUMBERS table present
+      (b) 7 of 7 rows name a file or command that exists
+      (c) row `Admissible listening items` says 74 but the repository computes 855 for practice items
+      (c) 7/8 load-bearing values match the repository
+      (e) reuse basis partition drift: 93 + 13 + 48 = 154, but authored_lessons = 122
+
+~ C3 References resolve                       6.3/ 10.0  ( 62.9%)
+      (a) all 19 referenced files resolve
+      (b) dangling section references: ['assessment-item-spec.md §2.5.1 (file unreadable)', 'assessment-item-spec.md §2.2 (file unreadable)', 'diagnostic-spec.md §2.1 (file unreadable)', 'diagnostic-spec.md §3.3 (file unreadable)', 'curriculum-graph-spec.md §4.3 (file unreadable)', 'listening-corpus.md §9 (file unreadable)', 'listening-corpus.md §8.2 (file unreadable)', 'assessment-item-spec.md §1.2 (file unreadable)', 'post-lesson-practice-spec.md §12 (file unreadable)', 'curriculum-graph-spec.md §4.3 (file unreadable)', 'curriculum-graph-spec.md §4.3 (file unreadable)', 'post-lesson-practice-spec.md §12 (file unreadable)', 'assessment-item-spec.md §9 (file unreadable)', 'assessment-item-spec.md §9 (file unreadable)', 'listening-corpus.md §9 (file unreadable)', 'assessment-item-spec.md §2.5.1 (file unreadable)', 'stats-progress-evaluation-spec.md §3 (file unreadable)', 'post-lesson-practice-spec.md §2.1 (file unreadable)', 'assessment-item-spec.md §9 (file unreadable)', 'tier-b-review.md §0 (file unreadable)', 'assessment-item-spec.md §9 (file unreadable)', 'tier-b-review.md §0 (file unreadable)', 'listening-corpus.md §8.2 (file unreadable)', 'curriculum-graph-spec.md §4.3 (file unreadable)', 'assessment-item-spec.md §9 (file unreadable)', 'stats-progress-evaluation-spec.md §4 (file unreadable)']
+
+  C4 Tables survive                           6.0/  6.0  (100.0%)
+      all 7 tables have rows matching their header width
+
+  C5 Recorded decisions acknowledged         12.0/ 12.0  (100.0%)
+      acknowledged: pronunciation production is out of scope  →  ...t-lesson retrieval practice. The pedagogical architecture is specified in `AGENTS.md`.  **Out of scope for the MVP, and why** — ea...
+      acknowledged: `cite_only` is the default reuse basis  →  ...e not text to reproduce or adapt. Every lesson therefore declares a **reuse basis**, and `cite_only` is the default: author origin...
+      acknowledged: list-shaped lessons cannot use `cite_only`  →  ...attribution string (`external-sources.md` §7.1) | | `adapt_requires_permission` | the 48 list-shaped lessons whose list *is* the s...
+      acknowledged: Listening is BKT-only until audio renders  →  ...3. **List-shaped lessons cannot use `cite_only`** — for them the list is the source. 4. **Listening is BKT-only in the MVP.** Less...
+      acknowledged: mastery is probabilistic (BKT + IRT + FSRS)  →  ...days including one spaced (`stats-progress-evaluation-spec.md` §3). Scheduling is    **BKT** for state, **IRT** for ability once p...
+      acknowledged: the dialogue corpus is authored, not source-derived  →  ...speakers  **Status:** specification-complete for the delivery layer; **122 of 123 lessons authored** (the 123rd, `les_b1_it_presen...
+
+~ C6 Deliverable honesty                     11.8/ 12.0  ( 98.1%)
+      (a) DELIVERABLES table present
+      (b) states outside ('authored', 'specified', 'unauthored', 'blocked', 'withdrawn'): ['anchored expert-se']
+      (c) 8/8 comparable counts agree with the repository
+
+  C7 Blockers declared                       10.0/ 10.0  (100.0%)
+      declared: no rendered audio exists
+      declared: no Stage-1 responses, so no IRT calibration and no CAT
+      declared: independent specialist review of the Tier B content is pending
+      declared: reuse permission for restricted-source lessons has not been granted
+
+  C8 Personas traceable                       8.0/  8.0  (100.0%)
+      traced: - **Absolute beginner (A1), no prior study** — enters at `les_a1_alpha → ['les_a1_alphabet_sounds', 'mod_a1_foundation', 'les_a2_greetings_intro', 'mod_a2_it_fundamentals', 'les_a2_it_terms_basics', 'mod_b1_it_technical', 'les_b1_it_write_docs', 'les_b1_it_architecture_vocab', 'les_b2_it_incident_postmortem', 'les_a2_it_incidents', 'les_a2_small_talk', 'les_a2_email_basics']
+
+  C9 Priority is a dependency                10.0/ 10.0  (100.0%)
+      (a) requirements table has an `Unblocks` column
+      (b) 5/5 High-priority rows name what they unblock
+
+  C10 Milestones executable                    6.0/  6.0  (100.0%)
+      (a) milestones have Entry and Exit columns
+      (b) 7/7 milestones have both conditions written
+      (c) critical path named
+
+==============================================================================
+TOTAL 92.6/100.0 = 92.6%   threshold 80.0%
+==============================================================================
+PASS — 92.6% >= 80.0%

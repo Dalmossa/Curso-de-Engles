@@ -1,0 +1,290 @@
+==============================================================================
+Curso-de-Ingles — content integrity
+==============================================================================
+
+[1] Registry closure (curriculum-graph-spec.md §4.3)
+  ok   registry parsed — 141 IDs
+  ok   orphan IDs — 0 orphans across 16 docs, 18 distinct references
+
+[2] Curriculum arithmetic (§4.3: 18 modules x 6 + 5 remediation + 10 IT expansions = 123)
+  ok   modules — 18
+  ok   lessons — 123
+  ok   registry closure — all 122 authored ids in §4.3 resolve to a file; 1 carry an explicit `blocked_*` status (les_b1_it_presentations)
+  ok   no orphans — every one of the 122 authored lesson ids is registered in §4.3
+  ok   registry status — every §4.3 row whose lesson file exists is marked `authored` (122 rows)
+  ok   pack coverage — every one of the 122 authored lessons has a pack
+  ok   module sizes — all 18 modules have expected lesson counts; remediation nodes counted separately (mod_b1_fluency_project +5 remediation)
+  ok   remediation — 5 remediation nodes, counted outside their host module's 6
+  ok   deferred retired — 0 lesson rows remain deferred_no_source
+  ok   sourcing status — sourced_external — 9 rows, §4.4.5 declares 9
+  ok   sourcing status — sourced_external_thin — 3 rows, §4.4.5 declares 3
+  ok   sourcing status — blocked_no_adequate_source — 1 rows, §4.4.5 declares 1
+  ok   summary arithmetic — §2 CEFR table sums to 118 module lessons, matching §4.3 (A1:24+A2:46+B1:28+B2:20)
+  ok   summary arithmetic — §13 matches the registry and disk (123 ids, 122 authored, 122 packs)
+
+[3] Source corpus (Ingles/output/)
+  ok   source files — 7
+  ok   local licence notices — 3/3 restricted sources still carry their notice
+  ok   reuse basis — A_restricted — 58 lessons, external-sources.md §0.5 declares 58
+  ok   reuse basis — B_copyright_only — 16 lessons, external-sources.md §0.5 declares 16
+  ok   reuse basis — C_no_copyright — 22 lessons, external-sources.md §0.5 declares 22
+  ok   reuse basis — D_permissive_external — 13 lessons, external-sources.md §0.5 declares 13
+  ok   reuse basis — E_no_source — 14 lessons, external-sources.md §0.5 declares 14
+
+[4] JSON blocks parse
+  ok   json blocks — 11 parsed (1 declared fragments wrapped for validation)
+
+[5] Listening corpus integrity
+  ok   declared dialogues exist — 13 declared, 13 present
+  ok   item IDs unique — 82 slots
+  ok   item status declared — 82 of 82 items, 14 with a §9 trace
+  ok   item key — lst_gist_001
+  ok   item key — lst_detail_001
+  ok   item key — lst_inference_001
+  ok   item key — lst_lexical_001
+  ok   item key — lst_prn_th_001
+  ok   item key — lst_prn_th_002
+  ok   item key — lst_gist_002
+  ok   item key — lst_detail_002
+  ok   item key — lst_lexical_002
+  ok   item key — lst_inference_002
+  ok   item key — lst_prn_r_001
+  ok   item key — lst_prn_h_001
+  ok   item key — lst_gist_003
+  ok   item key — lst_detail_003
+  ok   item key — lst_detail_004
+  ok   item key — lst_lexical_003
+  ok   item key — lst_prn_th_003
+  ok   item key — lst_prn_scluster_001
+  ok   item key — lst_gist_004
+  ok   item key — lst_pragmatic_001
+  ok   item key — lst_lexical_004
+  ok   item key — lst_detail_005
+  ok   item key — lst_prn_nullsubject_001
+  ok   item key — lst_prn_th_004
+  ok   item key — lst_gist_005
+  ok   item key — lst_detail_006
+  ok   item key — lst_pragmatic_002
+  ok   item key — lst_inference_003
+  ok   item key — lst_prn_th_005
+  ok   item withdrawn — lst_prn_th_006 (key check exempt)
+  ok   item key — lst_gist_006
+  ok   item key — lst_detail_007
+  ok   item key — lst_lexical_005
+  ok   item key — lst_inference_004
+  ok   item withdrawn — lst_prn_scluster_002 (key check exempt)
+  ok   item withdrawn — lst_prn_scluster_003 (key check exempt)
+  ok   item key — lst_gist_007
+  ok   item key — lst_pragmatic_003
+  ok   item key — lst_detail_008
+  ok   item key — lst_inference_005
+  ok   item key — lst_prn_th_007
+  ok   item key — lst_prn_scluster_004
+  ok   item key — lst_gist_008
+  ok   item key — lst_detail_009
+  ok   item withdrawn — lst_lexical_006 (key check exempt)
+  ok   item key — lst_inference_006
+  ok   item key — lst_prn_th_008
+  ok   item withdrawn — lst_prn_vowel_001 (key check exempt)
+  ok   item key — lst_gist_009
+  ok   item key — lst_lexical_007
+  ok   item key — lst_inference_007
+  ok   item key — lst_detail_010
+  ok   item withdrawn — lst_prn_scluster_005 (key check exempt)
+  ok   item key — lst_prn_nullsubject_002
+  ok   item key — lst_gist_013
+  ok   item key — lst_detail_014
+  ok   item key — lst_lexical_011
+  ok   item key — lst_inference_011
+  ok   item key — lst_pragmatic_007
+  ok   item key — lst_prn_th_012
+  ok   item key — lst_prn_scluster_008
+  ok   item key — lst_gist_010
+  ok   item key — lst_detail_011
+  ok   item key — lst_inference_008
+  ok   item key — lst_pragmatic_004
+  ok   item key — lst_lexical_008
+  ok   item withdrawn — lst_prn_th_009 (key check exempt)
+  ok   item withdrawn — lst_prn_scluster_006 (key check exempt)
+  ok   item key — lst_gist_011
+  ok   item key — lst_detail_012
+  ok   item key — lst_inference_009
+  ok   item key — lst_pragmatic_005
+  ok   item key — lst_lexical_009
+  ok   item key — lst_prn_scluster_007
+  ok   item key — lst_prn_th_010
+  ok   item key — lst_gist_012
+  ok   item key — lst_detail_013
+  ok   item key — lst_inference_010
+  ok   item key — lst_pragmatic_006
+  ok   item key — lst_lexical_010
+  ok   item key — lst_prn_r_002
+  ok   item key — lst_prn_th_011
+  ok   Q-L2 durations — all 13 within 45-120 s @150 wpm (range 49-84 s, floor margin 4 s)
+  ok   panel voices — A1: ['v_a', 'v_b', 'v_c', 'v_d']
+  ok   panel voices — A2: ['v_a', 'v_b', 'v_c', 'v_d']
+  ok   panel voices — B1: ['v_a', 'v_b', 'v_c', 'v_d']
+
+[6] External source registry
+  ok   accepted source cards — 19
+  ok   rejected sources — 15 rows carry an explicit verdict
+  ok   lessons repointed — 13 in §5 vs 13 externally-sourced in §4.3
+  ok   obligation register — attribution + share-alike + legal-opinion sections present
+  ok   dead-URL log — 21 entries
+
+[7] Cross-references between specs
+
+[8] Authored lesson files
+  ok   lesson — les_a1_alphabet_sounds.md — les_a1_alphabet_sounds, cite_only
+  ok   lesson — les_a1_articles_nouns.md — les_a1_articles_nouns, cite_only
+  ok   lesson — les_a1_daily_basics.md — les_a1_daily_basics, cite_only
+  ok   lesson — les_a1_days_months.md — les_a1_days_months, cite_only
+  ok   lesson — les_a1_en_us_en_gb.md — les_a1_en_us_en_gb, cite_only
+  ok   lesson — les_a1_false_cognates.md — les_a1_false_cognates, cite_only
+  ok   lesson — les_a1_food.md — les_a1_food, cite_only
+  ok   lesson — les_a1_greetings.md — les_a1_greetings, cite_only
+  ok   lesson — les_a1_have_has.md — les_a1_have_has, cite_only
+  ok   lesson — les_a1_intro_dialogue.md — les_a1_intro_dialogue, cite_only
+  ok   lesson — les_a1_numbers_colors.md — les_a1_numbers_colors, cite_only
+  ok   lesson — les_a1_occupations.md — les_a1_occupations, cite_only
+  ok   lesson — les_a1_present_simple.md — les_a1_present_simple, cite_only
+  ok   lesson — les_a1_present_simple_questions.md — les_a1_present_simple_questions, cite_only
+  ok   lesson — les_a1_pronouns_demonstrative.md — les_a1_pronouns_demonstrative, cite_only
+  ok   lesson — les_a1_pronouns_possessive.md — les_a1_pronouns_possessive, cite_only
+  ok   lesson — les_a1_pronouns_subject_object.md — les_a1_pronouns_subject_object, cite_only
+  ok   lesson — les_a1_pronunciation_intro.md — les_a1_pronunciation_intro, cite_only
+  ok   lesson — les_a1_reading_skimming.md — les_a1_reading_skimming, cite_only
+  ok   lesson — les_a1_regular_verbs_past.md — les_a1_regular_verbs_past, cite_only
+  ok   lesson — les_a1_there_is_are.md — les_a1_there_is_are, cite_only
+  ok   lesson — les_a1_time_dates.md — les_a1_time_dates, cite_only
+  ok   lesson — les_a1_to_be_forms.md — les_a1_to_be_forms, cite_only
+  ok   lesson — les_a1_wh_questions.md — les_a1_wh_questions, cite_only
+  ok   lesson — les_a2_airport.md — les_a2_airport, cite_only
+  ok   lesson — les_a2_ask_for_help.md — les_a2_ask_for_help, cite_only
+  ok   lesson — les_a2_collocations.md — les_a2_collocations, cite_only
+  ok   lesson — les_a2_corporate_wrapup.md — les_a2_corporate_wrapup, cite_only
+  ok   lesson — les_a2_corpus_intro.md — les_a2_corpus_intro, cite_only
+  ok   lesson — les_a2_deadlines_tasks.md — les_a2_deadlines_tasks, cite_only
+  ok   lesson — les_a2_email_basics.md — les_a2_email_basics, cite_only
+  ok   lesson — les_a2_feedback_praise.md — les_a2_feedback_praise, cite_only
+  ok   lesson — les_a2_future_will.md — les_a2_future_will, cite_only
+  ok   lesson — les_a2_hotel_taxi.md — les_a2_hotel_taxi, cite_only
+  ok   lesson — les_a2_imperatives.md — les_a2_imperatives, cite_only
+  ok   lesson — les_a2_introducing_others.md — les_a2_introducing_others, cite_only
+  ok   lesson — les_a2_it_algorithms_basics.md — les_a2_it_algorithms_basics, cite_only
+  ok   lesson — les_a2_it_clean_code_basics.md — les_a2_it_clean_code_basics, cite_only
+  ok   lesson — les_a2_it_computer_parts.md — les_a2_it_computer_parts, cite_only
+  ok   lesson — les_a2_it_email_technical.md — les_a2_it_email_technical, cite_only
+  ok   lesson — les_a2_it_incidents.md — les_a2_it_incidents, adapt_with_attribution
+  ok   lesson — les_a2_it_internet_history.md — les_a2_it_internet_history, cite_only
+  ok   lesson — les_a2_it_meeting_standup.md — les_a2_it_meeting_standup, adapt_with_attribution
+  ok   lesson — les_a2_it_nontech_tech.md — les_a2_it_nontech_tech, cite_only
+  ok   lesson — les_a2_it_pr_tickets.md — les_a2_it_pr_tickets, cite_only
+  ok   lesson — les_a2_it_reading_strategy.md — les_a2_it_reading_strategy, cite_only
+  ok   lesson — les_a2_it_roles_hierarchy.md — les_a2_it_roles_hierarchy, cite_only
+  ok   lesson — les_a2_it_system_unit.md — les_a2_it_system_unit, cite_only
+  ok   lesson — les_a2_it_terms_basics.md — les_a2_it_terms_basics, adapt_with_attribution
+  ok   lesson — les_a2_it_testing_fundamentals.md — les_a2_it_testing_fundamentals, cite_only
+  ok   lesson — les_a2_it_typescript_basics.md — les_a2_it_typescript_basics, cite_only
+  ok   lesson — les_a2_it_word_formation.md — les_a2_it_word_formation, cite_only
+  ok   lesson — les_a2_meeting_open.md — les_a2_meeting_open, cite_only
+  ok   lesson — les_a2_meeting_participate.md — les_a2_meeting_participate, cite_only
+  ok   lesson — les_a2_modals_can_need.md — les_a2_modals_can_need, cite_only
+  ok   lesson — les_a2_past_narrative.md — les_a2_past_narrative, cite_only
+  ok   lesson — les_a2_phone_calls.md — les_a2_phone_calls, cite_only
+  ok   lesson — les_a2_prepositions_basic.md — les_a2_prepositions_basic, cite_only
+  ok   lesson — les_a2_present_continuous.md — les_a2_present_continuous, cite_only
+  ok   lesson — les_a2_reading_strategy.md — les_a2_reading_strategy, cite_only
+  ok   lesson — les_a2_restaurant_shopping.md — les_a2_restaurant_shopping, cite_only
+  ok   lesson — les_a2_small_talk.md — les_a2_small_talk, cite_only
+  ok   lesson — les_a2_stress_timing.md — les_a2_stress_timing, cite_only
+  ok   lesson — les_a2_travel_vocab_core.md — les_a2_travel_vocab_core, cite_only
+  ok   lesson — les_a2_writing_bio.md — les_a2_writing_bio, cite_only
+  ok   lesson — les_a2_writing_messages.md — les_a2_writing_messages, cite_only
+  ok   lesson — les_a2_writing_past.md — les_a2_writing_past, cite_only
+  ok   lesson — les_a2_writing_selfcheck.md — les_a2_writing_selfcheck, cite_only
+  ok   lesson — les_a2_writing_svo.md — les_a2_writing_svo, cite_only
+  ok   lesson — les_b1_conditionals.md — les_b1_conditionals, cite_only
+  ok   lesson — les_b1_finance_business.md — les_b1_finance_business, cite_only
+  ok   lesson — les_b1_hr_career.md — les_b1_hr_career, cite_only
+  ok   lesson — les_b1_it_acronyms_deep.md — les_b1_it_acronyms_deep, cite_only
+  ok   lesson — les_b1_it_architecture_vocab.md — les_b1_it_architecture_vocab, adapt_with_attribution
+  ok   lesson — les_b1_it_bdd_specs.md — les_b1_it_bdd_specs, cite_only
+  ok   lesson — les_b1_it_code_review.md — les_b1_it_code_review, adapt_with_attribution
+  ok   lesson — les_b1_it_ddd_modeling.md — les_b1_it_ddd_modeling, cite_only
+  ok   lesson — les_b1_it_debugging.md — les_b1_it_debugging, adapt_with_attribution
+  ok   lesson — les_b1_it_devops_basics.md — les_b1_it_devops_basics, cite_only
+  ok   lesson — les_b1_it_ux_collab.md — les_b1_it_ux_collab, cite_only
+  ok   lesson — les_b1_it_write_docs.md — les_b1_it_write_docs, adapt_with_attribution
+  ok   lesson — les_b1_leadership_feedback.md — les_b1_leadership_feedback, cite_only
+  ok   lesson — les_b1_modals.md — les_b1_modals, cite_only
+  ok   lesson — les_b1_negotiation.md — les_b1_negotiation, cite_only
+  ok   lesson — les_b1_passive.md — les_b1_passive, cite_only
+  ok   lesson — les_b1_presentation_skills.md — les_b1_presentation_skills, cite_only
+  ok   lesson — les_b1_project_case_study.md — les_b1_project_case_study, adapt_with_attribution
+  ok   lesson — les_b1_project_client_sim.md — les_b1_project_client_sim, cite_only
+  ok   lesson — les_b1_project_integrated_review.md — les_b1_project_integrated_review, cite_only
+  ok   lesson — les_b1_project_negotiation_roleplay.md — les_b1_project_negotiation_roleplay, cite_only
+  ok   lesson — les_b1_project_presentation_final.md — les_b1_project_presentation_final, cite_only
+  ok   lesson — les_b1_project_retrospective.md — les_b1_project_retrospective, cite_only
+  ok   lesson — les_b1_question_forms.md — les_b1_question_forms, cite_only
+  ok   lesson — les_b1_reported_speech.md — les_b1_reported_speech, cite_only
+  ok   lesson — les_b1_sales_marketing.md — les_b1_sales_marketing, cite_only
+  ok   lesson — les_b1_tenses_review.md — les_b1_tenses_review, cite_only
+  ok   lesson — les_b2_celpe_br.md — les_b2_celpe_br, cite_only
+  ok   lesson — les_b2_culture_brazil_vs_usa.md — les_b2_culture_brazil_vs_usa, cite_only
+  ok   lesson — les_b2_exam_simulations.md — les_b2_exam_simulations, cite_only
+  ok   lesson — les_b2_exam_vocab.md — les_b2_exam_vocab, cite_only
+  ok   lesson — les_b2_ielts_writing.md — les_b2_ielts_writing, cite_only
+  ok   lesson — les_b2_it_advanced_patterns.md — les_b2_it_advanced_patterns, cite_only
+  ok   lesson — les_b2_it_architecture_decisions.md — les_b2_it_architecture_decisions, adapt_with_attribution
+  ok   lesson — les_b2_it_incident_postmortem.md — les_b2_it_incident_postmortem, adapt_with_attribution
+  ok   lesson — les_b2_it_jargon_mastery.md — les_b2_it_jargon_mastery, cite_only
+  ok   lesson — les_b2_it_mentoring.md — les_b2_it_mentoring, adapt_with_attribution
+  ok   lesson — les_b2_it_rfc_writing.md — les_b2_it_rfc_writing, adapt_with_attribution
+  ok   lesson — les_b2_it_strategy.md — les_b2_it_strategy, cite_only
+  ok   lesson — les_b2_it_technical_leadership.md — les_b2_it_technical_leadership, cite_only
+  ok   lesson — les_b2_professional_argument.md — les_b2_professional_argument, cite_only
+  ok   lesson — les_b2_professional_email_advanced.md — les_b2_professional_email_advanced, cite_only
+  ok   lesson — les_b2_professional_review.md — les_b2_professional_review, cite_only
+  ok   lesson — les_b2_professional_summary.md — les_b2_professional_summary, cite_only
+  ok   lesson — les_b2_register_nuance.md — les_b2_register_nuance, cite_only
+  ok   lesson — les_b2_toeic_reading.md — les_b2_toeic_reading, cite_only
+  ok   lesson — les_b2_toeic_writing.md — les_b2_toeic_writing, cite_only
+  ok   lesson — les_rem_confidence_builder.md — les_rem_confidence_builder, cite_only
+  ok   lesson — les_rem_grammar_be_pronouns.md — les_rem_grammar_be_pronouns, cite_only
+  ok   lesson — les_rem_listening_slow_clear.md — les_rem_listening_slow_clear, cite_only
+  ok   lesson — les_rem_pronunciation_th_vw.md — les_rem_pronunciation_th_vw, cite_only
+  ok   lesson — les_rem_writing_svo.md — les_rem_writing_svo, cite_only
+  ok   lesson — lesson-15min-workplace-greetings.md — les_a2_greetings_intro, cite_only
+
+[9] Practice packs
+  ok   pack — pack-les-a2-email-basics.md — pack_les_a2_email_basics_v1, 7 items, br_pt_form 13 filled / 6 null (1 of them no-distractor-set)
+  ok   pack — pack-les-a2-greetings-intro.md — pack_les_a2_greetings_intro_v1, 7 items, br_pt_form 12 filled / 7 null
+  ok   pack — pack-les-a2-introducing-others.md — pack_les_a2_introducing_others_v1, 7 items, br_pt_form 9 filled / 10 null (1 of them no-distractor-set)
+  ok   pack — pack-les-a2-it-terms-basics.md — pack_les_a2_it_terms_basics_v1, 7 items, br_pt_form 9 filled / 12 null
+  ok   pack — pack-les-a2-meeting-open.md — pack_les_a2_meeting_open_v1, 7 items, br_pt_form 13 filled / 6 null (1 of them no-distractor-set)
+  ok   pack — pack-les-a2-meeting-participate.md — pack_les_a2_meeting_participate_v1, 7 items, br_pt_form 14 filled / 5 null (1 of them no-distractor-set)
+  ok   pack — pack-les-a2-small-talk.md — pack_les_a2_small_talk_v1, 7 items, br_pt_form 11 filled / 8 null (1 of them no-distractor-set)
+  ok   br_pt_form census — §2.2.1's published census matches the packs — 81 filled / 49 null-with-note / 5 null-not-applicable / 0 undocumented
+
+[10] Internal section references resolve
+  ok   sxref — 79 internal section references resolved
+
+[11] Restricted sources are not declared publishable
+  ok   restricted — no section asserts publishability of restricted-derived material
+  ok   restricted — every pack declares a reuse basis consistent with its item provenance
+  ok   item id — all 855 item ids are unique across every pack and both schemas
+  ok   item blocks — 855 `### ITEM` blocks parsed — every one declares an id, and all 841 with a distractor table declare a key (14 are distractor-free by construction: production and minimal-pair items scored by ASR)
+  ok   duplicate options — no item in either schema offers the same option text twice (case-sensitive; bold stripped, because bold marks the key)
+
+[12] Markdown table column consistency
+  ok   table — 1001 tables, all rows match their header width
+
+[13] Worked examples honour their own disclosures
+  ok   example — 1 worked example(s) — no estimate printed for a domain the example itself declares non-reportable
+
+==============================================================================
+[WARN] pack schema: 115 of 122 packs use the `pack_les_<lesson>_v1.md` schema (806 items) and are outside check [9], which globs only `pack-les-*.md`. 110 of them declare no `**Reuse basis:**` (§0.5) and their dotted ids do not satisfy §1.2's prefix↔namespace rule. [11c]/[11d]/[11e] DO cover them. The rest is outstanding migration — see post-lesson-practice-spec.md §12.
+==============================================================================
+RESULT: PASS — 0 failures, 1 warning
