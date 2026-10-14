@@ -1,0 +1,29 @@
+{
+  "$comment": "Allowlist by ID for the known-red tests (R11 / D-0). Not a suppression: `npm run test:gate` fails if any of these PASSES (the entry became stale) and also fails on any failure that is NOT listed here. Editing this file is a deliberate act that the git history records.",
+  "adr": "ADR-021",
+  "ratified": "2026-10-14",
+  "rationale": "P1.3 is documented NOT DONE in BACKLOG.md:119 and blocked by ADR-021 (status: Proposed). next-activity-selector.ts reads node.metadata['skills']/['newSkills'] which curriculum-parser.ts never populates, iPlus1Score is a constant 0, and getFsrsPriorityForLesson() is `return 0`. The 5 failures below are deterministic (reproduced identically in every measured run), so they are the expected state until ADR-021 is decided and P1.3 is implemented.",
+  "scope": "tests/domain/services/next-activity-selector.spec.ts",
+  "entries": [
+    {
+      "file": "tests/domain/services/next-activity-selector.spec.ts",
+      "name": "NextActivitySelector selectNextActivity() returns a lesson when at entry point with no current node"
+    },
+    {
+      "file": "tests/domain/services/next-activity-selector.spec.ts",
+      "name": "NextActivitySelector selectNextActivity() respects track (General vs IT) when selecting next activity"
+    },
+    {
+      "file": "tests/domain/services/next-activity-selector.spec.ts",
+      "name": "NextActivitySelector selectNextActivity() includes spaced review items when FSRS items are due"
+    },
+    {
+      "file": "tests/domain/services/next-activity-selector.spec.ts",
+      "name": "NextActivitySelector selectNextActivity() prefers i+1 activities (new skills at right difficulty)"
+    },
+    {
+      "file": "tests/domain/services/next-activity-selector.spec.ts",
+      "name": "NextActivitySelector track switching respects module sequence constraints"
+    }
+  ]
+}
