@@ -45,7 +45,7 @@
 
 | [031](031-identifiers-urls-nesting.md) | Identificadores, URLs e profundidade de aninhamento da API | **Proposed** — open | 2026-10-14 | — |
 | [032](032-pagination-filtering-projections.md) | Paginação, ordenação, filtros e projeções de coleção | **Proposed** — open | 2026-10-14 | — |
-| [033](033-versioning-deprecation.md) | Versionamento em path, depreciação e a contradição §4.4 × RFC 9745 | **Proposed** — open | 2026-10-14 | — |
+| [033](033-versioning-deprecation.md) | Versionamento em path, depreciação e a contradição §4.4 × RFC 9745 — **resolvida**: §4.4 emendada para v2.2.0 (`Deprecation: <sf-date>`, RFC 9745 §2.1) e D5 retirado (o escopo do header é o recurso, RFC 9745 §2.2) | Accepted | 2026-10-14 | — |
 | [034](034-problem-details-profile.md) | Erros — perfil da plataforma sobre a RFC 9457 | **Proposed** — open | 2026-10-14 | — |
 | [035](035-idempotency-and-optimistic-concurrency.md) | Idempotência de escrita e concorrência otimista | **Proposed** — open | 2026-10-14 | — |
 | [036](036-caching-and-range.md) | Cache condicional do catálogo e onde Range/206 se aplica | **Proposed** — open | 2026-10-14 | — |
@@ -74,10 +74,27 @@ opening `docs/data-model.erd.md`, `db/models.py`, or a migration.
 
 ### Open ADRs — read before implementing
 
-**031–043 are `Proposed` (A1, 2026-10-14) and block A2/A3.** They are the contract decisions for the
-HTTP surface; none is `Accepted`, because several require a human act (H1–H3; the `Deprecation`
-amendment to §4.4; the BDD 403 → 404 amendment; the canonical domain for `Problem.type` URIs). The
-phase report is `reports/api/fase-1.md`; the audit they rest on is `docs/api/inventario.md`.
+**031–032 and 034–043 are `Proposed` (A1, 2026-10-14).** They are the contract decisions for the
+HTTP surface, and none of them is `Accepted`, because several require a human act (H1–H3; the BDD
+403 → 404 amendment; the canonical domain for `Problem.type` URIs). The phase report is
+`reports/api/fase-1.md`; the audit they rest on is `docs/api/inventario.md`.
+
+**033 is `Accepted`** — it was the one whose human act arrived: `CONSTITUTION.md` §4.4 was amended to
+v2.2.0 on 2026-10-14 (the `Deprecation` amendment, H-1), which was D2's only blocker. Its D5 was
+*withdrawn* in the same pass (RFC 9745 §2.2 governs the header's scope). See the ADR's
+*Post-acceptance amendment*.
+
+**Two bookkeeping facts a reader will otherwise trip over.**
+
+1. **`Proposed` does not mean "not used".** Several of these ADRs carry decisions that were
+   **ratified and implemented** while the frontmatter still says `Proposed` — e.g. ADR-040's D2
+   (canonical document), D4–D7 (gate, pin, order) were executed in A2 (`reports/api/fase-2.md`), and
+   ADR-031/033 D1 (the `/api/v1` prefix) is live in `src/main.ts`. The status field tracks the
+   *record's* approval, not the work's existence; where the two disagree, the report and the commit
+   are the evidence. Flipping 040 is left to the A3 phase, whose checklist is its last unchecked item
+   (D3, removing the obsolete `docs/api/openapi.yaml`).
+2. **ADR-018's §1 amendment (Constitution 2.1.0) is still pending §9 step 5** and is operative anyway,
+   because it is an accepted ADR enforced in `src/domain/` — see `CONSTITUTION.md` §9.
 
 > **Language:** 031–043 are written in Portuguese, unlike 001–030. `CONSTITUTION.md` imposes no
 > language rule (§4.1/§4.3/§4.4 were checked), so this is permitted but **inconsistent** with the
