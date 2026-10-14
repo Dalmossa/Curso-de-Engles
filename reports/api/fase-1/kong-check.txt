@@ -1,0 +1,1 @@
+PASS: Kong config checks (1 service, 5 routes, 3 rate-limiting plugins, 9 assertions)

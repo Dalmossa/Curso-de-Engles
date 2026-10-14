@@ -43,6 +43,20 @@
 | [029](029-immutability-by-trigger.md) | Immutability is a trigger, not a grant. Verification of P2.1/P2.2 measured that the DDL's `REVOKE UPDATE (id) ON items` is **inert** against the table-level `GRANT UPDATE` (PostgreSQL ACLs have no negative entries: `has_column_privilege` true, `attacl` empty, `UPDATE … SET id` rewrote the primary key as `its_platform_app`), and that `migration-check`'s I-2 assertion passed only because its own seeded `item_options` children trip a **foreign-key** error, not a permission one. Replacement: `trg_append_only_guard` (with P2.2) and `trg_item_id_immutable` refuse the mutation for **every** role — owner and `its_platform_admin` included, which no `REVOKE`-based control can express. The gates now assert the trigger's own exception (owner-role half included) instead of "some error"; the triggers assertion grows 4 → 6 named triggers | Accepted | 2026-10-12 | — |
 | [030](030-gateway-rate-limiting.md) | Gateway rate limiting — three `redis`-backed layers (`ip` 1000/min service-wide, `consumer` 100/min on `/learners` declared now and enforced when auth lands, `ip` 5/min on `/auth` per S-03), one monolith upstream, the ADR-006 example's per-service split and hour caps struck, the BDD "15-minute block" corrected to 429+`Retry-After`, and a `kong:check` gate over `iac/kong/kong.yml`. Also corrects the ADR-006 Implementation Plan: six false `[x]` boxes (ADR-009 precedent) | Accepted | 2026-10-12 | — |
 
+| [031](031-identifiers-urls-nesting.md) | Identificadores, URLs e profundidade de aninhamento da API | **Proposed** — open | 2026-10-14 | — |
+| [032](032-pagination-filtering-projections.md) | Paginação, ordenação, filtros e projeções de coleção | **Proposed** — open | 2026-10-14 | — |
+| [033](033-versioning-deprecation.md) | Versionamento em path, depreciação e a contradição §4.4 × RFC 9745 | **Proposed** — open | 2026-10-14 | — |
+| [034](034-problem-details-profile.md) | Erros — perfil da plataforma sobre a RFC 9457 | **Proposed** — open | 2026-10-14 | — |
+| [035](035-idempotency-and-optimistic-concurrency.md) | Idempotência de escrita e concorrência otimista | **Proposed** — open | 2026-10-14 | — |
+| [036](036-caching-and-range.md) | Cache condicional do catálogo e onde Range/206 se aplica | **Proposed** — open | 2026-10-14 | — |
+| [037](037-async-jobs.md) | Trabalho assíncrono como recurso — 202, Location, `/jobs/{id}` | **Proposed** — open | 2026-10-14 | — |
+| [038](038-authz-scopes-and-object-level-404.md) | Autenticação, escopos e autorização por objeto — 404, não 403 | **Proposed** — open | 2026-10-14 | — |
+| [039](039-rate-limit-response-shape.md) | Rate limiting — forma da resposta, headers e a proibição de inventar números | **Proposed** — open | 2026-10-14 | — |
+| [040](040-canonical-http-contract.md) | Fonte de verdade do contrato HTTP — um único OpenAPI, parseável | **Proposed** — open | 2026-10-14 | — |
+| [041](041-h1-catalog-write-surface.md) | **H1** — superfície de escrita do catálogo: somente leitura ou autoria? | **Proposed** — open | 2026-10-14 | — |
+| [042](042-h2-erasure-vs-append-only-log.md) | **H2** — direito à eliminação (LGPD art. 18) × log append-only imutável | **Proposed** — open | 2026-10-14 | — |
+| [043](043-h3-theta-cors-sdk.md) | **H3** — exposição de θ, política de CORS e publicação de SDK | **Proposed** — open | 2026-10-14 | — |
+
 ### Read before writing any persistence code — ADR-015…018
 
 Four records dated 2026-10-05 change what the rest of this directory says. Read them before
@@ -59,6 +73,16 @@ opening `docs/data-model.erd.md`, `db/models.py`, or a migration.
 — a twenty-line sketch) is why. `BACKLOG.md` P0.3a re-derives it from the six specs.
 
 ### Open ADRs — read before implementing
+
+**031–043 are `Proposed` (A1, 2026-10-14) and block A2/A3.** They are the contract decisions for the
+HTTP surface; none is `Accepted`, because several require a human act (H1–H3; the `Deprecation`
+amendment to §4.4; the BDD 403 → 404 amendment; the canonical domain for `Problem.type` URIs). The
+phase report is `reports/api/fase-1.md`; the audit they rest on is `docs/api/inventario.md`.
+
+> **Language:** 031–043 are written in Portuguese, unlike 001–030. `CONSTITUTION.md` imposes no
+> language rule (§4.1/§4.3/§4.4 were checked), so this is permitted but **inconsistent** with the
+> rest of this directory; the record is flagged here so a reviewer can convert them rather than
+> discover the mix later.
 
 **[013](013-auth-architecture-resource-vs-authorization-server.md) is `Proposed` and blocks
 one thing:** the platform must not implement token issuance. `/auth/refresh` is published in
