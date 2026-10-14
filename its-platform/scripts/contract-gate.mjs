@@ -1,0 +1,336 @@
+#!/usr/bin/env node
+/**
+ * Contract gate — canonical spec × NestJS routes (ADR-040 D5).
+ *
+ * Replaces `contract-check.mjs`, whose 31 lines asked only whether the obsolete
+ * document contained ten substrings. A0's N-4 proved on a copy that it PASSED
+ * with `components.schemas = {}`, with `POST` swapped for `GET`, and with a path
+ * that exists in no controller. Those three mutations are cases in
+ * `tests/contract/gate.spec.ts`, which runs THIS file.
+ *
+ * What it owns (ADR-040 D5.1): spec ↔ implementation. What it deliberately does
+ * NOT own: instance × schema validation and the drift guard between the two
+ * documents — both already live in `tests/contract/schemas.spec.ts`, and
+ * duplicating them here would recreate the very defect (two copies of one
+ * obligation) that ADR-040 exists to remove.
+ *
+ * Usage:
+ *   node scripts/contract-gate.mjs [--spec <path>] [--src <dir>]
+ *
+ * `--spec`/`--src` exist so the negative controls can point the gate at a
+ * mutated copy without editing the repository.
+ */
+import { existsSync, readFileSync, readdirSync } from 'fs';
+import { join, relative } from 'path';
+import YAML from 'yaml';
+
+const argv = process.argv.slice(2);
+const flag = (name, fallback) => {
+  const i = argv.indexOf(`--${name}`);
+  return i >= 0 && argv[i + 1] !== undefined ? argv[i + 1] : fallback;
+};
+
+const ROOT = process.cwd();
+const SPEC_PATH = flag('spec', join(ROOT, 'docs', 'api-spec.openapi.yaml'));
+const SRC_DIR = flag('src', join(ROOT, 'src'));
+
+const HTTP_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'];
+const DECORATORS = { Get: 'get', Post: 'post', Put: 'put', Patch: 'patch', Delete: 'delete' };
+
+/**
+ * Routes that are implemented but intentionally absent from the contract.
+ * An entry is only valid while its route still exists: the gate fails on a
+ * stale exemption, so this list cannot accumulate dead permissions.
+ */
+const ROUTE_EXEMPTIONS = [
+  {
+    path: '/health',
+    reason:
+      'Liveness probe consumed by Kong and the orchestrator. §4.4 governs /api/v1; a probe is not a versioned API surface.',
+  },
+  {
+    path: '/ready',
+    reason: 'Readiness probe, same reasoning as /health.',
+  },
+];
+
+const failures = [];
+const fail = (rule, detail) => failures.push(`${rule}: ${detail}`);
+
+// ---------------------------------------------------------------------------
+// 1. The document must parse. This is the defect D2 removed: for the whole life
+//    of the file, no tool consumed it because it was Markdown with a .yaml name.
+// ---------------------------------------------------------------------------
+if (!existsSync(SPEC_PATH)) {
+  fail('spec', `not found: ${SPEC_PATH}`);
+  report();
+} else {
+  let doc;
+  try {
+    doc = YAML.parse(readFileSync(SPEC_PATH, 'utf8'));
+  } catch (error) {
+    fail(
+      'parse',
+      `${relative(ROOT, SPEC_PATH)} is not parseable YAML: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+  if (doc !== undefined) main(doc);
+  else report();
+}
+
+// ---------------------------------------------------------------------------
+// 2. Routes, read from the NestJS controllers.
+// ---------------------------------------------------------------------------
+function listControllers(dir) {
+  const found = [];
+  const walk = (d) => {
+    for (const entry of readdirSync(d, { withFileTypes: true })) {
+      const p = join(d, entry.name);
+      if (entry.isDirectory()) walk(p);
+      else if (entry.name.endsWith('.controller.ts')) found.push(p);
+    }
+  };
+  if (existsSync(dir)) walk(dir);
+  return found.sort();
+}
+
+function extractRoutes(dir) {
+  const routes = [];
+  for (const file of listControllers(dir)) {
+    const text = readFileSync(file, 'utf8')
+      .replace(/\/\*[\s\S]*?\*\//g, '') // block comments
+      .replace(/^[ \t]*\/\/.*$/gm, ''); // line comments
+    const controller = text.match(/@Controller\s*\(\s*(?:'([^']*)'|"([^"]*)")?\s*\)/);
+    if (!controller) continue;
+    const prefix = controller[1] ?? controller[2] ?? '';
+    const decoratorRe = /@(Get|Post|Put|Patch|Delete)\s*\(\s*(?:'([^']*)'|"([^"]*)")?\s*\)/g;
+    let match;
+    while ((match = decoratorRe.exec(text)) !== null) {
+      const verb = DECORATORS[match[1]];
+      const suffix = match[2] ?? match[3] ?? '';
+      routes.push({
+        method: verb,
+        path: `/${[prefix, suffix].filter(Boolean).join('/')}`,
+        file: relative(ROOT, file),
+      });
+    }
+  }
+  return routes;
+}
+
+/** `/content/lessons/{lesson_id}` and `/content/lessons/:lesson_id` are the same route. */
+function normalize(path) {
+  return (
+    '/' +
+    path
+      .split('/')
+      .filter(Boolean)
+      .map((segment) => (segment.startsWith('{') || segment.startsWith(':') ? '{}' : segment))
+      .join('/')
+  );
+}
+
+// ---------------------------------------------------------------------------
+// The checks.
+// ---------------------------------------------------------------------------
+function main(doc) {
+  // --- shape ---------------------------------------------------------------
+  if (typeof doc.openapi !== 'string' || !doc.openapi.startsWith('3.1')) {
+    fail('spec', `openapi must be a 3.1.x version string, found ${JSON.stringify(doc.openapi)}`);
+  }
+
+  const schemas = doc.components?.schemas;
+  if (schemas === null || typeof schemas !== 'object' || Object.keys(schemas).length === 0) {
+    // A0's N-4a: the old gate passed with this mutation.
+    fail('schemas', 'components.schemas is empty or missing');
+  }
+
+  const paths = doc.paths;
+  if (paths === null || typeof paths !== 'object' || Object.keys(paths).length === 0) {
+    fail('paths', 'paths is empty or missing');
+    report();
+    return;
+  }
+
+  // --- servers must carry the §4.4 version prefix --------------------------
+  const servers = Array.isArray(doc.servers) ? doc.servers : [];
+  if (servers.length === 0) fail('servers', 'no servers declared');
+  for (const server of servers) {
+    if (typeof server?.url !== 'string') {
+      fail('servers', `server without a url: ${JSON.stringify(server)}`);
+      continue;
+    }
+    let pathname;
+    try {
+      pathname = new URL(server.url).pathname;
+    } catch {
+      fail('servers', `not an absolute URL: ${server.url}`);
+      continue;
+    }
+    if (pathname.replace(/\/+$/, '') !== '/api/v1') {
+      fail('servers', `${server.url} does not end in /api/v1 (CONSTITUTION §4.4)`);
+    }
+  }
+
+  // --- every $ref must resolve (D5.2, minus the spectral ruleset) ----------
+  for (const ref of collectRefs(doc)) {
+    if (resolvePointer(doc, ref) === undefined) {
+      fail('$ref', `${ref} does not resolve`);
+    }
+  }
+
+  // --- Problem must exist and carry the RFC 9457 core members (D5.5) -------
+  const problem = schemas?.Problem;
+  if (problem === undefined) {
+    fail('Problem', 'components.schemas.Problem is missing (ADR-034, CONSTITUTION §4.3)');
+  } else {
+    for (const member of ['type', 'title', 'status']) {
+      if (problem.properties?.[member] === undefined) {
+        fail('Problem', `Problem.properties.${member} is missing (ADR-034 D2)`);
+      }
+    }
+  }
+
+  // --- no boolean Deprecation header (D5.4, ADR-033 D2) --------------------
+  for (const { path, value } of collectKeys(doc, /^deprecation$/i)) {
+    const schema = value?.schema ?? value;
+    const isBoolean =
+      schema?.type === 'boolean' ||
+      typeof schema?.const === 'boolean' ||
+      (Array.isArray(schema?.enum) && schema.enum.some((v) => typeof v === 'boolean'));
+    if (isBoolean) {
+      fail(
+        'Deprecation',
+        `${path} declares the boolean form; RFC 9745 defines a date (obsolete draft form, CONSTITUTION §4.4)`,
+      );
+    }
+  }
+
+  // --- error responses and resource 404s ----------------------------------
+  for (const [path, item] of Object.entries(paths)) {
+    const hasParameter = /\{[^}]+\}/.test(path);
+    for (const [verb, operation] of Object.entries(item)) {
+      if (!HTTP_METHODS.includes(verb)) continue;
+      if (operation.responses === null || typeof operation.responses !== 'object') {
+        fail('responses', `${verb.toUpperCase()} ${path} declares no responses`);
+        continue;
+      }
+      for (const [status, response] of Object.entries(operation.responses)) {
+        if (!/^[45]\d\d$/.test(status)) continue;
+        const mediaTypes = Object.keys(response?.content ?? {});
+        if (mediaTypes.length === 0) {
+          fail('error media type', `${verb.toUpperCase()} ${path} ${status} declares no content`);
+        }
+        for (const mediaType of mediaTypes) {
+          if (mediaType !== 'application/problem+json') {
+            fail(
+              'error media type',
+              `${verb.toUpperCase()} ${path} ${status} serves ${mediaType}; CONSTITUTION §4.3 mandates application/problem+json`,
+            );
+          }
+        }
+      }
+      // R6: reading another learner's object answers 404, so every read of a
+      // resource with an identifier must publish that answer.
+      if (verb === 'get' && hasParameter && !('404' in operation.responses)) {
+        fail('404', `GET ${path} declares no 404 (R6/ADR-038)`);
+      }
+    }
+  }
+
+  // --- spec × implementation, both directions (D5.3) and method (D5.6) ----
+  const specOperations = new Map();
+  for (const [path, item] of Object.entries(paths)) {
+    specOperations.set(
+      normalize(path),
+      new Set(Object.keys(item).filter((k) => HTTP_METHODS.includes(k))),
+    );
+  }
+
+  const implemented = new Map();
+  for (const route of extractRoutes(SRC_DIR)) {
+    const key = normalize(route.path);
+    if (!implemented.has(key)) implemented.set(key, { methods: new Set(), paths: new Set() });
+    implemented.get(key).methods.add(route.method);
+    implemented.get(key).paths.add(route.path);
+  }
+
+  for (const [key, methods] of specOperations) {
+    const impl = implemented.get(key);
+    if (impl === undefined) {
+      fail('spec path has no route', `${key} is published but no controller implements it`);
+      continue;
+    }
+    const missing = [...methods].filter((m) => !impl.methods.has(m));
+    const extra = [...impl.methods].filter((m) => !methods.has(m));
+    if (missing.length > 0 || extra.length > 0) {
+      // A0's N-4b: the old gate passed with POST swapped for GET.
+      fail(
+        'method',
+        `${key}: spec=[${[...methods].sort().join(',')}] implementation=[${[...impl.methods].sort().join(',')}]`,
+      );
+    }
+  }
+
+  const exemptions = new Map(ROUTE_EXEMPTIONS.map((e) => [normalize(e.path), e]));
+  for (const [key, route] of implemented) {
+    if (specOperations.has(key)) continue;
+    if (exemptions.has(key)) continue;
+    for (const path of route.paths) {
+      fail(
+        'route not in spec',
+        `${path} is implemented but absent from the canonical spec (${[...route.methods].sort().join(',')})`,
+      );
+    }
+  }
+  for (const [key, exemption] of exemptions) {
+    if (!implemented.has(key)) {
+      fail('stale exemption', `${exemption.path} is exempted but no controller implements it`);
+    }
+  }
+
+  report();
+}
+
+function report() {
+  if (failures.length > 0) {
+    for (const failure of failures) console.log(`FAIL: ${failure}`);
+    console.log(`FAIL: contract gate — ${failures.length} violation(s)`);
+    process.exit(1);
+  }
+  console.log(
+    `PASS: contract gate — canonical spec parses, servers carry /api/v1, ` +
+      `errors are application/problem+json, and spec × routes agree in both directions`,
+  );
+}
+
+// ---------------------------------------------------------------------------
+// helpers
+// ---------------------------------------------------------------------------
+function collectRefs(node, out = []) {
+  if (node === null || typeof node !== 'object') return out;
+  if (typeof node.$ref === 'string') out.push(node.$ref);
+  for (const value of Object.values(node)) collectRefs(value, out);
+  return out;
+}
+
+function resolvePointer(doc, ref) {
+  if (!ref.startsWith('#/')) return undefined;
+  let current = doc;
+  for (const segment of ref.slice(2).split('/')) {
+    const key = segment.replace(/~1/g, '/').replace(/~0/g, '~');
+    if (current === null || typeof current !== 'object' || !(key in current)) return undefined;
+    current = current[key];
+  }
+  return current;
+}
+
+function collectKeys(node, pattern, path = '#', out = []) {
+  if (node === null || typeof node !== 'object') return out;
+  for (const [key, value] of Object.entries(node)) {
+    const here = `${path}/${key}`;
+    if (pattern.test(key)) out.push({ path: here, value });
+    collectKeys(value, pattern, here, out);
+  }
+  return out;
+}

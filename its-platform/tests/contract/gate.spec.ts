@@ -1,0 +1,192 @@
+/**
+ * Contract gate — negative controls (ADR-040 D5, R7).
+ *
+ * The gate replaces `contract-check.mjs`, whose 31 lines only asked whether the
+ * obsolete document contained ten substrings. A0's N-4 proved, on a copy, that
+ * that gate PASSED with `components.schemas = {}`, with `POST` swapped for
+ * `GET`, and with a path that exists in no controller. Each of those mutations
+ * is a case below.
+ *
+ * Every case runs the real CLI against a mutated copy — no mocking of the gate
+ * itself — so what is asserted is the thing that ships.
+ */
+import { execFileSync } from 'child_process';
+import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
+import * as yaml from 'yaml';
+
+const ROOT = process.cwd();
+const GATE = join(ROOT, 'scripts', 'contract-gate.mjs');
+const SPEC = join(ROOT, 'docs', 'api-spec.openapi.yaml');
+const SRC = join(ROOT, 'src');
+
+interface GateResult {
+  code: number;
+  out: string;
+}
+
+function runGate(specPath: string = SPEC, srcDir: string = SRC): GateResult {
+  try {
+    const out = execFileSync(
+      process.execPath,
+      [GATE, '--spec', specPath, '--src', srcDir],
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] },
+    );
+    return { code: 0, out };
+  } catch (error) {
+    const e = error as { status?: number; stdout?: string; stderr?: string };
+    return { code: e.status ?? 1, out: `${e.stdout ?? ''}${e.stderr ?? ''}` };
+  }
+}
+
+const tempDirs: string[] = [];
+function tempDir(): string {
+  const dir = mkdtempSync(join(tmpdir(), 'contract-gate-'));
+  tempDirs.push(dir);
+  return dir;
+}
+
+/** Writes a spec copy mutated by `mutate`, and returns its path. */
+function mutatedSpec(mutate: (doc: any) => void): string {
+  const doc = yaml.parse(readFileSync(SPEC, 'utf8'));
+  mutate(doc);
+  const p = join(tempDir(), 'spec.yaml');
+  writeFileSync(p, yaml.stringify(doc));
+  return p;
+}
+
+/** Writes a spec copy whose raw text is rewritten by `rewrite`. */
+function rewrittenSpec(rewrite: (raw: string) => string): string {
+  const p = join(tempDir(), 'spec.yaml');
+  writeFileSync(p, rewrite(readFileSync(SPEC, 'utf8')));
+  return p;
+}
+
+/** Copies `src/` and applies `mutate` to the copy. */
+function mutatedSrc(removeRelativePath: string): string {
+  const dir = join(tempDir(), 'src');
+  cpSync(SRC, dir, { recursive: true });
+  rmSync(join(dir, removeRelativePath));
+  return dir;
+}
+
+afterAll(() => {
+  for (const dir of tempDirs) rmSync(dir, { recursive: true, force: true });
+});
+
+describe('contract gate — the unmutated repository', () => {
+  it('passes on the canonical spec against the real controllers', () => {
+    const { code, out } = runGate();
+    expect(out).not.toMatch(/^FAIL/m);
+    expect(code).toBe(0);
+  });
+});
+
+describe('contract gate — negative controls (each must FAIL)', () => {
+  it('N-1 (A0 N-4a): empty components.schemas', () => {
+    const { code, out } = runGate(mutatedSpec((doc) => { doc.components.schemas = {}; }));
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: schemas/m);
+  });
+
+  it('N-2 (A0 N-4b): method swapped — get becomes post', () => {
+    const { code, out } = runGate(mutatedSpec((doc) => {
+      const op = doc.paths['/content/lessons/{lesson_id}'];
+      op.post = op.get;
+      delete op.get;
+    }));
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: method/m);
+  });
+
+  it('N-3 (A0 N-4c): a path implemented by no controller', () => {
+    const { code, out } = runGate(mutatedSpec((doc) => {
+      doc.paths['/content/imaginary/{thing_id}'] = { get: { responses: { '200': { description: 'x' } } } };
+    }));
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: spec path has no route/m);
+  });
+
+  it('N-4: a spec path removed while its route still exists', () => {
+    const { code, out } = runGate(mutatedSpec((doc) => { delete doc.paths['/learners/{learner_id}/mastery']; }));
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: route not in spec/m);
+  });
+
+  it('N-5: a fictitious spec path', () => {
+    const { code, out } = runGate(mutatedSpec((doc) => {
+      doc.paths['/not-in-any-controller'] = { get: { responses: { '200': { description: 'x' } } } };
+    }));
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: spec path has no route/m);
+  });
+
+  it('N-6: servers without the §4.4 /api/v1 prefix', () => {
+    const { code, out } = runGate(mutatedSpec((doc) => { doc.servers = [{ url: 'https://api.its.example.com/v1' }]; }));
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: servers/m);
+  });
+
+  it('N-7: Problem schema removed', () => {
+    const { code, out } = runGate(mutatedSpec((doc) => { delete doc.components.schemas.Problem; }));
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: Problem/m);
+  });
+
+  it('N-8: an error response served as application/json', () => {
+    const { code, out } = runGate(mutatedSpec((doc) => {
+      doc.paths['/content/lessons/{lesson_id}'].get.responses['404'].content = {
+        'application/json': { schema: { $ref: '#/components/schemas/Problem' } },
+      };
+    }));
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: error media type/m);
+  });
+
+  it('N-9: a GET on a path parameter without a 404 (R6)', () => {
+    const { code, out } = runGate(mutatedSpec((doc) => {
+      delete doc.paths['/content/packs/{pack_id}'].get.responses['404'];
+    }));
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: 404/m);
+  });
+
+  it('N-10: a boolean Deprecation header (ADR-033 D2)', () => {
+    const { code, out } = runGate(mutatedSpec((doc) => {
+      doc.paths['/content/lessons/{lesson_id}'].get.responses['200'].headers = {
+        Deprecation: { schema: { type: 'boolean', const: true } },
+      };
+    }));
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: Deprecation/m);
+  });
+
+  it('N-11: the historical defect — the document wrapped in a Markdown fence', () => {
+    const { code, out } = runGate(rewrittenSpec((raw) => '```yaml\n' + raw + '\n```\n'));
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: parse/m);
+  });
+
+  it('N-12: a controller route that the spec does not publish', () => {
+    const dir = join(tempDir(), 'src');
+    cpSync(SRC, dir, { recursive: true });
+    const file = join(dir, 'modules', 'auth', 'auth.controller.ts');
+    writeFileSync(
+      file,
+      readFileSync(file, 'utf8').replace(
+        "@Post('refresh')",
+        "@Post('refresh')\n  @Post('logout')\n  logout() { return null; }",
+      ),
+    );
+    const { code, out } = runGate(SPEC, dir);
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: route not in spec/m);
+  });
+
+  it('N-13: a route exemption that no longer matches a route (stale)', () => {
+    const { code, out } = runGate(SPEC, mutatedSrc('health/health.controller.ts'));
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: stale exemption/m);
+  });
+});
