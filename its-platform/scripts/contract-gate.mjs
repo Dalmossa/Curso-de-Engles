@@ -20,6 +20,7 @@
  * `--spec`/`--src` exist so the negative controls can point the gate at a
  * mutated copy without editing the repository.
  */
+import { execFileSync } from 'child_process';
 import { existsSync, readFileSync, readdirSync } from 'fs';
 import { join, relative } from 'path';
 import YAML from 'yaml';
@@ -33,6 +34,18 @@ const flag = (name, fallback) => {
 const ROOT = process.cwd();
 const SPEC_PATH = flag('spec', join(ROOT, 'docs', 'api-spec.openapi.yaml'));
 const SRC_DIR = flag('src', join(ROOT, 'src'));
+
+/**
+ * Repo root — the pinned spec files (`specs/*.md`) are addressed relative to it,
+ * and this process runs with its-platform as its cwd.
+ */
+function repoRoot() {
+  try {
+    return execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).trim();
+  } catch {
+    return join(ROOT, '..');
+  }
+}
 
 const HTTP_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'];
 const DECORATORS = { Get: 'get', Post: 'post', Put: 'put', Patch: 'patch', Delete: 'delete' };
@@ -187,6 +200,51 @@ function main(doc) {
     for (const member of ['type', 'title', 'status']) {
       if (problem.properties?.[member] === undefined) {
         fail('Problem', `Problem.properties.${member} is missing (ADR-034 D2)`);
+      }
+    }
+  }
+
+  // --- the derived contract declares the revision it derived FROM (D6) ------
+  // `Curso-de-Ingles/specs/*.md` is the source of truth (ADR-018); this document
+  // is derived. Without the pin, drift between a spec and the OpenAPI is not
+  // detectable: both look correct, which is why nobody looked before A0.
+  const provenance = doc.info?.['x-contract-provenance'];
+  if (provenance === null || typeof provenance !== 'object') {
+    fail('pin', 'info.x-contract-provenance is missing (ADR-040 D6)');
+  } else {
+    if (
+      typeof provenance['derived-at'] !== 'string' ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(provenance['derived-at'])
+    ) {
+      fail(
+        'pin',
+        `derived-at must be an ISO date, found ${JSON.stringify(provenance['derived-at'])}`,
+      );
+    }
+    const blobs = provenance['spec-blobs'];
+    if (blobs === null || typeof blobs !== 'object' || Object.keys(blobs).length === 0) {
+      fail('pin', 'spec-blobs is empty — the pin would verify nothing');
+    } else {
+      const root = repoRoot();
+      for (const [file, expected] of Object.entries(blobs)) {
+        const absolute = join(root, file);
+        if (!existsSync(absolute)) {
+          fail('pin', `${file} is pinned but does not exist`);
+          continue;
+        }
+        let actual;
+        try {
+          actual = execFileSync('git', ['hash-object', absolute], { encoding: 'utf8' }).trim();
+        } catch {
+          fail('pin', `${file} could not be hashed (is this a git repository?)`);
+          continue;
+        }
+        if (actual !== expected) {
+          fail(
+            'pin',
+            `${file} changed since the contract was derived (pinned ${String(expected).slice(0, 12)}, actual ${actual.slice(0, 12)}) — review the diff and re-derive before moving the pin`,
+          );
+        }
       }
     }
   }

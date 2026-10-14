@@ -28,6 +28,26 @@ info:
     name: Proprietary
     url: https://example.com/license
 
+  # ADR-040 D6 — the derived contract declares the revision it derived FROM.
+  # The source of truth for contracts is `Curso-de-Ingles/specs/*.md`, not this
+  # file (ADR-018, ADR-027 §:45). Without this pin, drift between a spec and the
+  # OpenAPI is undetectable: both look correct, so nobody looks.
+  #
+  # `npm run contract:gate` recomputes every blob below (`git hash-object`) and
+  # fails when one differs. A mismatch is not noise — it means the contract was
+  # derived from a revision that no longer exists, and the diff must be reviewed
+  # before the pin is moved.
+  x-contract-provenance:
+    source-of-truth: Curso-de-Ingles/specs/*.md (+ external-sources.md)
+    derived-at: 2026-10-14
+    spec-blobs:
+      specs/assessment-item-spec.md: ccad934d366d82e3051f14274e994f207b35b47f
+      specs/curriculum-graph-spec.md: b809be2ab388d109dece8a800872aade5424b16c
+      specs/listening-corpus-spec.md: 295e1b8546d0bd1fc6852b363d35e93947535f2f
+      specs/post-lesson-practice-spec.md: 9566fe6088035f5a8bd88ac754503c26c7dd9c59
+      specs/stats-progress-evaluation-spec.md: a8ae6bb6812a2da4ef3380879e105a7184d86cc8
+      external-sources.md: 3aba1a1c7b991cc54344c233eaa874fb3b6e8cb0
+
 servers:
   # CONSTITUTION.md §4.4 — URL path versioning is mandatory: /api/v1.
   # `app.setGlobalPrefix('api')` + `enableVersioning({ type: VersioningType.URI })`.

@@ -189,4 +189,25 @@ describe('contract gate — negative controls (each must FAIL)', () => {
     expect(code).toBe(1);
     expect(out).toMatch(/^FAIL: stale exemption/m);
   });
+
+  it('N-14 (D6): a pin that no longer matches the spec it names', () => {
+    const { code, out } = runGate(
+      mutatedSpec((doc) => {
+        doc.info['x-contract-provenance']['spec-blobs']['specs/assessment-item-spec.md'] =
+          '0'.repeat(40);
+      }),
+    );
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: pin/m);
+  });
+
+  it('N-15 (D6): the provenance pin absent altogether', () => {
+    const { code, out } = runGate(
+      mutatedSpec((doc) => {
+        delete doc.info['x-contract-provenance'];
+      }),
+    );
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: pin/m);
+  });
 });
