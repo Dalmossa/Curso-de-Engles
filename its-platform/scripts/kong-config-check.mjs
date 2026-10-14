@@ -24,7 +24,7 @@
  *       declared exception: they are VERSION_NEUTRAL and excluded from the
  *       global prefix in src/main.ts, so they stay at the root (D1; ADR-031 D1,
  *       ADR-033 D1).
- *   7.  Route coverage derives from docs/api/openapi.yaml: every first path
+ *   7.  Route coverage derives from the canonical docs/api-spec.openapi.yaml:
  *       segment must be served by some route — compared after removing the
  *       version prefix, since the spec's paths are relative to its `servers`
  *       — and the /health + /ready probes must exist (D1, D7 — P0.8).
@@ -50,7 +50,11 @@ import { join } from 'path';
 import YAML from 'yaml';
 
 const KONG_FILE = join(process.cwd(), 'iac', 'kong', 'kong.yml');
-const OPENAPI_FILE = join(process.cwd(), 'docs', 'api', 'openapi.yaml');
+// ADR-033 D7 step 4: re-pointed from docs/api/openapi.yaml (the deprecated
+// predecessor) to the canonical document. Route coverage is a statement about
+// the contract that is published, and until A2 this gate measured the one that
+// is not.
+const OPENAPI_FILE = join(process.cwd(), 'docs', 'api-spec.openapi.yaml');
 
 /** Pre-ADR-012 split upstreams — allowed in comment lines only (ADR-030 D1). */
 const LEGACY_SERVICES = ['curriculum-service', 'adaptive-engine', 'auth-service'];
@@ -157,18 +161,21 @@ function main() {
     }
   }
 
-  // ---- 7. Route coverage from docs/api/openapi.yaml -----------------------
-  let openapiRaw = '';
+  // ---- 7. Route coverage from the canonical spec --------------------------
+  // Parsed, not pattern-matched. Until A2 this walked the raw text with
+  // /^  (\/…)/ because the canonical document was Markdown and could not be
+  // parsed at all; it read the deprecated file instead. ADR-040 D2 made the
+  // canonical parseable, and this reads it.
+  let segments = new Set();
   try {
-    openapiRaw = readFileSync(OPENAPI_FILE, 'utf-8');
+    const spec = YAML.parse(readFileSync(OPENAPI_FILE, 'utf-8'));
+    for (const path of Object.keys(spec.paths ?? {})) {
+      const firstSegment = path.split('/').filter(Boolean)[0];
+      if (firstSegment) segments.add(`/${firstSegment}`);
+    }
   } catch (err) {
-    fail(`cannot read openapi spec ${OPENAPI_FILE}: ${err.message}`);
-  }
-
-  const segments = new Set();
-  for (const line of openapiRaw.split('\n')) {
-    const match = /^  (\/(?:[a-zA-Z0-9_-]+))/.exec(line);
-    if (match) segments.add(match[1]);
+    fail(`cannot read or parse openapi spec ${OPENAPI_FILE}: ${err.message}`);
+    segments = new Set();
   }
   // Spec paths are relative to `servers`, which already carries /api/v1, so the
   // prefix is removed before the comparison (assertion 6 has just proved it is
