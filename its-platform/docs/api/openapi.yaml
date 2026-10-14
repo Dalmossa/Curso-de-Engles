@@ -1,3 +1,18 @@
+# DEPRECATED — removal date: 2026-10-14 (ADR-040 D3).
+#
+# This document is NOT the contract. The canonical document is
+# `docs/api-spec.openapi.yaml`: CONSTITUTION.md §4.4 names its `servers` as the current version,
+# `npm run contract:gate` enforces it against the NestJS routes, and
+# `tests/contract/schemas.spec.ts` validates real served payloads against its schemas.
+#
+# This file is the deprecated predecessor: 9 of its 14 schemas, `servers` without the §4.4
+# /api/v1 prefix, no `Problem`. Its readers were repointed or retired in A2/A3, and it is removed
+# in A3; the durable record is CHANGELOG.md, "Removed". Migrate by reading the canonical file.
+#
+# Note on the notice period: CONSTITUTION §4.4's 90/180-day minimum applies to a deprecated
+# *resource* and to its `Sunset` header. A repository file is not a resource and emits nothing, so
+# neither applies here — §4.4's "Changelog" row (breaking change recorded with the migration path)
+# is the row this removal answers to.
 openapi: 3.1.0
 info:
   title: ITS Platform API
