@@ -1,14 +1,23 @@
 /**
  * P1.12 — the three `/content/*` responses, validated against the contract.
  *
- * `docs/api/openapi.yaml` and `docs/api-spec.openapi.yaml` both publish `LessonContent`,
- * `PackContent` and `DialogueContent`, and until now the only test over them,
- * `tests/contract/schemas.spec.ts`, checked a *four-phase sketch* (`fase1`–`fase4`) that the
- * endpoint never served and that ADR-027 §4 replaced. It could not have caught the one thing it
- * existed for: a response that no longer matches the published schema. This file validates real
- * instances of what `ContentService` returns, and validates them against **both** files, because
- * the two are edited by hand and had already drifted (one published `PackOption.note` as
- * `type: string`, which no key option in the catalogue satisfied).
+ * `docs/api-spec.openapi.yaml` publishes `LessonContent`, `PackContent`, `DialogueContent` and
+ * `DialogueAudio`, and until P1.12 the only test over them checked a *four-phase sketch*
+ * (`fase1`–`fase4`) that the endpoint never served and that ADR-027 §4 replaced. It could not
+ * have caught the one thing it existed for: a response that no longer matches the published
+ * schema. This file validates real instances of what `ContentService` returns.
+ *
+ * **A3 (2026-10-14) — one document.** This reader used to load *two* OpenAPI files and compare
+ * them, because the two were edited by hand and had already drifted (one published
+ * `PackOption.note` as `type: string`, which no key option in the catalogue satisfied). ADR-040
+ * D3 removed the second document in A3, so the second reading and the drift guard go with it — a
+ * guard between a document and itself verifies nothing. What keeps the contract honest against
+ * its *sources* (`Curso-de-Ingles/specs/*.md`, ADR-018) is the provenance pin,
+ * `info.x-contract-provenance.spec-blobs`, which `scripts/contract-gate.mjs` re-hashes with
+ * `git hash-object` (ADR-040 D6). The reader also stopped tolerating a ```yaml fence: the
+ * canonical file is bare YAML, and a fence is a defect the gate fails on (`FAIL: parse`,
+ * `gate.spec.ts` N-11); a lenient second reader of an obligation the gate owns is the
+ * duplicated-obligation defect ADR-040 exists to remove.
  *
  * There is no dependency on `ajv` or `jsonschema`: a hand-written validator covers the exact
  * keywords these schemas use — `$ref`, `type` (including the `[T, 'null']` arrays), `required`,
@@ -18,8 +27,7 @@
  * implicit.
  *
  * The instances are real: every value was read out of the loaded catalogue (PGlite, `loadContent`
- * over the content repo) rather than invented. `describeContract` runs each one against both
- * files, so a schema edited in one file and not the other fails a case.
+ * over the content repo) rather than invented.
  */
 
 import { readFileSync } from 'fs';
@@ -230,29 +238,26 @@ function validateAssertions(
 }
 
 // ---------------------------------------------------------------------------
-// The two spec files
+// The canonical spec file
 // ---------------------------------------------------------------------------
 
 /**
- * `docs/api-spec.openapi.yaml` embeds its document in a ```` ```yaml ```` fence; `openapi.yaml`
- * is the bare document. Both are read the same way: the fenced body when there is one, the file
- * otherwise.
+ * The canonical document, parsed as bare YAML.
+ *
+ * `docs/api-spec.openapi.yaml` is the only contract (ADR-040 D3). This reader does not look for a
+ * ```` ```yaml ```` fence: the fence was the historical defect (D2), and a reader that tolerates
+ * it hides the defect instead of reporting it.
  */
 function loadSpec(relativePath: string): Record<string, Json> {
   const raw = readFileSync(join(process.cwd(), relativePath), 'utf8');
-  const fenced = raw.match(/```ya?ml\n([\s\S]*?)\n```/);
-  const body = fenced && fenced[1] !== undefined ? fenced[1] : raw;
-  const parsed: Json = yaml.parse(body);
+  const parsed: Json = yaml.parse(raw);
   if (!isObject(parsed)) throw new Error(`${relativePath} did not parse to an object`);
   return parsed;
 }
 
-const SPEC_PATHS = ['docs/api/openapi.yaml', 'docs/api-spec.openapi.yaml'] as const;
+const SPEC_PATH = 'docs/api-spec.openapi.yaml';
 
-const SPECS = SPEC_PATHS.map(relativePath => ({
-  relativePath,
-  doc: loadSpec(relativePath),
-}));
+const SPEC = { relativePath: SPEC_PATH, doc: loadSpec(SPEC_PATH) };
 
 function schemaOf(doc: Record<string, Json>, name: string): Json {
   const components = doc['components'];
@@ -263,25 +268,10 @@ function schemaOf(doc: Record<string, Json>, name: string): Json {
 }
 
 /** Validate one instance against one named schema in one document. */
-function contractErrors(spec: (typeof SPECS)[number], schemaName: string, instance: Json): string[] {
+function contractErrors(spec: typeof SPEC, schemaName: string, instance: Json): string[] {
   const errors: string[] = [];
   validate(schemaOf(spec.doc, schemaName), instance, spec.doc, schemaName, errors);
   return errors;
-}
-
-/** A schema with its prose annotations removed, for the structural drift guard. */
-const ANNOTATIONS = new Set(['description', 'summary', 'title', 'example', 'examples']);
-
-function withoutAnnotations(node: Json): Json {
-  if (Array.isArray(node)) return node.map(withoutAnnotations);
-  if (isObject(node)) {
-    const result: Record<string, Json> = {};
-    for (const [key, value] of Object.entries(node)) {
-      if (!ANNOTATIONS.has(key)) result[key] = withoutAnnotations(value);
-    }
-    return result;
-  }
-  return node;
 }
 
 // ---------------------------------------------------------------------------
@@ -688,41 +678,20 @@ const CASES: ContractCase[] = [
 
 // ---------------------------------------------------------------------------
 
-describe('Content API response schemas (P1.12 contract)', () => {
-  for (const spec of SPECS) {
-    describe(`against ${spec.relativePath}`, () => {
-      for (const testCase of CASES) {
-        it(`${testCase.valid ? 'accepts' : 'rejects'} ${testCase.label}`, () => {
-          const errors = contractErrors(spec, testCase.schema, testCase.instance);
-          if (testCase.valid) {
-            expect(errors).toEqual([]);
-          } else {
-            // A wrong instance is only useful if the validator can say why, and says the reason
-            // the case names.
-            expect(errors.length).toBeGreaterThan(0);
-            if (testCase.becauseOf !== undefined) {
-              expect(errors.join('\n')).toContain(testCase.becauseOf);
-            }
-          }
-        });
+describe(`Content API response schemas (P1.12 contract) — ${SPEC_PATH}`, () => {
+  for (const testCase of CASES) {
+    it(`${testCase.valid ? 'accepts' : 'rejects'} ${testCase.label}`, () => {
+      const errors = contractErrors(SPEC, testCase.schema, testCase.instance);
+      if (testCase.valid) {
+        expect(errors).toEqual([]);
+      } else {
+        // A wrong instance is only useful if the validator can say why, and says the reason
+        // the case names.
+        expect(errors.length).toBeGreaterThan(0);
+        if (testCase.becauseOf !== undefined) {
+          expect(errors.join('\n')).toContain(testCase.becauseOf);
+        }
       }
     });
   }
-
-  it('the two files define the six content schemas identically (drift guard)', () => {
-    const [first, second] = SPECS;
-    if (!first || !second) throw new Error('expected two spec files');
-    for (const name of [
-      'LessonContent',
-      'PackOption',
-      'PackContent',
-      'DialogueContent',
-      'DialogueAudio',
-      'DialogueAudioClip',
-    ]) {
-      expect(withoutAnnotations(schemaOf(second.doc, name))).toEqual(
-        withoutAnnotations(schemaOf(first.doc, name)),
-      );
-    }
-  });
 });
