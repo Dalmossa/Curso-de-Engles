@@ -97,24 +97,26 @@ reader who arrives from a release note.
 
 | Rule | Value |
 |---|---|
-| **Response headers on a deprecated endpoint** | `Deprecation: true` and `Sunset: <HTTP-date>` (RFC 8594) |
+| **Response headers on a deprecated resource** | `Deprecation: <sf-date>` — RFC 9745 §2.1, value a Date per RFC 9651 §3.3.7, serialised `@<unix-seconds>` — and `Sunset: <HTTP-date>` (RFC 8594), which must not be earlier than `Deprecation`. The scope of the field is the resource in the response's context (RFC 9745 §2.2); a wider scope is documented below |
 | **Minimum notice — security and correctness fixes** | 90 days |
 | **Minimum notice — feature retirement** | 180 days |
 | **Retirement gate** | The `Sunset` date has passed **and** ADR-006 (Kong) access logs show **no external traffic to that prefix for 30 consecutive days**. This metric must already exist when the endpoint is deprecated, not be built afterwards. |
 | **Rule for changing a `Sunset` date** | Allowed only in the direction of *later*, and the change is itself a changelog entry with a reason. |
 
-**Two gaps in that policy, both measured, neither closed here.**
+**One of the two gaps this section used to record is closed; the other is not.**
 
-1. **The header form is obsolete, and the amendment is not ratified.** §4.4's table mandates
-   `Deprecation: true`. RFC 9745 (March 2025) defines `Deprecation` as an **`sf-date`** — a structured
-   field date — and the boolean was the draft form; §4.5's *"conventions, not prose"* rule makes this a
-   contradiction between two clauses of the same constitution. `docs/adr/033-versioning-deprecation.md`
-   D2 proposes the amendment and stays **`Proposed`**, because amending §4.4 is a human act (§9). In the
-   meantime `npm run contract:gate` **rejects a boolean `Deprecation`**, which means the gate enforces a
-   Proposed ADR over a binding clause. Nothing is blocked today — no endpoint carries a `Deprecation`
-   header — but the first deprecation cannot publish a conformant header until §9 resolves it. That is
-   deliberate: the alternative is publishing a form the IETF has retired.
-2. **The retirement gate has no instrument.** The 30-consecutive-day rule needs access logs at the
+1. **The header form — closed 2026-10-14.** §4.4 used to mandate `Deprecation: true`. RFC 9745 (March
+   2025) §2.1 makes the field's value a Date per RFC 9651 §3.3.7 — serialised `@<unix-seconds>` — and
+   the boolean was the pre-publication draft form. `CONSTITUTION.md` §4.4 was amended to **v2.2.0** the
+   same day; §9 of that document carries the diff, the defect identifier (**H-1**) and the *"what
+   weakens"* table, and `docs/adr/033-versioning-deprecation.md` is now **`Accepted`**. Its D5 —
+   *"deprecation is announced per whole version, never per endpoint"* — was **withdrawn** in the same
+   pass: RFC 9745 §2.2 makes the field apply to *the resource in the response's context*, and the old
+   rule had confused the header's scope with the granularity of the 30-day metric below. The previous
+   version of this note also cited a *"conventions, not prose"* rule in §4.5; **no such sentence exists
+   in §4.5**, and the citation was wrong. `npm run contract:gate` rejecting the boolean now agrees with
+   the constitution instead of contradicting it.
+2. **The retirement gate has no instrument — open.** The 30-consecutive-day rule needs access logs at the
    gateway, and `iac/kong/kong.yml` configures **no** logging, observability or correlation plugin —
    `grep -iE "http-log\|file-log\|prometheus\|opentelemetry\|correlation"` finds nothing in it. A
    deprecation can therefore be **announced** (`Deprecation` + `Sunset`) but cannot be **retired** on

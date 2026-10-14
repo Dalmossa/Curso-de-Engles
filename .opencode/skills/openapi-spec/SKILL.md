@@ -39,7 +39,7 @@ canonical file disagree, the file wins and this page is wrong.
 | `components.schemas` non-empty | The old substring gate passed with it emptied (A0, N-4a) |
 | Every `$ref` resolves | An unresolvable `$ref` is a contract that describes nothing |
 | Every `server.url` ends in `/api/v1` | §4.4 — URL versioning is mandatory; header/query versioning is prohibited |
-| No boolean `Deprecation` header | RFC 9745 defines a **date**; `true` is the obsolete draft form (ADR-033 D2) |
+| No boolean `Deprecation` header | RFC 9745 §2.1 defines a **date** (RFC 9651 §3.3.7, `@<unix-seconds>`); `true` is the retired draft form. `CONSTITUTION.md` §4.4 **v2.2.0** mandates the date form, so the gate and the constitution agree |
 | `Problem` has `type`/`title`/`status` | §4.3 — errors are RFC 9457 |
 | 4xx/5xx serve only `application/problem+json` | §4.3, ADR-034 D4 |
 | `GET` on a path with a parameter declares `404` | R6 — another learner's object is 404, never 403 (ADR-038) |
