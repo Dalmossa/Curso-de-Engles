@@ -67,9 +67,9 @@ Consequência metodológica: "qual dos dois documentos é o canônico" não é o
 
 Estão agora escritos no próprio `CHANGELOG.md` (§*Deprecation policy*), porque nenhum dos dois é visível lendo a tabela:
 
-**(a) A §4.4 manda uma forma de header que o IETF aposentou.** Ela exige `Deprecation: true`; o RFC 9745 (mar/2025) define `Deprecation` como **`sf-date`**, e o booleano era a forma do draft. Duas cláusulas da mesma constituição se contradizem, porque §4.5 manda seguir convenções e não prosa. A emenda é o ADR-033 D2, ainda `Proposed`.
+**(a) A §4.4 mandava uma forma de header que o IETF aposentou — resolvido em 2026-10-14.** Ela exigia `Deprecation: true`; o RFC 9745 (mar/2025) §2.1 define `Deprecation` como uma **data** (RFC 9651 §3.3.7, serializada `@<unix-seconds>`), e o booleano era a forma do draft. A emenda é o ADR-033 D2, que **foi ratificado** (§10, adendo) e levou `CONSTITUTION.md` §4.4 a **v2.2.0**. *Correção de uma frase que eu havia escrito aqui:* o texto acima dizia que §4.5 manda "seguir convenções e não prosa" — **essa frase não existe na §4.5**. A contradição era real, mas a citação era inventada; removida.
 
-**Consequência que A2 criou e que precisa ser dita:** o `contract:gate` **rejeita `Deprecation: true`** (ADR-040 D5.4) — isto é, o gate aplica um ADR `Proposed` **contra uma cláusula vigente**. Nada está bloqueado hoje (nenhum endpoint publica header de depreciação), mas a primeira depreciação não conseguirá publicar header conforme até o §9 decidir. Mantive a regra porque D5.4 a pede literalmente e porque a alternativa é publicar forma aposentada; o efeito é este, e é seu para ratificar ou reverter.
+**A consequência que A2 criou, e como ela terminou:** entre `809d68f` e a ratificação, o `contract:gate` **rejeitava `Deprecation: true`** (ADR-040 D5.4) enquanto a §4.4 vigente o **mandava** — o gate aplicando um ADR `Proposed` contra uma cláusula vigente. Isso está fechado: a §4.4 agora manda a forma que o gate aceita. A regra do gate continua **inerte** (nenhum path do spec canônico declara `Deprecation` hoje), e por isso o `Sunset ≥ Deprecation` que a §4.4 v2.2.0 exige **não é verificável por gate ainda** — não há valores sobre os quais comparar.
 
 **(b) O portão de 30 dias não tem instrumento.** A regra exige "sem tráfego externo por 30 dias consecutivos", e `iac/kong/kong.yml` não configura **nenhum** plugin de log de acesso, observabilidade ou correlação. Uma depreciação pode ser **anunciada** (`Deprecation` + `Sunset`) e **não** pode ser **aposentada** por evidência (ADR-033 D4).
 
@@ -205,11 +205,11 @@ Total: **18 casos automatizados** em `tests/contract/gate.spec.ts` (1 positivo +
 
 ## 8. Pendências humanas e bloqueios
 
-### 8.1 O que bloqueia D-3
+### 8.1 O que bloqueava D-3 — **resolvido no mesmo dia** (ver §10)
 
-**H-1 — emenda da §4.4 para a forma RFC 9745 de `Deprecation`.** Sem ela, remover `/auth/refresh` exigiria publicar `Deprecation: true`, que o `contract:gate` (por ADR-040 D5.4) rejeita. É contradição real, descrita em §2.4(a): o gate aplica um ADR `Proposed` contra uma cláusula vigente. **Portanto não removi a rota.**
+**H-1 — emenda da §4.4 para a forma RFC 9745 de `Deprecation`.** Sem ela, remover `/auth/refresh` exigiria publicar `Deprecation: true`, que o `contract:gate` (por ADR-040 D5.4) rejeita. **Você ratificou H-1 em 2026-10-14**; a §4.4 está em v2.2.0 e o ADR-033 virou `Accepted`. **A rota não foi removida** — D-3 está desbloqueado, mas é trabalho de outra fase (§10).
 
-Quando liberado, D-3 tocará (medido, para não redescobrir):
+Quando for feito, D-3 tocará (medido, para não redescobrir):
 
 | Superfície | Estado hoje |
 |---|---|
@@ -227,7 +227,8 @@ Quando liberado, D-3 tocará (medido, para não redescobrir):
 | 041 | H1 — catálogo somente-leitura × superfície de autoria | decisão de produto |
 | 042 | H2 — LGPD apagamento × `append_only_events` WORM | **parecer jurídico** (LGPD art. 18/19 vs. registro imutável) |
 | 043 | H3 — janela de depreciação, CORS, SDK, exposição de θ | decisão de produto + K-3 do PRD |
-| 033 D2 | forma do header `Deprecation` | emenda à §4.4 (§9) — **é o que bloqueia D-3** |
+| ~~033 D2~~ | ~~forma do header `Deprecation`~~ | ✅ **ratificado em 2026-10-14** (§10) |
+| 031, 032, 034–040 | as demais decisões de contrato de A1 | várias já foram **ratificadas por decisão sua** e implementadas com o frontmatter ainda `Proposed` — ver o `docs/adr/README.md` §*Open ADRs*, ponto 1. Virar o status de 040 é bookkeeping de A3 (o último item não marcado dele é D3) |
 
 ### 8.3 UNVERIFIED que A2 **não** resolveu (não usar número inventado)
 
@@ -287,4 +288,64 @@ RFC 9745 (mar/2025) — forma `sf-date` do campo `Deprecation`; documentação d
 
 ---
 
-**Próximo passo — paro aqui.** Para seguir preciso de duas respostas: **(1)** a divisão de fases de §2.7, e **H-1** (§8.1) para D-3. Sem elas, a próxima fase que eu recomendo é **A6** (uma linha: parar de servir `items[].key`) e **A3** (remover o spec obsoleto e repontar seus 5 leitores), que não dependem de nenhuma decisão humana.
+## 10. Adendo — as duas respostas chegaram (2026-10-14)
+
+Depois de o relatório acima ser escrito, você respondeu às duas perguntas de §8. O registro desta
+seção existe para que a fase não fique contando uma história que deixou de ser verdade.
+
+### 10.1 H-1 — **ratificada**; a §4.4 está em v2.2.0
+
+Ato humano executado no mesmo dia, pelo processo da §9:
+
+| Artefato | O que mudou |
+|---|---|
+| `CONSTITUTION.md` §4.4 | a linha `Deprecation` passa a mandar `Deprecation: <sf-date>` (RFC 9745 §2.1 → RFC 9651 §3.3.7, `@<unix-seconds>`), mantém `Sunset: <HTTP-date>` (RFC 8594) e **acrescenta** `Sunset` não-anterior a `Deprecation` (RFC 9745 §4). O escopo do campo passa a ser **o recurso** (RFC 9745 §2.2), com a obrigação de documentar escopo maior |
+| `CONSTITUTION.md` §9 | changelog `2.2.0 — Ratified`, com o defeito identificado (**H-1**) e a seção **"2.2.0 — What weakens"** exigida pelo passo 3. O cabeçalho passa a `Version: 2.2.0 · Status: Ratified · Pending: 2.1.0` |
+| `docs/adr/033-...md` | `status: Proposed` → **`Accepted`**; seção **Status** no topo; **D5 retirado** com a citação da RFC 9745 §2.2 e a tabela que separa as duas granularidades (escopo do header × métrica de aposentadoria); plano de implementação com o que está feito e o que não está |
+| `docs/adr/README.md` | linha 033 → `Accepted`; a seção *Open ADRs* deixou de dizer que 031–043 estão todas `Proposed`, e passou a registrar que **`Proposed` não significa "não usado"** — 040 e 031/033 D1 têm decisões ratificadas e implementadas com o frontmatter ainda `Proposed` |
+| `CHANGELOG.md` | a nota da política de depreciação foi reescrita: um dos dois buracos **fechou**, o outro (o portão sem instrumento) continua; a tabela restata da §4.4 passou à forma nova |
+| `scripts/contract-gate.mjs` | a mensagem da regra `Deprecation` citava `CONSTITUTION §4.4` como se ela mandasse o booleano. Agora cita a RFC 9745 §2.1 e a §4.4 **v2.2.0** — gate e constituição concordam |
+| `.opencode/skills/openapi-spec/SKILL.md` | a linha da regra idem |
+
+**Duas coisas que só apareceram ao executar a emenda, e que valem mais que a emenda:**
+
+1. **O ADR-033 D5 estava errado, e o `Proposed` escondia isso.** D5 dizia *"depreciação é anunciada por
+   versão inteira, nunca por endpoint solto"*, justificado pela métrica de 30 dias. RFC 9745 §2.2 diz o
+   oposto sobre o escopo padrão do header — **o recurso** — e é explícita que o escopo maior é
+   *"invisible for consumers who are unaware of the increased scoping rules"*. O erro era uma troca de
+   granularidades: a **métrica de aposentadoria** é por prefixo; o **escopo do header** é por recurso.
+   Retirei D5 e reabri a Alternativa 6 (que existia exatamente para rejeitar depreciação por endpoint).
+   *Achado no processo:* enunciar a decisão em voz alta (escrever o diff da emenda) foi o que expôs a
+   troca — o ADR `Proposed` havia sido lido duas vezes sem que ela aparecesse.
+2. **Eu havia citado uma regra que não existe.** O texto de A2 que registrava a contradição dizia que
+   *"§4.5 manda seguir convenções e não prosa"*, e **a §4.5 não contém essa frase** (a §4.5 é *Security,
+   Authentication & Data Sanitization*). A contradição entre §4.4 e RFC 9745 era real e está medida;
+   a citação era inventada. Corrigida no `CHANGELOG.md` e em §2.4(a) acima, com a marca de que foi
+   correção e não omissão — porque uma citação inventada em um arquivo normativo é exatamente o defeito
+   que este repositório persegue, e quem o comete é quem deve carregá-lo.
+
+**O que continua em aberto depois de H-1:** o portão de aposentadoria ainda não tem instrumento
+(`kong.yml` sem plugin de log — medido de novo em 2026-10-14); a ordem `Sunset ≥ Deprecation` não é
+verificável por gate enquanto nenhum path declarar `Deprecation`; e os 90/180 dias continuam como a §4.4
+já dizia (a ratificação de D3 é disso).
+
+### 10.2 A divisão de fases — **aprovada**
+
+A proposta de §2.7 foi aprovada como está: **A3** (um contrato, um leitor: remover
+`docs/api/openapi.yaml` e repontar os 5 leitores; unificar `endpoints.spec.ts` com o gate), **A4**
+(erros `problem+json` de verdade no filtro, catálogo `problem-types.md`, `code`/`trace_id`/`errors[]`),
+**A5** (RLS/`PgSessionContext`, 404-não-403, primeiros DTOs de request, `/auth/refresh` deixando de ser
+mock), **A6** (parar de servir `items[].key`), **A7+** (paginação, idempotência, cache, jobs, 429, CORS).
+A próxima fase é **A3**.
+
+**D-3 (`/auth/refresh`) fica para depois de A3**, como combinado na pergunta de H-1 — e agora não tem
+mais bloqueio constitucional. O que resta decidir sobre ele **não** é o header: é o que a §4.5 já diz
+(*"`/auth/refresh` is out of MVP scope"*) — o endpoint não é algo a depreciar, é algo que nunca deveria
+ter sido implementado, e a rota existe em `auth.controller.ts` devolvendo `mock_access_token`. Tratar
+isso é A5, não depreciação.
+
+---
+
+**Próximo passo — paro aqui, de novo.** As duas decisões que eu precisava chegaram e estão registradas
+acima; a fase A2 está fechada com a emenda constitucional no lugar. Diga **"continuar"** para eu abrir
+**A3** (remover o spec obsoleto e repontar seus 5 leitores — nada nele depende de decisão humana).
