@@ -5,7 +5,7 @@
  * The P2.3 acceptance is "per-learner 100/min, per-IP 1000/min, enforced at
  * the gateway". ADR-030 turns that sentence into a machine-checked declarative
  * contract in iac/kong/kong.yml, and this script is the gate that enforces it
- * (ADR-030 D7) — the same family as `contract:check` / `domain:check`.
+ * (ADR-030 D7) — the same family as `contract:gate` / `domain:check`.
  *
  * The assertions, mapped to ADR-030:
  *   1.  kong.yml exists and parses as YAML (D7).

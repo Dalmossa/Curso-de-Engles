@@ -1,11 +1,10 @@
 /**
  * Contract gate — negative controls (ADR-040 D5, R7).
  *
- * The gate replaces `contract-check.mjs`, whose 31 lines only asked whether the
- * obsolete document contained ten substrings. A0's N-4 proved, on a copy, that
- * that gate PASSED with `components.schemas = {}`, with `POST` swapped for
- * `GET`, and with a path that exists in no controller. Each of those mutations
- * is a case below.
+ * The gate **replaced** `contract-check.mjs` — deleted in A3 along with `scripts/contract-check-full.mjs`
+ * — whose 31 lines only asked whether the obsolete document contained ten substrings. A0's N-4
+ * proved, on a copy, that that gate PASSED with `components.schemas = {}`, with `POST` swapped for
+ * `GET`, and with a path that exists in no controller. Each of those mutations is a case below.
  *
  * Every case runs the real CLI against a mutated copy — no mocking of the gate
  * itself — so what is asserted is the thing that ships.

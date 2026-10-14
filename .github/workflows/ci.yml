@@ -355,10 +355,10 @@ jobs:
         run: node scripts/content-check.mjs
 
   # ------------------------------------------------------------------
-  # Contract Check (OpenAPI 3.1 lint + schema smoke)
+  # Contract gate (canonical OpenAPI x NestJS routes — ADR-040 D5)
   # ------------------------------------------------------------------
-  contract-check:
-    name: Contract Check (OpenAPI)
+  contract-gate:
+    name: Contract Gate (OpenAPI x routes)
     runs-on: ubuntu-latest
     needs: [lint]
     steps:
@@ -378,9 +378,9 @@ jobs:
         working-directory: its-platform
         run: npm ci
 
-      - name: Run contract-check (lint + schema validation)
+      - name: Run the contract gate
         working-directory: its-platform
-        run: node contract-check.mjs
+        run: npm run contract:gate
 
   # ------------------------------------------------------------------
   # RLS + Migration Integration (PostgreSQL 16 real — ADR-014)
@@ -548,7 +548,7 @@ jobs:
       - unit
       - integration
       - content-loader
-      - contract-check
+      - contract-gate
       - rls-integration
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
@@ -648,7 +648,7 @@ jobs:
       - unit
       - integration
       - content-loader
-      - contract-check
+      - contract-gate
       - rls-integration
       - security-scan
     if: always()
@@ -664,7 +664,7 @@ jobs:
           echo "Unit Tests: ${{ needs.unit.result }}"
           echo "Integration Tests: ${{ needs.integration.result }}"
           echo "Content Loader: ${{ needs.content-loader.result }}"
-          echo "Contract Check: ${{ needs.contract-check.result }}"
+          echo "Contract Gate: ${{ needs.contract-gate.result }}"
           echo "RLS + Migration: ${{ needs.rls-integration.result }}"
           echo "Security Scan: ${{ needs.security-scan.result }}"
 
@@ -683,7 +683,7 @@ jobs:
           needs.unit.result != 'success' ||
           needs.integration.result != 'success' ||
           needs.content-loader.result != 'success' ||
-          needs.contract-check.result != 'success' ||
+          needs.contract-gate.result != 'success' ||
           needs.rls-integration.result != 'success' ||
           needs.security-scan.result != 'success'
         run: exit 1

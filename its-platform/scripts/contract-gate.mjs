@@ -2,10 +2,10 @@
 /**
  * Contract gate — canonical spec × NestJS routes (ADR-040 D5).
  *
- * Replaces `contract-check.mjs`, whose 31 lines asked only whether the obsolete
- * document contained ten substrings. A0's N-4 proved on a copy that it PASSED
- * with `components.schemas = {}`, with `POST` swapped for `GET`, and with a path
- * that exists in no controller. Those three mutations are cases in
+ * Replaced `contract-check.mjs` — deleted in A3, along with `scripts/contract-check-full.mjs` —
+ * whose 31 lines asked only whether the obsolete document contained ten substrings. A0's N-4
+ * proved on a copy that it PASSED with `components.schemas = {}`, with `POST` swapped for `GET`,
+ * and with a path that exists in no controller. Those three mutations are cases in
  * `tests/contract/gate.spec.ts`, which runs THIS file.
  *
  * What it owns (ADR-040 D5.1): spec ↔ implementation. What it deliberately does
@@ -409,7 +409,8 @@ function report() {
   }
   console.log(
     `PASS: contract gate — canonical spec parses, servers carry /api/v1, ` +
-      `errors are application/problem+json, and spec × routes agree in both directions`,
+      `every error response serves application/problem+json and references Problem, ` +
+      `and spec × routes agree in both directions`,
   );
 }
 

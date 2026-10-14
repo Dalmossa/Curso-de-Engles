@@ -37,8 +37,8 @@ async function main() {
     await run('node', ['scripts/rls-context-check.mjs']);
     console.log('\n=== Running content-check ===');
     await run('node', ['scripts/content-check.mjs']);
-    console.log('\n=== Running contract-check ===');
-    await run('node', ['contract-check.mjs']);
+    console.log('\n=== Running the contract gate ===');
+    await run('node', ['scripts/contract-gate.mjs']);
     console.log('\n=== All checks passed ===');
     process.exit(0);
   } catch (err) {
