@@ -299,6 +299,19 @@ function main(doc) {
               'error media type',
               `${verb.toUpperCase()} ${path} ${status} serves ${mediaType}; CONSTITUTION §4.3 mandates application/problem+json`,
             );
+            continue;
+          }
+          // §4.3 makes `Problem` the *sole* error shape, and serving the right media type with
+          // a different schema is the failure the media-type check alone cannot see. This
+          // obligation used to live only in `tests/contract/endpoints.spec.ts` (it asserted the
+          // `$ref` per error response); A3 removed that file as subsumed and moved its one
+          // unique assertion here, where the media type is already being read.
+          const ref = response.content?.[mediaType]?.schema?.['$ref'];
+          if (typeof ref !== 'string' || resolvePointer(doc, ref) !== problem) {
+            fail(
+              'Problem',
+              `${verb.toUpperCase()} ${path} ${status} does not reference components.schemas.Problem (CONSTITUTION §4.3, ADR-034)`,
+            );
           }
         }
       }

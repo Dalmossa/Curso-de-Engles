@@ -237,4 +237,19 @@ describe('contract gate — negative controls (each must FAIL)', () => {
     expect(code).toBe(1);
     expect(out).toMatch(/^FAIL: prefix/m);
   });
+
+  it('N-18 (§4.3): an error response carrying the right media type but the wrong schema', () => {
+    // The media type stays legal and the `$ref` still resolves, so the new `Problem` rule is the
+    // only thing that can fail — this isolates the obligation A3 moved out of
+    // `tests/contract/endpoints.spec.ts` when that file was removed as subsumed.
+    const { code, out } = runGate(
+      mutatedSpec((doc) => {
+        doc.paths['/content/lessons/{lesson_id}'].get.responses['404'].content = {
+          'application/problem+json': { schema: { $ref: '#/components/schemas/ErrorResponse' } },
+        };
+      }),
+    );
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: Problem/m);
+  });
 });
