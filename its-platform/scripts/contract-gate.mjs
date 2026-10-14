@@ -273,7 +273,7 @@ function main(doc) {
     if (isBoolean) {
       fail(
         'Deprecation',
-        `${path} declares the boolean form; RFC 9745 defines a date (obsolete draft form, CONSTITUTION §4.4)`,
+        `${path} declares the boolean form; RFC 9745 §2.1 requires a Date (RFC 9651 §3.3.7, serialised @<unix-seconds>) — the boolean is the retired draft form. CONSTITUTION §4.4 v2.2.0 mandates the date form`,
       );
     }
   }
