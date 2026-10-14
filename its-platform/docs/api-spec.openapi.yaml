@@ -1,11 +1,19 @@
-# ITS Platform — OpenAPI 3.1 Specification
+# ITS Platform — canonical OpenAPI 3.1 document.
+#
+# Canonical since A2 (ADR-040 D2). This file is the single source of truth for
+# the HTTP contract: CONSTITUTION.md §4.4 names it as the versioning reference,
+# and the contract gate (`npm run contract:gate`) validates it against the
+# routes the NestJS app actually registers.
+#
+# The prose that used to wrap this document — provenance, naming rules, the
+# /auth/refresh scope note and the schema-to-spec map — now lives in
+# `docs/api-spec.md`. Do NOT re-embed this document inside a Markdown fence:
+# being parseable as YAML is the entire point of D-2, and a fenced copy is what
+# made the previous revision unreadable by every YAML parser in the toolchain.
+#
+# `docs/api/openapi.yaml` is the deprecated predecessor. See ADR-040 D3 for the
+# removal order and ADR-033 D7 for why the prefix change is ordered with it.
 
-**Version:** 0.1.0-draft · **Generated from:** `Curso-de-Ingles/ITS-ARCHITECTURE.md` §6
-**Source of truth for contracts:** `Curso-de-Ingles/specs/*.md`
-
----
-
-```yaml
 openapi: 3.1.0
 info:
   title: ITS Platform API
@@ -1098,36 +1106,3 @@ paths:
                     type: string
                   expires_in:
                     type: integer
-```
-
----
-
-## Notes
-
-- **URL versioning** is `/api/v1` (`CONSTITUTION.md` §4.4). Header and query-parameter
-  versioning are prohibited. NestJS: `app.setGlobalPrefix('api')` +
-  `enableVersioning({ type: VersioningType.URI, defaultVersion: '1' })`.
-- **Naming:** fixed path segments are `kebab-case`; JSON properties and query parameters
-  are `camelCase`; **content identifiers are `snake_case` and immutable** — `{learner_id}`,
-  `{lesson_id}`, `{pack_id}`, `{dialogue_id}` and the `les_*` / `pack_*` / `lst_*` ids they
-  carry are data-integrity keys governed by `verify-integrity.py` checks [1], [2], [8], [11],
-  **not** style choices. Renaming one is prohibited without amending
-  `Curso-de-Ingles/specs/curriculum-graph-spec.md` §4.3.
-- **Errors:** `Problem` (RFC 9457) is the §4.3-mandated shape and serves
-  `application/problem+json`. `ErrorResponse` is deprecated but still referenced by the 9
-  published endpoints; converting those is a breaking change tracked in `BACKLOG.md` P1.
-- **`/auth/refresh` is out of MVP scope** and must not be implemented — the platform is a
-  Resource Server (`ADR-013`, `CONSTITUTION.md` §4.5). It is annotated, not deleted, because
-  deletion is a breaking change under §4.4.
-
-- **All schemas** are derived from specs in `Curso-de-Ingles/specs/`:
-  - `item_id` prefix ↔ skill namespace → `assessment-item-spec.md` §1.2
-  - `Status` vocabulary (shipped/withdrawn/shadow-only) → `listening-corpus-spec.md` §4
-  - `reuse_basis` enum → `external-sources.md` §7.0
-  - Mastery gate ≥ 0.85 → `curriculum-graph-spec.md` §1.1
-  - Q-L2 ≥ 45s → `listening-corpus-spec.md` §3
-  - Two pack schemas (canonical/legacy) → `post-lesson-practice-spec.md` §8
-  - FSRS/BKT/IRT params → `stats-progress-evaluation-spec.md` §2–4
-
-- **Contract tests** in `its-platform/tests/contract/` validate every schema against the source specs.
-- **BDD scenarios** in `its-platform/tests/bdd/` map to PRD.md §9 milestones.
