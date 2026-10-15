@@ -32,32 +32,9 @@
  * because a role is a property of the connection the application actually uses.
  */
 
-import { Module } from '@nestjs/common';
-import type { INestApplication } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import type { AddressInfo } from 'net';
-import { DataSource } from 'typeorm';
-
-import { configureApp } from '../../src/app.setup.js';
 import { createTestDb, type TestDbContext } from '../helpers/db.js';
 import { PgSessionContext } from '../../src/infrastructure/persistence/pg-session-context.js';
-import { LearnerRepository } from '../../src/infrastructure/repositories/learner.repository.js';
-import { LearnerScopeService } from '../../src/modules/learners/learner-scope.service.js';
-import { LearnersController } from '../../src/modules/learners/learners.controller.js';
-import { LearnersService } from '../../src/modules/learners/learners.service.js';
-import { CurriculumController } from '../../src/modules/curriculum/curriculum.controller.js';
-import { CurriculumService } from '../../src/modules/curriculum/curriculum.service.js';
-import { PlacementController } from '../../src/modules/placement/placement.controller.js';
-import { PlacementService } from '../../src/modules/placement/placement.service.js';
-import { PracticeController } from '../../src/modules/practice/practice.controller.js';
-import { PracticeService } from '../../src/modules/practice/practice.service.js';
-import {
-  authorization,
-  clearOidcEnv,
-  setOidcEnv,
-  startTokenFixture,
-  type TokenFixture,
-} from '../helpers/tokens.js';
+import { startLearnerRoutesApp, type LearnerRoutesApp } from '../helpers/learner-routes-app.js';
 
 /** The caller. Owns a row, and is the `sub` of every token this file mints. */
 const LEARNER_A = 'aaaaaaaa-aaaa-4111-8111-111111111111';
@@ -78,37 +55,6 @@ const practice = (learnerId: string) => ({
   pack_id: PACK_ID,
   responses: [{ item_id: ITEM_ID, response: 'gate', response_time_ms: 900 }],
 });
-
-/**
- * The four controllers that carry the five learner-scoped routes, with every layer between the
- * socket and the row real: the services, `LearnerScopeService`, `LearnerRepository`,
- * `PgSessionContext` — over the harness's `DataSource`, which is the only thing that had to be
- * supplied from outside (a role is a property of a connection).
- */
-function moduleUnderTest(dataSource: DataSource): new () => unknown {
-  @Module({
-    controllers: [
-      LearnersController,
-      CurriculumController,
-      PlacementController,
-      PracticeController,
-    ],
-    providers: [
-      LearnersService,
-      CurriculumService,
-      PlacementService,
-      PracticeService,
-      LearnerScopeService,
-      LearnerRepository,
-      PgSessionContext,
-      // The token is the class: `LearnerRepository` and `PgSessionContext` both ask for `DataSource`.
-      { provide: DataSource, useValue: dataSource },
-    ],
-  })
-  class LearnerScopeHttpModule {}
-
-  return LearnerScopeHttpModule;
-}
 
 /** The part of a `Problem` that must not depend on who asks (`request_id`/`instance` vary, §4.6). */
 interface ProblemBody {
@@ -132,9 +78,8 @@ interface JsonProblem {
 
 let testDb: TestDbContext;
 let sessionContext: PgSessionContext;
-let app: INestApplication;
+let started: LearnerRoutesApp;
 let base = '';
-let fixture: TokenFixture;
 let AUTH: Record<string, string> = {};
 
 /** Every request in this file is made with the caller's credential — the surface is authenticated. */
@@ -175,25 +120,17 @@ beforeAll(async () => {
     [LEARNER_A, LEARNER_B],
   );
 
-  fixture = await startTokenFixture();
-  setOidcEnv(fixture);
-
-  app = await NestFactory.create(
-    moduleUnderTest(testDb.dataSource) as never,
-    { logger: false },
-  );
-  configureApp(app);
-  await app.listen(0);
-  const { port } = app.getHttpServer().address() as AddressInfo;
-  base = `http://127.0.0.1:${port}`;
-
-  AUTH = authorization(await fixture.accessToken(LEARNER_A, ['learner:self']));
+  // The application boots through the shared helper: the four modules' controllers with the
+  // deployed guard, pipes and error filter, over this harness's connection, and a real RS256
+  // credential whose `sub` is the learner. A5b's own decision here is only the connection's role,
+  // which the describes below set and reset.
+  started = await startLearnerRoutesApp(testDb.dataSource);
+  base = started.base;
+  AUTH = await started.auth(LEARNER_A);
 });
 
 afterAll(async () => {
-  await app.close();
-  clearOidcEnv();
-  await fixture.close();
+  await started.close();
   await testDb.cleanup();
 });
 
