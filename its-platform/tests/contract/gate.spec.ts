@@ -79,6 +79,15 @@ function mutatedMainSrc(rewrite: (main: string) => string): string {
   return dir;
 }
 
+/** Copies `src/` and rewrites the composition root `app.setup.ts` with `rewrite`. */
+function mutatedAppSetupSrc(rewrite: (setup: string) => string): string {
+  const dir = join(tempDir(), 'src');
+  cpSync(SRC, dir, { recursive: true });
+  const setupPath = join(dir, 'app.setup.ts');
+  writeFileSync(setupPath, rewrite(readFileSync(setupPath, 'utf8')));
+  return dir;
+}
+
 afterAll(() => {
   for (const dir of tempDirs) rmSync(dir, { recursive: true, force: true });
 });
@@ -222,7 +231,9 @@ describe('contract gate — negative controls (each must FAIL)', () => {
   it('N-16 (§4.4): the application stops applying the /api prefix', () => {
     const { code, out } = runGate(
       SPEC,
-      mutatedMainSrc((main) => main.replace(/app\.setGlobalPrefix\([\s\S]*?\);/, '')),
+      mutatedAppSetupSrc((appSetup) =>
+        appSetup.replace(/app\.setGlobalPrefix\([\s\S]*?\);/, ''),
+      ),
     );
     expect(code).toBe(1);
     expect(out).toMatch(/^FAIL: prefix/m);
@@ -231,7 +242,7 @@ describe('contract gate — negative controls (each must FAIL)', () => {
   it('N-17 (§4.4): header versioning instead of URI versioning', () => {
     const { code, out } = runGate(
       SPEC,
-      mutatedMainSrc((main) => main.replace('VersioningType.URI', 'VersioningType.HEADER')),
+      mutatedAppSetupSrc((appSetup) => appSetup.replace('VersioningType.URI', 'VersioningType.HEADER')),
     );
     expect(code).toBe(1);
     expect(out).toMatch(/^FAIL: prefix/m);
@@ -250,5 +261,18 @@ describe('contract gate — negative controls (each must FAIL)', () => {
     );
     expect(code).toBe(1);
     expect(out).toMatch(/^FAIL: Problem/m);
+  });
+
+  it('N-19 (§4.4): the composition root exists but nothing reaches it', () => {
+    // The control for reading `main.ts` *and* `src/app.setup.ts`: a correct `app.setup.ts` that
+    // `main.ts` never calls would satisfy every pattern rule, and the application would serve its
+    // routes without the /api/v1 prefix while the document kept declaring it. The `--src` copy is
+    // the only difference from the passing run above.
+    const { code, out } = runGate(
+      SPEC,
+      mutatedMainSrc((main) => main.replace(/configureApp\(app\);/, '')),
+    );
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: prefix/m);
   });
 });

@@ -22,7 +22,7 @@
  */
 import { execFileSync } from 'child_process';
 import { existsSync, readFileSync, readdirSync } from 'fs';
-import { join, relative } from 'path';
+import { join, relative, basename } from 'path';
 import YAML from 'yaml';
 
 const argv = process.argv.slice(2);
@@ -379,22 +379,45 @@ function main(doc) {
   // deliberately prefix-agnostic (spec paths are relative to `servers`). That
   // leaves one way for the contract to be true on paper and false in
   // production: the application stops mounting the prefix. Assert it here.
+  //
+  // Read over the composition roots rather than over `main.ts` alone: A4 moved
+  // the configuration into `src/app.setup.ts` (`configureApp`), which `main.ts`
+  // *and* `tests/integration/error-response.spec.ts` call, so the pipeline the
+  // integration test exercises is the one that ships. Which file holds the calls
+  // does not matter; that one of them does, and that `main.ts` reaches it, is
+  // the obligation. Controls: N-16, N-17, N-19.
   const mainFile = join(SRC_DIR, 'main.ts');
+  const roots = ['main.ts', 'app.setup.ts']
+    .map((name) => join(SRC_DIR, name))
+    .filter((file) => existsSync(file));
   if (!existsSync(mainFile)) {
     fail('prefix', `main.ts not found under ${SRC_DIR}`);
+  } else if (roots.length === 0) {
+    fail('prefix', `no composition root under ${SRC_DIR} (looked for main.ts, app.setup.ts)`);
   } else {
-    const main = readFileSync(mainFile, 'utf8');
-    if (!/setGlobalPrefix\s*\(\s*'api'/.test(main)) {
-      fail('prefix', `main.ts does not call setGlobalPrefix('api') (CONSTITUTION §4.4)`);
+    const where = roots.map((file) => basename(file)).join(' + ');
+    const config = roots.map((file) => readFileSync(file, 'utf8')).join('\n');
+    if (!/setGlobalPrefix\s*\(\s*'api'/.test(config)) {
+      fail('prefix', `${where} does not call setGlobalPrefix('api') (CONSTITUTION §4.4)`);
     }
-    if (!/enableVersioning\s*\(/.test(main) || !/VersioningType\.URI/.test(main)) {
+    if (!/enableVersioning\s*\(/.test(config) || !/VersioningType\.URI/.test(config)) {
       fail(
         'prefix',
-        'main.ts does not enable URI versioning (CONSTITUTION §4.4 prohibits header and query versioning)',
+        `${where} does not enable URI versioning (CONSTITUTION §4.4 prohibits header and query versioning)`,
       );
     }
-    if (!/defaultVersion\s*:\s*'1'/.test(main)) {
-      fail('prefix', `main.ts does not declare defaultVersion '1' (§4.4 defines /api/v1)`);
+    if (!/defaultVersion\s*:\s*'1'/.test(config)) {
+      fail('prefix', `${where} does not declare defaultVersion '1' (§4.4 defines /api/v1)`);
+    }
+    // The configuration has to reach the application from `main.ts` — either
+    // inline, or through the function that holds it. Without this, a correct
+    // `app.setup.ts` that nothing calls would satisfy every rule above.
+    const main = readFileSync(mainFile, 'utf8');
+    if (!/setGlobalPrefix\s*\(\s*'api'/.test(main) && !/configureApp\s*\(/.test(main)) {
+      fail(
+        'prefix',
+        "main.ts neither applies the §4.4 prefix nor calls the function that does (configureApp)",
+      );
     }
   }
 
