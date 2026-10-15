@@ -1,7 +1,7 @@
 ---
 adr: 044
 title: A6 — o catálogo deixa de servir o gabarito (`key`, `is_key`, `slots[].key`, e os canais derivados)
-status: Proposed
+status: Accepted
 date: 2026-10-15
 authors: [@api-lead]
 deciders: [unassigned]
@@ -10,10 +10,22 @@ informed: [@team]
 tags: [api, content, confidentiality, answer-key, r6, adr-027, adr-038, adr-041, human-decision, needs-human-review]
 ---
 
-**Esta é uma decisão humana (A6).** Este ADR enquadra, **mede**, recomenda e **para** (R9). Nada aqui
-foi implementado: o que existe é a medição, um *pin* executável do estado atual
-(`tests/integration/content-api.spec.ts`, bloco `A6`) e o controle negativo que mostra o que uma
-correção ingênua deixaria aberto.
+**Accepted** (2026-10-15). Ratificação humana, naquele dia: **D1–D4 e D6 como propostos, e D5 como
+recomendado** — a aula **mantém** o gabarito no corpo autorado, por ser material didático. Esta é a
+decisão humana (A6) que este ADR enquadrou, **mediu**, recomendou e sobre a qual **parou** (R9); a
+implementação entrou como A6b, na mesma data.
+
+O que fica registrado com todas as letras, para que o escopo não se alargue depois:
+
+- **Fecha:** `GET /content/packs/{id}` (`items[].key`, `options[].is_key`, `options[].note`) e
+  `GET /content/listening/{id}` (`slots[].key`, `slots[].distractors[]` → `slots[].options[]`).
+- **Mantém:** `GET /content/lessons/{id}` publica o gabarito no corpo autorado, **por decisão** (D5),
+  e o banco continua com `items.key`/`item_options.is_key` (a pontuação é server-side).
+- **Não abre superfície nova** (D4): não há `?include=key`, rota irmã, nem escopo de staff.
+
+O *pin* de A6a (`tests/integration/content-api.spec.ts`) fixava o defeito para que a correção tivesse
+superfície exata de inversão; A6c o inverteu, e o controle negativo de A6d mostra que revertendo a
+projeção as asserções voltam ao vermelho.
 
 ## Context
 
@@ -82,6 +94,11 @@ retirada do membro declarado não esvazia o conjunto, ela só deixa de rotulá-l
 `choice` servem exatamente quatro opções, `ABCD`, sem exceção; e cada um dos 74 slots tem quatro
 opções no banco (a chave e três distratores).
 
+**Um sétimo canal foi encontrado na implementação (A6b), e ele não aparece nesta tabela** porque a
+medição dela é sobre o catálogo e não sobre cada item: `options[].br_pt_form`. Dentro de um item, uma
+opção sem glosa entre opções com glosa é a chave — em 17 dos 841 itens era exatamente o caso. D6
+registra a medição e a regra que fecha o canal.
+
 `br_pt_form` foi medido e **não** é canal: `null` em 43 de 841 opções-chave e em 48 de 2523
 distratoras — há `null` dos dois lados, então um cliente não lê o gabarito nele. O bloco `A6` fixa
 isso para que um leitor posterior não "corrija" um campo que não vaza.
@@ -124,7 +141,7 @@ identidade-chave de `items.key` — **a tabela é o oráculo, nunca o payload**,
 Não há, portanto, consumidor nomeado (R3) que perca algo com o fechamento — que é a diferença entre
 esta decisão e uma quebra de contrato comum.
 
-## Decision (proposta — não vinculante até decisão humana)
+## Decision (ratificada em 2026-10-15)
 
 **D1 — Em `PackContent`, `items[].key` e `items[].options[].is_key` deixam de ser servidos**, e o
 contrato deixa de exigi-los (`api-spec.openapi.yaml` 416, 538). A projeção do item publica o
@@ -171,6 +188,18 @@ servido é o conjunto completo** de opções daquele item, de modo que a letra c
 recuperável por complemento. (a) sozinho não basta e (c) sozinho não basta: cada um cobre um dos
 canais derivados que a medição encontrou.
 
+**D6, medido de novo na implementação (A6b) — o sétimo canal.** Na primeira medição o enquadramento
+foi o **catálogo inteiro**, e ali `br_pt_form` parecia inofensivo: `null` em 43 das 841 opções-chave
+e em 48 das 2523 distratoras. O enquadramento que importa é **dentro do item**, e ele muda a
+conclusão: **17 dos 841 itens** tinham exatamente uma opção sem glosa, e essa opção era a chave nos
+17; 34 itens misturavam glosa e ausência de glosa dentro do item. Ou seja: `note` não era o único
+membro cuja *ausência* entregava a resposta — `br_pt_form` também entregava, nos 17 itens em que a
+opção correta era a única sem glosa. Aplicar (b) ao pé da letra resolve sem exceção e sem lista
+escura: **a glosa é publicada por item, e só quando todas as opções daquele item têm uma.** Com a
+regra, as opções de um item ficam isomórficas e nenhum membro aponta uma delas; 798 dos 841 itens
+escoráveis mantêm o membro e 43 perdem-no (9 porque nenhuma opção tem glosa, 34 porque o item
+mistura). O valor continua no banco (`item_options.br_pt_form`) para a superfície pós-resposta de D2.
+
 ## Consequences
 
 ### Positive
@@ -197,7 +226,11 @@ canais derivados que a medição encontrou.
 
 - **O banco não muda.** O loader continua escrevendo `items.key` e `item_options.is_key` — a
   pontuação server-side e `migration-check` não são tocados. A correção é de **leitura**.
-- `PackOption.br_pt_form` fica: medido, não separa a opção correta (43/841 contra 48/2523).
+- `PackOption.br_pt_form` fica, **mas por item**: publicado só quando todas as opções daquele item
+  têm glosa. A medição de A6a usava o enquadramento errado (o catálogo inteiro); A6b mediu item a
+  item e achou o sétimo canal — ver D6. Com a regra, 798 dos 841 itens escoráveis mantêm o membro e
+  43 perdem-no; o valor não sai do banco, só da projeção, e a superfície que o consumiria (pós-
+  resposta) é a mesma que D2 deixou para outra fase.
 - `listening_items` continua servido como `[]` (ADR-004) e `transcript` continua servido — é o
   material do item, não o gabarito.
 
@@ -221,47 +254,56 @@ canais derivados que a medição encontrou.
 
 ## Implementation Plan
 
-Não vinculante até a ratificação. A ordem é a de menor risco de regressão silenciosa.
+Executado em **A6b**, em 2026-10-15, na mesma data da ratificação, na ordem de menor risco de
+regressão silenciosa.
 
-- [ ] **A6.1 — a projeção.** `ContentService`: `getPack` deixa de copiar `key`/`is_key`/`note`; a
-      opção passa a `{letter, text, br_pt_form}`; `getDialogue` monta `slots[].options[]` a partir de
-  **todas** as opções do item (a chave inclusive, sem rótulo) e não serve `key` nem `distractors[]`.
-- [ ] **A6b — o contrato.** `api-spec.openapi.yaml`: remover `key`/`is_key`/`note` de `PackOption`
-      e o `if/then` de `note` (o `if` era *sobre* `is_key`, logo cai com ele); remover o `if/then` de
-      `key` e o membro `key` de `PackItemContent`; trocar `slots[].key` + `distractors[]` por
-      `slots[].options[]`; atualizar as descrições que citam os membros removidos. Rodar
-      `contract:gate`.
-- [ ] **A6c — as asserções do *pin*, invertidas.** As 6 que hoje fixam a exposição passam a fixar a
-      ausência; `br_pt_form` fica como está (ele fixa *não*-vazamento). Texto de partida, para que a
-      inversão seja mecânica e não criativa:
-
-      ```ts
-      // A6 — R6: a projeção não publica o gabarito, e nenhum membro dela é função dele.
-      expect(scorable.filter(item => 'key' in item)).toEqual([]);
-      expect(options.filter(option => option.is_key !== undefined)).toEqual([]);
-      expect(options.filter(option => option.note !== undefined)).toEqual([]);
-      // (b) de D6: mesmo membro, mesmo padrão de null, dentro de um item
-      const shapes = items.map(item => new Set(item.options.map(o =>
-        `${Object.keys(o).sort().join(',')}|${Object.values(o).map(v => v === null).join(',')}`)));
-      expect(shapes.filter(set => set.size !== 1).map(s => [...s])).toEqual([]);
-      // (c) de D6: o conjunto de letras servido é o completo
-      expect(itemsWithGaps).toEqual([]);
-      // e o listening: `options[]` completo, sem `key`, sem `distractors[]`
-    ```
-- [ ] **A6d — a entrada de CHANGELOG** (`breaking`), com o conjunto afetado vazio declarado e o
+- [x] **A6.1 — a projeção.** `src/modules/content/content.service.ts`: `getPack` deixou de copiar
+      `key`/`is_key`/`note`; a opção passou a `{letter, text, br_pt_form?}`; `getDialogue` monta
+      `slots[].options[]` a partir de **todas** as opções do item (a chave inclusive, sem rótulo) e
+      não serve `key` nem `distractors[]`.
+- [x] **A6b — o contrato.** `docs/api-spec.openapi.yaml`: `PackOption` perdeu `is_key` e `note`
+      (com o `if/then` de `note`, cujo `if` era *sobre* `is_key`); `PackItemContent` perdeu o membro
+      `key` e o seu `if/then`; `slots[].key` + `distractors[]` deram lugar a `slots[].options[]`.
+      `br_pt_form` virou `type: string` **não obrigatório**, e é essa a metade que o contrato tem de
+      saber: a regra de D6(b) exige que a ausência seja ausência, e um `null` de preenchimento é o
+      mesmo vazamento com outro acento — é exatamente o caso que `tests/contract/schemas.spec.ts`
+      passou a **rejeitar** (`PACK_WRONG`). `contract:gate` **PASS**.
+- [x] **A6c — as asserções do *pin*, invertidas.** O bloco `A6` de
+      `tests/integration/content-api.spec.ts` passou a ser o **predicado** de D6 — sete asserções,
+      uma por conjuntura mais o controle de que a tabela e o corpo da aula não mudaram — e as quatro
+      asserções antigas que fixavam a exposição foram invertidas junto (pack legacy, pack
+      canônico/ASR, diálogo e os 11 slots de ADR-027 §3a). O oráculo continua sendo
+      `items.key`/`item_options.is_key` na tabela: a primeira tentativa de A6a lia o gabarito do
+      *payload* e ficava vácuo exatamente quando o canal ainda estava aberto (§3).
+- [x] **A6d — a entrada de CHANGELOG** (`breaking`), com o conjunto afetado vazio declarado e o
       caminho de migração do cliente (renderizar `options[]`; pontuar no servidor).
-- [ ] **A6d — o controle negativo** (R4, e é o que fecha esta fase): reintroduzir `is_key` na
-      projeção numa cópia, mostrar as asserções correspondentes em vermelho, e reverter. O controle
-      negativo *desta* decisão (N-2, §3) já está medido; o que falta é o da *implementação*.
-- [ ] **A6e — relatório** `reports/api/fase-6.md` com o antes → depois dos gates.
+- [x] **A6e — o controle negativo da implementação** (R4). Um canal por vez, reintroduzido na
+      projeção **e na interface** — é o que uma regressão real teria de fazer, e é o que faz o código
+      compilar antes de a asserção julgá-lo:
 
-## Open question (a única que precisa de resposta)
+      | Reintrodução | Asserções que ficam vermelhas |
+      |---|---|
+      | `items[].key` | (a) ausência |
+      | `options[].is_key` | (a) ausência · "tabela vs payload" |
+      | `options[].note` | (a) ausência · (b) isomorfismo |
+      | `br_pt_form` por opção | (b) isomorfismo · regra da glosa |
+      | `slots[].key` | conjunto completo de `slots[].options[]` |
+
+      Nenhum canal passa despercebido — e os dois **derivados** (`note`, `br_pt_form`) são pegos
+      *especificamente* por (b), que é a medição de que (b) não é decorativa.
+- [x] **A6f — relatório** `reports/api/fase-6b.md`, com o antes → depois dos gates. A5a/A5b fixaram
+      o precedente de um relatório por sub-fase; `reports/api/fase-6.md` fica sendo o registro de A6a.
+
+## The question, and the answer (2026-10-15)
 
 > Ratifica D1–D4 e D6 como propostos, e **D5** como recomendado (a aula mantém o gabarito, por ser
 > material didático), ou prefere a outra metade de D5 — retirar também do corpo da aula?
 
-A resposta muda o escopo de A6b: "sim" fecha em dois schemas (`PackContent`, `DialogueContent`);
-"não" acrescenta uma projeção de markdown em `LessonContent`, com o custo e o risco descritos em D5.
+**Resposta: ratificado D1–D4 e D6, e D5 como recomendado.** A resposta é a que fecha em **dois**
+schemas (`PackContent`, `DialogueContent`); `LessonContent` não ganha projeção de markdown, e a
+alternativa de D5 (cirurgia de markdown em 122/122 aulas, com segunda renderização) fica registrada
+como considerada e **não** escolhida. Quem ler a aula conhece o gabarito dos itens daquela aula: é a
+natureza do material, explicitada em D5, e não uma porta deixada aberta.
 
 ## References
 
