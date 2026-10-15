@@ -152,3 +152,42 @@ in the contract does not quietly build an IdP.
 - `docs/api-spec.openapi.yaml` — `/auth/refresh` (line 849), `securitySchemes` (lines 45–54)
 - `docs/threat-model.md` — spoofing / tampering of credentials
 - OAuth 2.0 RFC 6749 · OIDC Core 1.0 · RFC 8725 (JWT BCP — algorithm pinning)
+
+## Nota de estado — A5a (2026-10-15)
+
+> Nota datada, não uma decisão nova. Este ADR segue `Proposed`, e o que A5a executou é a metade
+> **Settled**, que esta própria página declara *"binding on `BACKLOG.md` P0/P1"*. Nada da metade
+> **Open** foi tocado: nenhuma das quatro perguntas foi respondida.
+
+**O que mudou no repositório.** `POST /auth/refresh` deixa de devolver
+`{access_token: 'mock_access_token', expires_in: 900}` com `200` e passa a devolver `501`, e
+`AuthService` — cujo único método cunhava o mock — é deletado. Até A5a este ADR estava correto e o
+**código** era o único artefacto que discordava dele: `CHANGELOG.md` (*"Returns `501`"*),
+`docs/security-audit.md` V2.2.1, `iac/kong/kong.yml` (*"501 until P1.15–P1.17"*) e o contrato
+canônico (`x-mvp-scope: excluded` + resposta `501`) já afirmavam o mesmo desde A2. A execução segue
+a instrução desta página ao pé da letra — *"must not be implemented"*, com o path **mantido** e
+anotado — e **não** antecipa a remoção, que esta página reserva explicitamente (*"this record is not
+the place to authorise one"*) e que `docs/api/inventario.md` D-3 mantém como ato humano.
+
+**Uma frase de outro documento foi corrigida por causa disto.** `docs/api-spec.md` dizia que a rota
+*"must be deleted from the NestJS routes, not merely annotated"* e atribuía a remoção a ADR-038 /
+ADR-043; medido, **nenhum dos dois documentos menciona o endpoint**. O que a frase tinha de
+operativo — o mock **emitir** um token era a violação em si — foi o que A5a removeu; a remoção da
+rota continua nomeada como a opção aberta de `docs/api/inventario.md` D-3.
+
+**Estado do Implementation Plan desta página.** A caixa 1 está feita desde A2 e a instrução que ela
+implementava passou a ser verdadeira no servidor em A5a; as outras seguem abertas, e as duas que
+importam dependem de **ato humano**, não de trabalho:
+
+| Item do plano | Estado após A5a |
+|---|---|
+| *"Annotate `/auth/refresh` … blocked on ADR-013"* | feito em A2 (contrato canônico); **A5a fez a anotação verdadeira no comportamento**: `501` + `AuthService` deletado |
+| *"Build a local JWKS-signing fixture for P1"* | não feito — pertence a P1.14, não a A5a |
+| *"Close Question 1"* | **aberto, e é a única coisa que bloqueia o resto de P1.14** — ato humano |
+| *"Close Question 2"* | aberto; depende da Questão 1 |
+| *"If Question 1 resolves to 'no permanently': delete `/auth/refresh`"* | **não feito, e não antecipado**: remover um path publicado é mudança breaking (§4.4) que esta página recusa autorizar. Continua sendo o outro ramo de `docs/api/inventario.md` D-3 |
+| *"Update `docs/threat-model.md`"* | aberto; depende da Questão 1 |
+
+**Evidência.** `tests/integration/auth-refresh.spec.ts` (6 casos sobre HTTP real, contra o
+`AuthModule` real; vermelho antes da mudança com `Expected: 501, Received: 201`); `CHANGELOG.md`
+(entrada breaking com o caminho de migração); `reports/api/fase-5.md` §2 e §8.
