@@ -31,6 +31,7 @@ import { DataSource } from 'typeorm';
 
 import { configureApp } from '../../src/app.setup.js';
 import { PgSessionContext } from '../../src/infrastructure/persistence/pg-session-context.js';
+import { LearnerProfileRepository } from '../../src/infrastructure/repositories/learner-profile.repository.js';
 import { LearnerRepository } from '../../src/infrastructure/repositories/learner.repository.js';
 import { CurriculumController } from '../../src/modules/curriculum/curriculum.controller.js';
 import { CurriculumService } from '../../src/modules/curriculum/curriculum.service.js';
@@ -70,6 +71,8 @@ export function learnerRoutesModule(dataSource: DataSource): new () => unknown {
       PracticeService,
       LearnerScopeService,
       LearnerRepository,
+      // A7b: `LearnersService` reads the profile's four sources through this one.
+      LearnerProfileRepository,
       PgSessionContext,
       // The token is the class: `LearnerRepository` and `PgSessionContext` both ask for `DataSource`.
       { provide: DataSource, useValue: dataSource },

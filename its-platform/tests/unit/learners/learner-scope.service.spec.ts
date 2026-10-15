@@ -136,3 +136,60 @@ describe('A5b — `LearnerScopeService.requireVisible`', () => {
     await expect(h.service.requireVisible(SUBJECT, ADDRESSED)).resolves.toEqual({ id: ADDRESSED });
   });
 });
+
+/**
+ * A7b — the same load, with the work that needs it.
+ *
+ * `GET …/profile` reads four more tables *after* the row is loaded (ADR-045 D1), and those reads have
+ * one obligation in common: they must run under the same learner context, in the same transaction,
+ * or the policy that decided the 404 does not apply to them. `withVisible` is that shape, and
+ * `requireVisible` is its degenerate case — so the 404 exists once, not once per route that needs the
+ * row.
+ */
+describe('A7b — `LearnerScopeService.withVisible`', () => {
+  it('hands the loaded row and the transaction to the work, in the context it opened', async () => {
+    const h = harness(true);
+    const seen: unknown[][] = [];
+
+    const answer = await h.service.withVisible(SUBJECT, ADDRESSED, async (learner, tx) => {
+      seen.push([learner, tx]);
+      return 'the work ran';
+    });
+
+    expect(answer).toBe('the work ran');
+    // The row and the runner, in that order — the runner is what every subsequent read must use.
+    expect(seen).toEqual([[{ id: ADDRESSED }, { marker: 'tx' }]]);
+    expect(h.gucContexts).toEqual([SUBJECT]);
+    expect(h.queried).toEqual([ADDRESSED]);
+    expect(h.throughTransaction).toEqual([true]);
+  });
+
+  it('does not run the work when the addressed learner is not visible', async () => {
+    const h = harness(false);
+    const ran: string[] = [];
+
+    await expect(
+      h.service.withVisible(SUBJECT, ADDRESSED, async () => {
+        ran.push('ran');
+        return null;
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+
+    // The refusal is decided before the work, so an aggregate built inside it cannot be half-built,
+    // and nothing below the load has observed a row the caller cannot see.
+    expect(ran).toEqual([]);
+  });
+
+  it('refuses with the same 404 `requireVisible` gives — one message, one status', async () => {
+    const h = harness(false);
+
+    const refusal = await h.service
+      .withVisible(SUBJECT, ADDRESSED, async () => null)
+      .catch((error: unknown) => error);
+
+    // Same instance of the rule, so the response `detail` cannot drift between the routes that load
+    // and the routes that load and then read.
+    expect((refusal as NotFoundException).getStatus()).toBe(404);
+    expect((refusal as NotFoundException).message).toBe('Learner not found');
+  });
+});

@@ -13,12 +13,23 @@
  * truthful is P1.10/P1.11's question and A5b's ratified scope leaves them the stubs they were. Each
  * route pins one member of its published body so that "the payload did not change" has an address.
  *
+ * One of the five moved under A7b, and this file records the shape of the move rather than its
+ * content: `GET …/profile` no longer asks `requireVisible` for a row and then ignores it — it asks
+ * `withVisible` for the row **and the transaction**, which is what lets its four reads run under the
+ * policy that decided the 404 (ADR-045 D1). The members it now derives are asserted, member by
+ * member and against their sources, in `tests/integration/learner-routes-bodies.spec.ts`; what is
+ * pinned here is that the ask still happens first, with the subject first, and that no body is built
+ * when it refuses.
+ *
  * The scope service is a stub — it is the decision under test. That the real one loads the row from
  * PostgreSQL under the caller's own RLS context is `tests/integration/learner-scope-rls.spec.ts`.
  */
 
 import { NotFoundException } from '@nestjs/common';
+import type { QueryRunner } from 'typeorm';
 
+import { LearnerProfileRepository } from '../../../src/infrastructure/repositories/learner-profile.repository.js';
+import type { VisibleLearner } from '../../../src/infrastructure/repositories/learner.repository.js';
 import { CurriculumService } from '../../../src/modules/curriculum/curriculum.service.js';
 import { LearnerScopeService } from '../../../src/modules/learners/learner-scope.service.js';
 import { LearnersService } from '../../../src/modules/learners/learners.service.js';
@@ -37,7 +48,17 @@ const practiceBody = {
   responses: [{ item_id: 'voc_airport_001', response: 'gate', response_time_ms: 900 }],
 } as PracticeSubmissionDto;
 
-type Scope = Pick<LearnerScopeService, 'requireVisible'>;
+/** The two ways a handler asks ADR-038 D3's question — load only, or load and then read (A7b). */
+type Scope = Pick<LearnerScopeService, 'requireVisible' | 'withVisible'>;
+
+/**
+ * The profile's other collaborator, stubbed for the same reason the scope service is: what is under
+ * test here is the ask, not the aggregate. An empty answer is the honest stub — it is what the real
+ * repository returns for a learner with no rows.
+ */
+const PROFILE_REPOSITORY = {
+  read: () => Promise.resolve({ cefr: null, mastery: {}, fsrsStates: {} }),
+} as unknown as LearnerProfileRepository;
 
 interface Route {
   readonly name: string;
@@ -50,12 +71,20 @@ interface Route {
 const ROUTES: readonly Route[] = [
   {
     name: 'GET /learners/{learner_id}/profile',
-    call: (scope) => new LearnersService(scope as LearnerScopeService).getProfile(SUBJECT, ADDRESSED),
+    call: (scope) =>
+      new LearnersService(scope as LearnerScopeService, PROFILE_REPOSITORY).getProfile(
+        SUBJECT,
+        ADDRESSED,
+      ),
     member: 'learner_id',
   },
   {
     name: 'GET /learners/{learner_id}/mastery',
-    call: (scope) => new LearnersService(scope as LearnerScopeService).getMastery(SUBJECT, ADDRESSED),
+    call: (scope) =>
+      new LearnersService(scope as LearnerScopeService, PROFILE_REPOSITORY).getMastery(
+        SUBJECT,
+        ADDRESSED,
+      ),
     member: 'grammar',
   },
   {
@@ -86,16 +115,34 @@ const ROUTES: readonly Route[] = [
   },
 ];
 
+/** The transaction a runner-free stub hands to the work — what `withVisible` passes through. */
+const TX = { marker: 'tx' } as unknown as QueryRunner;
+
 /** A scope service that records what it was asked and answers the way the real one would. */
 function scope(visible: boolean): { service: Scope; asked: Array<[string, string]> } {
   const asked: Array<[string, string]> = [];
-  const service: Scope = {
-    requireVisible: (subject: string, learnerId: string) => {
-      asked.push([subject, learnerId]);
-      if (!visible) return Promise.reject(new NotFoundException('Learner not found'));
-      return Promise.resolve({ id: learnerId });
-    },
+
+  /** The one rule both methods share: record the ask, then refuse or answer. */
+  const ask = <T>(subject: string, learnerId: string, answer: () => T): T => {
+    asked.push([subject, learnerId]);
+    if (!visible) throw new NotFoundException('Learner not found');
+    return answer();
   };
+
+  const service: Scope = {
+    requireVisible: (subject: string, learnerId: string) =>
+      ask(subject, learnerId, () => Promise.resolve({ id: learnerId, created_at: new Date(0) })),
+
+    withVisible: <T>(
+      subject: string,
+      learnerId: string,
+      work: (learner: VisibleLearner, tx: QueryRunner) => Promise<T>,
+    ) =>
+      ask(subject, learnerId, () =>
+        work({ id: learnerId, created_at: new Date(0) }, TX),
+      ),
+  };
+
   return { service, asked };
 }
 

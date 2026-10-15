@@ -8,6 +8,13 @@
  * can say the 404 *"não precisa ser lembrado em cada controller"*: a handler that wants the
  * addressed learner asks for it, and a handler that does not ask cannot serve one.
  *
+ * **A7b added the second half of that same idea.** `GET …/profile` does not stop at the row: it reads
+ * four more tables (ADR-045 D1), and those reads have one obligation in common — they must run under
+ * the context the 404 was decided in, or the policy that refused a foreign learner does not apply to
+ * them. That is `withVisible`, and `requireVisible` is its degenerate case: a handler that only needs
+ * the row asks for the row, a handler that needs to read asks for the transaction too, and the
+ * refusal is written once instead of once per caller.
+ *
  * The two arguments are not interchangeable, and swapping them is the defect this class exists to
  * make impossible to write by accident:
  *
@@ -28,6 +35,7 @@
  */
 
 import { Injectable, NotFoundException } from '@nestjs/common';
+import type { QueryRunner } from 'typeorm';
 
 import { PgSessionContext } from '../../infrastructure/persistence/pg-session-context.js';
 import type { VisibleLearner } from '../../infrastructure/repositories/learner.repository.js';
@@ -44,22 +52,43 @@ export class LearnerScopeService {
   ) {}
 
   /**
-   * Load the addressed learner under the caller's own context, or refuse with the 404 of D3.
+   * Load the addressed learner and run `work` inside the same transaction, or refuse with the 404 of
+   * D3 **before** the work runs.
    *
    * The transaction is `PgSessionContext`'s (ADR-026 §3): `SET LOCAL` is a no-op outside a
-   * transaction, so the writer must be the thing that opened it, and the read must happen inside.
+   * transaction, so the writer must be the thing that opened it, and every read must happen inside.
    * Nothing is written, so the commit is empty — the transaction exists to bound the GUC, not to
    * change data.
+   *
+   * The refusal precedes the work by construction rather than by discipline: `work` cannot run
+   * without the learner, and the learner does not exist unless the policy returned it. That ordering
+   * is what keeps an aggregate from being half-built — and observed — for a learner the caller may
+   * not see.
+   */
+  async withVisible<T>(
+    subject: string,
+    learnerId: string,
+    work: (learner: VisibleLearner, tx: QueryRunner) => Promise<T>,
+  ): Promise<T> {
+    return this.sessionContext.withLearner(subject, async (tx) => {
+      const learner = await this.learners.findById(learnerId, tx);
+
+      if (learner === null) {
+        throw new NotFoundException(LEARNER_NOT_FOUND);
+      }
+
+      return work(learner, tx);
+    });
+  }
+
+  /**
+   * The load alone — `withVisible` for a caller that needs no more than the row.
+   *
+   * Not a second implementation: the 404, the context and the query live in `withVisible`, and this
+   * method is the one line that says so. A route that reads nothing else has no reason to hold the
+   * transaction open, and a route that does has no reason to open a second one.
    */
   async requireVisible(subject: string, learnerId: string): Promise<VisibleLearner> {
-    const learner = await this.sessionContext.withLearner(subject, (tx) =>
-      this.learners.findById(learnerId, tx),
-    );
-
-    if (learner === null) {
-      throw new NotFoundException(LEARNER_NOT_FOUND);
-    }
-
-    return learner;
+    return this.withVisible(subject, learnerId, async (learner) => learner);
   }
 }

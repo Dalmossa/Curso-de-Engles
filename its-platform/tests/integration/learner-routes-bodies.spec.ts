@@ -8,15 +8,23 @@
  * published without the reportability `diagnostic-spec.md` §3.6 requires; `gate_passed` published as
  * a constant while ADR-018 §6.1 defines it as a predicate over five clauses of evidence.
  *
- * This file is the executable form of that measurement, and it is deliberately a **pin**: every
- * assertion below describes the defect as it is today, so each one is meant to be **inverted** by the
- * implementation that closes it. A failure here does not mean the test is wrong — it means the
- * behaviour moved, and the assertion was the address of the behaviour.
+ * This file is the executable form of that measurement, and it holds its two halves. Under `A7b` the
+ * assertions describe the behaviour **after** `GET …/profile` was made a function of the tables it
+ * names (ADR-045 D3–D6); everywhere else they still describe the defect as it stands, so each is
+ * meant to be **inverted** by the implementation that closes it. A failure here does not mean the
+ * test is wrong — it means the behaviour moved, and the assertion was the address of the behaviour.
  *
- * Three oracles, and no claim without one:
+ * One assertion is **held** rather than inverted, and it says so where it is: `theta_estimates`
+ * stays `{}` while the table holds a θ, because ADR-045 D6 holds that member until ADR-043 R1 (H3)
+ * ratifies whether θ and its `se` leave the API at all.
+ *
+ * Four oracles, and no claim without one:
  *
  *   * the **catalogue** (`information_schema`) answers what a column *can* hold — `learners` has no
  *     `cefr_level`, `streak_days` or `xp`, and `item_responses` has no transition column;
+ *   * the **row the seed wrote** answers what the body could have read — `created_at` at 2020-01-01,
+ *     `p_know` 0.930/0.050, `theta` 1.200, `stability` 12.5, `cefr` C1 — read back out of the same
+ *     tables rather than repeated from the handler;
  *   * the **published document** answers what a response is documented to contain — the two halves of
  *     `PlacementResult.confidence`, which is `required` and undeclared;
  *   * a **domain service** answers the predicate — `MasteryGateService`, over the row the seed wrote.
@@ -44,6 +52,14 @@ import { startLearnerRoutesApp, type LearnerRoutesApp } from '../helpers/learner
 const LEARNER = 'a1000000-0000-4000-8000-000000000001';
 /** A second learner, whose only role is to be the *other* answer to the same question. */
 const OTHER = 'a1000000-0000-4000-8000-000000000002';
+/**
+ * A third learner, written only by the one test that needs two runs in a chosen order.
+ *
+ * It exists because the seed writes **one** diagnostic for `LEARNER`, and a member whose definition is
+ * "the *latest* run" cannot be measured against a fixture that has only one: the ordering word is the
+ * whole of D3's claim, and a single row answers it by accident no matter how the statement is written.
+ */
+const ORDERING = 'a1000000-0000-4000-8000-000000000003';
 const PACK = 'pack_les_a2_airport_v1';
 
 /** A parsed JSON object, before it is given the shape of one published response. */
@@ -52,13 +68,12 @@ type Json = Record<string, unknown>;
 interface ProfileBody extends Json {
   learner_id: string;
   created_at: string;
-  cefr_level: string;
+  /** `null` while the learner has completed no diagnostic — ADR-045 D3. */
+  cefr_level: string | null;
   mastery: Record<string, number>;
   theta_estimates: Record<string, unknown>;
   fsrs_states: Record<string, unknown>;
   preferences: Record<string, unknown>;
-  streak_days: number;
-  xp: number;
 }
 
 interface MasteryBody extends Json {
@@ -182,15 +197,19 @@ async function fiveBodies(): Promise<Record<string, unknown>> {
 }
 
 /**
- * Two members of these bodies are the clock rather than the database: `profile.created_at` and
- * `mastery.*.last_practice` are built with `new Date()` in the handlers. Comparing two readings of a
- * clock would fail for a reason that is not the one under measurement, so both are replaced — here,
- * explicitly, and nowhere else. That they are the clock *rather than the row's own value* is a claim
- * of its own, measured below, where the seed makes the difference six years wide.
+ * One member of the remaining bodies is the clock rather than the database: `mastery.*.last_practice`
+ * is built with `new Date()` in the handler (A7c's to fix). Comparing two readings of a clock would
+ * fail for a reason that is not the one under measurement, so it is replaced — here, explicitly, and
+ * nowhere else.
+ *
+ * `profile.created_at` used to be normalised by this function too, and A7b is why it no longer is:
+ * it is now the value of `learners.created_at`, and a stored value compared after being rewritten as
+ * `<clock>` is exactly the assertion that could not tell the two apart. `profile.created_at` and
+ * `profile.cefr_level` also left the fingerprint below for the same reason — a body that is a
+ * function of the seed cannot be asserted equal before and after the seed runs.
  */
 function withoutTheClock(body: unknown): Json {
   const copy = structuredClone(body) as Json;
-  if (typeof copy['created_at'] === 'string') copy['created_at'] = '<clock>';
   for (const value of Object.values(copy)) {
     if (value !== null && typeof value === 'object' && 'last_practice' in (value as object)) {
       (value as Json)['last_practice'] = '<clock>';
@@ -325,23 +344,30 @@ afterAll(async () => {
   await testDb.cleanup();
 });
 
-describe('A7 — the five bodies do not move when the tables they could read are written', () => {
-  it('answers the same five bodies before and after every declared source has a row', async () => {
+describe('A7 — the bodies that are still constant functions of the database', () => {
+  it('answers the same four bodies before and after the tables are written — and the profile does not', async () => {
     const before = await fiveBodies();
 
     await seedEverything();
 
     const after = await fiveBodies();
 
-    // One assertion for the whole class, and the reason this file exists: not "member X is stubbed"
-    // but "these five responses are constant functions of the database". Every claim below is a
+    // The assertion that was made of five routes and is now made of four: not "member X is stubbed"
+    // but "these four responses are constant functions of the database", and every claim below is a
     // consequence of this one, named member by member.
-    for (const route of Object.keys(before)) {
+    for (const route of ['mastery', 'next', 'placement', 'practice'] as const) {
       expect({ route, body: withoutTheClock(after[route]) }).toEqual({
         route,
         body: withoutTheClock(before[route]),
       });
     }
+
+    // The fifth route left this loop by **moving**, which is A7b: `GET …/profile` is now a function of
+    // `learners.created_at`, of the latest completed run, of `learner_mastery` and of `fsrs_states`.
+    // A body that moves cannot be compared with itself across the seed — and this assertion is also
+    // the control that keeps the loop above honest: if the seed wrote nothing, the profile would not
+    // move either, and both would be green for the wrong reason.
+    expect(after['profile']).not.toEqual(before['profile']);
   });
 
   it('writes the rows it claims to write, so the test above cannot pass on an empty fixture', async () => {
@@ -369,28 +395,8 @@ describe('A7 — the five bodies do not move when the tables they could read are
   });
 });
 
-describe('A7 — the profile publishes members no column can hold', () => {
-  it('serves cefr_level, streak_days and xp, and `learners` has no such columns', async () => {
-    const body = await profileOf(LEARNER);
-
-    const columns = (
-      await sql<{ column_name: string }>(
-        `SELECT column_name FROM information_schema.columns WHERE table_name = 'learners' ORDER BY column_name`,
-      )
-    ).map((row) => row.column_name);
-
-    // The catalogue first: the whole of the learner's row is here, and three of the members this
-    // response publishes are not among them. ERD §6.1 records it as corrections 9/10/11 — `cefr_level`,
-    // `streak_days` and `xp` removed, *"Gamification has no persistence at all (ADR-015 §3)"*.
-    expect(columns).toEqual(['created_at', 'id', 'last_active_at', 'updated_at']);
-
-    // And the response publishes them anyway, with values that were written into the handler.
-    expect(body.cefr_level).toBe('A2');
-    expect(body.streak_days).toBe(0);
-    expect(body.xp).toBe(0);
-  });
-
-  it('serves created_at as the clock, not the value the row has held since 2020', async () => {
+describe('A7b — the profile is a function of the tables it names (ADR-045 D3–D5)', () => {
+  it('serves created_at as the value the row has held since 2020, not the clock', async () => {
     await seedEverything();
 
     const body = await profileOf(LEARNER);
@@ -399,80 +405,238 @@ describe('A7 — the profile publishes members no column can hold', () => {
       [LEARNER],
     );
 
+    // The row first: six years old, and the value the body must carry. The equality below is the whole
+    // measurement — the body it replaces answered `new Date()`, which no part of this expression can
+    // be, so the assertion is not "a date is present" but "this date is the row's".
     expect(row.created_at.toISOString()).toBe('2020-01-01T00:00:00.000Z');
-
-    // The one member of this body the load already had in hand, and the only one it does not use: the
-    // handler builds it with `new Date()`. Six years apart is not a rounding — and it is the sharpest
-    // form of this file's subject, because the value was not invented, it was available and discarded.
-    expect(body.created_at).not.toBe(row.created_at.toISOString());
-    expect(new Date(body.created_at).getUTCFullYear()).toBeGreaterThan(2020);
+    expect(body.created_at).toBe(row.created_at.toISOString());
   });
 
-  it('serves mastery, theta_estimates and fsrs_states as shapes the tables contradict', async () => {
+  it('serves cefr_level from the learner’s latest completed run, and null when there is none', async () => {
     await seedEverything();
 
     const body = await profileOf(LEARNER);
-
-    expect(body.mastery).toEqual({ grammar: 0.5, vocab: 0.5 });
-    expect(body.theta_estimates).toEqual({});
-    expect(body.fsrs_states).toEqual({});
-
-    // The rows that should have answered those three members, written by the seed above.
-    const mastered = await one<{ skill_id: string; p_know: string }>(
-      `SELECT skill_id, p_know FROM learner_mastery WHERE learner_id = $1 AND skill_id = 'grammar.articles'`,
-      [LEARNER],
-    );
-    const theta = await one<{ theta: string }>(
-      `SELECT theta FROM theta_estimates WHERE learner_id = $1`,
-      [LEARNER],
-    );
-    const fsrs = await one<{ stability: string }>(
-      `SELECT stability FROM fsrs_states WHERE learner_id = $1`,
+    const run = await one<{ cefr: string }>(
+      `SELECT cefr FROM diagnostic_results WHERE learner_id = $1 ORDER BY created_at DESC LIMIT 1`,
       [LEARNER],
     );
 
-    expect(mastered.skill_id).toBe('grammar.articles');
-    expect(Number(mastered.p_know)).toBeCloseTo(0.93, 3);
-    expect(Number(theta.theta)).toBeCloseTo(1.2, 3);
-    expect(Number(fsrs.stability)).toBeCloseTo(12.5, 3);
+    // ERD §2 correction 9: the current band is the `cefr` of the latest completed `diagnostic_results`
+    // row (ADR-017 §3), which for this learner is C1 — the handler answered the literal 'A2'.
+    expect(run.cefr).toBe('C1');
+    expect(body.cefr_level).toBe(run.cefr);
+
+    // D3's other half, and the half a fixture can fake: no run is `null`, not a band. The second
+    // learner has no run at all, and the count is read back first so this cannot pass on a fixture
+    // that wrote one.
+    expect(
+      await count(`SELECT count(*)::int AS n FROM diagnostic_results WHERE learner_id = $1`, [OTHER]),
+    ).toBe(0);
+    expect((await profileOf(OTHER)).cefr_level).toBeNull();
+
+    // And the contract had to be amended for that: the member stays `required` — it is always
+    // present — while its type widens to admit the absence the table can produce. A member that is
+    // `required` and can be `null` is exactly what "not yet assessed" needs, and the alternative
+    // spellings (a sentinel band, a 404 on the profile) were measured and rejected in D3.
+    const learnerProfile = schema('LearnerProfile') as {
+      required: string[];
+      properties: Record<string, { type: unknown }>;
+    };
+    expect(learnerProfile.required).toContain('cefr_level');
+    expect(learnerProfile.properties['cefr_level']?.type).toEqual(['string', 'null']);
   });
 
-  it('serves preferences that no table stores and that are not the document default either', async () => {
+  it('answers the latest run — not the first, not the highest, and not merely any', async () => {
+    await seedEverything();
+
+    // A learner of its own, written here rather than in `beforeAll` because this is the only test that
+    // reads it: what varies is the *order* of one learner's runs, and `LEARNER` cannot carry that
+    // fixture without changing what every other test in this file reads. `start_node` is a FK into
+    // `lessons` and the seed's single lesson satisfies it for all three runs — the column under
+    // measurement is `cefr`.
+    await sql(`INSERT INTO learners (id) VALUES ($1) ON CONFLICT (id) DO NOTHING`, [ORDERING]);
+
+    const writeRun = (cefr: string, at: string) =>
+      sql(
+        `INSERT INTO diagnostic_results
+           (learner_id, theta, se_statistical, se_parameter, se_effective, precision_label,
+            ci95_lower, ci95_upper, cefr, start_cefr, start_node, stopping_rule, skill_theta,
+            profile, created_at)
+         VALUES ($1, 0.500, 0.300, 0.310, 0.430, 'provisional', -0.088, 1.088,
+                 $2, $2, 'les_c1_test', 'se_threshold', '{"grammar": {"theta": 0.5}}'::jsonb,
+                 'steady', $3)`,
+        [ORDERING, cefr, at],
+      );
+
+    // One run is written first, so that the two assertions below are read against an answer that
+    // exists rather than against `null`.
+    await writeRun('C1', '2022-01-01T00:00:00Z');
+    expect((await profileOf(ORDERING)).cefr_level).toBe('C1');
+
+    // An **earlier** run answers nothing. This is the assertion a statement with no `ORDER BY` cannot
+    // make: two rows are now candidates, and "whichever the planner returned first" is not a rule.
+    await writeRun('B2', '2021-01-01T00:00:00Z');
+    expect((await profileOf(ORDERING)).cefr_level).toBe('C1');
+
+    // A **later** run wins, and it wins while being a *lower* band than both runs before it — which is
+    // what rules out the two readings of the column that are not ERD §6.1's: the first run written, and
+    // the highest band reached. A learner can go down as well as up; `cefr_level` is where they are.
+    await writeRun('A2', '2023-01-01T00:00:00Z');
+    expect((await profileOf(ORDERING)).cefr_level).toBe('A2');
+  });
+
+  it('serves mastery keyed by the learner’s own skills, with p_know from the row', async () => {
+    await seedEverything();
+
+    const body = await profileOf(LEARNER);
+    const strong = await one<{ p_know: string }>(
+      `SELECT p_know FROM learner_mastery WHERE learner_id = $1 AND skill_id = 'grammar.articles'`,
+      [LEARNER],
+    );
+    const weak = await one<{ p_know: string }>(
+      `SELECT p_know FROM learner_mastery WHERE learner_id = $1 AND skill_id = 'vocabulary.airport'`,
+      [LEARNER],
+    );
+
+    // The keys are the content: the schema is a bare `additionalProperties` map, so *which* skills
+    // appear is the whole answer. The learner's skills are the two catalogue ids below — not
+    // `grammar`/`vocab`, which are what the handler chose, and not skills this learner has no
+    // evidence for.
+    expect(Object.keys(body.mastery).sort()).toEqual(['grammar.articles', 'vocabulary.airport']);
+    expect(body.mastery).toEqual({
+      'grammar.articles': Number(strong.p_know),
+      'vocabulary.airport': Number(weak.p_know),
+    });
+    expect(Number(strong.p_know)).toBeCloseTo(0.93, 3);
+    expect(Number(weak.p_know)).toBeCloseTo(0.05, 3);
+  });
+
+  it('serves fsrs_states from the rows, keyed by item, with the members the document requires', async () => {
+    await seedEverything();
+
+    const body = await profileOf(LEARNER);
+    const row = await one<{ stability: string; difficulty: string; last_review: Date }>(
+      `SELECT stability, difficulty, last_review FROM fsrs_states WHERE learner_id = $1`,
+      [LEARNER],
+    );
+
+    // Keyed by item, and each value is the row's own three members: NUMERIC arrives as a string and is
+    // normalised to a number (the contract declares both as `type: number`), and `last_review` as an
+    // RFC 3339 instant.
+    expect(Number(row.stability)).toBeCloseTo(12.5, 3);
+    expect(Object.keys(body.fsrs_states)).toEqual(['vocab.airport.001']);
+    expect(body.fsrs_states).toEqual({
+      'vocab.airport.001': {
+        stability: Number(row.stability),
+        difficulty: Number(row.difficulty),
+        last_review: row.last_review.toISOString(),
+      },
+    });
+
+    // The document is the shape oracle: the served object carries exactly the members `fsrs_states`
+    // declares as `required` — no more (nothing invented alongside them) and no fewer. The member is a
+    // map, so the obligation lives on `additionalProperties`, not on the map itself.
+    const learnerProfile = schema('LearnerProfile') as {
+      properties: { fsrs_states: { additionalProperties: { required: string[] } } };
+    };
+    const served = (body.fsrs_states as Record<string, Record<string, unknown>>)[
+      'vocab.airport.001'
+    ];
+    if (served === undefined) throw new Error('the profile served no FSRS state to inspect');
+    expect(Object.keys(served).sort()).toEqual(
+      [...learnerProfile.properties.fsrs_states.additionalProperties.required].sort(),
+    );
+  });
+
+  it('serves preferences equal to the document’s own defaults — 15, not 20', async () => {
     const body = await profileOf(LEARNER);
 
+    // No table stores a preference (read back below), so the document's `default:` is the only
+    // artefact that can answer this member, and D5 is that the server answers exactly it. The handler
+    // answered 20 where the document said 15 — a value no artefact holds and no declaration
+    // authorises, which is the one form a client cannot tell from a stored preference.
     const tables = (
       await sql<{ table_name: string }>(
         `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name LIKE '%preference%'`,
       )
     ).map((row) => row.table_name);
-
-    // No table holds a preference: ERD §6.1 records that *"the spec use domain defaults"*. So the
-    // document's own `default:` is the only artifact that could have answered this member, and the
-    // handler answers 20 where the document says 15 — stored nowhere and declared otherwise.
     expect(tables).toEqual([]);
-    expect(body.preferences['daily_goal_minutes']).toBe(20);
 
     const learnerProfile = schema('LearnerProfile') as {
-      properties: Record<string, { properties: Record<string, { default?: unknown }> }>;
+      properties: {
+        preferences: { properties: Record<string, { default?: unknown }> };
+      };
     };
-    const preferences = learnerProfile.properties['preferences'];
-    if (preferences === undefined) throw new Error('LearnerProfile declares no `preferences`');
+    const declared = learnerProfile.properties.preferences.properties;
+    const defaults = Object.fromEntries(
+      Object.entries(declared).map(([name, member]) => [name, member.default]),
+    );
 
-    expect(preferences.properties['daily_goal_minutes']?.default).toBe(15);
+    // Every member, not only the one that was wrong: the response and the declaration are the same
+    // object, which is what "the default is the answer" means.
+    expect(body.preferences).toEqual(defaults);
+    expect(body.preferences['daily_goal_minutes']).toBe(15);
   });
 
-  it('answers a second learner a body that differs in the one member it reads, and no other', async () => {
-    // The positive half of "constant function": `learner_id` comes from the row that was loaded, so
-    // it is the member the two answers differ by — and, with the two rows otherwise alike, the only
-    // one. A body that ignored the row entirely could not even manage this.
+  it('serves neither streak_days nor xp, and neither the row nor the document can hold them', async () => {
+    const body = await profileOf(LEARNER);
+
+    // The catalogue first: the whole of the learner's row is these four columns, and the members the
+    // response used to publish off it are not among them (ERD §2 corrections 9/10, §6.5 —
+    // *"Gamification has no persistence at all (ADR-015 §3)"*).
+    const columns = (
+      await sql<{ column_name: string }>(
+        `SELECT column_name FROM information_schema.columns WHERE table_name = 'learners' ORDER BY column_name`,
+      )
+    ).map((row) => row.column_name);
+    expect(columns).toEqual(['created_at', 'id', 'last_active_at', 'updated_at']);
+
+    // D4 is removal from **both** halves, and both are asserted here: a member declared and served is
+    // a claim about an artefact that does not exist, and `default: 0` gives it the appearance of a
+    // fact. A body without the members but a document with them would still be a promise.
+    expect(Object.keys(body)).not.toContain('streak_days');
+    expect(Object.keys(body)).not.toContain('xp');
+
+    const learnerProfile = schema('LearnerProfile') as { properties: Record<string, unknown> };
+    expect(Object.keys(learnerProfile.properties)).not.toContain('streak_days');
+    expect(Object.keys(learnerProfile.properties)).not.toContain('xp');
+  });
+
+  it('holds theta_estimates empty while the table holds 1.200 — the one member ADR-043 R1 owns', async () => {
+    await seedEverything();
+
+    const body = await profileOf(LEARNER);
+    const row = await one<{ theta: string }>(
+      `SELECT theta FROM theta_estimates WHERE learner_id = $1`,
+      [LEARNER],
+    );
+
+    // The row exists and the member stays `{}` — by decision, not by omission. ADR-045 D6 holds
+    // `theta_estimates` until ADR-043 R1 (H3) ratifies whether θ and its `se` leave the public API at
+    // all, and `diagnostic-spec.md` §3.6's reportability lattice is consulted nowhere on this path.
+    // This is the only assertion in this file that is a *hold* rather than a correction, and it is the
+    // one H3's ratification inverts.
+    expect(Number(row.theta)).toBeCloseTo(1.2, 3);
+    expect(body.theta_estimates).toEqual({});
+  });
+
+  it('differs from a second learner by every member the tables differ by, and by nothing else', async () => {
+    await seedEverything();
+
     const mine = await profileOf(LEARNER);
     const theirs = await profileOf(OTHER);
 
+    // The positive half of the measurement, now with five members to tell apart: the seed wrote
+    // `created_at`, a run, two mastery rows and an FSRS state for the first learner and nothing for
+    // the second, so every derived member differs — and the one member that is the document's default
+    // for everybody does not. A body that ignored the tables could not produce either half.
     expect(mine.learner_id).toBe(LEARNER);
     expect(theirs.learner_id).toBe(OTHER);
-
-    const neutralise = (body: ProfileBody) => withoutTheClock({ ...body, learner_id: '<the row>' });
-    expect(neutralise(theirs)).toEqual(neutralise(mine));
+    expect(theirs.created_at).not.toBe(mine.created_at);
+    expect(theirs.cefr_level).toBeNull();
+    expect(theirs.mastery).toEqual({});
+    expect(theirs.fsrs_states).toEqual({});
+    expect(theirs.preferences).toEqual(mine.preferences);
   });
 });
 

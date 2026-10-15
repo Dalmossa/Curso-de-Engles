@@ -659,11 +659,17 @@ components:
           type: string
           format: date-time
         cefr_level:
-          type: string
+          type: [string, 'null']
           pattern: '^(A1|A2|B1|B2|C1|C2)$'
+          description: >-
+            The learner's current band: the `cefr` of the **latest completed** `diagnostic_results`
+            run (`docs/data-model.erd.md` §2 correction 9, ADR-017 §3). `null` while no diagnostic has
+            been completed — "not yet assessed", which is neither a band nor an error, and is why the
+            member stays `required` (it is always present) while its type admits the absence
+            (ADR-045 D3). The `pattern` constrains the string branch only.
         mastery:
           type: object
-          description: Per-skill mastery probabilities (BKT)
+          description: Per-skill mastery probabilities (BKT), keyed by the learner's own skill ids
           additionalProperties:
             type: number
             minimum: 0
@@ -714,12 +720,14 @@ components:
             daily_goal_minutes:
               type: integer
               default: 15
-        streak_days:
-          type: integer
-          default: 0
-        xp:
-          type: integer
-          default: 0
+        # MIGRATION NOTE — A7b (2026-10-15). `streak_days` and `xp` were removed from this schema
+        # and from the response (ADR-045 D4). They had no artefact behind them: `learners` has no
+        # such columns (ERD §2 corrections 9/10) and no spec defines a badge, threshold or award
+        # (ADR-015 §3, `data-model.erd.md` §6.5 — "Gamification has no persistence at all"). A
+        # `default: 0` says what a *client* may assume in the absence of a value; serving `0` said it
+        # as a fact, which is indistinguishable from a streak that has just broken. Re-adding either
+        # member is a §4.4-breaking change that owes a source first. `CHANGELOG.md` records the
+        # migration path.
 
     # ============================================================
     # Errors

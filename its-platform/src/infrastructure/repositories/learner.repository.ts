@@ -27,14 +27,16 @@ import { DataSource, type QueryRunner } from 'typeorm';
 /**
  * What a caller may see of the addressed learner.
  *
- * Deliberately narrower than the DDL's row: `learners` also has `created_at`, `last_active_at` and
- * `updated_at`, and nothing in A5b reads them. A column that is selected but never consumed is a
- * claim about a consumer that does not exist (R2/R3), and the response bodies this read sits behind
- * are the stubs they were — the ratified scope of A5b is *"only the read the RLS governs"*, not the
- * profile aggregation (that is P1.10/P1.11).
+ * Narrower than the DDL's row, and the difference is a decision rather than an omission:
+ * `created_at` is here because `GET …/profile` publishes it as the row's own value (A7b), while
+ * `last_active_at` and `updated_at` are not, because no response publishes them. A column that is
+ * selected but never consumed is a claim about a consumer that does not exist (R2/R3) — and the
+ * mirror image of that rule is what A7b fixed one file over, where the consumer existed and the
+ * column was thrown away: `created_at` was in hand and the response answered `new Date()` instead.
  */
 export interface VisibleLearner {
   readonly id: string;
+  readonly created_at: Date;
 }
 
 @Injectable()
@@ -63,12 +65,14 @@ export class LearnerRepository {
    * about what it can see.
    */
   async findById(learnerId: string, tx?: QueryRunner): Promise<VisibleLearner | null> {
-    const sql = 'SELECT id FROM learners WHERE id = $1';
+    // Two columns, and both are consumed: `id` is the profile's `learner_id` and `created_at` its
+    // `created_at`. The row is returned as it came back — neither member is rewritten here.
+    const sql = 'SELECT id, created_at FROM learners WHERE id = $1';
 
-    const rows: Array<{ id: string }> =
+    const rows: Array<{ id: string; created_at: Date }> =
       tx === undefined ? await this.dataSource.query(sql, [learnerId]) : await tx.query(sql, [learnerId]);
 
     const first = rows[0];
-    return first === undefined ? null : { id: first.id };
+    return first === undefined ? null : { id: first.id, created_at: first.created_at };
   }
 }

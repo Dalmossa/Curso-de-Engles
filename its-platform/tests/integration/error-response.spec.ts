@@ -38,6 +38,7 @@ import { ContentService } from '../../src/modules/content/content.service.js';
 import { LearnersController } from '../../src/modules/learners/learners.controller.js';
 import { LearnersService } from '../../src/modules/learners/learners.service.js';
 import { LearnerScopeService } from '../../src/modules/learners/learner-scope.service.js';
+import { LearnerProfileRepository } from '../../src/infrastructure/repositories/learner-profile.repository.js';
 import { LearnerContextError } from '../../src/infrastructure/persistence/pg-session-context.js';
 import {
   authorization,
@@ -91,9 +92,26 @@ const contentStub = {
  * exercises the same three layers the request does (`controller → service → scope`), with the
  * database — the one layer a contract suite should not need — replaced by the refusal itself.
  * The refusal measured against a real policy over HTTP is `learner-scope-rls.spec.ts`.
+ *
+ * Both ways of asking refuse here, because both are the same refusal: A7b's `withVisible` is what
+ * `GET …/profile` now asks, and it rejects before the work — so the stub refuses without ever
+ * calling it, exactly as the real one does.
  */
 const learnerScopeStub = {
   requireVisible: () => Promise.reject(new NotFoundException('Learner not found')),
+  withVisible: () => Promise.reject(new NotFoundException('Learner not found')),
+};
+
+/**
+ * A7b gave `LearnersService` one more collaborator, and it is stubbed for the same reason the scope
+ * service is: every request this file sends is refused by the scope before a member is read, so the
+ * repository is never asked anything. Its stub never answers a call — an empty read would be the
+ * honest answer, but the suite would be asserting the shape of a payload it does not publish.
+ */
+const learnerProfileStub = {
+  read: () => {
+    throw new Error('the profile repository is unreachable in this suite: the scope refuses first');
+  },
 };
 
 @Module({
@@ -102,6 +120,7 @@ const learnerScopeStub = {
     { provide: ContentService, useValue: contentStub },
     LearnersService,
     { provide: LearnerScopeService, useValue: learnerScopeStub },
+    { provide: LearnerProfileRepository, useValue: learnerProfileStub },
   ],
 })
 class ErrorContractModule {}
