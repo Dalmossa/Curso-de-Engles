@@ -1,4 +1,4 @@
-import { Body, Controller, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { DiagnosticRequestDto } from './dto/diagnostic-request.dto.js';
 import { PlacementService } from './placement.service.js';
 
@@ -14,6 +14,7 @@ export class PlacementController {
    * metatype to act on; with `any` the published schema was advisory.
    */
   @Post(':id/placement')
+  @HttpCode(200)
   async runDiagnostic(@Param('id', ParseUUIDPipe) id: string, @Body() body: DiagnosticRequestDto) {
     return this.placementService.runDiagnostic(id, body);
   }

@@ -1,4 +1,4 @@
-import { Body, Controller, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { PracticeSubmissionDto } from './dto/practice-submission.dto.js';
 import { PracticeService } from './practice.service.js';
 
@@ -13,6 +13,7 @@ export class PracticeController {
    * `minimum` enforceable (§4.5).
    */
   @Post(':id/practice')
+  @HttpCode(200)
   async submitPractice(@Param('id', ParseUUIDPipe) id: string, @Body() body: PracticeSubmissionDto) {
     return this.practiceService.submitPractice(id, body);
   }
