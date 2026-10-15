@@ -1,7 +1,9 @@
 import { Body, Controller, HttpCode, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { PracticeSubmissionDto } from './dto/practice-submission.dto.js';
 import { PracticeService } from './practice.service.js';
+import { SCOPES, Scopes } from '../../common/auth/scopes.decorator.js';
 
+@Scopes(SCOPES.learnerSelf)
 @Controller('learners')
 export class PracticeController {
   constructor(private readonly practiceService: PracticeService) {}

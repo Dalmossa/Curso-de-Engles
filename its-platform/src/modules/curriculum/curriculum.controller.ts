@@ -1,6 +1,8 @@
 import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
 import { CurriculumService } from './curriculum.service.js';
+import { SCOPES, Scopes } from '../../common/auth/scopes.decorator.js';
 
+@Scopes(SCOPES.learnerSelf)
 @Controller('learners')
 export class CurriculumController {
   constructor(private readonly curriculumService: CurriculumService) {}

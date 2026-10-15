@@ -13,6 +13,8 @@ import type { INestApplication } from '@nestjs/common';
 
 import { ProblemExceptionFilter } from './common/filters/problem-exception.filter.js';
 import { correlationIdMiddleware } from './common/http/correlation.js';
+import { JwtAuthGuard } from './common/guards/jwt-auth.guard.js';
+import { tokenVerifierFromEnv } from './infrastructure/auth/token-verifier-from-env.js';
 
 export function configureApp(app: INestApplication): INestApplication {
   // CONSTITUTION.md §4.4 — URL path versioning is mandatory and is the only
@@ -38,6 +40,17 @@ export function configureApp(app: INestApplication): INestApplication {
   // for `Problem.request_id`, and it sets the response header for every response (§4.6) — including
   // the ones this filter never sees.
   app.use(correlationIdMiddleware);
+
+  // §4.5 — "deny by default: `JwtAuthGuard` registered as a **global** guard; public routes opt
+  // out explicitly via `@Public()`". It is installed here, and not as an `APP_GUARD` provider in
+  // a module, for the reason this file's header gives: the integration suites build their own
+  // modules, and a guard that only the production module carried would be absent from every
+  // proof — present in the deployment, absent from the test that is supposed to cover it.
+  //
+  // The verifier is configuration, and an incomplete configuration denies everything rather than
+  // verifying nothing (`token-verifier-from-env.ts`). So there is no branch here in which the
+  // application starts without authentication.
+  app.useGlobalGuards(new JwtAuthGuard(tokenVerifierFromEnv()));
 
   app.useGlobalPipes(
     new ValidationPipe({

@@ -38,6 +38,13 @@ import { ContentService } from '../../src/modules/content/content.service.js';
 import { LearnersController } from '../../src/modules/learners/learners.controller.js';
 import { LearnersService } from '../../src/modules/learners/learners.service.js';
 import { LearnerContextError } from '../../src/infrastructure/persistence/pg-session-context.js';
+import {
+  authorization,
+  clearOidcEnv,
+  setOidcEnv,
+  startTokenFixture,
+  type TokenFixture,
+} from '../helpers/tokens.js';
 
 /** The internal text a domain error really carries (`PgSessionContext.withLearner`). */
 const INTERNALS =
@@ -93,7 +100,15 @@ class ErrorContractModule {}
 
 let app: INestApplication;
 let base = '';
+let fixture: TokenFixture;
 const loggedErrors: Array<{ message: unknown; stack?: unknown }> = [];
+
+/**
+ * A5b put the guard in front of everything this file reaches, so the suite now presents one
+ * credential for all of it. It holds both scopes because the file spans both surfaces (`/content`
+ * and `/learners`) — a property of this arrangement, not of the scopes.
+ */
+let AUTH: Record<string, string> = {};
 
 /** The media type §4.3 makes mandatory; Express may append the charset. */
 const PROBLEM_MEDIA_TYPE = /^application\/problem\+json(; charset=utf-8)?$/;
@@ -103,20 +118,27 @@ beforeAll(async () => {
     loggedErrors.push({ message, stack });
   });
 
+  fixture = await startTokenFixture();
+  setOidcEnv(fixture);
+
   app = await NestFactory.create(ErrorContractModule, { logger: false });
   configureApp(app);
   await app.listen(0);
   const address = app.getHttpServer().address() as AddressInfo;
   base = `http://127.0.0.1:${address.port}`;
+
+  AUTH = authorization(await fixture.accessToken(UUID, ['learner:self', 'content:read']));
 });
 
 afterAll(async () => {
   jest.restoreAllMocks();
   await app?.close();
+  clearOidcEnv();
+  await fixture.close();
 });
 
 async function get(path: string, headers: Record<string, string> = {}): Promise<Response> {
-  return fetch(`${base}${path}`, { headers });
+  return fetch(`${base}${path}`, { headers: { ...AUTH, ...headers } });
 }
 
 async function problemOf(res: Response): Promise<Record<string, unknown>> {
@@ -206,7 +228,7 @@ describe('P1.17 — the served error response is the contract’s `Problem`', ()
   it('400 from `ValidationPipe`: the message array is joined into one string', async () => {
     const res = await fetch(`${base}/api/v1/probe/echo`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', ...AUTH },
       body: JSON.stringify({ name: 'ok', notWhitelisted: 1 }),
     });
     const problem = await problemOf(res);

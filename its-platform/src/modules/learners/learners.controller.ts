@@ -1,6 +1,11 @@
 import { Controller, Get, Param, ParseUUIDPipe, NotFoundException } from '@nestjs/common';
 import { LearnersService } from './learners.service.js';
+import { SCOPES, Scopes } from '../../common/auth/scopes.decorator.js';
 
+// Class-level: every route on this controller is the caller's own portfolio, and ADR-038 D2 gives
+// that its own scope. The guard reads handler metadata first and class metadata second, so this
+// stays the rule while an operation can still narrow it.
+@Scopes(SCOPES.learnerSelf)
 @Controller('learners')
 export class LearnersController {
   constructor(private readonly learnersService: LearnersService) {}

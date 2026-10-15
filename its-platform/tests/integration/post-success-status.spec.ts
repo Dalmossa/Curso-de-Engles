@@ -37,6 +37,13 @@ import { PlacementController } from '../../src/modules/placement/placement.contr
 import { PlacementService } from '../../src/modules/placement/placement.service.js';
 import { PracticeController } from '../../src/modules/practice/practice.controller.js';
 import { PracticeService } from '../../src/modules/practice/practice.service.js';
+import {
+  authorization,
+  clearOidcEnv,
+  setOidcEnv,
+  startTokenFixture,
+  type TokenFixture,
+} from '../helpers/tokens.js';
 
 const UUID = '3f2a1c44-9b7e-4a01-8c4d-1e2f3a4b5c6d';
 const PLACEMENT_PATH = '/learners/{learner_id}/placement';
@@ -66,22 +73,33 @@ class PostStatusModule {}
 
 let app: INestApplication;
 let base = '';
+let fixture: TokenFixture;
+let AUTH: Record<string, string> = {};
 
 beforeAll(async () => {
+  fixture = await startTokenFixture();
+  setOidcEnv(fixture);
   app = await NestFactory.create(PostStatusModule, { logger: false });
   configureApp(app);
   await app.listen(0);
   base = `http://127.0.0.1:${(app.getHttpServer().address() as AddressInfo).port}`;
+  // A5b: both operations are learner-scoped and authenticated, so the suite now presents the
+  // credential a real caller would. What it asserts is unchanged — the *status* of a request that
+  // was already going to succeed; before the fixture, it was asserted of a request the guard would
+  // have refused, which is how the 201 survived A5a's proof.
+  AUTH = authorization(await fixture.accessToken(UUID, ['learner:self']));
 });
 
 afterAll(async () => {
   await app?.close();
+  clearOidcEnv();
+  await fixture.close();
 });
 
 async function post(path: string, body: unknown): Promise<Response> {
   return fetch(`${base}${path}`, {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers: { 'content-type': 'application/json', ...AUTH },
     body: JSON.stringify(body),
   });
 }

@@ -1,7 +1,9 @@
 import { Body, Controller, HttpCode, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { DiagnosticRequestDto } from './dto/diagnostic-request.dto.js';
 import { PlacementService } from './placement.service.js';
+import { SCOPES, Scopes } from '../../common/auth/scopes.decorator.js';
 
+@Scopes(SCOPES.learnerSelf)
 @Controller('learners')
 export class PlacementController {
   constructor(private readonly placementService: PlacementService) {}

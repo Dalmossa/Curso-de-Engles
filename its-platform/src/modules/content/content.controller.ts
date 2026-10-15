@@ -1,4 +1,5 @@
 import { Controller, Get, Param, Query, BadRequestException, NotFoundException } from '@nestjs/common';
+import { SCOPES, Scopes } from '../../common/auth/scopes.decorator.js';
 // Value import, not `import type`: `emitDecoratorMetadata` needs the class at runtime for
 // Nest's constructor injection (the same reason `placement.controller.ts` imports its service).
 import { ContentService } from './content.service.js';
@@ -35,6 +36,10 @@ const DEFAULT_RATE = 1;
  * `dialogue_id` — not the sketch's generic `id`. Nest matches `@Param` by name, and a rename here
  * is what keeps the generated client's argument names and the spec's in step.
  */
+// ADR-038 D1: the catalogue is **not** public. It is the product, and an anonymous reader of it
+// has no named consumer (R3) — so it carries its own scope rather than an `@Public()`, and the
+// reversal (should one be named) is the permissive direction, which is not breaking.
+@Scopes(SCOPES.contentRead)
 @Controller('content')
 export class ContentController {
   constructor(private readonly contentService: ContentService) {}

@@ -33,28 +33,56 @@ import type { AddressInfo } from 'net';
 
 import { configureApp } from '../../src/app.setup.js';
 import { AuthModule } from '../../src/modules/auth/auth.module.js';
+import {
+  authorization,
+  clearOidcEnv,
+  setOidcEnv,
+  startTokenFixture,
+  type TokenFixture,
+} from '../helpers/tokens.js';
 
 const PROBLEM_MEDIA_TYPE = /^application\/problem\+json(; charset=utf-8)?$/;
 const REFRESH = '/api/v1/auth/refresh';
+const UUID = '3f2a1c44-9b7e-4a01-8c4d-1e2f3a4b5c6d';
 
 let app: INestApplication;
 let base = '';
+let fixture: TokenFixture;
+/**
+ * A5b put this route behind the global guard, so *this* is what changed for it: the same `501`,
+ * reached by an already-authenticated caller. The contract asked for a credential all along
+ * (`security: [BearerAuth: []]` on this operation), and until A5b nothing read that line.
+ */
+let AUTH: Record<string, string> = {};
 
 beforeAll(async () => {
+  fixture = await startTokenFixture();
+  setOidcEnv(fixture);
   app = await NestFactory.create(AuthModule, { logger: false });
   configureApp(app);
   await app.listen(0);
   base = `http://127.0.0.1:${(app.getHttpServer().address() as AddressInfo).port}`;
+  AUTH = authorization(await fixture.accessToken(UUID, []));
 });
 
 afterAll(async () => {
   await app?.close();
+  clearOidcEnv();
+  await fixture.close();
 });
 
 async function refresh(): Promise<{ res: Response; body: Record<string, unknown> }> {
-  const res = await fetch(`${base}${REFRESH}`, { method: 'POST' });
+  const res = await fetch(`${base}${REFRESH}`, { method: 'POST', headers: AUTH });
   return { res, body: (await res.json()) as Record<string, unknown> };
 }
+
+describe('A5b — the guard is in front of this route too (§4.5)', () => {
+  it('answers 401 to a caller who presents no token — before the 501', async () => {
+    const res = await fetch(`${base}${REFRESH}`, { method: 'POST' });
+
+    expect(res.status).toBe(401);
+  });
+});
 
 describe('A5a — `POST /auth/refresh` is out of MVP scope (§4.5)', () => {
   it('answers 501, not 200', async () => {
