@@ -413,38 +413,24 @@ components:
 
     PackOption:
       type: object
-      required: [letter, text, is_key]
+      required: [letter, text]
       properties:
         letter:
           type: string
           pattern: '^[A-D]$'
         text:
           type: string
-        is_key:
-          type: boolean
         br_pt_form:
-          type: [string, 'null']
-          description: '`item_options.br_pt_form`; null on 117 of the 915 key options.'
-        note:
-          type: [string, 'null']
+          type: string
           description: >-
-            The distractor rationale. Null on a key option — the parser writes
-            `note: isKey ? null : …` — and **all 915** key options in the catalogue are served
-            that way, so the published `type: string` rejected every pack and dialogue
-            response. Non-key options are the opposite extreme: 0 of 2579 has a null note.
-      if:
-        properties:
-          is_key:
-            const: false
-        required: [is_key]
-      then:
-        required: [note]
-        properties:
-          note:
-            type: string
-            description: >-
-              A non-key option always carries one: `item_options` CHECK (is_key OR note IS NOT
-              NULL), and the parser falls back to a stated no-rationale marker rather than null.
+            `item_options.br_pt_form`, published only when **every** option of the item carries
+            one — 798 of the 841 scorable items today; the member is absent from the other 43 (9
+            whose options carry no gloss at all, and 34 that mix gloss and no gloss inside the
+            item). ADR-044 D6(b): it cannot be published per option, because a gloss present on
+            some options of an item and missing on others points at the one it is missing from —
+            measured 2026-10-15, 17 items had exactly one gloss-less option and it was the key in
+            all 17. `is_key` and `note` are not published at all: `note` was `null` on 841 of 841
+            key options and on 0 of 2523 distractors, so the member *was* the key.
 
     PackContent:
       type: object
@@ -494,24 +480,20 @@ components:
                 type: string
                 enum: [choice, free_text, asr_phoneme_match]
                 description: >-
-                  `items.scoring`. Required reading alongside `key`: an item that is
-                  `asr_phoneme_match` carries no options and no key by design, and without this
-                  member its `options: []` + `key: null` is indistinguishable from a malformed
-                  item (6 of 847).
+                  `items.scoring`. Required reading for a caller: an item that is
+                  `asr_phoneme_match` carries no options by design, and without this member its
+                  `options: []` is indistinguishable from a malformed item (6 of 847). It is also
+                  what took over from `key` as the signal — ADR-044 removed the key, not the
+                  distinction.
               options:
                 type: array
                 description: >-
-                  `item_options` ordered by `position`. No `minItems`: ADR-004 already declares
-                  `options: List[Option]  # Empty for production/minimal-pair items`, and 6 of
-                  847 items carry none.
+                  `item_options` ordered by `position`, and **the complete set**: the key option is
+                  among them and carries nothing that marks it (ADR-044 D1/D6). No `minItems`:
+                  ADR-004 already declares `options: List[Option]  # Empty for
+                  production/minimal-pair items`, and 6 of 847 items carry none.
                 items:
                   $ref: '#/components/schemas/PackOption'
-              key:
-                type: [string, 'null']
-                pattern: '^[A-D]$'
-                description: >-
-                  The key option's letter; `null` when there is no choice. ADR-004:
-                  `key: Optional[str]  # None for production items` — 6 of 847.
               listening_items:
                 type: array
                 description: >-
@@ -529,21 +511,6 @@ components:
                       pattern: '^lst_[a-z0-9_]+$'
                     skill:
                       type: string
-            if:
-              properties:
-                scoring:
-                  const: choice
-              required: [scoring]
-            then:
-              required: [key]
-              properties:
-                key:
-                  type: string
-                  description: >-
-                    `required` alone does not close this: a JSON `null` is present, so an item
-                    with `scoring: choice` and `key: null` was still valid. The type conjunct is
-                    what rejects it.
-
     DialogueContent:
       type: object
       required: [dialogue_id, title, cefr_level, status, slots]
@@ -586,7 +553,7 @@ components:
           type: array
           items:
             type: object
-            required: [slot_id, skill, key, transcript]
+            required: [slot_id, skill, transcript, options]
             properties:
               slot_id:
                 type: string
@@ -598,13 +565,6 @@ components:
                   `items.listening_kind` with its `lst_` prefix removed, and `lst_pron_minpair` ->
                   `pronunciation` — `listening-corpus-spec.md` §4's own type->skill table. All six
                   occur (gist 13, detail 14, inference 11, lexical 10, pragmatic 7, pronunciation 19).
-              key:
-                type: string
-                pattern: '^[A-D]$'
-                description: >-
-                  The key option's letter. Required and satisfiable since ADR-027 §3a: 11 of the 74
-                  shipped slots mark their key with a check mark in the option table's trailing
-                  column rather than in its value column, and the reader now honours both.
               transcript:
                 type: string
                 description: >-
@@ -612,9 +572,15 @@ components:
                   artefact `clips` are derived from, so it is the only place the speaker's name and
                   the authored line breaks survive. The same string for every slot of a dialogue: a
                   per-slot slice would need a slot-clip link and `items.clip_ids` is never populated.
-              distractors:
+              options:
                 type: array
-                description: 'The non-key options of the slot, by `position`.'
+                description: >-
+                  **Every** option of the slot, by `position`, four rows on each of the 74 shipped
+                  slots — the key option included and unmarked (ADR-044 D3). The member replaces two
+                  that each handed the key over: `key` published it, and `distractors[]` published
+                  its *complement*, which recovered the key as `{A…D} \ distractors` on all 74. The
+                  flag (`is_key`) and the rationale (`distractor_type`) stay in `item_options` for a
+                  post-answer feedback surface to read; no such surface exists (R3).
                 items:
                   type: object
                   required: [letter, text]
@@ -624,13 +590,6 @@ components:
                       pattern: '^[A-D]$'
                     text:
                       type: string
-                    type:
-                      description: >-
-                        `item_options.distractor_type`. The DDL CHECK and
-                        `assessment-item-spec.md` §"Distractor taxonomy" declare the same six
-                        values; nullable, because 126 of the corpus's 233 non-key options carry a
-                        rationale where the type would sit.
-                      enum: [l1_transfer, overgeneralization, semantic_plausible, form_alternative, register_mismatch, negative_control, null]
 
     DialogueAudio:
       type: object

@@ -268,7 +268,7 @@ node contract-check.mjs                                                         
 
 | Rota | Ação que A3/A4/A5 deve tomar |
 |---|---|
-| `/content/lessons\|packs\|listening\|listening/audio` | **manter**: é a única camada real; falta ETag/304, `problem+json` e a checagem "aprendiz nunca recebe `key`" (hoje `PackContent.items[].key` **é servido** — `content.service.ts:237`) |
+| `/content/lessons\|packs\|listening\|listening/audio` | **manter**: é a única camada real; falta ETag/304 e `problem+json`. ~~e a checagem "aprendiz nunca recebe `key`" (hoje `PackContent.items[].key` **é servido** — `content.service.ts:237`)~~ — **resolvido em A6b (2026-10-15, ADR-044)**: `items[].key`, `options[].is_key`, `options[].note`, `slots[].key` e `slots[].distractors[]` deixaram de ser servidos, e `br_pt_form` só sai quando todas as opções do item têm glosa. A linha era a medição de A0 e não é mais verdadeira |
 | `/learners/{id}/profile\|mastery\|next\|practice\|placement` | **reescrever** sobre o DB + `PgSessionContext`; trocar `:id` por identidade derivada do token (A1(h)); DTOs estritos |
 | `/auth/refresh` | **remover** ou `501` (D-3) |
 | `/health`, `/ready` | **renomear/mover** para `/healthz`,`/readyz` e implementar as checagens reais |

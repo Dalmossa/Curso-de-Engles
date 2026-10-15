@@ -312,9 +312,11 @@ const LESSON_WRONG: Json = {
 };
 
 /**
- * `pack_les_a1_alphabet_sounds_v1` (legacy_v1), item `vocab.alphabet.vowels` — the option rows
- * exactly as `item_options` holds them: a key option with `note: null` and distractors whose
- * `note` is the loader's stated no-rationale marker.
+ * `pack_les_a1_alphabet_sounds_v1` (legacy_v1), item `vocab.alphabet.vowels` — the shape
+ * `ContentService` publishes after ADR-044: every option by position, with nothing that marks the
+ * key. All four of this item's options carry a gloss in `item_options`, so all four publish
+ * `br_pt_form`; the rule is per item, and the mixed case is `PACK_CANONICAL` below, with the null
+ * spelling of it — which the schema rejects — as `PACK_WRONG`.
  */
 const PACK_LEGACY: Json = {
   pack_id: 'pack_les_a1_alphabet_sounds_v1',
@@ -329,36 +331,11 @@ const PACK_LEGACY: Json = {
       prompt: '**Vowels** in English are:',
       scoring: 'choice',
       options: [
-        {
-          letter: 'A',
-          text: 'B, C, D, F, G',
-          is_key: false,
-          br_pt_form: 'vogais / A, E, I, O, U',
-          note: 'no distractor rationale recorded (legacy_v1)',
-        },
-        {
-          letter: 'B',
-          text: '**A, E, I, O, U**',
-          is_key: true,
-          br_pt_form: 'vogais / A, E, I, O, U',
-          note: null,
-        },
-        {
-          letter: 'C',
-          text: 'A, B, C, D, E',
-          is_key: false,
-          br_pt_form: 'vogais / A, E, I, O, U',
-          note: 'no distractor rationale recorded (legacy_v1)',
-        },
-        {
-          letter: 'D',
-          text: 'X, Y, Z',
-          is_key: false,
-          br_pt_form: 'vogais / A, E, I, O, U',
-          note: 'no distractor rationale recorded (legacy_v1)',
-        },
+        { letter: 'A', text: 'B, C, D, F, G', br_pt_form: 'vogais / A, E, I, O, U' },
+        { letter: 'B', text: '**A, E, I, O, U**', br_pt_form: 'vogais / A, E, I, O, U' },
+        { letter: 'C', text: 'A, B, C, D, E', br_pt_form: 'vogais / A, E, I, O, U' },
+        { letter: 'D', text: 'X, Y, Z', br_pt_form: 'vogais / A, E, I, O, U' },
       ],
-      key: 'B',
       listening_items: [],
     },
   ],
@@ -366,11 +343,14 @@ const PACK_LEGACY: Json = {
 
 /**
  * `pack_les_a2_greetings_intro_v1` (canonical) — `grm_demonstrative_this_001` (a choice) and
- * `prn_th_voiced_001`, one of the six `asr_phoneme_match` items that carry **no options and
- * `key: null`** by design (ADR-004). That pair is why `options` has no `minItems`, why `key` is
- * `[string, 'null']`, and why the `if scoring == choice` conjunct exists: it rejects `choice`
- * with a null key while admitting `asr_phoneme_match` with one. A subset of the real pack, but
- * every column value is the real one.
+ * `prn_th_voiced_001`, one of the six `asr_phoneme_match` items that carry **no options** by
+ * design (ADR-004). That pair is why `options` has no `minItems`, and why `scoring` is the member
+ * that tells them apart: ADR-044 D1 removed the `key: null` that used to do it.
+ *
+ * The choice item is also the contract's **mixed-gloss** case: in `item_options` one row of it
+ * carries a gloss and the other three do not, so the projection publishes no `br_pt_form` at all.
+ * Publishing the rows that have one would point at the rows that do not, which is the leak the
+ * rule exists to close (ADR-044 D6b).
  */
 const PACK_CANONICAL: Json = {
   pack_id: 'pack_les_a2_greetings_intro_v1',
@@ -386,30 +366,11 @@ const PACK_CANONICAL: Json = {
         "Sarah: 'This' is used here. Complete: “___ is Marco.”",
       scoring: 'choice',
       options: [
-        { letter: 'A', text: 'This', is_key: true, br_pt_form: null, note: null },
-        {
-          letter: 'B',
-          text: 'He',
-          is_key: false,
-          br_pt_form: 'Ele é o Marco',
-          note: "PT *é* serves both introducing and describing, so the learner has no cue that EN splits them — the item's own stated cause",
-        },
-        {
-          letter: 'C',
-          text: 'There',
-          is_key: false,
-          br_pt_form: null,
-          note: 'there-introducer',
-        },
-        {
-          letter: 'D',
-          text: 'It',
-          is_key: false,
-          br_pt_form: null,
-          note: 'null-subject transfer',
-        },
+        { letter: 'A', text: 'This' },
+        { letter: 'B', text: 'He' },
+        { letter: 'C', text: 'There' },
+        { letter: 'D', text: 'It' },
       ],
-      key: 'A',
       listening_items: [],
     },
     {
@@ -420,16 +381,17 @@ const PACK_CANONICAL: Json = {
       prompt: 'Which word did you hear?',
       scoring: 'asr_phoneme_match',
       options: [],
-      key: null,
       listening_items: [],
     },
   ],
 };
 
 /**
- * A `choice` item with the `key` member **absent**. `required: [key]` is the only thing it
- * violates: `key: null` would be admitted (a null is present), which is exactly the gap the
- * `then` conjunct's `type: string` records.
+ * The legacy item with `br_pt_form` published **as `null`** on the three options that have no
+ * gloss — the shape a "publish the glosses that exist, fill the rest with null" implementation
+ * produces. `PackOption.br_pt_form` is `type: string` and not required, so the member is either
+ * absent or a gloss: the null spelling is the same disclosure with a different accent (the row
+ * that is null is the row the item's key is on), and the schema rejects it.
  */
 const PACK_WRONG: Json = {
   pack_id: 'pack_les_a1_alphabet_sounds_v1',
@@ -443,7 +405,12 @@ const PACK_WRONG: Json = {
       domain: 'vocab',
       prompt: '**Vowels** in English are:',
       scoring: 'choice',
-      options: [{ letter: 'A', text: 'B, C, D, F, G', is_key: true, note: null }],
+      options: [
+        { letter: 'A', text: 'B, C, D, F, G', br_pt_form: null },
+        { letter: 'B', text: '**A, E, I, O, U**', br_pt_form: null },
+        { letter: 'C', text: 'A, B, C, D, E', br_pt_form: 'vogais / A, E, I, O, U' },
+        { letter: 'D', text: 'X, Y, Z', br_pt_form: null },
+      ],
       listening_items: [],
     },
   ],
@@ -451,9 +418,11 @@ const PACK_WRONG: Json = {
 
 /**
  * `dlg_a1_01_first_intro` — two slots of the real six, one `gist` and one `pronunciation`
- * (`lst_pron_minpair` → `pronunciation`), with their real keys and distractor rows. The
- * transcript is the dialogue's own (the endpoint repeats it per slot; the schema asks only that
- * it be a string).
+ * (`lst_pron_minpair` → `pronunciation`), with their real option rows and **all four of them**:
+ * the key sits inside the set and carries nothing that marks it (ADR-044 D3). The old
+ * `distractors[]` published the *complement* of the key, so this fixture also loses the member
+ * whose absence used to be the answer. The transcript is the dialogue's own (the endpoint repeats
+ * it per slot; the schema asks only that it be a string).
  */
 const TRANSCRIPT = [
   "> **Ana:** Hi. I'm Ana Silva. I think I start today.",
@@ -479,25 +448,24 @@ const DIALOGUE: Json = {
     {
       slot_id: 'lst_gist_001',
       skill: 'gist',
-      key: 'B',
       transcript: TRANSCRIPT,
-      distractors: [
-        { letter: 'A', text: 'Choosing a name for a new team member', type: 'semantic_plausible' },
-        { letter: 'C', text: 'A meeting about the payments team', type: 'overgeneralization' },
-        { letter: 'D', text: 'An argument about who the manager is', type: 'semantic_plausible' },
+      options: [
+        { letter: 'A', text: 'Choosing a name for a new team member' },
+        { letter: 'B', text: "A new colleague's first day at work" },
+        { letter: 'C', text: 'A meeting about the payments team' },
+        { letter: 'D', text: 'An argument about who the manager is' },
       ],
     },
     {
       slot_id: 'lst_prn_th_001',
       skill: 'pronunciation',
-      key: 'A',
       transcript: TRANSCRIPT,
-      // The distractor taxonomy is null here: the corpus's `Notes` column holds an articulatory
-      // note where a type would sit (measured: 2638 of 2745 non-key options).
-      distractors: [
-        { letter: 'B', text: 'tree', type: null },
-        { letter: 'C', text: 'free', type: null },
-        { letter: 'D', text: 'street', type: null },
+      // The option texts are the corpus's minimal pair: the key is the only one with [θ].
+      options: [
+        { letter: 'A', text: 'three' },
+        { letter: 'B', text: 'tree' },
+        { letter: 'C', text: 'free' },
+        { letter: 'D', text: 'street' },
       ],
     },
   ],
@@ -511,7 +479,7 @@ const DIALOGUE_WRONG: Json = {
   status: 'withdrawn',
   duration_seconds: 44,
   voices: [],
-  slots: [{ slot_id: 'lst_gist_999', skill: 'gist', transcript: 'x', distractors: [] }],
+  slots: [{ slot_id: 'lst_gist_999', skill: 'gist', transcript: 'x', options: [] }],
 };
 
 /**
@@ -617,20 +585,20 @@ const CASES: ContractCase[] = [
   { schema: 'PackContent', label: 'a legacy_v1 pack', instance: PACK_LEGACY, valid: true },
   {
     schema: 'PackContent',
-    label: 'a canonical pack with an ASR item',
+    label: 'a canonical pack with an ASR item and a mixed-gloss choice item',
     instance: PACK_CANONICAL,
     valid: true,
   },
   {
     schema: 'PackContent',
-    label: 'a pack item with `choice` and no key member',
+    label: 'a pack publishing `br_pt_form: null` on a mixed-gloss item',
     instance: PACK_WRONG,
     valid: false,
-    becauseOf: 'missing required property `key`',
+    becauseOf: 'br_pt_form',
   },
   {
     schema: 'DialogueContent',
-    label: 'a shipped dialogue with keyed slots',
+    label: 'a shipped dialogue with complete slot option sets',
     instance: DIALOGUE,
     valid: true,
   },
