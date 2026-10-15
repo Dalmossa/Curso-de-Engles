@@ -8,9 +8,9 @@
  * forbids, and the absence of that capability here is the point rather than an omission.
  *
  * `subject` is the learner id (ADR-038 D7, ratified 2026-10-15): the token's `sub` is what the
- * application puts into `app.current_learner_id`, so ADR-003's policy — not a comparison of ids in
- * a controller — decides what the caller can see. D3 rejects the alternative explicitly:
- * *"Não há `if (pathId === tokenSubject)`"*.
+ * application puts into the learner context ADR-026 §1 has exactly one writer for, so ADR-003's
+ * policy — not a comparison of ids in a controller — decides what the caller can see. D3 rejects
+ * the alternative explicitly: *"Não há `if (pathId === tokenSubject)`"*.
  *
  * `scopes` is the authority for ADR-038 D2, and it is deliberately a *separate* field from
  * `subject`: §4.5 states that *"authorisation is a separate concern from authentication and is
