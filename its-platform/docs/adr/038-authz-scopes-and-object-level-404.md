@@ -201,12 +201,30 @@ sem claim estável de sujeito, D3 não tem o que colocar no `PgSessionContext`.
 - [x] A2 (A5b) — `JwtAuthGuard` global + `@Public()` (D1) e o conjunto de escopos (D2), com o
       verificador de JWKS (RS256, `iss`/`aud`/`exp`/`nbf`), o *fail closed* de uma configuração
       ausente e a fixture de JWKS de teste que ADR-013 pedia.
-- [ ] A2 — `401`/`403` no spec canônico (ADR-040) e no catálogo de problemas (ADR-034).
-- [ ] A3 — trocar as 5 rotas `/learners/*` mock por consultas sob `PgSessionContext` (D3).
-- [ ] A3 — controle negativo **obrigatório**: L2 pedindo recurso de L1 ⇒ **404**, e a query não
-      retornou linha (provar RLS, não só o status) — o par positivo é L1 lendo o próprio ⇒ 200.
-- [ ] A3 — nenhum handler learner-scoped pode rodar com credencial de owner (a armadilha medida em
-      `ADR-026`); o teste asserta o papel da conexão.
+- [x] A2 (A5b) — `401` no spec canônico (**10 de 10** operações) e `403` (**9 de 10**), com a regra
+      nova no `contract:gate` (toda operação que exige credencial tem de declarar o `401` com que
+      pode ser respondida) e controles negativos medidos. **Metade aberta, e nomeada:** o catálogo
+      de problemas de ADR-034 não existe — `docs/api/problem-types.md` continua `[ ]` no plano
+      daquele ADR — então não há tabela em que registrar `401`/`403`. O que é servido hoje cobre os
+      dois sem tabela: `type: about:blank` com `title` = frase do status (D3 de ADR-034).
+- [x] A3 (A5b) — as 5 rotas `/learners/*` deixam de ser mock: `LearnerRepository.findById` (a
+      consulta) e `LearnerScopeService.requireVisible` (o 404), ambos sob `PgSessionContext`, e os
+      quatro serviços passam `(subject, learnerId)` — uma implementação da regra, não cinco. O
+      **corpo** continua o stub: é o escopo ratificado de A5b, e P1.10/P1.11 o substituem.
+- [x] A3 (A5b) — controle negativo medido: L1 lendo o próprio ⇒ **200** e L1 pedindo L2 ⇒ **404**
+      em `profile`, `mastery`, `next`, `placement` e `practice`; um id que não existe é respondido
+      byte a byte igual a um id alheio (sem oráculo). *"A query não retornou linha"* é o que produz
+      o 404, e isso está provado nas duas direções: no unit, repositório devolvendo `null` ⇒
+      `NotFoundException`; na integração, o dono da tabela enxerga a **mesma** linha e a mesma
+      requisição é `200` — logo quem nega é a política. Evidência:
+      `tests/integration/learner-scope-rls.spec.ts`.
+- [ ] A3 — nenhum handler learner-scoped pode rodar com credencial de owner. **Medido e não
+      fechado.** O mesmo spec mede as duas metades (com `SET ROLE its_platform_app` ⇒ 404; na
+      conexão owner ⇒ 200), e `src/infrastructure/data-source.ts` conecta como `DB_USERNAME`
+      (default `postgres`), que é o dono das tabelas e portanto bypassa as políticas: a decisão do
+      caminho está correta e **inerte** na configuração que o repositório entrega. A correção é de
+      configuração/implantação (ou uma asserção no boot), não do caminho de código que A5b
+      ratificou. Aberta com as opções em `reports/api/fase-5b.md` §4.2.
 - [ ] A3/A6 — eventos de staff e de negação no log §4.6 (D6).
 
 ## References
