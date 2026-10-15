@@ -738,11 +738,21 @@ components:
     # CONSTITUTION.md §4.3 — RFC 9457 Problem Details for HTTP APIs.
     # Media type: application/problem+json
     #
-    # MIGRATION NOTE: the 9 published endpoints still declare `ErrorResponse`
-    # ({error, message, request_id}), which is not RFC 9457. `Problem` is the
-    # §4.3-mandated shape and is the target; converting the existing error
-    # responses is a BREAKING CHANGE under §4.4 and is therefore deferred and
-    # tracked as BACKLOG.md P1 (see CONSTITUTION.md §2.0.0 "What weakens").
+    # MIGRATION NOTE — updated in A4 (2026-10-14). This block used to say that "the
+    # 9 published endpoints still declare `ErrorResponse`". Measured since, that is
+    # false in both directions: **all 14** 4xx/5xx responses reference `Problem`, and
+    # no path or operation references `ErrorResponse` — the only occurrences left in
+    # this file are its own definition and these comments. The note had been written
+    # ahead of the migration and was never re-read.
+    #
+    # The document half and the served half now agree: `ProblemExceptionFilter`
+    # (src/common/filters/problem-exception.filter.ts) is the only code that builds
+    # an error body, and `npm run contract:gate` fails if an error response stops
+    # referencing `Problem`.
+    #
+    # `ErrorResponse` is kept, `deprecated: true`, because deleting a published
+    # schema is itself a §4.4 breaking change and its `Sunset` date is not yet set
+    # (a human decision — reports/api/fase-4.md §8).
     # Do not add new endpoints using ErrorResponse.
     Problem:
       type: object
@@ -784,9 +794,11 @@ components:
 
     ErrorResponse:
       deprecated: true
-      description: |
-        DEPRECATED — retained for the 9 published endpoints pending migration to `Problem`.
-        Use `Problem` for all new responses.
+      # Orphaned as of A4 (2026-10-14): measured, no path and no operation references it - all
+      # 14 error responses reference `Problem`. Kept because removing a published schema is itself
+      # a CONSTITUTION.md §4.4 breaking change, and its `Sunset` date is not yet set (a human
+      # decision; reports/api/fase-4.md §8).
+      description: 'Deprecated and unreferenced: no endpoint uses this schema. Use `Problem`.'
       type: object
       required: [error, message, request_id]
       properties:

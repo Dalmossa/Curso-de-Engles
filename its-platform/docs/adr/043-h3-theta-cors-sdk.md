@@ -153,3 +153,13 @@ métrica** (ADR-033 D4).
 - `docs/adr/034-problem-details-profile.md` (o que um SDK herdaria)
 - `its-platform/src/main.ts:22-25` (CORS atual) ·
   `its-platform/src/modules/content/content.service.ts:237` (vazamento de `key`)
+
+---
+
+## Nota de estado — A4a (2026-10-14)
+
+> Nada aqui decide H3, e o ADR continua **`Proposed`**. Duas citações deste documento envelheceram em
+> A4a, quando a configuração da aplicação saiu de `src/main.ts` para `src/app.setup.ts`
+> (`configureApp`, chamado por `main.ts`): o bloco de CORS de H3.2 e a linha de References que o cita
+> (`src/main.ts:22-25`). O bloco é **o mesmo**, palavra por palavra — mudou de arquivo, não de
+> conteúdo —, e a política de CORS segue exatamente como este ADR a descreve.

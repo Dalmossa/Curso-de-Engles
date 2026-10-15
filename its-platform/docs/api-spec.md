@@ -37,8 +37,26 @@ dated report is stale.
   **not** style choices. Renaming one is prohibited without amending
   `Curso-de-Ingles/specs/curriculum-graph-spec.md` §4.3.
 - **Errors:** `Problem` (RFC 9457) is the §4.3-mandated shape and serves
-  `application/problem+json`. `ErrorResponse` is deprecated but still referenced by the 9
-  published endpoints; converting those is a breaking change tracked in `BACKLOG.md` P1.
+  `application/problem+json`. **As of A4 (2026-10-14) that is also what the server sends:**
+  `src/common/filters/problem-exception.filter.ts` is the only code that builds an error body,
+  and `tests/integration/error-response.spec.ts` asserts the served bytes over real HTTP rather
+  than over this document. The members behave per the RFC and are worth stating once, because
+  three of them are easy to misread: `type` is `about:blank`, so `title` is the **HTTP status
+  phrase** (`"Not Found"`) and not a machine code — a client doing control flow switches on
+  `status` (§4.2.1, §3.1.2); `instance` is the request path **without** the query string, because
+  a query can carry a token (§4.5 data minimisation); and `detail` is a **string** that is
+  **omitted** when it would only repeat the title and **always omitted** on 5xx (§4.3 forbids
+  serialising internals — those go to the log with the correlation id). `request_id` is one id
+  per *request*, and it is the same value the `X-Correlation-ID` response header carries on every
+  response, errors included (§4.6). That header is **not declared in this document or in
+  `docs/api-spec.openapi.yaml`**: declaring it is a contract addition, and the header's spelling
+  is itself decided nowhere in this repository (ADR-006 prescribes Kong's `correlation-id` plugin
+  without a `header_name`, and `iac/kong/kong.yml` does not load the plugin) — an open decision,
+  listed with the canonical `type` domain in `reports/api/fase-4.md` §8. `ErrorResponse` is
+  `deprecated: true` and referenced by **no** endpoint (measured: the canonical document's only
+  occurrences are its own definition and the comments describing it; all **14** 4xx/5xx responses
+  reference `Problem`). It is kept only because deleting a published schema is itself a §4.4
+  breaking change, and its `Sunset` date — owed since P1.17 landed — is not yet set.
 - **`/auth/refresh` is out of MVP scope** and must not be implemented — the platform is a
   Resource Server (`ADR-013`, `CONSTITUTION.md` §4.5). It must be deleted from the NestJS
   routes, not merely annotated: the mock in `auth.service.ts` **emits** `{access_token}`, which

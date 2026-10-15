@@ -173,3 +173,37 @@ vira documentação morta no primeiro `throw` apressado.
 - **RFC 6901** — *JavaScript Object Notation (JSON) Pointer*
 - `its-platform/src/common/filters/problem-exception.filter.ts:34,35,39,43,46-57` ·
   `its-platform/src/main.ts:9-18` · `.opencode/agents` (herança FastAPI: não consultar para código)
+
+---
+
+## Nota de estado — A4a (2026-10-14)
+
+> Esta nota não decide nada deste ADR, e ele continua **`Proposed`**. Ela existe porque A4a mexeu no
+> **terreno que o plano cita**, e uma citação de arquivo/linha envelhecida é indistinguível de um
+> plano correto enquanto ninguém a lê — a mesma falha que o `MIGRATION NOTE` do spec canônico tinha.
+
+**O que mudou de lugar.** A configuração da aplicação saiu de `src/main.ts` e vive em
+`src/app.setup.ts` (`configureApp`) — o `ValidationPipe` inclusive. `main.ts` agora só chama a função;
+`tests/integration/error-response.spec.ts` monta a aplicação pela mesma chamada, e
+`npm run contract:gate` lê os dois arquivos (§4.4, controles N-16/N-17/N-19). As citações
+`src/main.ts:9-18` do Contexto, de D5 e de References apontam para o arquivo antigo.
+
+**O que do plano já está feito, e por qual evidência** (A4a implementa só o que **já era lei** —
+spec canônica + §4.3/§4.6 + RFC 9457 — e não ratifica nada deste ADR):
+
+| item | estado após A4a |
+|---|---|
+| D2 — `title` humano e estável por tipo | **feito**: a frase do status HTTP, que é o que RFC 9457 §4.2.1 exige quando `type` é `about:blank` |
+| D3 — `about:blank` | **feito**: o `type` de terceiro (`httpstatuses.com/{status}`) saiu |
+| D4 — media type | **feito**: `application/problem+json`, o único corpo de erro da plataforma |
+| D6 — sem interno na resposta | **feito, com controle negativo**: 5xx não carrega `detail` nenhum e a mensagem interna vai para o log com o correlation id (`tests/unit/…filter.spec.ts`, `tests/integration/error-response.spec.ts`) |
+| `trace_id` a partir do contexto (§4.6) | **feito como `request_id` = o id da requisição** (um por requisição, não um por erro), ecoado no header `X-Correlation-ID` |
+| D1 — domínio canônico das URIs de `type` | **não decidido, e é o único bloqueio**: ato humano |
+| D2 — `code` | **não feito**: depende de D1 |
+| D5 — `errors[]` com JSON Pointer | **não feito**: depende de D1; hoje um array de validação é juntado com `"; "` em `detail`, e o teste HTTP afirma que **não** existe membro `errors` — o recibo do que está aberto |
+| D7 — catálogo `problem-types.md` e o gate | **não feito**: depende de D1 |
+
+**Um item do plano ficou sem objeto:** *"corrigir `tests/contract/endpoints.spec.ts:59`"* — A3
+removeu esse arquivo (subsumido pelo gate), e a obrigação que só ele cobria (o media type dos erros)
+está no gate e no teste de integração. Quando D1 for decidido, o plano deve ser rebaselinado contra o
+estado real em vez de executado linha a linha.
