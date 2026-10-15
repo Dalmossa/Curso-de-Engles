@@ -34,7 +34,12 @@ import {
   ContentRepository,
   type DialogueRow,
 } from '../../src/infrastructure/repositories/content.repository.js';
-import { ContentService } from '../../src/modules/content/content.service.js';
+import {
+  ContentService,
+  type DialogueContent,
+  type LessonContent,
+  type PackContent,
+} from '../../src/modules/content/content.service.js';
 import { HmacAudioUrlSigner } from '../../src/infrastructure/audio/hmac-audio-url-signer.js';
 
 const CONTENT_ROOT = process.env['CONTENT_REPO_PATH'] ?? join(process.cwd(), '..');
@@ -318,6 +323,167 @@ describe('Content API over the real catalogue (P1.12)', () => {
     it('returns the same null for `shadow_only` as for an unknown id', async () => {
       await expect(service.getDialogue(SHADOW_ONLY_ID)).resolves.toBeNull();
       await expect(service.getDialogue('dlg_zz_not_a_dialogue')).resolves.toBeNull();
+    });
+  });
+
+  /**
+   * **A6 — the answer key the catalogue serves. This block pins the defect; it does not approve it.**
+   *
+   * R6 of the plan is unconditional: *"nunca expor θ marcado como não-reportável — nem gabaritos,
+   * keys, nem parâmetros de item"* (`docs/adr/043-h3-theta-cors-sdk.md`, R1's table). Measured on
+   * 2026-10-15 over the loaded catalogue, all three `/content/*` payloads publish the key of
+   * everything they publish, with no exception — and two of the six channels are **derived**: they
+   * still hand the key over after `key` and `is_key` alone are removed.
+   *
+   * | Route | Member | Measured |
+   * |---|---|---|
+   * | `GET /content/packs/{id}` | `items[].key` | 841 of the 841 `scoring: 'choice'` items (the other 6 are `asr_phoneme_match` — `null` by design, ADR-004) |
+   * | `GET /content/packs/{id}` | `items[].options[].is_key` | 841 options — exactly one per scorable item |
+   * | `GET /content/packs/{id}` | `items[].options[].note` *(derived)* | `null` on **841 of 841** key options and on **0 of 2523** distractors — `note === null` *is* the key |
+   * | `GET /content/listening/{id}` | `slots[].key` | 74 of 74 slots, across all 13 shipped dialogues |
+   * | `GET /content/listening/{id}` | `slots[].distractors[]` *(derived)* | on **74 of 74** slots the key is the letter **absent** from the distractor set (the set is closed at A–D) |
+   * | `GET /content/lessons/{id}` | `phases[].markdown` | 122 of 122 lessons — the authored `**Key:** B` line, and the correct row in bold |
+   *
+   * The contract declares `key`, `is_key` and `slots[].key` **required** (`api-spec.openapi.yaml`
+   * lines 416, 538, 589), and **ADR-027 (Accepted)** §2 says `is_key` "marks the key" while its
+   * *Neutral* consequences say "the pack's consumer needs `is_key` and `scoring`, which are
+   * published". The exposure is **decided**, not accidental; closing it amends an Accepted ADR and
+   * breaks the published shape (`CONSTITUTION.md` §4.4), so it is a human decision (R9) and the
+   * record is **ADR-044 (Proposed)**.
+   *
+   * Why pin a defect at all: the fix is a contract change, and the only way to know it is complete
+   * is to have today's state asserted member by member — including the two derived channels, which
+   * a naive removal of `key`/`is_key` leaves intact. When ADR-044 lands these assertions are
+   * **inverted** (the replacement text is in that ADR's implementation plan) and the negative
+   * control is that reverting the fix turns them red again. Nothing in this repository reads any of
+   * them: scoring goes `ContentRepository` → `item_options.is_key` in the database, and
+   * `POST /learners/{id}/practice` takes a `response`, never a `key`.
+   */
+  describe('the answer key the `/content/*` payloads serve (A6 — pinned defect, ADR-044 Proposed)', () => {
+    let packs: PackContent[];
+    let dialogues: DialogueContent[];
+    let lessons: LessonContent[];
+    /**
+     * The key of every item, read from `items.key` — **the table is the oracle, never the
+     * payload.** A test that takes which option is the key from the payload goes vacuous the
+     * moment `options[].is_key` is withdrawn (reproduced: the first draft of the `note` assertion
+     * below failed for the wrong reason), while the channel it is meant to pin stays open.
+     */
+    let keyByItem: Map<string, string | null>;
+
+    beforeAll(async () => {
+      const idsOf = async (table: string): Promise<string[]> => {
+        const rows = (await context.dataSource.query(`SELECT id FROM ${table} ORDER BY id`)) as Array<{
+          id: string;
+        }>;
+        return rows.map(row => row.id);
+      };
+
+      packs = (await Promise.all((await idsOf('packs')).map(id => service.getPack(id)))).filter(
+        (pack): pack is PackContent => pack !== null,
+      );
+      dialogues = (await Promise.all((await idsOf('dialogues')).map(id => service.getDialogue(id)))).filter(
+        (dialogue): dialogue is DialogueContent => dialogue !== null,
+      );
+      lessons = (await Promise.all((await idsOf('lessons')).map(id => service.getLesson(id)))).filter(
+        (lesson): lesson is LessonContent => lesson !== null,
+      );
+
+      const keyRows = (await context.dataSource.query(`SELECT id, key FROM items`)) as Array<{
+        id: string;
+        key: string | null;
+      }>;
+      keyByItem = new Map(keyRows.map(row => [row.id, row.key]));
+    }, 300_000);
+
+    const choiceItems = () => packs.flatMap(pack => pack.items).filter(item => item.scoring === 'choice');
+
+    it('serves `items[].key` for every item the pack can score', () => {
+      const scorable = choiceItems();
+      expect(scorable.length).toBeGreaterThan(0);
+      expect(scorable.filter(item => item.key === null).map(item => item.item_id)).toEqual([]);
+      // And it is the stored letter, not some other letter: the payload agrees with `items.key`.
+      const disagreesWithTheTable = scorable.filter(item => item.key !== keyByItem.get(item.item_id));
+      expect(disagreesWithTheTable.map(item => item.item_id)).toEqual([]);
+    });
+
+    it('serves `options[].is_key` — exactly one key option per scorable item, on the table key', () => {
+      const scorable = choiceItems();
+      const notExactlyOne = scorable.filter(item => item.options.filter(option => option.is_key).length !== 1);
+      expect(notExactlyOne.map(item => item.item_id)).toEqual([]);
+
+      const flaggedButNotTheKey = scorable.filter(
+        item => item.options.find(option => option.is_key)?.letter !== keyByItem.get(item.item_id),
+      );
+      expect(flaggedButNotTheKey.map(item => item.item_id)).toEqual([]);
+
+      // Not part of the leak, but load-bearing for the fix: the option set is *complete*, so
+      // withdrawing the flag leaves a set a client can still render. (Measured 2026-10-15: all
+      // 841 scorable items serve four options, lettered A–D, and `item_options` holds four rows
+      // for each of the 74 listening slots too — the key plus three distractors.)
+      const notFourAbcd = choiceItems().filter(
+        item => item.options.length !== 4 || item.options.map(option => option.letter).join('') !== 'ABCD',
+      );
+      expect(notFourAbcd.map(item => item.item_id)).toEqual([]);
+    });
+
+    it('hands the key over through `options[].note` too, which is null on exactly the key options', () => {
+      const scorable = choiceItems();
+      const keyOption = scorable.map(item => ({
+        item_id: item.item_id,
+        keyNote: item.options.find(option => option.letter === keyByItem.get(item.item_id))?.note,
+        distractorNotes: item.options
+          .filter(option => option.letter !== keyByItem.get(item.item_id))
+          .map(option => option.note),
+      }));
+      expect(keyOption.length).toBeGreaterThan(0);
+
+      expect(keyOption.filter(entry => entry.keyNote !== null).map(entry => entry.item_id)).toEqual([]);
+      expect(keyOption.filter(entry => entry.distractorNotes.includes(null)).map(entry => entry.item_id)).toEqual([]);
+    });
+
+    it('does not leak through `options[].br_pt_form`, which separates no option from another', () => {
+      const options = choiceItems().flatMap(item =>
+        item.options.map(option => ({ isKey: option.letter === keyByItem.get(item.item_id), form: option.br_pt_form })),
+      );
+      // Measured: null on 43 of 841 key options and on 48 of 2523 distractors. Both sides carry
+      // nulls, so a client cannot read the key off it — recorded here so a later reader does not
+      // "fix" a field that is not a channel.
+      expect(options.filter(option => option.isKey && option.form === null).length).toBeGreaterThan(0);
+      expect(options.filter(option => !option.isKey && option.form === null).length).toBeGreaterThan(0);
+    });
+
+    it('serves `slots[].key`, equal to the table value', () => {
+      const slots = dialogues.flatMap(dialogue => dialogue.slots);
+      expect(slots.length).toBeGreaterThan(0);
+      expect(slots.filter(slot => slot.key === null).map(slot => slot.slot_id)).toEqual([]);
+      expect(slots.filter(slot => slot.key !== keyByItem.get(slot.slot_id)).map(slot => slot.slot_id)).toEqual([]);
+    });
+
+    it('hands the key over through `slots[].distractors[]` too — the letter the slot distractor set omits', () => {
+      const slots = dialogues.flatMap(dialogue => dialogue.slots);
+      // The second channel, and the reason `slots[].key` alone is not the fix: `distractors[]` is
+      // the *complement* of the key, so withdrawing the member leaves the key recoverable as
+      // {A…D} \ distractors. (Measured: true for all 74 shipped slots; none has an empty set.)
+      const keyAbsentFromItsDistractors = slots.filter(slot =>
+        slot.distractors.every(distractor => distractor.letter !== keyByItem.get(slot.slot_id)),
+      );
+      expect(keyAbsentFromItsDistractors.length).toBe(slots.length);
+      expect(slots.filter(slot => slot.distractors.length !== 3).map(slot => slot.slot_id)).toEqual([]);
+    });
+
+    it('serves the authored key inside the lesson body itself', () => {
+      const withKey = lessons.filter(lesson =>
+        lesson.phases.some(phase => phase.markdown.includes('**Key:**') || phase.markdown.includes('✓')),
+      );
+      expect(lessons.length).toBeGreaterThan(0);
+      expect(withKey.length).toBe(lessons.length);
+
+      const markdown = (lessons.find(lesson => lesson.lesson_id === 'les_a1_alphabet_sounds')?.phases ?? [])
+        .map(phase => phase.markdown)
+        .join('\n');
+      expect(markdown).toContain('| B | **A, E, I, O, U** |');
+      expect(markdown).toContain('**Key:** B');
     });
   });
 });
