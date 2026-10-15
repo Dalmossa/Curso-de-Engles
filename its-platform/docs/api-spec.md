@@ -57,10 +57,34 @@ dated report is stale.
   occurrences are its own definition and the comments describing it; all **14** 4xx/5xx responses
   reference `Problem`). It is kept only because deleting a published schema is itself a §4.4
   breaking change, and its `Sunset` date — owed since P1.17 landed — is not yet set.
-- **`/auth/refresh` is out of MVP scope** and must not be implemented — the platform is a
-  Resource Server (`ADR-013`, `CONSTITUTION.md` §4.5). It must be deleted from the NestJS
-  routes, not merely annotated: the mock in `auth.service.ts` **emits** `{access_token}`, which
-  is the violation itself. The deletion and its §4.4 deprecation path are ADR-038 / ADR-043.
+- **Request bodies reject what they do not declare** — `CONSTITUTION.md` §4.5 mandates a global
+  `ValidationPipe` with `whitelist` and `forbidNonWhitelisted`, so an undeclared member is
+  **rejected**, never ignored. Until A5a (2026-10-15) the pipe was configured but no request DTO
+  existed, so every `@Body()` was `any`, the pipe had no metatype to act on, and the rule never
+  fired (A0 measured it: `docs/api/inventario.md`; `BACKLOG.md` P0.6's own acceptance —
+  *"unknown field → 400, not silent strip"* — has been marked DONE since 2026-10-07). The two
+  published request bodies are now enforced by `DiagnosticRequestDto` and `PracticeSubmissionDto`
+  (`src/modules/*/dto/`), and both schemas declare `additionalProperties: false` at every level the
+  pipe reaches — the body root, `prior_estimate`, `responses[]`, and the object branch of
+  `response`, which `response-shape.ts` validates because a `whitelist` cannot reach inside a
+  `oneOf`. The same declaration is required of any future request schema by `npm run contract:gate`
+  (controls N-20/N-21), because OpenAPI's default is the opposite of §4.5: a schema that stays
+  silent documents a tolerance the server does not have. `tests/integration/request-validation.spec.ts`
+  asserts the served `400` over real HTTP at every one of those levels.
+- **`/auth/refresh` is out of MVP scope.** ADR-013's binding half is explicit — *"must not be
+  implemented"*, and *"the path remains in the OpenAPI document … annotated rather than deleted
+  because removing a published path is a breaking change under §4.4, and this record is not the
+  place to authorise one."* **Since A5a (2026-10-15) that is what the server does**: the method
+  answers `501`, and `AuthService` — whose only job was to mint `{access_token: 'mock_access_token'}`
+  — is deleted, so no token-shaped value can be issued (`CONSTITUTION.md` §4.5). This page used to
+  say the route *"must be deleted from the NestJS routes, not merely annotated"* and attributed the
+  deletion to ADR-038 / ADR-043; measured, neither document mentions the endpoint. What A5a took
+  from that sentence is the part whose violation was the mock's **emission**: emitting a token is
+  the violation, and it is gone. **Removing the route** is the other option of
+  `docs/api/inventario.md` D-3 and remains open — the contract publishes the path, so removing it is
+  a §4.4-breaking change that ADR-013 declines to authorise and that A5a does not take either. The
+  `501` and the absence of any `token` in the body are asserted over real HTTP by
+  `tests/integration/auth-refresh.spec.ts`.
 
 - **All schemas** are derived from specs in `Curso-de-Ingles/specs/`:
   - `item_id` prefix ↔ skill namespace → `assessment-item-spec.md` §1.2

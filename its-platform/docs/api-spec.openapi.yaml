@@ -92,6 +92,12 @@ components:
     # ============================================================
     DiagnosticRequest:
       type: object
+      description: >-
+        Body of `POST /learners/{learner_id}/placement`. A member not declared here is **rejected**
+        (`400`), not ignored: `CONSTITUTION.md` §4.5 mandates a `ValidationPipe` with `whitelist` and
+        `forbidNonWhitelisted`, and `DiagnosticRequestDto` enforces this schema. The contract gate
+        refuses a request schema that omits `additionalProperties: false` (A5a).
+      additionalProperties: false
       required: [learner_id, mode]
       properties:
         learner_id:
@@ -105,6 +111,7 @@ components:
         prior_estimate:
           type: object
           description: Optional prior θ estimate for warm start
+          additionalProperties: false
           properties:
             theta:
               type: number
@@ -212,6 +219,14 @@ components:
     # ============================================================
     PracticeSubmission:
       type: object
+      description: >-
+        Body of `POST /learners/{learner_id}/practice`. A member not declared here is **rejected**
+        (`400`), not ignored — including inside `responses[]` and inside the object branch of
+        `response`, which `response-shape.ts` validates because a `whitelist` cannot reach into a
+        `oneOf`. `CONSTITUTION.md` §4.5 mandates that rejection; `PracticeSubmissionDto` enforces
+        this schema. The contract gate refuses a request schema that omits
+        `additionalProperties: false` (A5a).
+      additionalProperties: false
       required: [learner_id, pack_id, responses]
       properties:
         learner_id:
@@ -225,6 +240,7 @@ components:
           minItems: 1
           items:
             type: object
+            additionalProperties: false
             required: [item_id, response, response_time_ms]
             properties:
               item_id:
@@ -236,6 +252,7 @@ components:
                     description: Selected option letter (A, B, C, D)
                   - type: object
                     description: Production response (ASR transcript, etc.)
+                    additionalProperties: false
                     properties:
                       transcript:
                         type: string
