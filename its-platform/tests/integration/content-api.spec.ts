@@ -13,10 +13,15 @@
  *   * **§3a — the 11 unscorable slots.** `content-check.mjs` reports that the corpus marks an
  *     item's key with `✓` in one of two table columns; the loader read only one, so 11 shipped
  *     slots loaded with `items.key IS NULL`. The regression test below calls `getDialogue` for
- *     their four dialogues and requires each of the 11 to arrive with a non-null key.
+ *     their four dialogues and requires each of the 11 to arrive with its four options served —
+ *     the key included and, since ADR-044, unmarked.
  *   * **§3 — the same 404 for "not shipped" and "unknown".** The serving rule lives in the
  *     service (the repository is a pure read), so both cases are asserted at this level: an
  *     unknown id and a `shadow_only` row both return `null`.
+ *
+ * `R6`/ADR-044 adds a third obligation this file is the only place to assert: **nothing the three
+ * payloads serve is a function of the answer key.** The final block states that predicate on the
+ * whole loaded catalogue (see its header for the three conjuncts and the six channels they close).
  *
  * Nothing is mocked. The only fabricated rows are the two the corpus cannot supply — a
  * `shadow_only` dialogue and a dialogue at the 45 s floor — and they are inserted directly into
@@ -39,6 +44,7 @@ import {
   type DialogueContent,
   type LessonContent,
   type PackContent,
+  type PackOptionContent,
 } from '../../src/modules/content/content.service.js';
 import { HmacAudioUrlSigner } from '../../src/infrastructure/audio/hmac-audio-url-signer.js';
 
@@ -53,9 +59,10 @@ function testSigner(): HmacAudioUrlSigner {
 }
 
 /**
- * ADR-027 §3a's 11 slots, grouped by the dialogue that owns them. Before the fix each loaded
- * with `items.key IS NULL` and no option flagged `is_key` — present in the API response, and
- * unscorable.
+ * ADR-027 §3a's 11 slots, grouped by the dialogue that owns them. Before that fix each loaded
+ * with `items.key IS NULL` and no option flagged `is_key`, which made it unscorable. ADR-044 then
+ * took the key out of the payload, so this regression's evidence is the table plus the *shape* of
+ * what is served: a slot whose key failed to load yields three options, not four.
  */
 const PREVIOUSLY_UNSCORABLE_SLOTS: Record<string, string[]> = {
   dlg_a2_05_touch_base: ['lst_inference_007'],
@@ -181,22 +188,30 @@ describe('Content API over the real catalogue (P1.12)', () => {
         domain: 'vocab',
         prompt: '**Vowels** in English are:',
         scoring: 'choice',
-        key: 'B',
         listening_items: [],
       });
+      // A6/R6 (ADR-044): no `key` member, and no `is_key`/`note` on the options. The correct option
+      // is identified **in the table**, which is where scoring reads it — the payload serves the
+      // complete set, unmarked.
+      expect(vowels).not.toHaveProperty('key');
       expect(vowels?.options.map(option => option.letter)).toEqual(['A', 'B', 'C', 'D']);
-      expect(vowels?.options.filter(option => option.is_key)).toHaveLength(1);
-      expect(vowels?.options.find(option => option.is_key)?.text).toBe('**A, E, I, O, U**');
-      // The key option's `note` is null — the column's real value, and the value that made the
-      // published `type: string` unsatisfiable (see the contract spec).
-      expect(vowels?.options.find(option => option.is_key)?.note).toBeNull();
+
+      const stored = (await context.dataSource.query(`SELECT key FROM items WHERE id = $1`, [
+        'vocab.alphabet.vowels',
+      ])) as Array<{ key: string | null }>;
+      expect(stored[0]?.key).toBe('B');
+      expect(vowels?.options.find(option => option.letter === stored[0]?.key)?.text).toBe('**A, E, I, O, U**');
+
+      // `br_pt_form` survives where it is uniform within the item (ADR-044 D6(b)): all four
+      // options of this one carry the same gloss, so the member stays for all four.
       for (const option of vowels?.options ?? []) {
-        if (!option.is_key) expect(option.note).not.toBeNull();
+        expect(option).not.toHaveProperty('is_key');
+        expect(option).not.toHaveProperty('note');
         expect(option.br_pt_form).toBe('vogais / A, E, I, O, U');
       }
     });
 
-    it('serves a canonical pack, including an ASR item with no options and a null key', async () => {
+    it('serves a canonical pack: an ASR item with no options, and a choice item without a key', async () => {
       const pack = await service.getPack('pack_les_a2_greetings_intro_v1');
       expect(pack?.schema_version).toBe('canonical');
 
@@ -204,13 +219,20 @@ describe('Content API over the real catalogue (P1.12)', () => {
       expect(asr).toMatchObject({
         scoring: 'asr_phoneme_match',
         skill: 'pronunciation',
-        key: null,
       });
       expect(asr?.options).toEqual([]);
+      // `scoring` keeps carrying the distinction ADR-027 §2 needed — an item with no options is
+      // `asr_phoneme_match` by design, not broken (ADR-004). What goes away is the second signal,
+      // the null `key` (ADR-044 D1).
+      expect(asr).not.toHaveProperty('key');
 
       const choice = pack?.items.find(item => item.item_id === 'grm_demonstrative_this_001');
-      expect(choice).toMatchObject({ scoring: 'choice', key: 'A', skill: 'grammar' });
-      expect(choice?.options.find(option => option.is_key)?.text).toBe('This');
+      expect(choice).toMatchObject({ scoring: 'choice', skill: 'grammar' });
+      expect(choice).not.toHaveProperty('key');
+      expect(choice?.options.map(option => option.letter)).toEqual(['A', 'B', 'C', 'D']);
+      // The correct option is in the served set, and it is not marked: exactly one option reads
+      // 'This', and the payload says nothing about which one it is.
+      expect(choice?.options.filter(option => option.text === 'This')).toHaveLength(1);
     });
 
     it('returns null for an unknown pack id', async () => {
@@ -242,9 +264,14 @@ describe('Content API over the real catalogue (P1.12)', () => {
       const storedTranscript = stored[0]?.transcript;
       expect(typeof storedTranscript).toBe('string');
       expect(dialogue?.slots).toHaveLength(6);
+      expect(dialogue?.slots).toHaveLength(6);
       for (const slot of dialogue?.slots ?? []) {
         expect(slot.transcript).toBe(storedTranscript);
-        expect(slot.key).toMatch(/^[A-D]$/);
+        // A6/R6 (ADR-044 D3): no `key` member and no `distractors[]` — the payload serves the
+        // complete option set, the key option included and unmarked.
+        expect(slot).not.toHaveProperty('key');
+        expect(slot).not.toHaveProperty('distractors');
+        expect(slot.options.map(option => option.letter)).toEqual(['A', 'B', 'C', 'D']);
       }
 
       expect(dialogue?.slots.map(slot => slot.slot_id)).toEqual([
@@ -260,17 +287,37 @@ describe('Content API over the real catalogue (P1.12)', () => {
       expect(dialogue?.slots.find(slot => slot.slot_id === 'lst_gist_001')?.skill).toBe('gist');
 
       const gist = dialogue?.slots.find(slot => slot.slot_id === 'lst_gist_001');
-      // Distractors are the non-key options, by position: the key is B, so A, C, D remain.
-      expect(gist?.distractors.map(distractor => distractor.letter)).toEqual(['A', 'C', 'D']);
-      expect(gist?.distractors.find(distractor => distractor.letter === 'C')?.type).toBe(
-        'overgeneralization',
+      // The served set is the table's set, complete and in order — the key option included, with
+      // nothing on the payload saying which one it is (ADR-044 D3: no `key`, no `distractors[]`).
+      const gistOptions = (await context.dataSource.query(
+        `SELECT position, option_text, is_key, distractor_type FROM item_options
+         WHERE item_id = $1 ORDER BY position`,
+        ['lst_gist_001'],
+      )) as Array<{ position: number; option_text: string; is_key: boolean; distractor_type: string | null }>;
+      expect(gistOptions).toHaveLength(4);
+      expect(gist?.options.map(option => option.text)).toEqual(gistOptions.map(row => row.option_text));
+      expect(gist?.options.map(option => option.letter)).toEqual(
+        gistOptions.map(row => 'ABCD'.charAt(row.position - 1)),
       );
+      // The flag and the rationale stay in the table: they are the material a *post-answer*
+      // feedback surface would read, and that surface does not exist (ADR-044 D2/D3, R3).
+      expect(gistOptions.filter(row => row.is_key)).toHaveLength(1);
+      expect(gistOptions.filter(row => row.distractor_type === 'overgeneralization')).toHaveLength(1);
     });
 
-    it('serves a non-null key for each of the 11 slots that used to load unscorable (ADR-027 §3a)', async () => {
+    it('keeps a scored key for each of the 11 slots that used to load unscorable (ADR-027 §3a)', async () => {
       const expected = Object.entries(PREVIOUSLY_UNSCORABLE_SLOTS);
       const total = expected.reduce((count, [, ids]) => count + ids.length, 0);
       expect(total).toBe(11);
+
+      // The regression's evidence moves with the fix (ADR-044): the payload no longer says which
+      // option is correct, so the proof is (i) the table and (ii) the *completeness* of the served
+      // set — a slot whose key had failed to load has three options, not four.
+      const rows = (await context.dataSource.query(`SELECT id, key FROM items WHERE id = ANY($1)`, [
+        expected.flatMap(([, ids]) => ids),
+      ])) as Array<{ id: string; key: string | null }>;
+      expect(rows).toHaveLength(11);
+      for (const row of rows) expect(row.key).toMatch(/^[A-D]$/);
 
       for (const [dialogueId, slotIds] of expected) {
         const dialogue = await service.getDialogue(dialogueId);
@@ -278,16 +325,9 @@ describe('Content API over the real catalogue (P1.12)', () => {
         for (const slotId of slotIds) {
           const slot = dialogue?.slots.find(candidate => candidate.slot_id === slotId);
           expect(slot).toBeDefined();
-          expect(slot?.key).toMatch(/^[A-D]$/);
+          expect(slot?.options.map(option => option.letter)).toEqual(['A', 'B', 'C', 'D']);
         }
       }
-
-      // And the loader wrote them: the read path is not compensating for a missing column.
-      const rows = (await context.dataSource.query(`SELECT id, key FROM items WHERE id = ANY($1)`, [
-        expected.flatMap(([, ids]) => ids),
-      ])) as Array<{ id: string; key: string | null }>;
-      expect(rows).toHaveLength(11);
-      for (const row of rows) expect(row.key).toMatch(/^[A-D]$/);
     });
 
     it('returns null for an unknown dialogue id', async () => {
@@ -327,47 +367,43 @@ describe('Content API over the real catalogue (P1.12)', () => {
   });
 
   /**
-   * **A6 — the answer key the catalogue serves. This block pins the defect; it does not approve it.**
+   * **R6/A6 — nothing the `/content/*` payloads serve is a function of the answer key.**
    *
-   * R6 of the plan is unconditional: *"nunca expor θ marcado como não-reportável — nem gabaritos,
-   * keys, nem parâmetros de item"* (`docs/adr/043-h3-theta-cors-sdk.md`, R1's table). Measured on
-   * 2026-10-15 over the loaded catalogue, all three `/content/*` payloads publish the key of
-   * everything they publish, with no exception — and two of the six channels are **derived**: they
-   * still hand the key over after `key` and `is_key` alone are removed.
+   * A6a wrote this block to *pin the defect*: seven channels over three routes, three of them
+   * derived, so that the fix had an exact surface to invert. `docs/adr/044` is `Accepted`
+   * (2026-10-15) and A6c inverted it, so what is asserted now is the closure. The predicate is
+   * D6's, and all three conjuncts are load-bearing — each one covers a channel the others miss:
    *
-   * | Route | Member | Measured |
+   * | # | Conjunct | The channel that makes it necessary |
    * |---|---|---|
-   * | `GET /content/packs/{id}` | `items[].key` | 841 of the 841 `scoring: 'choice'` items (the other 6 are `asr_phoneme_match` — `null` by design, ADR-004) |
-   * | `GET /content/packs/{id}` | `items[].options[].is_key` | 841 options — exactly one per scorable item |
-   * | `GET /content/packs/{id}` | `items[].options[].note` *(derived)* | `null` on **841 of 841** key options and on **0 of 2523** distractors — `note === null` *is* the key |
-   * | `GET /content/listening/{id}` | `slots[].key` | 74 of 74 slots, across all 13 shipped dialogues |
-   * | `GET /content/listening/{id}` | `slots[].distractors[]` *(derived)* | on **74 of 74** slots the key is the letter **absent** from the distractor set (the set is closed at A–D) |
-   * | `GET /content/lessons/{id}` | `phases[].markdown` | 122 of 122 lessons — the authored `**Key:** B` line, and the correct row in bold |
+   * | (a) | no member of the projection is a function of the key | `items[].key` (841/841 scorable items), `options[].is_key` (841 options), `options[].note` — `null` on 841/841 key options and 0/2523 distractors |
+   * | (b) | the options of one item are isomorphic: same members, same `null` pattern | `br_pt_form`, the seventh channel — 17 items had exactly one gloss-less option and it was the key in all 17 (34 items mixed gloss and no gloss inside the item) |
+   * | (c) | the served letter set is the item's complete set | `slots[].distractors[]` — the complement of the key on 74/74 slots |
    *
-   * The contract declares `key`, `is_key` and `slots[].key` **required** (`api-spec.openapi.yaml`
-   * lines 416, 538, 589), and **ADR-027 (Accepted)** §2 says `is_key` "marks the key" while its
-   * *Neutral* consequences say "the pack's consumer needs `is_key` and `scoring`, which are
-   * published". The exposure is **decided**, not accidental; closing it amends an Accepted ADR and
-   * breaks the published shape (`CONSTITUTION.md` §4.4), so it is a human decision (R9) and the
-   * record is **ADR-044 (Proposed)**.
+   * "All three are load-bearing" is not rhetoric: the negative control measured it. With
+   * `items[].key`, `options[].is_key` and `slots[].key` withdrawn — the plan's *"one line of
+   * `select`"* — 4 of the 7 pinned assertions stayed green, because `note`, the distractor
+   * complement and the lesson body are independent channels (`docs/adr/044` §3).
    *
-   * Why pin a defect at all: the fix is a contract change, and the only way to know it is complete
-   * is to have today's state asserted member by member — including the two derived channels, which
-   * a naive removal of `key`/`is_key` leaves intact. When ADR-044 lands these assertions are
-   * **inverted** (the replacement text is in that ADR's implementation plan) and the negative
-   * control is that reverting the fix turns them red again. Nothing in this repository reads any of
-   * them: scoring goes `ContentRepository` → `item_options.is_key` in the database, and
-   * `POST /learners/{id}/practice` takes a `response`, never a `key`.
+   * The oracle is the **table** (`items.key`, `item_options.is_key`), never the payload. A test
+   * that learns which option is correct *from the payload* goes vacuous exactly when the payload
+   * stops saying it — which is the state being asserted, so it would pass for the wrong reason.
+   * The first draft of A6a did exactly that (it read `option.is_key`); ADR-044 §3 reproduces it.
+   *
+   * One member is deliberately still served, and it is asserted below so that a later reader does
+   * not "fix" a decision: the authored lesson body keeps its key (D5 — the lesson is study
+   * material, not the assessment payload). Scoring never reads any of this: it goes
+   * `ContentRepository` → `item_options.is_key` in the database, and
+   * `POST /learners/{id}/practice` takes a `response`, never a key.
    */
-  describe('the answer key the `/content/*` payloads serve (A6 — pinned defect, ADR-044 Proposed)', () => {
+  describe('R6 — nothing the `/content/*` payloads serve is a function of the answer key (A6, ADR-044)', () => {
     let packs: PackContent[];
     let dialogues: DialogueContent[];
     let lessons: LessonContent[];
     /**
      * The key of every item, read from `items.key` — **the table is the oracle, never the
-     * payload.** A test that takes which option is the key from the payload goes vacuous the
-     * moment `options[].is_key` is withdrawn (reproduced: the first draft of the `note` assertion
-     * below failed for the wrong reason), while the channel it is meant to pin stays open.
+     * payload.** A6a's first draft read `option.is_key` instead and went vacuous the moment the
+     * member was withdrawn, i.e. exactly when the channel it existed to pin was still open.
      */
     let keyByItem: Map<string, string | null>;
 
@@ -398,81 +434,158 @@ describe('Content API over the real catalogue (P1.12)', () => {
 
     const choiceItems = () => packs.flatMap(pack => pack.items).filter(item => item.scoring === 'choice');
 
-    it('serves `items[].key` for every item the pack can score', () => {
+    it('carries no `key` on an item and no `is_key` or `note` on an option (D6a)', () => {
       const scorable = choiceItems();
       expect(scorable.length).toBeGreaterThan(0);
-      expect(scorable.filter(item => item.key === null).map(item => item.item_id)).toEqual([]);
-      // And it is the stored letter, not some other letter: the payload agrees with `items.key`.
-      const disagreesWithTheTable = scorable.filter(item => item.key !== keyByItem.get(item.item_id));
-      expect(disagreesWithTheTable.map(item => item.item_id)).toEqual([]);
+
+      expect(scorable.filter(item => 'key' in item).map(item => item.item_id)).toEqual([]);
+      const options = scorable.flatMap(item => item.options);
+      expect(options.filter(option => 'is_key' in option)).toEqual([]);
+      expect(options.filter(option => 'note' in option)).toEqual([]);
+
+      // The names do not come back under another spelling: the projection's members are exactly
+      // these three, and `br_pt_form` is the only conditional one (the next test pins the rule).
+      const memberNames = new Set(options.flatMap(option => Object.keys(option)));
+      expect([...memberNames].sort()).toEqual(['br_pt_form', 'letter', 'text']);
     });
 
-    it('serves `options[].is_key` — exactly one key option per scorable item, on the table key', () => {
+    it('makes the options of one item isomorphic — same members, same `null` pattern (D6b)', () => {
+      /** Members present, and whether each is null — the two halves of "isomorphic". */
+      const shapeOf = (option: PackOptionContent): string =>
+        Object.entries(option)
+          .sort(([a], [b]) => (a < b ? -1 : 1))
+          .map(([name, value]) => `${name}=${value === null ? 'null' : 'value'}`)
+          .join(',');
+
+      const nonIsomorphic = choiceItems()
+        .map(item => ({ item_id: item.item_id, shapes: new Set(item.options.map(shapeOf)) }))
+        .filter(entry => entry.shapes.size !== 1);
+      expect(nonIsomorphic.map(entry => entry.item_id)).toEqual([]);
+    });
+
+    it('serves every scorable item its complete option set, lettered A–D (D6c)', async () => {
       const scorable = choiceItems();
-      const notExactlyOne = scorable.filter(item => item.options.filter(option => option.is_key).length !== 1);
-      expect(notExactlyOne.map(item => item.item_id)).toEqual([]);
-
-      const flaggedButNotTheKey = scorable.filter(
-        item => item.options.find(option => option.is_key)?.letter !== keyByItem.get(item.item_id),
-      );
-      expect(flaggedButNotTheKey.map(item => item.item_id)).toEqual([]);
-
-      // Not part of the leak, but load-bearing for the fix: the option set is *complete*, so
-      // withdrawing the flag leaves a set a client can still render. (Measured 2026-10-15: all
-      // 841 scorable items serve four options, lettered A–D, and `item_options` holds four rows
-      // for each of the 74 listening slots too — the key plus three distractors.)
-      const notFourAbcd = choiceItems().filter(
+      const notFourAbcd = scorable.filter(
         item => item.options.length !== 4 || item.options.map(option => option.letter).join('') !== 'ABCD',
       );
       expect(notFourAbcd.map(item => item.item_id)).toEqual([]);
+
+      // And it is the table's set, not a filtered subset of it: served count equals row count for
+      // every scorable item, so "the key option is among them, unmarked" is measured, not assumed.
+      const rows = (await context.dataSource.query(
+        `SELECT item_id, count(*)::int AS options FROM item_options GROUP BY item_id`,
+      )) as Array<{ item_id: string; options: number }>;
+      const rowsByItem = new Map(rows.map(row => [row.item_id, row.options]));
+      const subset = scorable.filter(item => rowsByItem.get(item.item_id) !== item.options.length);
+      expect(subset.map(item => item.item_id)).toEqual([]);
     });
 
-    it('hands the key over through `options[].note` too, which is null on exactly the key options', () => {
+    it('publishes `br_pt_form` only when every option of the item has one (D6b, the seventh channel)', async () => {
       const scorable = choiceItems();
-      const keyOption = scorable.map(item => ({
-        item_id: item.item_id,
-        keyNote: item.options.find(option => option.letter === keyByItem.get(item.item_id))?.note,
-        distractorNotes: item.options
-          .filter(option => option.letter !== keyByItem.get(item.item_id))
-          .map(option => option.note),
-      }));
-      expect(keyOption.length).toBeGreaterThan(0);
+      const partial = scorable.filter(item => {
+        const withGloss = item.options.filter(option => option.br_pt_form !== undefined).length;
+        return withGloss !== 0 && withGloss !== item.options.length;
+      });
+      expect(partial.map(item => item.item_id)).toEqual([]);
 
-      expect(keyOption.filter(entry => entry.keyNote !== null).map(entry => entry.item_id)).toEqual([]);
-      expect(keyOption.filter(entry => entry.distractorNotes.includes(null)).map(entry => entry.item_id)).toEqual([]);
-    });
+      const withGloss = scorable.filter(item => item.options.every(option => option.br_pt_form !== undefined));
+      const withoutGloss = scorable.filter(item => item.options.every(option => option.br_pt_form === undefined));
+      // Both readings occur, so neither "always publish" nor "never publish" passes this test — the
+      // rule is per item, and both halves of it are exercised by the corpus.
+      expect(withGloss.length).toBeGreaterThan(0);
+      expect(withoutGloss.length).toBeGreaterThan(0);
+      expect(withGloss.length + withoutGloss.length).toBe(scorable.length);
 
-    it('does not leak through `options[].br_pt_form`, which separates no option from another', () => {
-      const options = choiceItems().flatMap(item =>
-        item.options.map(option => ({ isKey: option.letter === keyByItem.get(item.item_id), form: option.br_pt_form })),
+      // Both halves against the table. The global ratio was the wrong frame and this is why: a gloss
+      // measured catalogue-wide reads "43 of 841 key options and 48 of 2523 distractors", which
+      // looks like no channel at all — while *inside* an item a single gloss-less option is the key
+      // whenever the item has exactly one. Measured 2026-10-15: 17 items were that shape, and all
+      // 17 had the gloss-less option on the key; 34 items mixed the two inside the item.
+      const rows = (await context.dataSource.query(
+        `SELECT i.id, count(*)::int AS options,
+                count(*) FILTER (WHERE o.br_pt_form IS NOT NULL)::int AS glossed
+           FROM items i JOIN item_options o ON o.item_id = i.id
+          WHERE i.scoring = 'choice'
+          GROUP BY i.id`,
+      )) as Array<{ id: string; options: number; glossed: number }>;
+      const glossedByItem = new Map(rows.map(row => [row.id, row.glossed]));
+
+      const publishedWhileMixed = scorable.filter(item => {
+        const glossed = glossedByItem.get(item.item_id) ?? 0;
+        const uniform = glossed === 0 || glossed === item.options.length;
+        return !uniform && item.options.some(option => option.br_pt_form !== undefined);
+      });
+      expect(publishedWhileMixed.map(item => item.item_id)).toEqual([]);
+
+      const withheldWhileGlossed = scorable.filter(
+        item =>
+          glossedByItem.get(item.item_id) === item.options.length &&
+          item.options.some(option => option.br_pt_form === undefined),
       );
-      // Measured: null on 43 of 841 key options and on 48 of 2523 distractors. Both sides carry
-      // nulls, so a client cannot read the key off it — recorded here so a later reader does not
-      // "fix" a field that is not a channel.
-      expect(options.filter(option => option.isKey && option.form === null).length).toBeGreaterThan(0);
-      expect(options.filter(option => !option.isKey && option.form === null).length).toBeGreaterThan(0);
+      expect(withheldWhileGlossed.map(item => item.item_id)).toEqual([]);
+
+      // And the mixed items are still in the table, so this rule is not asserted over an empty set:
+      // the rows stay for a post-answer surface to read, and only the projection changed.
+      const mixedInTable = rows.filter(row => row.glossed !== 0 && row.glossed !== row.options);
+      expect(mixedInTable.length).toBeGreaterThan(0);
     });
 
-    it('serves `slots[].key`, equal to the table value', () => {
+    it('serves each slot its complete option set, with no `key` and no `distractors[]` (D3)', async () => {
       const slots = dialogues.flatMap(dialogue => dialogue.slots);
       expect(slots.length).toBeGreaterThan(0);
-      expect(slots.filter(slot => slot.key === null).map(slot => slot.slot_id)).toEqual([]);
-      expect(slots.filter(slot => slot.key !== keyByItem.get(slot.slot_id)).map(slot => slot.slot_id)).toEqual([]);
+      expect(slots.filter(slot => 'key' in slot).map(slot => slot.slot_id)).toEqual([]);
+      expect(slots.filter(slot => 'distractors' in slot).map(slot => slot.slot_id)).toEqual([]);
+      const notFourAbcd = slots.filter(slot => slot.options.map(option => option.letter).join('') !== 'ABCD');
+      expect(notFourAbcd.map(slot => slot.slot_id)).toEqual([]);
+
+      // Against the table, option by option and in order: `distractors[]` published the complement
+      // of the key, so "the served set is complete" is the half that has to be measured, not the
+      // count alone. (The key row is among the four — 11 of the 74 slots mark it with a check mark
+      // rather than in the value column, ADR-027 §3a.)
+      const rows = (await context.dataSource.query(
+        `SELECT item_id, option_text FROM item_options
+          WHERE LEFT(item_id, 4) = 'lst_' ORDER BY item_id, position`,
+      )) as Array<{ item_id: string; option_text: string }>;
+      const bySlot = new Map<string, string[]>();
+      for (const row of rows) {
+        bySlot.set(row.item_id, [...(bySlot.get(row.item_id) ?? []), row.option_text]);
+      }
+      const disagrees = slots.filter(slot => {
+        const fromTable = bySlot.get(slot.slot_id) ?? [];
+        return (
+          fromTable.length !== slot.options.length ||
+          fromTable.some((text, index) => text !== slot.options[index]?.text)
+        );
+      });
+      expect(disagrees.map(slot => slot.slot_id)).toEqual([]);
     });
 
-    it('hands the key over through `slots[].distractors[]` too — the letter the slot distractor set omits', () => {
-      const slots = dialogues.flatMap(dialogue => dialogue.slots);
-      // The second channel, and the reason `slots[].key` alone is not the fix: `distractors[]` is
-      // the *complement* of the key, so withdrawing the member leaves the key recoverable as
-      // {A…D} \ distractors. (Measured: true for all 74 shipped slots; none has an empty set.)
-      const keyAbsentFromItsDistractors = slots.filter(slot =>
-        slot.distractors.every(distractor => distractor.letter !== keyByItem.get(slot.slot_id)),
-      );
-      expect(keyAbsentFromItsDistractors.length).toBe(slots.length);
-      expect(slots.filter(slot => slot.distractors.length !== 3).map(slot => slot.slot_id)).toEqual([]);
+    it('keeps the key and the flag in the table — the change is a projection, not a deletion (Neutral)', async () => {
+      const scorable = choiceItems();
+      const keyRows = (await context.dataSource.query(
+        `SELECT id, key FROM items WHERE scoring = 'choice'`,
+      )) as Array<{ id: string; key: string | null }>;
+      expect(keyRows.filter(row => row.key === null).map(row => row.id)).toEqual([]);
+      expect(keyRows.filter(row => row.key !== keyByItem.get(row.id)).map(row => row.id)).toEqual([]);
+
+      const flagRows = (await context.dataSource.query(
+        `SELECT item_id, count(*) FILTER (WHERE is_key)::int AS keys FROM item_options GROUP BY item_id`,
+      )) as Array<{ item_id: string; keys: number }>;
+      const keysByItem = new Map(flagRows.map(row => [row.item_id, row.keys]));
+      const wrong = scorable.filter(item => keysByItem.get(item.item_id) !== 1);
+      expect(wrong.map(item => item.item_id)).toEqual([]);
+
+      // The pair that makes this a read-path change: present in the table, absent from the payload.
+      // If a later change stops writing the flag, this test fails for the data, not for the reader.
+      const flaggedInPayload = scorable.filter(item => item.options.some(option => 'is_key' in option));
+      expect(flaggedInPayload.map(item => item.item_id)).toEqual([]);
     });
 
-    it('serves the authored key inside the lesson body itself', () => {
+    it('still serves the authored key inside the lesson body — by decision (D5)', () => {
+      // Not a defect pin, and deliberately the inverse of the ones above: ADR-044 D5 keeps the key
+      // in the lesson, because the body is the study material (`AGENTS.md`: Input → Guided Practice
+      // → Output Task → Formative Check) rather than the assessment payload. A phase that strips it
+      // changes this test and the ADR together; the alternative was measured and not chosen.
       const withKey = lessons.filter(lesson =>
         lesson.phases.some(phase => phase.markdown.includes('**Key:**') || phase.markdown.includes('✓')),
       );

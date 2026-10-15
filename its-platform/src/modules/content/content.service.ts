@@ -22,9 +22,12 @@ import type { AudioUrlSigner } from '../../infrastructure/audio/audio-url-signer
  *   pronunciation 7, coherence 2 — all six published values, nothing outside them.
  * - **`options[].letter` from `position`.** 1→A … 6→F; the corpus uses 1–4 everywhere (measured:
  *   `max(position) = 4`), and the DDL CHECKs the 1–6 range.
- * - **`key` is served as the column's value**, `null` included. ADR-004 declares
- *   `key: Optional[str]  # None for production items`, and 6 of the 847 pack items are
- *   `asr_phoneme_match` with no options and no key. Callers distinguish them by `scoring`.
+ * - **No member of a projection is a function of the answer key** (ADR-044, `Accepted`
+ *   2026-10-15). `items[].key`, `options[].is_key`, `options[].note`, `slots[].key` and
+ *   `slots[].distractors[]` are *not* published; the key option is served inside a complete,
+ *   unmarked set, and the flag/rationale stay in the table where scoring reads them. `br_pt_form`
+ *   is published per item, and only when every option of that item carries one (the rule and the
+ *   17-item measurement are on the interface below).
  * - **`listening_items` is `[]`.** ADR-004's declared default, and a measured fact rather than
  *   an omission: no pack item owns a listening slot (`items.clip_ids` is never populated).
  * - **`slots[].skill` is `listening_kind` minus its `lst_` prefix**, with the corpus's single
@@ -82,11 +85,14 @@ export interface LessonContent {
 export interface PackOptionContent {
   letter: string;
   text: string;
-  is_key: boolean;
-  /** `item_options.br_pt_form` — nullable column. */
-  br_pt_form: string | null;
-  /** `item_options.note` — nullable: the DDL requires it only of a *distractor*. */
-  note: string | null;
+  /**
+   * `item_options.br_pt_form` — published **only when every option of the item carries one**
+   * (ADR-044 D6(b)). The rule is not cosmetic: measured 2026-10-15, 17 items had exactly one
+   * gloss-less option and it was the key in all 17, so publishing a partial gloss tells a client
+   * which option is correct. The global ratio (43 of 841 key options, 48 of 2523 distractors) reads
+   * like no channel at all — inside an item, a single gloss-less option is the key.
+   */
+  br_pt_form?: string;
 }
 
 /** ADR-004's `List[ListeningSlot]`, declared and served empty (§`listening_items` above). */
@@ -103,8 +109,6 @@ export interface PackItemContent {
   prompt: string;
   scoring: string;
   options: PackOptionContent[];
-  /** `items.key` — `null` when there is no choice (ADR-004's production items). */
-  key: string | null;
   listening_items: PackListeningSlotContent[];
 }
 
@@ -121,24 +125,22 @@ export interface DialogueVoiceContent {
   accent: string;
 }
 
-export interface DialogueDistractorContent {
+export interface DialogueOptionContent {
   letter: string;
   text: string;
-  /** `item_options.distractor_type` — nullable in fact (the corpus stores prose there). */
-  type: string | null;
 }
 
 export interface DialogueSlotContent {
   slot_id: string;
   skill: string;
   /**
-   * `items.key`. The column is nullable; measured, all 74 shipped slots carry one and
-   * `content-check.mjs` fails a choice that does not, so the served value is non-null today.
-   * The type keeps the column's nullability rather than asserting a guarantee the DDL lacks.
+   * Every option of the slot — the key included and unmarked (ADR-044 D3). `distractors[]` used to
+   * publish the *complement* of the key, which made the key recoverable as {A…D} \ distractors on
+   * all 74 shipped slots; the complete set is also what a renderer needs, since a client cannot
+   * draw an item from its distractors alone.
    */
-  key: string | null;
+  options: DialogueOptionContent[];
   transcript: string;
-  distractors: DialogueDistractorContent[];
 }
 
 export interface DialogueContent {
@@ -220,23 +222,29 @@ export class ContentService {
 
     const items = [...rows.items]
       .sort((a, b) => rankOf(a.id) - rankOf(b.id))
-      .map(item => ({
-        item_id: item.id,
-        item_type: item.item_type,
-        skill: skillNamespaceOf(item.skill_ids),
-        domain: item.domain_id,
-        prompt: item.stem,
-        scoring: item.scoring,
-        options: (options.get(item.id) ?? []).map(option => ({
-          letter: LETTERS.charAt(option.position - 1),
-          text: option.option_text,
-          is_key: option.is_key,
-          br_pt_form: option.br_pt_form,
-          note: option.note,
-        })),
-        key: item.key,
-        listening_items: [],
-      }));
+      .map(item => {
+        const stored = options.get(item.id) ?? [];
+        // D6(b): `br_pt_form` is published only when *every* option of the item carries one. Inside
+        // an item, a gloss present on some options and missing on others points at the one that is
+        // missing — measured, 17 items had exactly one gloss-less option and it was the key in all
+        // 17. The alternative (publish the glosses that exist) is the leak; the alternative (publish
+        // the member as `null` where missing) is the same leak spelled differently.
+        const glossed = stored.length > 0 && stored.every(option => option.br_pt_form !== null);
+        return {
+          item_id: item.id,
+          item_type: item.item_type,
+          skill: skillNamespaceOf(item.skill_ids),
+          domain: item.domain_id,
+          prompt: item.stem,
+          scoring: item.scoring,
+          options: stored.map(option => ({
+            letter: LETTERS.charAt(option.position - 1),
+            text: option.option_text,
+            ...(glossed ? { br_pt_form: option.br_pt_form as string } : {}),
+          })),
+          listening_items: [],
+        };
+      });
 
     return {
       pack_id: rows.pack.id,
@@ -278,15 +286,15 @@ export class ContentService {
       slots: rows.slots.map(slot => ({
         slot_id: slot.item_id,
         skill: listeningSkillOf(slot.listening_kind),
-        key: slot.key,
         transcript: dialogue.transcript,
-        distractors: (options.get(slot.item_id) ?? [])
-          .filter(option => !option.is_key)
-          .map(option => ({
-            letter: LETTERS.charAt(option.position - 1),
-            text: option.option_text,
-            type: option.distractor_type,
-          })),
+        // The complete set, by `position`, in the order the reader returns (ADR-044 D3). The key
+        // option is in it and carries nothing that distinguishes it; the flag (`is_key`) and the
+        // rationale (`distractor_type`) stay in the table for a post-answer surface to read, and no
+        // such surface exists yet (R3).
+        options: (options.get(slot.item_id) ?? []).map(option => ({
+          letter: LETTERS.charAt(option.position - 1),
+          text: option.option_text,
+        })),
       })),
     };
   }
