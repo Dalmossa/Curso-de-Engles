@@ -1,6 +1,8 @@
-import { Controller, Get, Param, ParseUUIDPipe, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
 import { LearnersService } from './learners.service.js';
 import { SCOPES, Scopes } from '../../common/auth/scopes.decorator.js';
+import { CurrentPrincipal } from '../../common/auth/current-principal.decorator.js';
+import type { TokenPrincipal } from '../../common/auth/token-principal.js';
 
 // Class-level: every route on this controller is the caller's own portfolio, and ADR-038 D2 gives
 // that its own scope. The guard reads handler metadata first and class metadata second, so this
@@ -10,20 +12,25 @@ import { SCOPES, Scopes } from '../../common/auth/scopes.decorator.js';
 export class LearnersController {
   constructor(private readonly learnersService: LearnersService) {}
 
+  /**
+   * `principal.subject` is the token's `sub` and `id` is the path parameter, and they travel
+   * **separately** down to `PgSessionContext` and the query. There is no comparison between them
+   * here, or anywhere: ADR-038 D3 makes the 404 the consequence of the policy returning no row, and
+   * the controller therefore has no `if (!profile) throw` of its own left to forget.
+   */
   @Get(':id/profile')
-  async getProfile(@Param('id', ParseUUIDPipe) id: string) {
-    const profile = await this.learnersService.getProfile(id);
-    // No body of its own: the global `ProblemExceptionFilter` renders the `Problem` (P1.17), with
-    // this occurrence's message as `detail`. A missing learner is a 404 for the same reason
-    // `POST /learners` in the spec is not a 409 — the DDL has no uniqueness to violate beyond the
-    // primary key (ADR-038's object-level 404 rule applies to reads of another learner's object).
-    if (!profile) throw new NotFoundException('Learner not found');
-    return profile;
+  async getProfile(
+    @CurrentPrincipal() principal: TokenPrincipal,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.learnersService.getProfile(principal.subject, id);
   }
 
   @Get(':id/mastery')
-  async getMastery(@Param('id', ParseUUIDPipe) id: string) {
-    return this.learnersService.getMastery(id);
+  async getMastery(
+    @CurrentPrincipal() principal: TokenPrincipal,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.learnersService.getMastery(principal.subject, id);
   }
 }
-

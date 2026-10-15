@@ -43,6 +43,7 @@ import { PlacementController } from '../../src/modules/placement/placement.contr
 import { PlacementService } from '../../src/modules/placement/placement.service.js';
 import { PracticeController } from '../../src/modules/practice/practice.controller.js';
 import { PracticeService } from '../../src/modules/practice/practice.service.js';
+import { LearnerScopeService } from '../../src/modules/learners/learner-scope.service.js';
 import {
   authorization,
   clearOidcEnv,
@@ -61,9 +62,24 @@ const PROBLEM_MEDIA_TYPE = /^application\/problem\+json(; charset=utf-8)?$/;
 /** A real item id from the catalogue — measured: all 49 distinct pack item ids match the pattern. */
 const ITEM_ID = 'voc_email_tone_marker_001';
 
+/**
+ * A5b put a load in front of the handler: the addressed learner is resolved under the caller's RLS
+ * context (`LearnerScopeService`), so a route can answer 404 before it ever validates a body. This
+ * suite is about what the contract *refuses* and what it accepts — not about the database — so the
+ * scope is stubbed to "visible". The load has its own evidence, over HTTP and against a real
+ * policy, in `tests/integration/learner-scope-rls.spec.ts`.
+ */
+const learnerScopeStub = {
+  requireVisible: (subject: string, id: string) => Promise.resolve({ id }),
+};
+
 @Module({
   controllers: [PlacementController, PracticeController],
-  providers: [PlacementService, PracticeService],
+  providers: [
+    PlacementService,
+    PracticeService,
+    { provide: LearnerScopeService, useValue: learnerScopeStub },
+  ],
 })
 class RequestValidationModule {}
 

@@ -52,8 +52,8 @@ const contentStub = {
 };
 
 const learnersStub = {
-  getProfile: () => Promise.resolve(null),
-  getMastery: () => Promise.resolve(null),
+  getProfile: (subject: string, id: string) => Promise.resolve({ learner_id: id }),
+  getMastery: (subject: string, id: string) => Promise.resolve({ learner_id: id }),
 };
 
 @Module({
@@ -209,14 +209,16 @@ describe('A5b — a valid token is authentication; the scope is authorisation (A
     expect(response.status).toBe(403);
   });
 
-  it('hands a sufficiently scoped request to the handler, which is where the 404 comes from', async () => {
-    // The stub answers `null` for every learner, so the *handler* raises `NotFoundException` —
-    // the 404 in A5b is not thrown by a check on the id. ADR-038 D3's replacement is the RLS
-    // query; until the routes read real rows, the observable "the guard let it through" is this.
+  it('hands a sufficiently scoped request to the handler, and the handler answers', async () => {
+    // The proof the guard let it through is the handler's own value: the stub answers the id it was
+    // addressed with, so a body means the request reached the handler and a 200 means nothing
+    // refused it on the way. Where a *refusal* comes from is D3's question, not the guard's, and it
+    // is measured end-to-end (real policy, real rows) in `learner-scope-rls.spec.ts`.
     const token = await fixture.accessToken(UUID, ['learner:self']);
     const response = await call(`/api/v1/learners/${UUID}/profile`, authorization(token));
 
-    expect(response.status).toBe(404);
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({ learner_id: UUID });
   });
 });
 

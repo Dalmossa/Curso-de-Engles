@@ -456,20 +456,25 @@ jobs:
       #     with 0 of 15 RLS tables and 0 of 45 policies — the RLS gate silently stops running.
       #     The order is not a preference; the shared service container is why it matters.
       #
-      # Two spec files are run here, and no others, because each has a second `describe` that needs
-      # a real engine. `diagnostic-persistence.spec.ts` takes `SET ROLE its_platform_app` and
-      # exercises ADR-003's policy through `PgSessionContext`; `rls-isolation.spec.ts` drives two
-      # `pg` connections at one database to prove cross-learner isolation and contention. PGlite
-      # cannot express either — it is one connection, one session, no lock contention (ADR-014,
-      # narrowed by ADR-026 §5). The `integration` job keeps running both files on PGlite; that is
-      # not duplication — `diagnostic-persistence`'s 12 owner-role tests pass on both engines, and
-      # only its 6 app-role tests and `rls-isolation`'s real-engine `describe` (not entered when
-      # `TEST_DATABASE_URL` is unset) can tell them apart. The rest of `tests/integration/` needs
-      # no real engine, so naming the two files keeps them out of a step where each extra
-      # DB-touching spec is another one that must be serialised, and another one that can trip the
-      # cluster-scoped role replay described above.
+      # Three spec files are run here, and no others, because each measures ADR-003's policy and
+      # something about a real engine is part of what it measures. `diagnostic-persistence.spec.ts`
+      # takes `SET ROLE its_platform_app` and exercises the policy through `PgSessionContext`;
+      # `rls-isolation.spec.ts` drives two `pg` connections at one database to prove cross-learner
+      # isolation and contention; `learner-scope-rls.spec.ts` (A5b) drives the five learner-scoped
+      # routes over HTTP with the connection switched to `its_platform_app`, and its last `describe`
+      # measures what the policy is *for* by showing what the same request does without the role.
+      # PGlite cannot express two sessions or lock contention — it is one connection, one session
+      # (ADR-014, narrowed by ADR-026 §5) — and on a real engine the role lives on a **pooled,
+      # warm** connection, which is the arrangement a deployment has and an in-process single
+      # connection does not. The `integration` job keeps running all three on PGlite; that is not
+      # duplication — `diagnostic-persistence`'s 12 owner-role tests pass on both engines, and only
+      # its 6 app-role tests, `rls-isolation`'s real-engine `describe` (not entered when
+      # `TEST_DATABASE_URL` is unset) and that last `describe` of `learner-scope-rls` can tell them
+      # apart. The rest of `tests/integration/` needs no real engine, so naming the three files keeps
+      # them out of a step where each extra DB-touching spec is another one that must be serialised,
+      # and another one that can trip the cluster-scoped role replay described above.
       #
-      # One step, two DB-touching specs, one shared service container — so the pattern is run with
+      # One step, three DB-touching specs, one shared service container — so the pattern is run with
       # `--runInBand`, and that flag is evidence, not style. `createTestDb()` in real mode drops and
       # recreates `public` on connect *and* in `cleanup()`; jest's default scheduling puts test
       # files in separate worker processes against the same database, so one worker's `DROP SCHEMA
@@ -494,7 +499,7 @@ jobs:
         env:
           NODE_OPTIONS: --experimental-vm-modules
           TEST_DATABASE_URL: postgresql://its_platform_app_test:its_platform_app_test@localhost:5432/its_platform_test
-        run: npx jest --no-coverage --runInBand --testPathPattern 'tests/integration/(diagnostic-persistence|rls-isolation)\.spec\.ts'
+        run: npx jest --no-coverage --runInBand --testPathPattern 'tests/integration/(diagnostic-persistence|learner-scope-rls|rls-isolation)\.spec\.ts'
 
   # ------------------------------------------------------------------
   # Mutation Testing (adaptive engine)

@@ -26,7 +26,7 @@
  * | the API answers under `/api/v1` and not at the root | §4.4 (control N-19 in the gate) |
  */
 
-import { Body, Controller, Get, Logger, Module, Post } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Module, NotFoundException, Post } from '@nestjs/common';
 import type { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { IsString } from 'class-validator';
@@ -37,6 +37,7 @@ import { ContentController } from '../../src/modules/content/content.controller.
 import { ContentService } from '../../src/modules/content/content.service.js';
 import { LearnersController } from '../../src/modules/learners/learners.controller.js';
 import { LearnersService } from '../../src/modules/learners/learners.service.js';
+import { LearnerScopeService } from '../../src/modules/learners/learner-scope.service.js';
 import { LearnerContextError } from '../../src/infrastructure/persistence/pg-session-context.js';
 import {
   authorization,
@@ -84,16 +85,23 @@ const contentStub = {
   getDialogueAudio: () => Promise.resolve(null),
 };
 
-const learnersStub = {
-  getProfile: () => Promise.resolve(null),
-  getMastery: () => Promise.resolve(null),
+/**
+ * The learner route's 404 as A5b produces it: `LearnerScopeService` refuses before the payload is
+ * built, and the filter renders the refusal. The service under it is the **real** one, so this file
+ * exercises the same three layers the request does (`controller → service → scope`), with the
+ * database — the one layer a contract suite should not need — replaced by the refusal itself.
+ * The refusal measured against a real policy over HTTP is `learner-scope-rls.spec.ts`.
+ */
+const learnerScopeStub = {
+  requireVisible: () => Promise.reject(new NotFoundException('Learner not found')),
 };
 
 @Module({
   controllers: [ContentController, LearnersController, ProbeController],
   providers: [
     { provide: ContentService, useValue: contentStub },
-    { provide: LearnersService, useValue: learnersStub },
+    LearnersService,
+    { provide: LearnerScopeService, useValue: learnerScopeStub },
   ],
 })
 class ErrorContractModule {}
@@ -188,6 +196,8 @@ describe('P1.17 — the served error response is the contract’s `Problem`', ()
   });
 
   it('404 from `learners/{id}/profile` — the hand-rolled body is gone', async () => {
+    // A5b moved this refusal out of the controller and into `LearnerScopeService` (ADR-038 D3); what
+    // this suite still owns is that whatever raises it, the bytes are the contract's `Problem`.
     const res = await get(`/api/v1/learners/${UUID}/profile`);
     const problem = await problemOf(res);
 

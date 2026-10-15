@@ -37,6 +37,7 @@ import { PlacementController } from '../../src/modules/placement/placement.contr
 import { PlacementService } from '../../src/modules/placement/placement.service.js';
 import { PracticeController } from '../../src/modules/practice/practice.controller.js';
 import { PracticeService } from '../../src/modules/practice/practice.service.js';
+import { LearnerScopeService } from '../../src/modules/learners/learner-scope.service.js';
 import {
   authorization,
   clearOidcEnv,
@@ -65,9 +66,23 @@ function declaredSuccessStatuses(path: string): string[] {
   return Object.keys(spec.paths[path]?.['post']?.responses ?? {}).filter((s) => /^2\d\d$/.test(s));
 }
 
+/**
+ * A5b put a load in front of the handler: the addressed learner is resolved under the caller's RLS
+ * context (`LearnerScopeService`) before the operation computes anything. This suite publishes one
+ * claim — which success status each operation answers — so the scope is stubbed to "visible"; the
+ * load's own evidence is `tests/integration/learner-scope-rls.spec.ts`.
+ */
+const learnerScopeStub = {
+  requireVisible: (subject: string, id: string) => Promise.resolve({ id }),
+};
+
 @Module({
   controllers: [PlacementController, PracticeController],
-  providers: [PlacementService, PracticeService],
+  providers: [
+    PlacementService,
+    PracticeService,
+    { provide: LearnerScopeService, useValue: learnerScopeStub },
+  ],
 })
 class PostStatusModule {}
 

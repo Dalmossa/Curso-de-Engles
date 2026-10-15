@@ -21,3 +21,6 @@ export type {
 
 export { AuditRepository, AUDIT_EVENT_TYPES } from './audit.repository.js';
 export type { AuditEventInput, AuditEventType, AuditAppendResult } from './audit.repository.js';
+
+export { LearnerRepository } from './learner.repository.js';
+export type { VisibleLearner } from './learner.repository.js';
