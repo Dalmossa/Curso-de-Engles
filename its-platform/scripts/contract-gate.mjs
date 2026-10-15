@@ -279,6 +279,8 @@ function main(doc) {
   }
 
   // --- error responses and resource 404s ----------------------------------
+  // The document's own root requirement, for the operations that declare none (OpenAPI inherits it).
+  const rootSecurity = Array.isArray(doc.security) ? doc.security : [];
   for (const [path, item] of Object.entries(paths)) {
     const hasParameter = /\{[^}]+\}/.test(path);
     for (const [verb, operation] of Object.entries(item)) {
@@ -319,6 +321,20 @@ function main(doc) {
       // resource with an identifier must publish that answer.
       if (verb === 'get' && hasParameter && !('404' in operation.responses)) {
         fail('404', `GET ${path} declares no 404 (R6/ADR-038)`);
+      }
+      // ADR-038 D4 / §4.5: an operation that requires a bearer token can answer 401, so it must
+      // publish that answer. The omission this rule exists for was real and invisible: the document
+      // declared `security: [BearerAuth: []]` on ten operations and a `401` on one of them, and
+      // nothing read the other nine because nothing served a 401 — A5b's guard is what made the
+      // gap a difference between the document and the served bytes.
+      //
+      // The rule reads `security` the way OpenAPI does: an operation that declares none inherits
+      // the document's root requirement, and only an explicit empty array makes it public.
+      const requiresToken = Array.isArray(operation.security)
+        ? operation.security.length > 0
+        : rootSecurity.length > 0;
+      if (requiresToken && !('401' in operation.responses)) {
+        fail('401', `${verb.toUpperCase()} ${path} requires a token but declares no 401 (ADR-038 D4)`);
       }
     }
   }
@@ -487,6 +503,7 @@ function report() {
   console.log(
     `PASS: contract gate — canonical spec parses, servers carry /api/v1, ` +
       `every error response serves application/problem+json and references Problem, ` +
+      `every operation that requires a token declares the 401 it can be answered with, ` +
       `and spec × routes agree in both directions`,
   );
 }

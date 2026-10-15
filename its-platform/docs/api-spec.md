@@ -71,7 +71,26 @@ dated report is stale.
   (controls N-20/N-21), because OpenAPI's default is the opposite of §4.5: a schema that stays
   silent documents a tolerance the server does not have. `tests/integration/request-validation.spec.ts`
   asserts the served `400` over real HTTP at every one of those levels.
-- **`/auth/refresh` is out of MVP scope.** ADR-013's binding half is explicit — *"must not be
+- **Authentication is required on every operation, and it is enforced.** `CONSTITUTION.md` §4.5
+  (*"deny by default … public routes opt out explicitly via `@Public()`"*) demanded this from the
+  start and **A5b (2026-10-15) is where it became true**: A0 measured **zero** `@UseGuards` in
+  `src/`, so every operation in this document served an anonymous caller exactly as it served an
+  authenticated one. `JwtAuthGuard` is now installed by `configureApp` — the composition root the
+  integration suites also boot — and the `@Public()` list is closed and has two members:
+  `GET /health`, `GET /ready` (ADR-038 D1). Three answers, in this order: no token or a token that
+  does not verify is `401`; a valid token whose **scopes** do not authorise the operation is `403`
+  (ADR-038 D2/D4); an object belonging to another learner is `404`, and that is the RLS policy
+  refusing a row, never a comparison of the path id with the token subject (ADR-038 D3). The
+  document declares `401`/`403` on every operation that can answer them, because the guard changed
+  the served set and *"the document is the truth"* (ADR-040) is not a claim about intent. What the
+  document **cannot** carry is *which* scope each route requires: `BearerAuth` is
+  `type: http, scheme: bearer`, which has no `scopes` map, and a security requirement with a
+  non-empty array against an `http` scheme is invalid OpenAPI 3.1 — the per-route scope lives in the
+  `@Scopes(...)` decorator (`src/common/auth/scopes.decorator.ts`, the closed set of ADR-038 D2).
+  The enforced break: **the catalogue is no longer readable anonymously.** It was, because nothing
+  checked; ADR-038 D1 decided it is not public (the reversal is the permissive direction), and the
+  `CHANGELOG.md` carries it as *Changed — breaking*.
+- **Login is not on this surface.** ADR-013's binding half is explicit — *"must not be
   implemented"*, and *"the path remains in the OpenAPI document … annotated rather than deleted
   because removing a published path is a breaking change under §4.4, and this record is not the
   place to authorise one."* **Since A5a (2026-10-15) that is what the server does**: the method
@@ -84,7 +103,10 @@ dated report is stale.
   `docs/api/inventario.md` D-3 and remains open — the contract publishes the path, so removing it is
   a §4.4-breaking change that ADR-013 declines to authorise and that A5a does not take either. The
   `501` and the absence of any `token` in the body are asserted over real HTTP by
-  `tests/integration/auth-refresh.spec.ts`.
+  `tests/integration/auth-refresh.spec.ts`. **Since A5b** the same operation is behind the global
+  guard like every other one, so an unauthenticated call answers `401` and the `501` is what an
+  *authenticated* caller reaches; that is the contract's own reading of the path, which carries
+  `security: [BearerAuth: []]` and now declares both answers.
 
 - **All schemas** are derived from specs in `Curso-de-Ingles/specs/`:
   - `item_id` prefix ↔ skill namespace → `assessment-item-spec.md` §1.2

@@ -81,6 +81,19 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      # ADR-038 D2's scope set (`content:read`, `learner:self`, `learner:export`, `learner:erase`,
+      # `learners:read`, `learners:admin`) is enforced by the global `JwtAuthGuard`, and OpenAPI 3.1
+      # cannot carry it here: a `type: http` scheme has no `scopes` map, and a security requirement
+      # with a non-empty array against an `http` scheme is invalid (`scopes` belongs to `oauth2` and
+      # `openIdConnect`). The per-operation `401`/`403` below therefore say *that* authority is
+      # required, not *which* authority — the scope each route requires is in the decorator on the
+      # controller (`src/common/auth/scopes.decorator.ts`) and in ADR-038 D2.
+      description: >-
+        A JWT access token issued by the platform's external IdP, presented as
+        `Authorization: Bearer <token>`. The platform is a Resource Server: it verifies tokens
+        (RS256, `iss`/`aud`/`exp`/`nbf`, per `CONSTITUTION.md` §4.5 and ADR-013) and never issues
+        one. A request without a valid token answers `401`; a valid token whose scopes do not
+        authorise the operation answers `403` (ADR-038 D4).
     RefreshToken:
       type: http
       scheme: bearer
@@ -872,6 +885,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
         '429':
           description: Rate limited
           content:
@@ -911,6 +930,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NextActivity'
+        '401':
+          description: Unauthorized — a valid bearer token is required (ADR-038 D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
         '404':
           description: Learner not found or curriculum exhausted
           content:
@@ -951,6 +982,18 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized — a valid bearer token is required (ADR-038 D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
         '404':
           description: Pack or learner not found
           content:
@@ -979,6 +1022,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LessonContent'
+        '401':
+          description: Unauthorized — a valid bearer token is required (ADR-038 D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
         '404':
           description: Lesson not found
           content:
@@ -1007,6 +1062,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PackContent'
+        '401':
+          description: Unauthorized — a valid bearer token is required (ADR-038 D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
         '404':
           description: Pack not found
           content:
@@ -1035,6 +1102,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DialogueContent'
+        '401':
+          description: Unauthorized — a valid bearer token is required (ADR-038 D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
         '404':
           description: Dialogue not found, or found but not `shipped` — the same 404 body for both (ADR-027 §3)
           content:
@@ -1080,6 +1159,18 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized — a valid bearer token is required (ADR-038 D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
         '404':
           description: >-
             Dialogue not found, not `shipped`, without a render `take` complete for the whole
@@ -1111,6 +1202,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LearnerProfile'
+        '401':
+          description: Unauthorized — a valid bearer token is required (ADR-038 D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
         '404':
           description: Learner not found
           content:
@@ -1152,6 +1255,18 @@ paths:
                     last_practice:
                       type: string
                       format: date-time
+        '401':
+          description: Unauthorized — a valid bearer token is required (ADR-038 D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
         '404':
           description: Learner not found
           content:
@@ -1181,6 +1296,12 @@ paths:
       security:
         - RefreshToken: []
       responses:
+        '401':
+          description: Unauthorized — a valid bearer token is required (ADR-038 D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
         '501':
           description: |
             Not implemented. The MVP is a Resource Server and does not issue tokens.
