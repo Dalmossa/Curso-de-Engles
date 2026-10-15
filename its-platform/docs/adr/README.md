@@ -50,7 +50,7 @@
 | [035](035-idempotency-and-optimistic-concurrency.md) | Idempotência de escrita e concorrência otimista | **Proposed** — open | 2026-10-14 | — |
 | [036](036-caching-and-range.md) | Cache condicional do catálogo e onde Range/206 se aplica | **Proposed** — open | 2026-10-14 | — |
 | [037](037-async-jobs.md) | Trabalho assíncrono como recurso — 202, Location, `/jobs/{id}` | **Proposed** — open | 2026-10-14 | — |
-| [038](038-authz-scopes-and-object-level-404.md) | Autenticação, escopos e autorização por objeto — 404, não 403 | **Proposed** — open | 2026-10-14 | — |
+| [038](038-authz-scopes-and-object-level-404.md) | Autenticação, escopos e autorização por objeto — 404, não 403 | Accepted | 2026-10-14 | — |
 | [039](039-rate-limit-response-shape.md) | Rate limiting — forma da resposta, headers e a proibição de inventar números | **Proposed** — open | 2026-10-14 | — |
 | [040](040-canonical-http-contract.md) | Fonte de verdade do contrato HTTP — um único OpenAPI, parseável, e o gate que o valida — **concluído**: o canônico é `docs/api-spec.openapi.yaml`, o gate é `npm run contract:gate`, e o segundo documento saiu em A3 (D3) com os seus leitores repontados ou retirados | Accepted | 2026-10-14 | — |
 | [041](041-h1-catalog-write-surface.md) | **H1** — superfície de escrita do catálogo: somente leitura ou autoria? | **Proposed** — open | 2026-10-14 | — |
@@ -74,10 +74,19 @@ opening `docs/data-model.erd.md`, `db/models.py`, or a migration.
 
 ### Open ADRs — read before implementing
 
-**031–032 and 034–043 are `Proposed` (A1, 2026-10-14).** They are the contract decisions for the
-HTTP surface, and none of them is `Accepted`, because several require a human act (H1–H3; the BDD
-403 → 404 amendment; the canonical domain for `Problem.type` URIs). The phase report is
-`reports/api/fase-1.md`; the audit they rest on is `docs/api/inventario.md`.
+**031–032 and 034–039, 041–043 are `Proposed` (A1, 2026-10-14).** They are the contract decisions for
+the HTTP surface, and none of them is `Accepted`, because several require a human act (H1–H3; the
+canonical domain for `Problem.type` URIs). The phase report is `reports/api/fase-1.md`; the audit
+they rest on is `docs/api/inventario.md`.
+
+**038 is `Accepted`** — its human act arrived on 2026-10-15 (the record ratified in full, with the
+subject claim `sub` = `learner_id`, Class L), and **D4.1 was executed the same day**:
+`tests/bdd/README.md` now requires **404**, not 403, in the "Learner cannot access another learner's
+data" scenario, which is the acceptance artifact the ADR exists to correct. One tension **inside**
+D4 — its table's row 1 versus its note, under D3 — is *named and not resolved*; the adopted reading,
+the reason the other one is not implementable without the `pathId === tokenSubject` comparison D3
+rejects, and the single question a human has to answer are in the ADR's *Implementation note* and
+`reports/api/fase-5b.md` §4. The `needs-human-review` tag stays for that reason alone.
 
 **033 is `Accepted`** — it was the one whose human act arrived: `CONSTITUTION.md` §4.4 was amended to
 v2.2.0 on 2026-10-14 (the `Deprecation` amendment, H-1), which was D2's only blocker. Its D5 was

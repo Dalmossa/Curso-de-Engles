@@ -1,7 +1,7 @@
 ---
 adr: 038
 title: Autenticação, escopos e autorização por objeto — e por que outro aprendiz responde 404, não 403
-status: Proposed
+status: Accepted
 date: 2026-10-14
 authors: [@api-lead]
 deciders: [unassigned]
@@ -9,6 +9,29 @@ consulted: [@security-lead, @backend-lead]
 informed: [@team]
 tags: [api, security, authz, bola, idor, scopes, rls, adr-013, adr-026, bdd-amendment, needs-human-review]
 ---
+
+**Accepted** (2026-10-15). Ratificado integralmente naquele dia — **D1, D2, D4, D4.1 e D7** — e a
+ratificação veio junto com a escolha do escopo de implementação: **"mínimo: só a leitura que a RLS
+governa"**. O que isso fechou e o que isso deixa aberto:
+
+- **D1 e D2 implementadas** (`reports/api/fase-5b.md`). `JwtAuthGuard` é um guard **global**,
+  instalado em `configureApp` — o mesmo caminho que os testes de integração percorrem, e não um
+  provider de módulo que só o processo de produção carregaria. A lista de `@Public()` é fechada e
+  tem dois membros (`GET /health`, `GET /ready`). O conjunto de escopos de D2 é um valor **e** um
+  tipo (`SCOPES`/`Scope`, `src/common/auth/scopes.decorator.ts`), para que um erro de escrita seja
+  erro de compilação. Sem `OIDC_JWKS_URI`/`OIDC_ISSUER`/`OIDC_AUDIENCE` configurados o guard
+  **recusa tudo** (`DenyAllTokenVerifier`) em vez de verificar nada — a metade aberta de ADR-013
+  não pode ser preenchida por omissão.
+- **D4.1 executada**: `tests/bdd/README.md` passou a exigir **404** no cenário do aprendiz alheio.
+- **D7 respondida**: o claim de sujeito é o `sub` do JWT e o seu valor é o `learner_id` opaco
+  (Classe L, ADR-031 D1). É esse valor, e nada mais, que entra em `PgSessionContext`; a forma do
+  claim é a decisão de identidade que ADR-013 mantém aberta quanto ao *IdP*, não quanto ao claim.
+- **Uma tensão dentro de D4 fica nomeada e não resolvida** — o *Implementation note* abaixo. Ela é
+  a razão de `needs-human-review` continuar nos `tags`.
+
+`deciders` continua `unassigned` de propósito: a ratificação foi dada pela autoridade de decisão do
+projeto, e escrever um handle aqui afirmaria que uma pessoa nomeada aprovou — a mesma razão pela
+qual ADR-033 o mantém assim.
 
 ## Context
 
@@ -82,6 +105,30 @@ consequência de a consulta não devolver linha.
 Nota: quando o escopo falta e o objeto **não** é do solicitante, o resultado é 404 — a escassez de
 escopo não justifica confirmar existência.
 
+> **Implementation note (A5b) — `needs_human_review`.** A **linha 1** da tabela acima e a **nota**
+> não podem valer as duas sob D3, e a implementação teve de escolher. O mesmo pedido — token com
+> `content:read`, `GET /learners/{learner_id}/profile` — cai nas duas: a linha 1 diz **403** (escopo
+> insuficiente para a rota), a nota diz **404** quando o objeto é alheio.
+>
+> Aplicar a **nota** exigiria saber se o objeto é alheio **antes** de decidir o escopo. A única
+> forma de o saber sem consultar o banco é comparar o `{learner_id}` do path com o sujeito do token
+> — a forma `if (pathId === tokenSubject)` que **D3 rejeita por nome**. Consultando primeiro, a
+> resposta só chega depois da leitura, e nesse ponto a ordem já não é "escopo, depois objeto": é
+> "objeto, depois escopo".
+>
+> Aplicar a **linha 1** é o que A5b implementou: o guard decide pelo que a **rota** exige e pelo que
+> o **token** traz, nunca pelo objeto, e por isso responde o mesmo `403` quer o id exista, quer não.
+> Não há oráculo de enumeração em nenhuma das duas ordens — mas as linhas 2 e 3 de D4 descrevem o
+> caso "objeto alheio ⇒ 404" **para um token que já tem o escopo da rota**, que é o caso do cenário
+> de aceitação (D4.1) e o que está implementado. A linha 1, a nota, as linhas 2–4: **a nota é a
+> única das cinco afirmações que a implementação não satisfaz.**
+>
+> Medição e os testes que fixam a leitura adotada: `reports/api/fase-5b.md` §4. A decisão humana
+> pedida é uma só: **em `GET /learners/{id}/…`, um token sem `learner:self` que pede o id *de outro*
+> responde 403 (como hoje) ou 404 (como a nota diz)?** Responder 404 mantém D3 — a RLS continua a
+> decidir o que existe — ao custo de a checagem de escopo passar para dentro do handler, depois de
+> carregar o recurso.
+
 **D4.1 — `tests/bdd/README.md:237` é corrigido de 403 para 404.** O cenário fica: *"Then the response
 is 404 Not Found and the PostgreSQL RLS policy blocks the query."* Como é um artefato de aceitação,
 esta correção é uma **emenda ao BDD** e portanto um ato humano: este ADR fica `Proposed` e para (R9).
@@ -148,10 +195,13 @@ sem claim estável de sujeito, D3 não tem o que colocar no `PgSessionContext`.
 
 ## Implementation Plan
 
-- [ ] **Bloqueado — ato humano.** Ratificar D4.1 (emenda do BDD 403 → 404) e o caráter não-público
-      do catálogo (D1).
-- [ ] A2 — `JwtAuthGuard` global + `@Public()` (D1) e o conjunto de escopos (D2) no spec canônico
-      (ADR-040), com `401`/`403`/`404` no catálogo de problemas (ADR-034).
+- [x] **Ato humano (2026-10-15).** Ratificado: ADR-038 inteiro — D1 (guard global; só `/health` e
+      `/ready` públicos; catálogo autenticado), D2, D4, D4.1 (emenda do BDD 403 → 404) e D7. Escopo
+      escolhido para a implementação: **mínimo — só a leitura que a RLS governa**.
+- [x] A2 (A5b) — `JwtAuthGuard` global + `@Public()` (D1) e o conjunto de escopos (D2), com o
+      verificador de JWKS (RS256, `iss`/`aud`/`exp`/`nbf`), o *fail closed* de uma configuração
+      ausente e a fixture de JWKS de teste que ADR-013 pedia.
+- [ ] A2 — `401`/`403` no spec canônico (ADR-040) e no catálogo de problemas (ADR-034).
 - [ ] A3 — trocar as 5 rotas `/learners/*` mock por consultas sob `PgSessionContext` (D3).
 - [ ] A3 — controle negativo **obrigatório**: L2 pedindo recurso de L1 ⇒ **404**, e a query não
       retornou linha (provar RLS, não só o status) — o par positivo é L1 lendo o próprio ⇒ 200.

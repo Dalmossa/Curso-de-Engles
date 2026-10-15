@@ -239,7 +239,7 @@ Then the response is served at take 3, and no clip is served from take 1 or 2
 Given learner "L1" has mastery data
 And learner "L2" is authenticated
 When L2 requests GET /learners/L1/profile
-Then the response is 403 Forbidden
+Then the response is 404 Not Found (no row is visible to L2 — ADR-038 D3/D4.1)
 And the PostgreSQL RLS policy blocks the query
 ```
 

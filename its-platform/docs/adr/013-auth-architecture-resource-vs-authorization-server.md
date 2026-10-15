@@ -138,8 +138,13 @@ in the contract does not quietly build an IdP.
 
 ## Implementation Plan
 
-- [ ] Annotate `/auth/refresh` in `docs/api-spec.openapi.yaml` as out of MVP scope, blocked on ADR-013
-- [ ] Build a local JWKS-signing fixture for P1 integration tests (test-only; not a product IdP)
+- [x] Annotate `/auth/refresh` in `docs/api-spec.openapi.yaml` as out of MVP scope, blocked on ADR-013
+      — done; the path carries the annotation and `x-blocked-by: ADR-013`, and A5a made it answer
+      `501` rather than mint a token (`reports/api/fase-5.md`, C3; the `501` is in the document)
+- [x] Build a local JWKS-signing fixture for P1 integration tests (test-only; not a product IdP)
+      — done in A5b: `its-platform/tests/helpers/tokens.ts` generates a key pair per suite and serves
+      a real JWKS over loopback HTTP, so the application under test fetches and verifies exactly as it
+      would in production. It signs; it does not issue for a person, and it is not shipped
 - [ ] Close Question 1 — decide whether the platform ever issues tokens, and record the trigger if yes
 - [ ] Close Question 2 — only if Question 1 resolves to "yes"; evaluate managed versus self-hosted, including LGPD posture
 - [ ] If Question 1 resolves to "no permanently": delete `/auth/refresh` from the contract as a breaking change under §4.4, and update §4.5 to remove the deferral language
