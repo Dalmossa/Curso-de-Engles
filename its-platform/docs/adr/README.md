@@ -56,6 +56,7 @@
 | [041](041-h1-catalog-write-surface.md) | **H1** — superfície de escrita do catálogo: somente leitura ou autoria? | **Proposed** — open | 2026-10-14 | — |
 | [042](042-h2-erasure-vs-append-only-log.md) | **H2** — direito à eliminação (LGPD art. 18) × log append-only imutável | **Proposed** — open | 2026-10-14 | — |
 | [043](043-h3-theta-cors-sdk.md) | **H3** — exposição de θ, política de CORS e publicação de SDK | **Proposed** — open | 2026-10-14 | — |
+| [044](044-a6-no-answer-key-in-served-payloads.md) | **A6** — o catálogo deixa de servir o gabarito (`key`, `is_key`, `slots[].key` **e os canais derivados**): `note` é `null` exatamente na opção-chave (841/841 contra 0/2523) e os distratores de um slot são o complemento do gabarito (74/74) — medido, com controle negativo: retirar os três membros declarados deixa três canais abertos | **Proposed** — open | 2026-10-15 | — |
 
 ### Read before writing any persistence code — ADR-015…018
 
@@ -92,6 +93,16 @@ rejects, and the single question a human has to answer are in the ADR's *Impleme
 v2.2.0 on 2026-10-14 (the `Deprecation` amendment, H-1), which was D2's only blocker. Its D5 was
 *withdrawn* in the same pass (RFC 9745 §2.2 governs the header's scope). See the ADR's
 *Post-acceptance amendment*.
+
+**044 is `Proposed` and is the one open decision the phase plan calls `A6`.** It is the only record
+here whose subject is a *leak rather than a gap*: `GET /content/packs/{id}` and
+`GET /content/listening/{id}` publish the answer key of every item they publish — and two of the
+channels are **derived**, so the "one line of `select`" the plan assumed leaves them open (measured
+in `tests/integration/content-api.spec.ts`, block `A6`, and in the ADR's §3: three of seven
+assertions survive the naive removal). Unlike 031–043, its scope is not a surface that does not
+exist yet — it is two schemas that already answer, which is why it amends an Accepted record
+(027 §2) and breaks the published shape (§4.4). D5 is the one genuinely pedagogical half: the lesson
+body carries the same key by design, and the ADR recommends keeping it there.
 
 **Two bookkeeping facts a reader will otherwise trip over.**
 
