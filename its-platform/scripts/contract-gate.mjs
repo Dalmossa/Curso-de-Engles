@@ -323,6 +323,60 @@ function main(doc) {
     }
   }
 
+  // --- request bodies must reject undeclared members (CONSTITUTION §4.5) ---
+  // §4.5 mandates a global `ValidationPipe` with `whitelist` and `forbidNonWhitelisted`: a member
+  // the contract does not declare is **rejected**, not ignored. The delivered DTOs make that real
+  // (`tests/integration/request-validation.spec.ts`: an undeclared member at the top level, inside
+  // `prior_estimate`, inside an item and inside `response`'s object branch is a 400). OpenAPI's
+  // default is the opposite — `additionalProperties: true` — so a request schema that stays silent
+  // documents a tolerance the server does not have, and a client generated from the document would
+  // be written to rely on it. The walk is recursive because `whitelist` acts wherever a nested class
+  // was declared, and the DTOs declare one at every level. A free-form map (no `properties`, only a
+  // value schema in `additionalProperties`) is deliberately exempt: it declares no member set to
+  // reject against, and §4.5's rule is about members.
+  const checkRequestBodyObjects = (node, where, seen) => {
+    if (node === null || typeof node !== 'object') return;
+    const ref = node['$ref'];
+    if (typeof ref === 'string') {
+      if (seen.has(ref)) return;
+      seen.add(ref);
+      const target = resolvePointer(doc, ref);
+      if (target === undefined) return; // the `$ref` rule already reported it
+      checkRequestBodyObjects(target, where, seen);
+      return;
+    }
+    if (node.properties !== undefined && node.additionalProperties !== false) {
+      fail(
+        'request body',
+        `${where} declares members but not \`additionalProperties: false\`; §4.5 mandates that non-whitelisted properties are rejected, so the document would promise a tolerance the server refuses`,
+      );
+    }
+    for (const [name, child] of Object.entries(node.properties ?? {})) {
+      checkRequestBodyObjects(child, `${where}.${name}`, seen);
+    }
+    if (node.items !== undefined) checkRequestBodyObjects(node.items, `${where}[]`, seen);
+    for (const keyword of ['oneOf', 'anyOf', 'allOf']) {
+      const branches = node[keyword] ?? [];
+      for (let i = 0; i < branches.length; i += 1) {
+        checkRequestBodyObjects(branches[i], `${where} (${keyword} ${i})`, seen);
+      }
+    }
+  };
+
+  for (const [path, item] of Object.entries(paths)) {
+    for (const [verb, operation] of Object.entries(item)) {
+      if (!HTTP_METHODS.includes(verb)) continue;
+      const content = operation?.requestBody?.content ?? {};
+      for (const [mediaType, media] of Object.entries(content)) {
+        checkRequestBodyObjects(
+          media?.schema,
+          `${verb.toUpperCase()} ${path} requestBody (${mediaType})`,
+          new Set(),
+        );
+      }
+    }
+  }
+
   // --- spec × implementation, both directions (D5.3) and method (D5.6) ----
   const specOperations = new Map();
   for (const [path, item] of Object.entries(paths)) {

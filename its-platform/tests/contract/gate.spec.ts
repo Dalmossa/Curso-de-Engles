@@ -275,4 +275,33 @@ describe('contract gate — negative controls (each must FAIL)', () => {
     expect(code).toBe(1);
     expect(out).toMatch(/^FAIL: prefix/m);
   });
+
+  it('N-20 (§4.5): a request body that promises a tolerance the server refuses', () => {
+    // `additionalProperties` is absent from OpenAPI unless declared, and its absence means `true`:
+    // a schema that stays silent documents that a caller may send whatever it likes. §4.5 mandates
+    // the opposite, so the declaration is what keeps the document from contradicting the server —
+    // this control removes it from one request schema and requires the gate to notice.
+    const { code, out } = runGate(
+      mutatedSpec((doc) => {
+        delete doc.components.schemas.DiagnosticRequest.additionalProperties;
+      }),
+    );
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: request body/m);
+  });
+
+  it('N-21 (§4.5): the nested object is checked too, not only the body root', () => {
+    // The DTOs declare a nested class at every level the pipe can reach, so `whitelist` rejects an
+    // undeclared member inside an item as well — `tests/integration/request-validation.spec.ts`
+    // proves it for `responses[]`. A rule that only inspected the referenced schema would pass this
+    // document and miss the level where the tolerance would reappear.
+    const { code, out } = runGate(
+      mutatedSpec((doc) => {
+        delete doc.components.schemas.PracticeSubmission.properties.responses.items
+          .additionalProperties;
+      }),
+    );
+    expect(code).toBe(1);
+    expect(out).toMatch(/^FAIL: request body.*responses\[\]/m);
+  });
 });
