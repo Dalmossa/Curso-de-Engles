@@ -33,7 +33,9 @@ jest.setTimeout(300_000);
 
 import { join } from 'path';
 import { BadRequestException } from '@nestjs/common';
+import type { Request } from 'express';
 import type { DataSource } from 'typeorm';
+import { toProblem } from '../../src/common/filters/problem-exception.filter.js';
 import { createTestDb, type TestDbContext } from '../helpers/db.js';
 import { loadContent } from '../../src/infrastructure/content/content-loader.js';
 import { ContentRepository } from '../../src/infrastructure/repositories/content.repository.js';
@@ -156,11 +158,28 @@ async function rejectionOf(
   try {
     await work;
   } catch (error) {
-    const http = error as { getStatus: () => number; getResponse: () => Record<string, unknown> };
-    return { status: http.getStatus(), body: http.getResponse() };
+    const http = error as { getStatus: () => number };
+    return {
+      status: http.getStatus(),
+      body: toProblem(error, REFUSAL_REQUEST) as unknown as Record<string, unknown>,
+    };
   }
   throw new Error('expected the call to reject, but it resolved');
 }
+
+/**
+ * The one request the refusals are rendered for. `toProblem` is what the global filter serves
+ * (§4.3, P1.17), so these assertions read the body a client would receive. It carries a
+ * `correlationId` the way the middleware leaves a real request, so `request_id` is stable across
+ * both renderings instead of masking the comparison.
+ */
+const REFUSAL_REQUEST = {
+  url: '/api/v1/content/listening/dlg_x/audio',
+  path: '/api/v1/content/listening/dlg_x/audio',
+  method: 'GET',
+  headers: {},
+  correlationId: '3f2a1c44-9b7e-4a01-8c4d-1e2f3a4b5c6d',
+} as unknown as Request;
 
 beforeAll(async () => {
   context = await createTestDb();
@@ -426,12 +445,12 @@ describe('ContentController.getDialogueAudio (P1.13)', () => {
     expect(unknown.status).toBe(404);
     expect(withheld.status).toBe(404);
 
-    // Every member but the per-request correlation id is identical, so "not admitted" cannot be
-    // probed for (ADR-028 §3).
+    // Every member is identical, `request_id` included: one request, one id, so the two refusals
+    // are the same bytes and "not admitted" cannot be probed for (ADR-028 §3).
     const { request_id: unknownRequestId, ...unknownRest } = unknown.body;
     const { request_id: withheldRequestId, ...withheldRest } = withheld.body;
     expect(unknownRest).toEqual(withheldRest);
     expect(typeof unknownRequestId).toBe('string');
-    expect(typeof withheldRequestId).toBe('string');
+    expect(withheldRequestId).toBe(unknownRequestId);
   });
 });

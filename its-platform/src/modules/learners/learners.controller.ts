@@ -8,7 +8,11 @@ export class LearnersController {
   @Get(':id/profile')
   async getProfile(@Param('id', ParseUUIDPipe) id: string) {
     const profile = await this.learnersService.getProfile(id);
-    if (!profile) throw new NotFoundException({ error: 'not_found', message: 'Learner not found', request_id: cryptoRandom() });
+    // No body of its own: the global `ProblemExceptionFilter` renders the `Problem` (P1.17), with
+    // this occurrence's message as `detail`. A missing learner is a 404 for the same reason
+    // `POST /learners` in the spec is not a 409 — the DDL has no uniqueness to violate beyond the
+    // primary key (ADR-038's object-level 404 rule applies to reads of another learner's object).
+    if (!profile) throw new NotFoundException('Learner not found');
     return profile;
   }
 
@@ -18,6 +22,3 @@ export class LearnersController {
   }
 }
 
-function cryptoRandom(): string {
-  return (globalThis as any).crypto?.randomUUID?.() ?? require('crypto').randomUUID();
-}

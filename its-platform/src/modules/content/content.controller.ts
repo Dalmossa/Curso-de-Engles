@@ -21,17 +21,19 @@ const SUPPORTED_RATES: readonly number[] = [1, 0.75];
 const DEFAULT_RATE = 1;
 
 /**
- * P1.12 — the three `/content/*` reads (ADR-027 §1). Every response is the persisted catalogue,
- * read through `ContentRepository`; there is no mock and no file access anywhere on this path.
+ * P1.12 — the three `/content/*` reads (ADR-027 §1). Every response is the
+ * persisted lesson, pack or dialogue read from the repository.
+ *
+ * Errors carry no body of their own: the throw states the occurrence's message and the global
+ * `ProblemExceptionFilter` renders it as RFC 9457 `Problem` (§4.3, P1.17). Before A4 these six
+ * throws each built `{error, message, request_id}` — a second error shape, one `crypto` UUID per
+ * *throw*, and a `request_id` the filter then discarded. The ADR-027 §3 invariant they exist for is
+ * unchanged: unknown id and "exists but not `shipped`" produce the same status *and the same
+ * detail*, so a caller cannot probe for the difference.
  *
  * The path parameter names are the OpenAPI `parameters[].name`s — `lesson_id`, `pack_id`,
  * `dialogue_id` — not the sketch's generic `id`. Nest matches `@Param` by name, and a rename here
  * is what keeps the generated client's argument names and the spec's in step.
- *
- * The 404 body is deliberately *not* RFC 9457 (ADR-027 §5): it is the shape the rest of the
- * platform already emits, and P1.17 owns the migration to Problem Details. The dialogue 404 is
- * the same body as an unknown id, so a caller cannot distinguish "no such dialogue" from
- * "exists, but not shipped" (ADR-027 §3).
  */
 @Controller('content')
 export class ContentController {
@@ -41,11 +43,7 @@ export class ContentController {
   async getLesson(@Param('lesson_id') lesson_id: string): Promise<LessonContent> {
     const lesson = await this.contentService.getLesson(lesson_id);
     if (!lesson) {
-      throw new NotFoundException({
-        error: 'not_found',
-        message: 'Lesson not found',
-        request_id: cryptoRandom(),
-      });
+      throw new NotFoundException('Lesson not found');
     }
     return lesson;
   }
@@ -54,11 +52,7 @@ export class ContentController {
   async getPack(@Param('pack_id') pack_id: string): Promise<PackContent> {
     const pack = await this.contentService.getPack(pack_id);
     if (!pack) {
-      throw new NotFoundException({
-        error: 'not_found',
-        message: 'Pack not found',
-        request_id: cryptoRandom(),
-      });
+      throw new NotFoundException('Pack not found');
     }
     return pack;
   }
@@ -69,11 +63,7 @@ export class ContentController {
     if (!dialogue) {
       // One body for "unknown id" and "exists, not `shipped`" (ADR-027 §3): the caller must not
       // be able to tell a withdrawn dialogue from a non-existent one.
-      throw new NotFoundException({
-        error: 'not_found',
-        message: 'Dialogue not found',
-        request_id: cryptoRandom(),
-      });
+      throw new NotFoundException('Dialogue not found');
     }
     return dialogue;
   }
@@ -95,36 +85,18 @@ export class ContentController {
     @Query('rate') rate?: string,
   ): Promise<DialogueAudioContent> {
     if (!DIALOGUE_ID_PATTERN.test(dialogue_id)) {
-      throw new BadRequestException({
-        error: 'bad_request',
-        message: 'Malformed dialogue_id',
-        request_id: cryptoRandom(),
-      });
+      throw new BadRequestException('Malformed dialogue_id');
     }
 
     const requested = rate === undefined ? DEFAULT_RATE : Number(rate);
     if (!SUPPORTED_RATES.includes(requested)) {
-      throw new BadRequestException({
-        error: 'bad_request',
-        message: 'Unsupported rate; expected 1 or 0.75',
-        request_id: cryptoRandom(),
-      });
+      throw new BadRequestException('Unsupported rate; expected 1 or 0.75');
     }
 
     const audio = await this.contentService.getDialogueAudio(dialogue_id, requested);
     if (!audio) {
-      throw new NotFoundException({
-        error: 'not_found',
-        message: 'Dialogue audio not found',
-        request_id: cryptoRandom(),
-      });
+      throw new NotFoundException('Dialogue audio not found');
     }
     return audio;
   }
-}
-
-/** A `crypto` UUID where the global is present (Node ≥ 19), else the `crypto` module. */
-function cryptoRandom(): string {
-  const globalCrypto = (globalThis as { crypto?: { randomUUID?: () => string } }).crypto;
-  return globalCrypto?.randomUUID?.() ?? require('crypto').randomUUID();
 }
