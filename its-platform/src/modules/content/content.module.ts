@@ -26,8 +26,11 @@ import { HmacAudioUrlSigner } from '../../infrastructure/audio/hmac-audio-url-si
       provide: AUDIO_URL_SIGNER,
       useFactory: (config: ConfigService) =>
         new HmacAudioUrlSigner({
-          signingKey: config.get<string>('AUDIO_URL_SIGNING_KEY') ?? '',
-          baseUrl: config.get<string>('AUDIO_BASE_URL') ?? '',
+          // Deliberately NOT `?? ''`: the signer treats an unset value as "fall back outside
+          // production / fail closed in production" (ADR-028 §5), and `''` would force the
+          // failure even in dev.
+          signingKey: config.get<string>('AUDIO_URL_SIGNING_KEY'),
+          baseUrl: config.get<string>('AUDIO_BASE_URL'),
         }),
       inject: [ConfigService],
     },

@@ -50,10 +50,16 @@ const RENDER_PATH = /\/catalog\/render\/([^/]+)\/take-(\d+)\.opus$/;
 const HEX_SHA256 = /^[0-9a-f]{64}$/i;
 
 export interface HmacAudioUrlSignerOptions {
-  /** `AUDIO_URL_SIGNING_KEY`; a KMS-rotated secret in deployed environments. */
-  signingKey: string;
-  /** `AUDIO_BASE_URL` — the origin/CDN base, environment-specific and never hard-coded. */
-  baseUrl: string;
+  /**
+   * `AUDIO_URL_SIGNING_KEY`; a KMS-rotated secret in deployed environments. Optional **so the DI
+   * factory can forward an unset value**: outside production only, a missing key falls back to
+   * `DEV_FALLBACK_SIGNING_KEY` so the stack boots without KMS access; in production a missing key
+   * stays a loud construction failure (ADR-028 §5 fail-closed). An empty string is **not** unset —
+   * it still fails the validation below, by design.
+   */
+  signingKey?: string | undefined;
+  /** `AUDIO_BASE_URL` — same rule as `signingKey`; dev-only fallback, never in production. */
+  baseUrl?: string | undefined;
   /**
    * Test seam only. Returns epoch **milliseconds**; production uses `Date.now`. Injecting a clock
    * is what makes the 300 s boundary (just inside, just outside) a deterministic assertion
@@ -62,6 +68,14 @@ export interface HmacAudioUrlSignerOptions {
   now?: () => number;
 }
 
+/**
+ * The dev-only fallbacks. The key is named so `grep` finds it in any audit, and it is never valid
+ * in production: `NODE_ENV=production` refuses to fall back to it at all, keeping ADR-028 §5's
+ * fail-closed construction in every deployed environment.
+ */
+const DEV_FALLBACK_SIGNING_KEY = 'temp-fallback-key-do-not-use-in-prod';
+const DEV_FALLBACK_BASE_URL = 'https://audio.test';
+
 export class HmacAudioUrlSigner implements AudioUrlSigner {
   readonly defaultTtlSeconds = DEFAULT_TTL_SECONDS;
 
@@ -69,17 +83,34 @@ export class HmacAudioUrlSigner implements AudioUrlSigner {
   private readonly baseUrl: string;
   private readonly now: () => number;
 
-  constructor(options: HmacAudioUrlSignerOptions) {
+  constructor(options: HmacAudioUrlSignerOptions = {}) {
     // Fail closed at construction, not at the first request: an empty key would produce URLs
     // signed with the empty string, and an empty base URL would produce relative URLs a client
     // cannot fetch. Both are configuration defects that must be loud.
-    const signingKey = options.signingKey.trim();
-    const baseUrl = options.baseUrl.trim().replace(/\/+$/, '');
+    //
+    // The one relaxation is dev-only: outside `NODE_ENV=production`, an **unset** key/URL (missing
+    // from options and from the environment) falls back to the named dev constants above so a
+    // developer can boot the stack without KMS access. Production never falls back — the same
+    // construction failure as before applies.
+    const isProduction = process.env['NODE_ENV'] === 'production';
+    const rawSigningKey =
+      options.signingKey ??
+      process.env['AUDIO_URL_SIGNING_KEY'] ??
+      (isProduction ? '' : DEV_FALLBACK_SIGNING_KEY);
+    const rawBaseUrl =
+      options.baseUrl ?? process.env['AUDIO_BASE_URL'] ?? (isProduction ? '' : DEV_FALLBACK_BASE_URL);
+    const signingKey = rawSigningKey.trim();
+    const baseUrl = rawBaseUrl.trim().replace(/\/+$/, '');
     if (signingKey.length === 0) {
       throw new Error('HmacAudioUrlSigner requires a non-empty AUDIO_URL_SIGNING_KEY');
     }
     if (baseUrl.length === 0) {
       throw new Error('HmacAudioUrlSigner requires a non-empty AUDIO_BASE_URL');
+    }
+    if (signingKey === DEV_FALLBACK_SIGNING_KEY || baseUrl === DEV_FALLBACK_BASE_URL) {
+      console.warn(
+        '⚠️ AUDIO_URL_SIGNING_KEY/AUDIO_BASE_URL not configured — using the named dev fallback. Never valid in production.',
+      );
     }
     this.key = signingKey;
     this.baseUrl = baseUrl;
