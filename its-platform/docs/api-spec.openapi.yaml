@@ -94,10 +94,6 @@ components:
         (RS256, `iss`/`aud`/`exp`/`nbf`, per `CONSTITUTION.md` §4.5 and ADR-013) and never issues
         one. A request without a valid token answers `401`; a valid token whose scopes do not
         authorise the operation answers `403` (ADR-038 D4).
-    RefreshToken:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
 
   schemas:
     # ============================================================
@@ -1240,52 +1236,3 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
-
-  /auth/refresh:
-    post:
-      tags: [auth]
-      summary: Refresh access token
-      description: |
-        **OUT OF MVP SCOPE — blocked on ADR-013. Do not implement.**
-
-        An endpoint returning `access_token` is Authorization Server behaviour. The MVP
-        operates as a Resource Server only: it validates JWTs issued by an external IdP and
-        does not mint tokens (CONSTITUTION.md §4.5, ADR-013).
-
-        This path is retained rather than deleted because removing a published path is a
-        breaking change under §4.4, and ADR-013 does not authorise one. It is annotated so
-        that an implementer reading this contract does not quietly build an IdP.
-
-        Implementing this endpoint requires ADR-013 to be resolved first.
-      operationId: refreshToken
-      x-mvp-scope: excluded
-      x-blocked-by: ADR-013
-      security:
-        - RefreshToken: []
-      responses:
-        '401':
-          description: Unauthorized — a valid bearer token is required (ADR-038 D4)
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Problem'
-        '501':
-          description: |
-            Not implemented. The MVP is a Resource Server and does not issue tokens.
-            See ADR-013.
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Problem'
-        '200':
-          description: New access token
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [access_token, expires_in]
-                properties:
-                  access_token:
-                    type: string
-                  expires_in:
-                    type: integer

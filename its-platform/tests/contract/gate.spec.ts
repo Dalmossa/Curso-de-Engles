@@ -188,12 +188,12 @@ describe('contract gate — negative controls (each must FAIL)', () => {
   it('N-12: a controller route that the spec does not publish', () => {
     const dir = join(tempDir(), 'src');
     cpSync(SRC, dir, { recursive: true });
-    const file = join(dir, 'modules', 'auth', 'auth.controller.ts');
+    const file = join(dir, 'modules', 'content', 'content.controller.ts');
     writeFileSync(
       file,
       readFileSync(file, 'utf8').replace(
-        "@Post('refresh')",
-        "@Post('refresh')\n  @Post('logout')\n  logout() { return null; }",
+        "@Get('lessons/:lesson_id')",
+        "@Get('lessons/:lesson_id')\n  @Get('ghost')\n  ghost() { return null; }",
       ),
     );
     const { code, out } = runGate(SPEC, dir);

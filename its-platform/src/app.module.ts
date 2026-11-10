@@ -7,7 +7,6 @@ import { LearnersModule } from './modules/learners/learners.module.js';
 import { PracticeModule } from './modules/practice/practice.module.js';
 import { PlacementModule } from './modules/placement/placement.module.js';
 import { CurriculumModule } from './modules/curriculum/curriculum.module.js';
-import { AuthModule } from './modules/auth/auth.module.js';
 import { AuditModule } from './modules/audit/audit.module.js';
 
 @Module({
@@ -24,7 +23,6 @@ import { AuditModule } from './modules/audit/audit.module.js';
     PracticeModule,
     PlacementModule,
     CurriculumModule,
-    AuthModule,
     AuditModule,
   ],
 })
