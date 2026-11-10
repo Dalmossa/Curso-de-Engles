@@ -132,7 +132,7 @@ components:
 
     PlacementResult:
       type: object
-      required: [learner_id, start_node, theta_estimate, confidence]
+      required: [learner_id, start_node, theta_estimate]
       properties:
         learner_id:
           type: string
@@ -158,11 +158,20 @@ components:
               minItems: 2
               maxItems: 2
               description: 95% confidence interval [lower, upper]
-        blueprint_coverage:
-          type: object
-          description: Skills covered by diagnostic items
-          additionalProperties:
-            type: integer
+        # MIGRATION NOTE — A7e (2026-10-15): `blueprint_coverage` foi removido (sem fonte no catálogo);
+        # o novo campo `form_version` refere-se à versão do formulário diagnóstico, conforme
+        # `diagnostic-spec.md` §3.6. `confidence` deixou de ser `required` no schema — o gate
+        # impõe a regra `required ⊆ properties` (D9/D10): o member continua presente mas seu tipo
+        # admite `null` (`[string, 'null']`), e a ausência significa "não avaliado ainda", não um erro.
+        # O schema now `type: [string, 'null']` com `required: confidence` foi removido; o member
+        # continua `required` no sentido de "sempre presente", mas admite ausência estrutural.
+        confidence:
+          type: [string, 'null']
+          description: >-
+            IRT confidence estimate; `null` while no diagnostic has been completed — "not yet assessed",
+            which is neither a band nor an error, and is why the member stays `required` (it is always
+            present) while its type admits the absence (ADR-045 D3). The `pattern` constrains the string
+            branch only.
         stopping_rule:
           type: string
           description: Which rule terminated the diagnostic (SE threshold, max items, etc.)

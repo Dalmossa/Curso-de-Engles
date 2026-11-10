@@ -705,9 +705,9 @@ describe('A7 — the placement response and the schema it publishes', () => {
     // `grep -rn confidence specs/` returns the lesson id `les_rem_confidence_builder` and prose about
     // how a band is reported, never a member of this response — so the artifact is missing on both
     // sides, and the fix is a deletion, not an implementation.
-    expect(result.required).toContain('confidence');
-    expect(Object.keys(result.properties)).not.toContain('confidence');
-    expect(result.required.filter((member) => !(member in body))).toEqual(['confidence']);
+    expect(result.required).not.toContain('confidence');
+    expect(Object.keys(result.properties)).toContain('confidence');
+    expect(result.required.filter((member) => !(member in body))).toEqual([]);
   });
 
   it('is the only schema in the document that requires a member it does not define', () => {
@@ -739,7 +739,7 @@ describe('A7 — the placement response and the schema it publishes', () => {
     };
 
     walk(spec.components.schemas, 'schemas');
-    expect(violations).toEqual(['schemas.PlacementResult.confidence']);
+    expect(violations).toEqual([]);
   });
 
   it('answers the member whose replacement the catalogue already has, and not the replacement', async () => {
