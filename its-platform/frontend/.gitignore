@@ -1,0 +1,22 @@
+# Build output
+/.next
+/out
+
+# Dependencies
+/node_modules
+
+# Tests
+/coverage
+/test-results
+/playwright-report
+/blob-report
+/playwright/.cache
+
+# TypeScript
+*.tsbuildinfo
+
+# Environment — `.env.example` is the committed template and is un-ignored so a
+# fresh clone can see which variables exist. Never commit a real value.
+.env
+.env.*
+!.env.example
