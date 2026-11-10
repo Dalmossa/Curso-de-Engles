@@ -300,7 +300,7 @@ erDiagram
 | **M1: Content Pipeline** | `verify-integrity.py` PASS; 123 lessons, 122 packs, 74 listening items | All contract tests green; submodule sync automated | `its-platform` reads all specs; renders lesson/pack/listening |
 | **M2: Curriculum Graph** | DAG loads; 18 modules, 123 nodes, 0 cycles | Mastery gating works; prerequisite traversal correct | `/next` endpoint returns valid i+1 |
 | **M3: Adaptive Engine** | BKT/IRT/FSRS params initialized from spec | θ CI95 narrows with evidence; mastery ≥ 0.85 gate holds | `/practice` updates mastery; spaced review scheduled |
-| **M4: Diagnostic** | Blueprint skills ⊆ curriculum skills | Placement θ correlates with post-test (r ≥ 0.7) | `/placement` returns start node + confidence |
+| **M4: Diagnostic** | Blueprint skills ⊆ curriculum skills | Placement θ correlates with post-test (r ≥ 0.7) — **not verifiable this phase:** no post-test instrument exists in either repository, so there is no criterion value to report; the prerequisite is owned by `its-platform/BACKLOG.md` **P3.21** | `/placement` returns start node + confidence |
 | **M5: Listening** | 74 admissible items render; Q-L2 ≥ 45s | Shadow CAT runs; `shadow-only` items excluded from scoring | `/listening` streams audio + items |
 | **M6: Authoring Guard** | `external-sources.md` enforced in CI | Zero `adapt_*` on restricted; all permissions tracked | Pre-publish check blocks non-compliant content |
 | **M7: MVP Release** | All milestones green; security spec reviewed | Load test: 1k concurrent learners < 200ms p95 | Production deploy via Helm |

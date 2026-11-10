@@ -67,6 +67,11 @@ original material, cite the source in a bibliography, reproduce nothing.
 | `adapt_with_attribution` | the 13 lessons backed by a permissively-licensed external source | publish the attribution string (`external-sources.md` §7.1) |
 | `adapt_requires_permission` | the 48 list-shaped lessons whose list *is* the source | written, perpetual, redistribution-granting permission |
 
+**These three counts do not sum to the 123 lessons** (93 + 13 + 48 = 154, an overcount of 31). The
+cause and the `external-sources.md` §0 five-class partition that reconciles them are derived in §4's
+*"Derivation of reuse basis partition"*, which carries the **UNVERIFIED + pendência humana** marker:
+the exact mapping needs a `curriculum-graph-spec.md` §4.3 cross-reference that is still pending.
+
 **The list-shaped exemption is the real exposure.** A list of 250 jargon entries is the
 source, not a fact about the language. `les_b2_it_jargon_mastery`,
 `les_b1_it_acronyms_deep`, `les_a1_false_cognates` and `les_a2_travel_vocab_core` cannot be
@@ -133,11 +138,15 @@ unwritten and not pending. A PRD that cannot name that state will quietly relabe
 | Packs outside the canonical item schema | 115 | authored |
 | External sources licence-checked and accepted | 19 | authored |
 | Learner-facing application | 0 | unauthored |
-| IRT item parameters (`a`, `b`) | 12 | anchored Expert-SE |
+| IRT item parameters (`a`, `b`) | 12 | authored (expert-anchored, declared SE) |
 | Rendered audio clips | 0 | blocked |
 
-The last row is the reason the row above it is zero. Neither can move first: parameters need
-responses, responses need items, items need lessons and audio, and none of the four exists yet.
+The last row is the reason the row above it is zero — parameters need responses, responses need
+items, items need lessons, and rendered audio is what the listening items wait on. But the
+parameters themselves are **no longer zero**: the 12-item pilot bank (P1.8, DONE 2026-10-10,
+`assessment-item-spec.md` §9) supplies `(a, b)` for the Stage-1 form, **expert-anchored with
+declared SE** (`Var_a = 0.35²`, `Var_b = (1.75/n_raters)²`) — a Stage-1 anchor, not a population
+calibration. What needs responses is the *Stage-2 refit* (P3.1), which stands on `n ≥ 50` per item.
 
 **Derivation of reuse basis partition (per §2):**
 - PRD §2 declares: `cite_only`=93, `adapt_with_attribution`=13, `adapt_requires_permission`=48 → sum 154 ≠ 123 lições (overcount 31).
@@ -170,6 +179,11 @@ recomputes all seven at run time and fails the document if any drifts.
 | Item slots authored | 82 | `listening-corpus.md` `### L<n>-<n> — \`lst_…\`` headers |
 | Admissible listening items | 74 | `listening-corpus.md` `**Status:** shipped` fields |
 | Practice packs authored | 122 | `pack-les-*.md` **and** `pack_les_*_v1.md` files at repo root — both schemas; see `post-lesson-practice-spec.md` §12 |
+
+**One identity reconciles the three practice-item counts** (855 authored · 847 loaded · 921 rows):
+`SDD.md` §5 documents it with the command — 855 (both pack schemas) − 8 `MATCHING_KEY_UNSUPPORTED`
+skips (ADR-022 §5) = 847 pack items loaded; + 74 admissible listening slots folded into `items`
+(ADR-018 §9.6) = 921 rows, which `node scripts/content-check.mjs` prints as `{"…","items":921,"skips":16}`.
 
 Counts that are **not** in this table, and why they are harder:
 
@@ -224,9 +238,15 @@ previous PRD had no blockers because it believed its content was finished.
 1. **No audio has been rendered.** 13 transcripts require 30 speaker-clips (`v_a` 8, `v_b` 7,
    `v_c` 7, `v_d` 8). Until they exist, every listening item is render-blocked, the diagnostic
    cannot assess listening, and the placement band is labelled `placement_provisional`.
-2. **No Stage-1 responses, therefore no IRT calibration.** The pilot bank for the five criteria
-   in `assessment-item-spec.md` §9 is unbuilt. This blocks the CAT, every θ, and therefore
-   reliable ability claims — and it sits at the head of the critical path in §8.
+2. **No Stage-1 responses, therefore no IRT calibration.** The pilot bank the five criteria in
+   `assessment-item-spec.md` §9 call for **exists** — `P1.8` delivered **12 items**, `expert-anchored`,
+   with **declared SE** (`Var_a = 0.35²`, `Var_b = (1.75/n_raters)²`) — so the old charge that the
+   bank *"is unbuilt"* no longer holds and has been withdrawn here. What is still missing is the
+   **Stage-2 refit that needs real responses**: no learner has answered the items, and
+   `assessment-item-spec.md` §3.2 gates the refit on **`n ≥ 50` responses per item**, without which
+   the parameters cannot move off `expert_anchored` (`SE_parameter` 0.30 → 0.12). Until those
+   responses exist this blocks the CAT, every θ, and therefore reliable ability claims — and it
+   sits at the head of the critical path in §9.
 3. **Independent expert review of the Tier B deck is pending.** `tier-b-review.md` §0 records
    that the existing pass is *not* an independent review: the reviewer authored the items. One
    qualified ELT professional with Portuguese as an L2 must review `content-map.md` §11.2.
@@ -244,7 +264,7 @@ that unblocks nothing and is marked High is a contradiction, and `prd-score.py` 
 
 | ID | Requirement | Priority | Unblocks |
 |----|-------------|----------|----------|
-| RF-001 | Migrate the 115 second-schema packs: add `**Reuse basis:**` to the 110 that lack it, and rename dotted `item_id`s to §1.2's prefix convention | High | The last integrity gap. It is the precondition for retiring the pack-schema warning in `verify-integrity.py`; until then §0.5's per-artefact reuse basis is unenforced on 90% of the corpus |
+| RF-001 | Migrate the 115 second-schema packs: add `**Reuse basis:**` to the 110 that lack it, and rename dotted `item_id`s to `assessment-item-spec.md` §1.2's prefix convention | High | The last integrity gap. It is the precondition for retiring the pack-schema warning in `verify-integrity.py`; until then §0.5's per-artefact reuse basis is unenforced on 90% of the corpus |
 | RF-002 | Build the 12-item Stage-1 pilot bank and run the five criteria of `assessment-item-spec.md` §9 | High | Produces the first real `(a, b)` with declared SE (`Var_a = 0.35²`, `Var_b = (1.75/n_raters)²`); each of the five criteria reported pass or fail, with failures named. Parameters are expert-anchored with declared SE.
 | RF-003 | Render 30 speaker-clips from the 13 transcripts | High | Unblocks listening mastery scoring, the 7 empty Listening slots, and the diagnostic re-run |
 | RF-004 | Submit the §7.0 permission request for the 48 restricted lessons | High | Only route to publication for list-shaped material; nothing else in the plan touches them |
@@ -282,6 +302,12 @@ document's "Build 4-6 weeks".
 | M4 — Diagnostic honours itself | M2 and M3 done | Second diagnostic run produces a quotable CEFR band; `placement_provisional` is gone from the results screen |
 | M5 — Publishable subset | M0 and M2 done | The 13 externally-sourced lessons publish with attribution strings; the 48 restricted ones either hold permission or are excluded from the release |
 | M6 — Learner-facing build | M1, M2, M3 done | A learner completes a lesson, gets post-lesson practice, and the mastery gate returns a calibrated probability with a confidence interval |
+
+**M4 carries a second exit criterion that this table does not state** — `ITS-ARCHITECTURE.md` §10
+adds *"placement θ correlates with post-test (r ≥ 0.7)"*. It is **not verifiable this phase**: no
+post-test instrument exists in either repository, so there is no value to report. The prerequisite
+(post-test instrument + correlation method) is owned by `its-platform/BACKLOG.md` **P3.21**, and the
+architecture cell is marked accordingly.
 
 **The critical path runs M0 → M1 → M2 → M6.** M3 is parallel from M1. Everything statistical
 depends on M2, and M2 depends on M1 — which is why RF-002 (the pilot bank) is High and RF-009

@@ -12,7 +12,7 @@
 |---|---|---|
 | [§1 Snapshot do estado](#1-snapshot-do-estado) | **Status atual de tudo** — portas P0.x, commits, CI, gates | `grep -n "Snapshot"` |
 | [§2 Corpo de trabalho analisado](#2-corpo-de-trabalho-analisado) | Histórico de execução P0.1→P0.4 + achados de auditoria (ADR-009, índices 27) | `grep -n "P0\."` · `grep -n "Achado de auditoria"` |
-| [§3 Avaliação crítica](#3-avaliação-crítica) | Forças, defeitos abertos (D1–D4), riscos | `grep -n "^| D[0-9]"` |
+| [§3 Avaliação crítica](#3-avaliação-crítica) | Forças, defeitos abertos (D1–D4), riscos | `grep -n "^\| D[0-9]"` |
 | [§4 Decisões duráveis](#4-decisões-duráveis-não-reabrir-sem-adr) | Não reabrir sem ADR (9 itens) | `grep -n "Decisões duráveis"` |
 | [§5 Pendências com dono](#5-pendências-com-dono) | O que precisa de decisão do usuário (P1–P7) | `grep -n "Pendências com dono"` |
 | [§6 Baseline dos gates](#6-baseline-dos-gates) | Valores **esperados** (exit 1 do release-gates NÃO é bug) | `grep -n "baseline"` |
@@ -56,14 +56,14 @@
 | Decisão P2 (PostgreSQL real na CI) | ✅ resolvida | 2026-10-06 | `9a0a787` |
 | P0.6 scaffolding + contract tests | ✅ **DONE** (2026-10-07) | NestJS modules/controllers/services + ValidationPipe + RFC 9457 + contract tests (Jest) | Subagent api-developer |
 | P0.7 test harness + integration/contract | ✅ **DONE** (2026-10-07) | Test helpers (PGlite), integration tests (loader idempotency), expanded contract tests, parser unit tests | Subagent api-developer |
-| P0.8 CI hardening (content-loader + contract-check jobs) | ✅ **DONE** (2026-10-07) | CI jobs added + summary wiring; local gates green | — |
-| P0.9 delete legacy Python tree | ✅ **DONE** (2026-10-08) | Removed `src/its_platform/`, `pyproject.toml`, Python tests; CI: removed `bdd-tests` job, updated `verify-release-gates.py` (mutation gate target gone); all core gates green | 1d | P0.8 | — | verify-integrity/prd-score/typecheck/build/content-check/domain/contract-check OK |
+| P0.8s CI hardening (content-loader + contract-check jobs) | ✅ **DONE** (2026-10-07) | CI jobs added + summary wiring; local gates green | — |
+| P0.9 delete legacy Python tree | ✅ **DONE** (2026-10-08) | Removed `src/its_platform/`, `pyproject.toml`, Python tests; CI: removed `bdd-tests` job, updated `verify-release-gates.py` (mutation gate target gone); all core gates green (campos herdados de um esquema anterior, preservados: esforço `1d`, dependência `P0.8`, evidência de gates `verify-integrity/prd-score/typecheck/build/content-check/domain/contract-check OK`) | — |
 
 **Gates (baseline — valores esperados, não defeito):**
 
 | Gate | Resultado | Observação |
 |---|---|---|
-| `python3 verify-integrity.py` | **PASS — 0 failures, 1 warning** | warning = 115/122 packs em schema legacy (migração §12) |
+| `python3 verify-integrity.py` | **PASS — 0 failures, 0 warnings** | 115 packs legados em schema antigo (`pack_les_*_v1.md`) agora sob catraca versionada (`_legacy_packs_baseline.json`) em vez de aviso; migração §12 |
 | `python3 prd-score.py` | **96.1% PASS** (threshold 80%) | |
 | `python3 its-platform/scripts/verify-release-gates.py` | **FAIL — 12 failures, 4 warnings, exit 1** | **ESPERADO** — repo não releasable até G1–G7; ver §6 abaixo |
 | `npm run typecheck` / `domain:check` / `test` | ✅ 0 / 0 / 2 | |
@@ -214,7 +214,7 @@ nesta linha e na tabela de resumo.
 3. **P0.5** (2d) — ✅ **DONE 2026-10-07** — port content loads (lessons, packs, listening) com parsers puros TS + loader TypeORM idempotente; gate `scripts/content-check.mjs` (PGlite default, DATABASE_URL opcional); unit tests; política de skips com baseline fail-closed (ADR-020). Verificação: typecheck/build/domain:check/tests + content-check OK (PGlite).
 4. **P0.6** (1d) — ✅ **DONE 2026-10-07** — NestJS scaffolding API (modules/controllers/services), ValidationPipe + RFC 9457 Problem filter, contract tests (Jest + OpenAPI smoke).
 5. **P0.7** (1d) — ✅ **DONE 2026-10-07** — test harness (PGlite helpers), integration tests (loader idempotency), expanded contract tests, parser unit tests.
-6. **P0.8** (1d) — ✅ **DONE 2026-10-07** — CI hardening: `content-loader` (PGlite seed+asserts), `contract-check` (OpenAPI lint+smoke), summary wired.
+6. **P0.8s** (1d) — ✅ **DONE 2026-10-07** — CI hardening: `content-loader` (PGlite seed+asserts), `contract-check` (OpenAPI lint+smoke), summary wired.
 7. **P0.9** — ✅ **DONE 2026-10-08** — deletar `src/its_platform/` + `pyproject.toml` + Python tests; CI: remover job `bdd-tests`; `verify-release-gates.py` atualizado (mutation gate target removido). Todos os gates core verdes.
 8. **P1.1** — ✅ **DONE 2026-10-08** — DAG loader do curriculum-graph-spec.md §4.3 (18 módulos, 123 lessons, 5 remediation, 164 edges). Parsers: module catalog (§3), lesson registry (§4.3), cross-module edges (last lesson → first lesson of successors). Gates: acyclicity, CEFR monotonicity, reachability (all 123 lessons reachable via entry points + prerequisite + cross-module edges), module/lesson/remediation counts. Graph: 141 nodes, 164 edges.
 9. **P1.2** — ✅ **DONE 2026-10-08** — Mastery gate enforcement (four-clause gate per ADR-018 §1–2, curriculum-graph-spec.md §6.1). Domain service `MasteryGateService` com: gate numérico (p≥0.85), CI₉₅_lower(P)>0.70 com n_eff por domínio (λ: vocab=0.02, grammar=0.005, pron=0.03), n_obs≥3, distinct_days≥2, spaced_obs≥1. Module gate (§6.2) e acceleration gate (§6.3). Property tests 18/18 pass.

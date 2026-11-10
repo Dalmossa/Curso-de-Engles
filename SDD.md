@@ -152,6 +152,8 @@ admissible items against a real 74 for the life of the table, because there was 
 | 122 authored | `**Lesson ID:**` across repo-root `les_*.md` | [2] [8] |
 | 74 admissible listening items | `**Status:** shipped` in `listening-corpus.md` | [5] |
 | 855 practice items | both pack schemas at repo root | [9] [11c] |
+| 847 loaded pack items | 855 − 8 items skipped by `MATCHING_KEY_UNSUPPORTED` (ADR-022 §5) | `content-check.mjs` `report.items` − 74 slots |
+| 921 rows in `items` | 847 pack items + 74 listening slots (`**Status:** shipped`) | `node scripts/content-check.mjs` → `{"…","items":921,"skips":16}` |
 | 19 accepted external sources | `external-sources.md` §0.5.1 | [6] |
 | 58 restricted lessons (A_restricted) | `check_sources` part B | [3b] |
 | 141 IDs in registry §4.3 | `check_registry` | [1] |
@@ -160,6 +162,15 @@ admissible items against a real 74 for the life of the table, because there was 
 
 A number without a derivation is a defect in that document, not a rounding difference. This is
 RNF-001 and it exists because `listening-corpus.md` §8.2 shipped the wrong count for years.
+
+**The three practice-item counts reconcile as one identity.** The catalogue declares 855 item ids
+across both pack schemas (49 canonical + 806 legacy, `CHANGELOG.md` A5a entry); the loader skips the
+8 `MATCHING_KEY_UNSUPPORTED` ids (ADR-022 §5 — each appearing once, all in legacy packs), so **847**
+pack items load; the 74 admissible listening slots (`**Status:** shipped`) are folded into the same
+`items` table (`listening_items` folded in, ADR-018 §9.6), giving **921** rows. Measured, not
+asserted: `node scripts/content-check.mjs` prints `{"…","items":921,"skips":16}` (16 = 8 unsupported
+keys + 7 withdrawn + 1 shadow-only slot) and `PASS`; the same identity is recorded in ADR-044
+(*"banco: 921 `items` … 847 itens servidos"*).
 
 ---
 
