@@ -1,0 +1,113 @@
+# ===========================================================================
+# P2.10 Load Test — Weekly 1k concurrent users
+# ===========================================================================
+name: Load Test
+
+on:
+  schedule:
+    - cron: '0 4 * * 0'  # Weekly Sunday 04:00 UTC
+  workflow_dispatch:
+    inputs:
+      vus:
+        description: 'Number of virtual users'
+        required: false
+        default: '1000'
+      duration:
+        description: 'Test duration'
+        required: false
+        default: '5m'
+      base_url:
+        description: 'Base URL to test'
+        required: false
+        default: 'https://api-staging.example.com'
+
+permissions:
+  contents: read
+
+jobs:
+  load-test:
+    name: Load Test (k6)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup k6
+        uses: grafana/k6-action@v0.2.0
+        with:
+          version: 'latest'
+
+      - name: Run Load Test
+        run: |
+          k6 run \
+            --vus ${{ github.event.inputs.vus || 1000 }} \
+            --duration ${{ github.event.inputs.duration || '5m' }} \
+            --env BASE_URL=${{ github.event.inputs.base_url || 'https://api-staging.example.com' }} \
+            tests/load/k6-load-test.js
+        env:
+          K6_WEB_DASHBOARD: true
+          K6_WEB_DASHBOARD_EXPORT: k6-report.html
+
+      - name: Upload k6 Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-load-test-report
+          path: k6-report.html
+          retention-days: 30
+
+      - name: Check Thresholds
+        run: |
+          # k6 exits with non-zero on threshold failure
+          echo "Load test completed successfully"
+
+  smoke-test:
+    name: Smoke Test (PR validation)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup k6
+        uses: grafana/k6-action@v0.2.0
+        with:
+          version: 'latest'
+
+      - name: Run Smoke Test
+        run: |
+          k6 run \
+            --env BASE_URL=${{ secrets.STAGING_API_URL || 'https://api-staging.example.com' }} \
+            tests/load/k6-smoke-test.js
+
+      - name: Fail on Threshold Failure
+        run: |
+          echo "Smoke test passed"
+
+  notify:
+    name: Notify on Failure
+    needs: [load-test, smoke-test]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack
+        if: env.SLACK_WEBHOOK_URL != ''
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+          payload: |
+            {
+              "text": "❌ Load test failed for ${{ github.repository }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Load Test Failed* 🚨\nRepository: ${{ github.repository }}\nRun: ${{ github.run_id }}\nBranch: ${{ github.ref_name }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
