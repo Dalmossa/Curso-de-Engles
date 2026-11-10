@@ -1,3 +1,10 @@
+## Idioma (regra obrigatória)
+
+- Responda sempre em português do Brasil (pt-BR), mesmo que o pedido, os logs, as specs ou o código estejam em inglês.
+- Só use outro idioma se o usuário pedir isso na mensagem atual.
+- Não traduza: código, nomes de variáveis e arquivos, comandos e mensagens de erro citadas.
+- Comentários de código: siga o idioma que o arquivo já usa.
+
 # AGENTS.md — Curso de Inglês
 
 This repository contains an English course built from markdown content extracted from PDF source materials.
@@ -8,7 +15,7 @@ This repository contains an English course built from markdown content extracted
 Curso-de-Ingles/
 ├── AGENTS.md                    # This file
 └── Ingles/
-    ├── *.pdf                    # Original source PDFs (7 files)
+    ├── *.md                    # Original source PDFs (7 files)
     └── output/
         └── *.md                 # Converted markdown content (7 files)
 ```
@@ -53,7 +60,9 @@ python3 verify-integrity.py     # exits 1 on any FAIL
 ```
 
 It runs **14 checks** covering the class of error that is invisible when reading one file at a time
-and that has actually occurred in this repo:
+and that has actually occurred in this repo. The number is **derived** from the script's `CHECKS`
+registry — check [14] reads this sentence back and fails if the two disagree, so it cannot drift
+again (it said 14 while `main()` called 13).
 
 | # | Check | What it exists because |
 |---|-------|------------------------|
@@ -64,11 +73,12 @@ and that has actually occurred in this repo:
 | 6 | External source registry | 21 dead URLs and 15 rejections have to stay recorded, or the same sources get re-proposed |
 | 7 | Cross-references (`check_xrefs`) | Every backtick-quoted `.md` filename must resolve to a real file or a file in `Ingles/output/`. Found 4 missing files that were cited but did not exist. |
 | 8 | Authored lesson files | filename == lesson id, `**Reuse basis:**` present and valid, `adapt_*` barred against restricted sources, and a respelling scan for `cite_only` reproduction. The respelling rule requires a diacritic as well as a space: 239 of 560 respellings are multi-word and **none of the 239 lacks a diacritic**, so the diacritic costs no signal and removes the `[preposition phrase]` false positive |
-| 9 | Practice packs | **Found 2 unscorable items in the first 4 packs** (duplicate options) plus 21 items with no machine-parseable key. It also checks id prefix ↔ skill namespace, requires a `note:` on every distractor, and asserts the `br_pt_form` census it publishes in `assessment-item-spec.md` §2.2.1. It globbed 7 of 122 packs — see [11c]/[11d]/[11e] for what now runs on both schemas |
-| 10 | Internal `§` references resolve | Two dialogue headers cited a "§7 sourcing note" that did not exist — a dangling reference that also happened to be the exact licensing mislabelling the licence section exists to prevent. The check found 4 more real ones |
+| 9 | Practice packs | **Found 2 unscorable items in the first 4 packs** (duplicate options) plus 21 items with no machine-parseable key. It also checks id prefix ↔ skill namespace, requires a `note:` on every distractor, and asserts the `br_pt_form` census it publishes in `assessment-item-spec.md` §2.2.1. It globbed 7 of 122 packs — see [11c]/[11d]/[11e] for what now runs on both schemas. The 115 packs of the second schema are held by a **versioned ratchet** (`_legacy_packs_baseline.json`): the count may fall, never rise — a new pack in the deprecated schema fails the gate. |
+| 10 | Internal `§` references resolve | Two dialogue headers cited a "§7 sourcing note" that did not exist — a dangling reference that also happened to be the exact licensing mislabelling the licence section exists to prevent. The check found 4 more real ones. Scope: the 16 specs, `PRD.md`, `ITS-ARCHITECTURE.md`, `MEMORY.md`, every authored lesson and **both** pack schemas — 259 documents, 1 332 references checked (691 against the pack spec the **schema** declares, 398 locally, 1 dangling). A legacy pack's `spec_conformance:` manifest cites `§2.1`/`§4.2` with no document name, so the schema's `pack_les_*_v1.md → post-lesson-practice-spec.md` mapping resolves it. Getting that number right took two passes: the window that classifies a reference as cross-document ran **before** resolution, and the manifest's own `lesson_id:` line sits inside that window, so 461 correct citations were filed as "cross-document" and never looked at — the same mistake one level up that `SELF_ALIAS` fixes, so a file's own identifiers are now masked. Residual, measured: 315 references are skipped because the file names its spec in its own header (`**Spec:** …`), and 37 live in 10 documents that define no numbered sections at all (17 in this file) |
 | 11 | **Restricted sources are not declared publishable** | `content-map.md` §11.1 — the **P0** term deck — was headed *"Source-derived, zero authoring"* and then reproduced a restricted book's 40-row list, its invented phonetic notation and 8 verbatim sentences, while §0.5.1 of the registry claimed the opposite 700 lines away. Found by the check, not by reading. **[11b]** every pack's `**Reuse basis:**` must match its items' provenance; **[11c]** `item_id` must be unique across **both** pack schemas (found 10 collisions); **[11d]** every item declares an id and every item **with a distractor table** declares a `**Key:**` — the obligation is conditional on there being a choice, so the 14 production/minimal-pair items scored by ASR are correctly exempt; **[11e]** no item may offer the same option twice (case-sensitive, bold stripped) — run across both schemas it found **28** items whose distractor was byte-identical to its own key |
-| 12 | Markdown table column consistency | A regex meant to drop a respelling column dropped the Portuguese-gloss column instead and deleted all 40 glosses from §11.1. No other check can see that loss: every check that reads a cell reads it as "present" |
-| 13 | Worked examples honour their own disclosures | `diagnostic-spec.md` §3.6 shipped a JSON example printing a `listening` θ while §2.1 had removed Listening from the blueprint, and a `pronunciation` θ while its own `skill_theta_reportable` said false. Check [4] only asks whether the block parses, and a block that parses while contradicting itself is the common case |
+| 12 | Markdown table column consistency | A regex meant to drop a respelling column dropped the Portuguese-gloss column instead and deleted all 40 glosses from §11.1. No other check can see that loss: every check that reads a cell reads it as "present". Now scans the same 259 documents as [10], and **fails if it scans zero tables** — a pass over nothing is indistinguishable from a glob that stopped matching |
+| 13 | Worked examples honour their own disclosures | `diagnostic-spec.md` §3.6 shipped a JSON example printing a `listening` θ while §2.1 had removed Listening from the blueprint, and a `pronunciation` θ while its own `skill_theta_reportable` said false. Check [4] only asks whether the block parses, and a block that parses while contradicting itself is the common case. A block that declares `"skills"` and does **not** parse is now a failure here too (it used to be skipped in silence), and zero qualifying blocks is a failure |
+| 14 | This document states the real number of checks | `AGENTS.md` said "14 checks" while `main()` called 13, and neither number was derived from anything. The registry is now the only source: [14] parses the count out of this sentence and fails if it disagrees, if the sentence is removed, or if the check numbers are not the contiguous 1..N sequence |
 
 **Run it after editing any spec or authoring any artifact.** Most defects in this repository were
 found by it, not by reading.
@@ -178,3 +188,130 @@ Transform the 7 raw markdown sources into:
 ---
 
 *This architecture guides how the raw content in `Ingles/output/` should be processed, structured, and delivered by the ITS. Agents working on this repo should treat the markdown files as source material for curriculum engineering, not as final lesson delivery format.*
+
+---
+
+## its-platform/frontend — ITS UI Platform
+
+**Localização**: `its-platform/frontend/`
+
+### Visão geral
+Frontend da plataforma ITS (Intelligent Tutoring System) — UI para falantes de BR-PT, PWA com offline para lições e prática de pronúncia. Consome a API NestJS (`/api/v1`).
+
+### Comandos principais
+
+| Ação | Comando |
+|------|---------|
+| Desenvolvimento | `npm run dev` (port 3100) |
+| Build produção | `npm run build` |
+| Type check | `npm run typecheck` |
+| Lint | `npm run lint` |
+| Testes unitários | `npm run test` |
+| Gerar tipos API | `npm run api:types` |
+
+### Arquitetura em camadas
+
+```
+src/
+├── app/                    # Next.js App Router pages/routes
+│   ├── (dashboard)/        # Dashboard protegido (server-only)
+│   ├── diagnostic/         # Formulário de diagnóstico
+│   ├── lessons/[lesson_id]/ # Visualização de lição
+│   ├── mastery/            # Painel de domínio por habilidade
+│   └── practice/           # Prática de pacotes
+├── core/                   # Lógica pura, sem framework
+│   ├── entities/           # Tipos de domínio (LessonContent, PracticeResult, etc.)
+│   ├── value-objects/      # CefrLevel, Skill, Mastery, etc.
+│   ├── services/           # MasteryGate, ActivityDestination, LessonPhases, PracticeSession
+│   ├── errors/             # ProblemDetails, DomainError
+│   └── ports/              # Interfaces de repositório
+├── application/            # Casos de uso (use cases)
+│   └── use-cases/          # RunDiagnostic, GetLesson, SubmitPractice, GetLearnerDashboard
+├── infrastructure/         # Adaptadores (implementações concretas)
+│   ├── api/                # Direct gateway, HttpClient, operations table, repositories
+│   ├── composition/        # server-container.ts (composition root, server-only)
+│   ├── env/                # Environment typing
+│   └── identity/           # Token identity (server-only)
+├── presentation/           # UI components, providers, lib
+│   ├── components/         # UI primitives, lesson-view, mastery-panel, etc.
+│   ├── providers/          # QueryProvider, ThemeProvider
+│   ├── lib/                # copy.ts (strings PT-BR), format, utils
+│   └── forms/              # diagnostic-form.tsx
+├── shared/                 # Utils compartilhados
+│   ├── constants.ts        # THEME_STORAGE_KEY, APP_NAME, APP_DESCRIPTION
+│   ├── format.ts           # formatPercent, formatDateTime, humanizeIdentifier, initial
+│   ├── routes.ts           # Route definitions (home, login, diagnostic, mastery, lesson)
+│   ├── utils/              # cn.ts (className merging), storage.ts
+│   └── action-result.ts    # ActionResult type
+```
+
+### Ponto de entrada da API
+
+Todas as chamadas à API NestJS passam pelo **BFF (Backend for Frontend)** definido em `infrastructure/api/`.
+
+- **Gateway direto** (`DirectApiGateway`): servidor-only, usa token de ambiente. Nunca expõe token no browser.
+- **Transportes**: `HttpContentRepository`, `HttpCurriculumRepository`, `HttpLearnerRepository`, `HttpPlacementRepository`, `HttpPracticeRepository`.
+- **Operações** (`operations.ts`): tabela fechada de 9 operações tipadas contra o OpenAPI:
+  - `learner.profile`, `learner.mastery`, `learner.next`, `learner.practice`, `learner.placement`
+  - `content.lesson`, `content.pack`, `content.dialogue`, `content.dialogueAudio`
+
+Cada operação valida parâmetros contra padrões do contrato (UUIDs, padrões `les_`, `pack_`, `dlg_`, etc.) antes de montar a URL.
+
+### PWA — Offline
+
+Service worker em `public/sw.js` com estratégias de cache runtime:
+
+| Recurso | Estratégia | Cache Name | Máx itens |
+|---|---|---|---|
+| Lições (`/content/lessons/...`) | stale-while-revalidate | `lesson-content-v1` | 10 |
+| Pacotes (`/content/packs/...`) | stale-while-revalidate | `lesson-content-v1` | 10 |
+| Diálogos (`/content/listening/...`) | stale-while-revalidate | `dialogue-content-v1` | 10 |
+| Áudio do diálogo (`/.../audio`) | stale-while-revalidate | `dialogue-audio-v1` | 10 |
+| Navegação | network-first | `its-platform-v1` | — |
+| Outros GETs | stale-while-revalidate | `its-platform-v1` | — |
+
+O service worker intercepta apenas requests de mesmo domínio (`url.origin === self.location.origin`). Cross-origin não é cacheado.
+
+### Tema e provider
+
+- Tema light/dark persistente em `localStorage` (`THEME_STORAGE_KEY = 'its-theme'`)
+- `ThemeProvider` usa `useSyncExternalStore` — DOM é fonte única de verdade
+- `ThemeScript` inline roda antes do hydration para evitar flash de tema
+- `query-provider.tsx` tanstack query com staleTime 30s, retry seletivo
+
+### Erros e boundaries
+
+- Todo erro vira `DomainError` no `HttpClient` (`problemDetailsToDomainError`)
+- `ProblemExceptionFilter` no backend garante respostas `application/problem+json`
+- `error-boundary.tsx` + `global-error.tsx` capturam e mostram mensagens PT-BR
+- `copy.ts` centraliza todas as strings da interface — facilitar testes sem matcher de texto
+
+### Convenciones importantes
+
+- **Pastas `(dashboard)`** são route groups do Next.js — não coloque rotas soltas que colidam
+- **`routes.ts`** define todas as rotas em um lugar — use `routes.lesson(id)`, `routes.lessonPractice(id, packId)`, etc.
+- **`server-only`** em arquivos que precisam de token/env (gateway, container, identity)
+- **`use client`** só nos componentes que realmente precisam de estado no browser
+- **`server component`** é o padrão — nav, header, cards ficam no servidor
+
+### Cuidados comuns
+
+- Não tentar acessar `ITS_API_TOKEN` no browser — ele nunca chega ao bundle frontend
+- O gateway recusará path params que não batem com os padrões do contrato (lança `DomainError` `invalid_input`)
+- Lições precisam exatamente 4 fases — `normalizeLessonPhases` lança erro se não compliance
+- `br_pt_form` só aparece quando TODAS as options têm gloss — 798 de 841 items têm; ausência não significa erro
+- Items `asr_phoneme_match` têm `options: []` por design — não confunda com malformado
+
+### Tipos gerados
+
+`npm run api:types` gera `src/infrastructure/api/generated/api-types.ts` a partir de `docs/api-spec.openapi.yaml`. Execute sempre após alterar a especificação.
+
+### Estrutura de pastas chave (referência rápida)
+
+- `src/core/entities/` — entidade domain (LessonContent, PracticeResult, etc.)
+- `src/core/value-objects/` — value objects (CefrLevel, Skill, MasteryBand, etc.)
+- `src/application/use-cases/` — casos de uso (orquestradores)
+- `src/infrastructure/api/repositories/` — adaptadores HTTP
+- `src/presentation/components/ui/` — componentes UI primitivos (Badge, Button, Card, Progress, etc.)
+- `src/presentation/lib/copy.ts` — todas as strings em pt-BR
+- `src/shared/format.ts` — formatadores utilitários
