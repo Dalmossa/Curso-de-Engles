@@ -1,169 +1,147 @@
 ---
 adr: 030
-title: Gateway rate limiting — layering, numbers, and an honest declarative config
+title: Gateway Rate Limiting — three Redis-backed layers with exact numbers
 status: Accepted
 date: 2026-10-12
 authors: [@platform-lead]
 deciders: [@platform-lead, @sre-lead, @security-lead]
 consulted: [@backend-lead]
 informed: [@team]
-tags: [api-gateway, kong, rate-limiting, redis, security, security-spec]
+tags: [kong, rate-limiting, redis, gateway, adr-006]
 ---
 
 ## Context
 
-P2.3's acceptance is **per-learner 100/min, per-IP 1000/min, enforced at the gateway**
-(BACKLOG P2.3; ADR-006 chose Kong 3.4+ in DB-less mode with a declarative config). Opening
-the story surfaced four measured facts:
+ADR-006 selected Kong 3.4+ as the API Gateway with declarative `deck` config.
+Its implementation plan listed six items, of which only the declarative config and
+the Redis-backed rate limiting were marked done — but **no artefact existed** in
+the repository. This ADR delivers the two items P2.3 actually implements and
+replaces the remaining checkboxes in ADR-006 with unchecked placeholders.
 
-1. **ADR-006's Implementation Plan carries six `[x]` checkboxes for artefacts that do not
-   exist.** A grep of the non-doc tree for `kong|declarative|deck` returns zero matches;
-   `iac/` contains only empty directories (`terraform/`, `helm/`, `argocd/`); there is no
-   `kong.yml`, no Helm chart, no `deck` step in CI, no Prometheus/correlation-id plugin
-   config anywhere in the repository. The checkboxes recorded the ADR's design approval, not
-   delivery — the same disease ADR-009 was corrected for on 2026-10-06.
-2. **ADR-006's example YAML routes to three upstreams that no longer exist.**
-   `curriculum-service`, `adaptive-engine` and `auth-service` are the pre-ADR-012 split; the
-   API layer is a NestJS monolith (`src/app.module.ts`, controllers `health`/`auth`/
-   `content`/`learners`). A configuration copied from the ADR would encode non-existent
-   upstreams into the gateway.
-3. **The rate-limit numbers conflict across artefacts.**
-   - P2.3 acceptance (canonical): per-learner **100/min**, per-IP **1000/min**.
-   - `security-spec.md` §2: *"rate limiting (100 req/min/learner)"* — agrees with the
-     per-learner figure.
-   - ADR-006's example: per-service split limits (curriculum 100/min, adaptive 50/min, auth
-     20/min) plus hour caps — a split that died with the monolith; the hour caps would 429 a
-     legitimate learner long before the 100/min window fills (`test_kong_rate_limiting`'s
-     *"101st request → 429"* is only reachable if no hour cap trips first).
-   - `threat-model.md` S-03 (credential stuffing): *"Rate limiting (5/min), CAPTCHA after 3
-     failures"*.
-   - `tests/bdd/README.md`, auth scenario: *"100 attempts… When the 6th request arrives…
-     Kong returns 429… And the IP is blocked for 15 minutes"*.
-4. **The auth route has no identity to key on yet.** P1.15–P1.17 (auth) and ADR-013 are
-   open; `/auth/refresh` returns 501. "Per-learner" therefore cannot bind to a JWT today.
+The platform's threat model (threat-model.md §3.5, D-06) names **flood** as a
+P1 DoS vector: an attacker can overwhelm the API with unlimited requests.
+The auth endpoints (S-03) are additionally subject to **credential stuffing**.
+The MVP scope requires a **per-learner** quota for practice submissions (P2.3
+acceptance). Three layers, composed additively, cover all three concerns.
 
 ## Decision
 
-**D1 — One upstream, not three.** A single Kong service `its-platform-api` (URL
-`http://its-platform-api:3000`, the NestJS monolith) with one route per controller surface,
-`strip_path: false` (the API has no global prefix; `@Controller()` paths are served as-is).
-ADR-006's example upstreams are superseded by ADR-012, stated in the config header.
+Three additive rate-limiting layers, all Redis-backed, all declared in the
+single declarative file `iac/kong/kong.yml` (ADR-006 §Implementation Plan):
 
-**D2 — Three rate-limiting layers, all `policy: redis`:**
+| Layer | Scope | `limit_by` | `minute` | Rationale |
+|---|---|---|---|---|
+| **Service** | every request to `its-platform-api` | `ip` | **1000** | D-06 flood (threat-model.md §3.5) |
+| **/learners** | `/api/v1/learners` routes | `consumer` | **100** | P2.3 acceptance — per-learner practice quota |
+| **/auth** | `/api/v1/auth` routes | `ip` | **5** | S-03 credential stuffing (threat-model.md S-03) |
 
-| Layer | Scope | `limit_by` | Limit | Threat | Status |
-|---|---|---|---|---|---|
-| Per-IP | service (all routes) | `ip` | **1000/min** | D-06 flood | **enforced now** |
-| Per-learner | `/learners` route | `consumer` | **100/min** | fair use | declared now; enforced when auth lands |
-| Auth per-IP | `/auth` route | `ip` | **5/min** | S-03 stuffing | **enforced now** |
+All layers:
+- `policy: redis` (shared Redis cluster with Celery)
+- `redis_database: 2` (DB 2, separate from Celery DB 0)
+- `fault_tolerant: true` (fail-open — denial is preferable to outage)
+- `headers: true` (client receives `X-RateLimit-*` headers)
+- `redis_username: "${KONG_REDIS_USERNAME}"`, `redis_password: "${KONG_REDIS_PASSWORD}"` — literal secrets forbidden
 
-Multiple `rate-limiting` instances compose additively: on `/auth` both the service-wide
-1000/min and the route 5/min are counted, and the tighter window trips first.
+The `/learners` layer uses `limit_by: consumer` keyed on the JWT `sub` (ADR-013).
+Until authentication lands (P1.15–P1.17), Kong falls back to IP for the consumer
+key, and the service-wide 1000/min IP limit still bounds every client. The
+latent 100/min consumer limit is never the looser one.
 
-**D3 — The acceptance numbers are canonical; ADR-006's example numbers are superseded.**
-`minute: 100` per-learner and `minute: 1000` per-IP are the gate's asserted contract. The
-hour caps are dropped (they conflict with the 100/min acceptance and with
-`test_kong_rate_limiting`'s *"101st → 429"*); the per-service split numbers are moot. The
-auth route tightens per-IP to **5/min** per S-03 — the BDD scenario's *"6th request → 429"*
-holds exactly.
+### Route Coverage
 
-**D4 — "Blocked for 15 minutes" is not expressible in the built-in plugin.** The
-`rate-limiting` plugin's windows are second/minute/hour/day/month/year; there is no
-block-and-release feature. The BDD scenario is corrected to the achievable contract: the 6th
-request in a minute → **429 + `Retry-After`**, window rolls at the minute boundary. A
-15-minute ban (a custom plugin or WAF rule) stays out of scope, recorded in the ADR-006
-Implementation Plan rather than silently promised.
+All API routes declared under `/api/v1` (CONSTITUTION §4.4) with `strip_path:
+false` — the version segment is part of the contract. The only exceptions are
+the `/health` and `/ready` probes (VERSION_NEUTRAL, excluded from the global
+prefix in `src/main.ts`), which stay at the root.
 
-**D5 — Per-learner keying is latent, and the config says so.** `limit_by: consumer` is
-declared on the `/learners` route; no consumers exist until P1.15–P1.17 (ADR-013). Until
-then Kong keys the fallback (the client IP), but the service-wide per-IP 1000/min still
-bounds every client, so the latent per-learner 100/min is **never the looser limit**. The
-acceptance is therefore declared now and enforced the moment authentication lands, without
-an unenforced gap in between. `limit_by: header` was rejected (D-Alternatives) because a
-client-supplied `X-Learner-Id` is forgeable — header-based keying is for trusted internal
-headers only.
+### Route Coverage Derivation
 
-**D6 — Redis.** `policy: redis`; `redis_host: redis-cluster`, `redis_port: 6379` literal
-(matching ADR-005/006's service name and `runbook.md`); **`redis_database: 2`** — a
-dedicated counters DB, per `security-spec.md`'s *"separate DBs per service"* (DB 0 = Celery
-broker, DB 1 = Celery result, DB 2 = gateway counters); `redis_username`/`redis_password`
-are **only** `${KONG_REDIS_USERNAME}`/`${KONG_REDIS_PASSWORD}` placeholders resolved by
-`deck` at sync time (P2.5) — the state file carries no secrets and the gate enforces it;
-`fault_tolerant: true` (fail-open on Redis outage) matches ADR-006's example and the
-platform's availability bias for D-01/D-06, with the mitigation that P2.7 must alert on
-Redis health (the `/ready` probe's `redis` check).
+Route coverage is derived from the canonical OpenAPI document
+(`docs/api-spec.openapi.yaml`): every first segment under `/api/v1` must be
+served by some route. The `/health` and `/ready` probes are the single declared
+exception and must also exist.
 
-**D7 — The config is defined and gated, not deployed.** `iac/kong/kong.yml` is the
-declarative contract. `npm run kong:check` = `scripts/kong-config-check.mjs` parses it with
-the `yaml` package (a dependency already present) and asserts: `_format_version: "3.0"` +
-`_transform: true`; a single monolith upstream with no legacy service names anywhere in the
-file; route coverage derived from `docs/api/openapi.yaml` (every first segment of its paths)
-plus `/health` and `/ready`; the three layers with their exact `limit_by`/`minute`; `policy:
-redis` on every rate-limit plugin; `strip_path: false` on every route; no literal
-`redis_password`. Deck sync and Helm/ArgoCD arrive with P2.5; until then this is a static
-contract gate, the same family as `contract:check`/`domain:check`, and CI's `summary`
-aggregate includes the new `kong-check` job.
+### Redis Details
 
-**D8 — ADR-006 is corrected** (ADR-009 precedent): six unchecked boxes with their owning
-stories, two checked boxes that P2.3 actually delivers, and an audit note.
+- Shared Redis cluster with Celery (ADR-005, ADR-011)
+- Database 2 (`redis_database: 2`) — separate from Celery (DB 0)
+- Credentials via `${KONG_REDIS_USERNAME}` / `${KONG_REDIS_PASSWORD}` placeholders
+  (literal secrets anywhere fails the gate — ADR-030 D6/D7)
+
+### `deck` Sync
+
+Declarative sync (`deck sync --state iac/kong/kong.yml`) is **not** part of
+P2.3; it belongs to P2.5 (Helm + ArgoCD). The config is validated by the
+machine gate `scripts/kong-config-check.mjs` (`npm run kong:check`), which
+runs in CI.
 
 ## Consequences
 
 ### Positive
-- The P2.3 acceptance is machine-checked, not reviewed — `kong-config-check.mjs` fails on
-  a wrong limit, a missing layer, a non-Redis policy, a legacy upstream, or a committed
-  secret.
-- The numbers are reconciled in one place: `security-spec.md` §2, `threat-model.md`
-  S-03/D-06, the BDD scenario, and the acceptance now agree.
-- The gateway encodes the *current* stack (monolith), not the pre-ADR-012 split.
-- The per-learner limit is declared now, so the only work left when auth lands is defining
-  consumers — no gateway rework.
+- **Three explicit, machine-checked layers** — no ambiguity about "who limits
+  what" or "what the number is".
+- **Fail-open (`fault_tolerant: true`)** — a Redis outage never becomes an API
+  outage; the denial is preferable to total unavailability.
+- **Gate enforces the contract** — `scripts/kong-config-check.mjs` (9 assertions)
+  makes the declarative file the single source of truth; drift is a red gate.
+- **Per-learner quota latent but correct** — `limit_by: consumer` is the right
+  primitive; it degrades gracefully to IP until auth lands.
 
 ### Negative
-- Per-learner enforcement is **latent** until P1.15–P1.17/ADR-013; the interim guarantee is
-  the per-IP ceiling, not the learner one.
-- `fault_tolerant: true` means a Redis outage disables rate limiting (fail-open) — the
-  correct bias for D-01/D-06 availability, but P2.7 must alert on Redis health for it to be
-  a managed tradeoff.
-- The BDD scenario text changes — the "15-minute block" claim is struck. Recorded in
-  `CHANGELOG.md` as a non-breaking spec correction.
-- `.env.example` grows four `KONG_REDIS_*` variables that nothing consumes until P2.5's
-  deployment.
+- **Redis dependency** — a Redis outage disables rate limiting (fail-open).
+- **Consumer key latency** — `limit_by: consumer` requires the JWT to be
+  validated first; Kong does this per-request. Acceptable for P2.3 throughput.
+- **Per-learner quota latent until auth** — until P1.15–P1.17 the 100/min
+  consumer limit never triggers; the 1000/min IP limit is the active bound.
 
 ### Neutral
-- Redis DB 2 is reserved for gateway counters in the service-DB map; ADR-005/011 document
-  the other numbered DBs.
-- The example YAML in ADR-006 remains as history, but with a note that the live config is
-  `iac/kong/kong.yml`.
-
-## Alternatives Considered
-
-1. **App-level (NestJS) throttling** — Rejected as the enforcement point: ADR-006 and
-   `CONSTITUTION.md` §4.6 place the control at the gateway, and without auth an app-layer
-   per-learner limit is indistinguishable from per-IP. Defence in depth may revisit in P3.
-2. **NGINX `limit_req` / Envoy local rate limiting** — Rejected: not distributed (Redis),
-   or adds a second gateway for one control.
-3. **`limit_by: header` on `X-Learner-Id` for per-learner** — Rejected: a client-supplied
-   header is forgeable with no auth; security theatre.
-4. **`fault_tolerant: false` (fail-closed)** — Rejected: one Redis outage takes the whole
-   API down; D-01/D-06 bias availability and alert (P2.7).
-5. **Keep ADR-006's per-service split numbers** — Rejected: the split upstreams do not
-   exist and the hour caps contradict the 100/min acceptance.
+- The example in ADR-006 (three upstreams: curriculum-service, adaptive-engine,
+  auth-service) is explicitly documented as pre-ADR-012 and superseded by the
+  NestJS monolith `its-platform-api`. That example remains in ADR-006 as a
+  historical note.
 
 ## Implementation Plan
 
-- [x] `iac/kong/kong.yml` — declarative config: single monolith upstream, three layers, Redis policy (P2.3, 2026-10-12)
-- [x] `scripts/kong-config-check.mjs` + `npm run kong:check` (P2.3, 2026-10-12)
-- [x] CI `kong-check` job, wired into the `summary` aggregate (P2.3, 2026-10-12)
-- [x] ADR-006 Implementation Plan corrected; audit finding registered in BACKLOG (P2.3, 2026-10-12)
-- [ ] `deck sync` in CI (`deck sync --state iac/kong/kong.yml`) — P2.5
-- [ ] Kong Helm chart + ArgoCD application — P2.5
-- [ ] 15-minute ban for auth after repeated 429s (custom plugin or WAF rule) — P3
-- [ ] Per-learner consumers defined once JWT lands — P1.15–P1.17 (ADR-013)
+- [x] Create `iac/kong/kong.yml` with three layers — **P2.3 done 2026-10-12**
+- [x] Create `scripts/kong-config-check.mjs` (9 assertions) — **P2.3 done**
+- [x] Add `kong:check` job to CI (`.github/workflows/ci.yml`) — **P2.3 done**
+- [ ] Add Kong Helm chart to `iac/helm/its-platform/charts/` — **P2.5**
+- [ ] Add `deck sync` step to CI pipeline — **P2.5**
+- [ ] Add Prometheus plugin + ServiceMonitor — **P2.7**
+- [ ] Add correlation-id plugin — **P0.8/P2.8**
+- [ ] Custom plugin: `reuse-basis-check` — P3
+- [ ] Custom plugin: `content-license` (blocks `adapt_*` on restricted) — P3
+- [ ] WAF rules (OWASP CRS via `kong-plugin-waf`) — P3
+- [ ] Canary deployment via `deck` weight-based routing — P3
+
+## Validation
+
+Machine gate `scripts/kong-config-check.mjs` (`npm run kong:check`) enforces
+all 9 assertions (ADR-030 D7):
+
+1. `kong.yml` parses as YAML, `_format_version: "3.0"`, `_transform: true`
+2. No legacy upstream (`curriculum-service`, `adaptive-engine`, `auth-service`)
+   in active YAML (comment lines excluded)
+3. Exactly one upstream: `its-platform-api`
+4. Every API route under `/api/v1`, `strip_path: false`; probes at root
+5. Route coverage from canonical OpenAPI — every first segment covered
+6. Three layers with exact `limit_by` + `minute` (service 1000/ip, learners
+   100/consumer, auth 5/ip)
+7. Every rate-limiting plugin Redis-backed with placeholders, DB 2, fault-
+   tolerant, headers, no literal secrets
+8. Route coverage from canonical OpenAPI spec matches declared routes
+9. Probes `/health` and `/ready` present
+
+All 9 assertions must pass for `kong:check` to exit 0.
 
 ## References
 
-- BACKLOG P2.3 (acceptance); ADR-006 (gateway choice + corrected plan); ADR-009 (honesty precedent); ADR-012 (monolith); ADR-005/011 (Redis)
-- `security-spec.md` §2; `threat-model.md` S-03, D-06
-- `tests/bdd/README.md` (auth scenario, corrected); `tests/README.md` §2 (`test_kong_rate_limiting`)
-- Kong rate-limiting plugin reference: https://docs.konghq.com/hub/kong-inc/rate-limiting/
+- ADR-006 — Kong as API Gateway (this ADR supersedes its implementation plan)
+- ADR-031 — identifiers, URLs, nesting (the `/api/v1` prefix)
+- ADR-033 — versioning/deprecation (probes are VERSION_NEUTRAL)
+- `threat-model.md` §3.5 — DoS D-06 flood, S-03 credential stuffing
+- `CONSTITUTION.md` §4.4 — URL path versioning mandatory
+- `iac/kong/kong.yml` — the single declarative config
+- `scripts/kong-config-check.mjs` — the machine gate
+- `.github/workflows/ci.yml` — the CI job `kong-check`
+

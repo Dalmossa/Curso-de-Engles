@@ -1,0 +1,371 @@
+# ===========================================================================
+# ITS Platform — CI Pipeline
+# ===========================================================================
+# Gates (in order): lint → typecheck → test → contract:gate → domain:check →
+# rls:check → kong:check → migration-check
+#
+# See its-platform/scripts/*.mjs for the implementation of each gate.
+# CONSTITUTION.md §4.8 defines the pass/fail thresholds.
+# ---------------------------------------------------------------------------
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  # No other permissions needed; secrets accessed via env in jobs that need them
+
+jobs:
+  # ------------------------------------------------------------------------
+  # Lint + Typecheck (fastest, run first)
+  # ------------------------------------------------------------------------
+  lint-and-typecheck:
+    name: Lint + Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: its-platform/package-lock.json
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: npm ci
+
+      - name: Lint
+        working-directory: its-platform
+        run: npm run lint
+
+      - name: Typecheck
+        working-directory: its-platform
+        run: npm run typecheck
+
+  # ------------------------------------------------------------------------
+  # Unit Tests
+  # ------------------------------------------------------------------------
+  unit:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: its-platform/package-lock.json
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: npm ci
+
+      - name: Unit Tests
+        working-directory: its-platform
+        run: npm run test:unit
+
+  # ------------------------------------------------------------------------
+  # Integration Tests (PGlite)
+  # ------------------------------------------------------------------------
+  integration:
+    name: Integration Tests (PGlite)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: its-platform/package-lock.json
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: npm ci
+
+      - name: Integration Tests
+        working-directory: its-platform
+        run: npm run test:integration
+
+  # ------------------------------------------------------------------------
+  # Contract Gate (OpenAPI ↔ implementation)
+  # ------------------------------------------------------------------------
+  contract-gate:
+    name: Contract Gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: its-platform/package-lock.json
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: npm ci
+
+      - name: Contract Gate
+        working-directory: its-platform
+        run: npm run contract:gate
+
+  # ------------------------------------------------------------------------
+  # Domain Isolation Check
+  # ------------------------------------------------------------------------
+  domain-check:
+    name: Domain Isolation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: its-platform/package-lock.json
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: npm ci
+
+      - name: Domain Check
+        working-directory: its-platform
+        run: npm run domain:check
+
+  # ------------------------------------------------------------------------
+  # RLS Context Check
+  # ------------------------------------------------------------------------
+  rls-check:
+    name: RLS Context
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: its-platform/package-lock.json
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: npm ci
+
+      - name: RLS Check
+        working-directory: its-platform
+        run: npm run rls:check
+
+  # ------------------------------------------------------------------------
+  # Kong Config Check (P2.3 / ADR-030)
+  # ------------------------------------------------------------------------
+  kong-check:
+    name: Kong Config Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: its-platform/package-lock.json
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: npm ci
+
+      - name: Kong Config Check
+        working-directory: its-platform
+        run: npm run kong:check
+
+  # ------------------------------------------------------------------------
+  # Migration Check (PGlite + real Postgres)
+  # ------------------------------------------------------------------------
+  migration-check:
+    name: Migration Check (PGlite)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        ports: [5432:5432]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: its-platform/package-lock.json
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: npm ci
+
+      - name: Migration Check (PGlite)
+        working-directory: its-platform
+        run: node scripts/migration-check.mjs
+
+  # ------------------------------------------------------------------------
+  # Migration Check (Real PostgreSQL 16) — ADR-014
+  # ------------------------------------------------------------------------
+  migration-check-pg:
+    name: Migration Check (PostgreSQL 16)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        ports: [5432:5432]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: its-platform/package-lock.json
+
+      - name: Install dependencies
+        working-directory: its-platform
+        run: npm ci
+
+      - name: Migration Check (Real PG)
+        working-directory: its-platform
+        env:
+          DATABASE_URL: postgres://test:test@localhost:5432/test
+        run: node scripts/migration-check.mjs
+
+  # ------------------------------------------------------------------------
+  # Content Integrity (root repo)
+  # ------------------------------------------------------------------------
+  content-integrity:
+    name: Content Integrity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Content Integrity
+        run: python3 verify-integrity.py
+
+  # ------------------------------------------------------------------------
+  # PRD Score (root repo)
+  # ------------------------------------------------------------------------
+  prd-score:
+    name: PRD Score
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: PRD Score
+        run: python3 prd-score.py
+
+  # ------------------------------------------------------------------------
+  # Summary (aggregates all gate statuses)
+  # ------------------------------------------------------------------------
+  summary:
+    name: Summary
+    runs-on: ubuntu-latest
+    needs:
+      - lint-and-typecheck
+      - unit
+      - integration
+      - contract-gate
+      - domain-check
+      - rls-check
+      - kong-check
+      - migration-check
+      - migration-check-pg
+      - content-integrity
+      - prd-score
+    if: always()
+    steps:
+      - name: Collect results
+        run: |
+          echo "All gates completed."
+          echo "See individual job logs for details."
+          # Exit with failure if any needed job failed
+          for job in lint-and-typecheck unit integration contract-gate domain-check rls-check kong-check migration-check migration-check-pg content-integrity prd-score; do
+            result="${{ needs.$job.result }}"
+            if [ "$result" != "success" ]; then
+              echo "❌ $job failed ($result)"
+              exit 1
+            else
+              echo "✅ $job passed"
+            fi
+          done
+          echo "🎉 All gates passed!"
+
+# ---------------------------------------------------------------------------
+# Concurrency: cancel in-flight runs on same branch/PR when new push arrives
+# ---------------------------------------------------------------------------
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
