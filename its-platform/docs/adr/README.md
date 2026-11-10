@@ -58,6 +58,7 @@
 | [043](043-h3-theta-cors-sdk.md) | **H3** — exposição de θ, política de CORS e publicação de SDK | **Proposed** — open | 2026-10-14 | — |
 | [044](044-a6-no-answer-key-in-served-payloads.md) | **A6** — o catálogo deixa de servir o gabarito (`key`, `is_key`, `slots[].key` **e os canais derivados**): `note` é `null` exatamente na opção-chave (841/841 contra 0/2523), os distratores de um slot são o complemento do gabarito (74/74) e, dentro de um item, a opção sem glosa é a chave (17 de 841, achado na implementação) — medido, com controle negativo nos dois níveis; **implementado em A6b** (2026-10-15) | Accepted | 2026-10-15 | — |
 | [045](045-a7-learner-route-bodies.md) | **A7** — os corpos das cinco rotas `/learners/{id}/*` são constantes, e a decomposição para corrigi-los. Medido (17 asserções, `learner-routes-bodies.spec.ts`, controle negativo de 4 mutações): `cefr_level`/`xp`/`streak_days` sem coluna, `created_at` como relógio onde a linha vale 2020, `mastery`/`theta_estimates`/`fsrs_states` inventados ou vazios contra linhas reais, `daily_goal_minutes` 20 contra o `default: 15` do documento, `/mastery` com chaves escolhidas e `gate_passed` `false` para uma skill que passa nas cinco cláusulas, `blueprint_coverage` no lugar de `form_version`, `confidence` `required` e indefinido (único no documento), `/practice` pontuando item fixo e `bkt_update.transition` sem fonte, `/next` com `mastery_gaps: []`. D1 propõe cinco sub-fases (A7b–A7f); bloqueia: ADR-021 (`/next`) e ADR-043 R1 (θ) | **Proposed** — open | 2026-10-15 | — |
+| [046](046-rag-pgvector-retrieval.md) | **RAG sobre o conteúdo das lições** — o retorno do `pgvector`, condicionado à query nomeada que o ADR-018 §8 exigiu: Q-RAG-1 (recuperação semântica de trechos para o tutor) e Q-RAG-2 (seleção i+1 por proximidade de conteúdo), **internas**, sem rota HTTP nova (R3). Portão de licenciamento: só `reuse_basis ∈ {cite_only, adapt_with_attribution}` gera vetor (mesma regra do `verify-integrity.py` [11]); `content_embeddings` carrega a proveniência do invariant floor (`embedding_model`/`_version`, `chunker_version`, `source_id`, `derived_at`); RLS **não** se aplica (conteúdo global, ERD §9 rule 2); o grafo do ADR-016/ADR-021 permanece a *ordem* — o embedding é a *proximidade*. **Aceito em 2026-10-20:** dimensão **1024** (`bge-m3`), modelo **`bge-m3` via Ollama local**, chunk **por fase** (`chunker_version = "phase-v1"`), métrica **cosine** (`m=16`, `ef_construction=64`) — com ressalvas para `ef_search` e limiar 0.75 *to be measured/a confirmar*. Emenda o **ADR-018 §8 por referência** (`supersedes_scope`), preservando o invariant floor e o alerta pedagógico | Accepted | 2026-10-20 | — (emenda ADR-018 §8) |
 
 ### Read before writing any persistence code — ADR-015…018
 
@@ -122,6 +123,14 @@ body carries the same key by design.
    than of the disagreement.
 2. **ADR-018's §1 amendment (Constitution 2.1.0) is still pending §9 step 5** and is operative anyway,
    because it is an accepted ADR enforced in `src/domain/` — see `CONSTITUTION.md` §9.
+3. **ADR-046 emends ADR-018 §8 by reference and does not edit the record.** §8 removed
+   `pgvector`/`content_embeddings` from the MVP *with a stated blocker* — *"a retrieval requirement
+   that names a query … If it returns, it is its own ADR."* ADR-046 is that ADR: it satisfies the
+   blocker (two named queries) and says so in its frontmatter (`supersedes_scope`). The two halves
+   of §8 that **stay** are the invariant floor (the projection carries its model and version) and
+   the warning that an HNSW index over authored content is a pedagogical decision; ADR-046 acata os
+   dois e deixa dimensão/modelo/chunker em aberto (OQ-1…OQ-3) em vez de inventá-los. ADR-018 is not
+   marked `Superseded` — no other section of it changes.
 
 > **Language:** 031–043 are written in Portuguese, unlike 001–030. `CONSTITUTION.md` imposes no
 > language rule (§4.1/§4.3/§4.4 were checked), so this is permitted but **inconsistent** with the
