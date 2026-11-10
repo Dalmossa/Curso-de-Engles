@@ -275,3 +275,52 @@ backup:
 # ===========================================================================
 tests:
   enabled: true
+
+# ===========================================================================
+# Backup (pgBackRest) — P2.6
+# ===========================================================================
+backup:
+  enabled: true
+  s3:
+    bucket: its-platform-pgbackrest
+    region: us-east-1
+    # accessKey and secretKey injected via SealedSecrets at deploy time
+  crossRegion:
+    enabled: true
+    s3:
+      bucket: its-platform-pgbackrest-dr
+      region: us-west-2
+  retention:
+    full: 30
+    diff: 7
+    archive: 7
+  schedule:
+    full: "0 2 * * *"      # Daily at 02:00 UTC
+    diff: "0 */6 * * *"    # Every 6 hours
+  restoreTest:
+    enabled: true
+    schedule: "0 4 * * 0"  # Weekly Sunday 04:00 UTC
+
+# ===========================================================================
+# PostgreSQL (CloudNativePG or self-managed)
+# ===========================================================================
+postgresql:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: postgres
+    tag: "16-alpine"
+  database: its_platform
+  username: postgres
+  replicas: 1
+  persistence:
+    enabled: true
+    storageClass: standard
+    size: 20Gi
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"

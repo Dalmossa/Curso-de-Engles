@@ -1,0 +1,136 @@
+{{- if .Values.backup.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "its-platform.fullname" . }}-pgbackrest-cron
+  labels:
+    {{- include "its-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: pgbackrest
+data:
+  # Full backup daily at 02:00 UTC
+  full-backup: |
+    #!/bin/bash
+    pgbackrest --stanza={{ .Values.global.environment }} --type=full backup
+  
+  # Differential backup every 6 hours
+  diff-backup: |
+    #!/bin/bash
+    pgbackrest --stanza={{ .Values.global.environment }} --type=diff backup
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "its-platform.fullname" . }}-pgbackrest-full
+  labels:
+    {{- include "its-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: pgbackrest
+spec:
+  schedule: "0 2 * * *"  # Daily at 02:00 UTC
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          serviceAccountName: {{ include "its-platform.serviceAccountName" . }}
+          containers:
+            - name: pgbackrest-full
+              image: ghcr.io/pgbackrest/pgbackrest:2.50
+              command: ["/bin/bash", "-c", "pgbackrest --stanza={{ .Values.global.environment }} --type=full --log-level-console=info backup"]
+              env:
+                - name: PGBACKREST_CONFIG
+                  value: /etc/pgbackrest/pgbackrest.conf
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "its-platform.fullname" . }}-pgbackrest-s3
+                      key: access-key
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "its-platform.fullname" . }}-pgbackrest-s3
+                      key: secret-key
+              volumeMounts:
+                - name: pgdata
+                  mountPath: /var/lib/postgresql/16/main
+                - name: pgbackrest-config
+                  mountPath: /etc/pgbackrest
+                - name: pgbackrest-spool
+                  mountPath: /var/spool/pgbackrest
+              resources:
+                requests:
+                  cpu: "100m"
+                  memory: "128Mi"
+                limits:
+                  cpu: "500m"
+                  memory: "512Mi"
+          volumes:
+            - name: pgdata
+              persistentVolumeClaim:
+                claimName: {{ include "its-platform.fullname" . }}-postgresql
+            - name: pgbackrest-config
+              configMap:
+                name: {{ include "its-platform.fullname" . }}-pgbackrest-config
+            - name: pgbackrest-spool
+              emptyDir: {}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "its-platform.fullname" . }}-pgbackrest-diff
+  labels:
+    {{- include "its-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: pgbackrest
+spec:
+  schedule: "0 */6 * * *"  # Every 6 hours
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 10
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          serviceAccountName: {{ include "its-platform.serviceAccountName" . }}
+          containers:
+            - name: pgbackrest-diff
+              image: ghcr.io/pgbackrest/pgbackrest:2.50
+              command: ["/bin/bash", "-c", "pgbackrest --stanza={{ .Values.global.environment }} --type=diff --log-level-console=info backup"]
+              env:
+                - name: PGBACKREST_CONFIG
+                  value: /etc/pgbackrest/pgbackrest.conf
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "its-platform.fullname" . }}-pgbackrest-s3
+                      key: access-key
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "its-platform.fullname" . }}-pgbackrest-s3
+                      key: secret-key
+              volumeMounts:
+                - name: pgdata
+                  mountPath: /var/lib/postgresql/16/main
+                - name: pgbackrest-config
+                  mountPath: /etc/pgbackrest
+                - name: pgbackrest-spool
+                  mountPath: /var/spool/pgbackrest
+              resources:
+                requests:
+                  cpu: "100m"
+                  memory: "128Mi"
+                limits:
+                  cpu: "500m"
+                  memory: "512Mi"
+          volumes:
+            - name: pgdata
+              persistentVolumeClaim:
+                claimName: {{ include "its-platform.fullname" . }}-postgresql
+            - name: pgbackrest-config
+              configMap:
+                name: {{ include "its-platform.fullname" . }}-pgbackrest-config
+            - name: pgbackrest-spool
+              emptyDir: {}

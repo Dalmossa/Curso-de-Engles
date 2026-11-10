@@ -1,0 +1,46 @@
+{{- if .Values.backup.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "its-platform.fullname" . }}-pgbackrest-config
+  labels:
+    {{- include "its-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: pgbackrest
+data:
+  pgbackrest.conf: |
+    [global]
+    repo1-type=s3
+    repo1-path=/its-platform-backups/{{ .Values.global.environment }}
+    repo1-s3-bucket={{ .Values.backup.s3.bucket }}
+    repo1-s3-region={{ .Values.backup.s3.region }}
+    repo1-s3-endpoint=s3.{{ .Values.backup.s3.region }}.amazonaws.com
+    repo1-cipher-type=aes-256-cbc
+    compress-type=zstd
+    compress-level=3
+    process-max=4
+    buffer-size=2MB
+    log-level-console=info
+    log-level-file=debug
+
+    [global:archive]
+    repo1-retention-full={{ .Values.backup.retention.full }}
+    repo1-retention-diff={{ .Values.backup.retention.diff }}
+    repo1-retention-archive={{ .Values.backup.retention.archive }}
+
+    [global:archive-push]
+    archive-timeout=60
+    archive-queue-max=100MB
+
+    {{- if .Values.backup.crossRegion.enabled }}
+    repo2-type=s3
+    repo2-path=/its-platform-backups/{{ .Values.global.environment }}-dr
+    repo2-s3-bucket={{ .Values.backup.crossRegion.s3.bucket }}
+    repo2-s3-region={{ .Values.backup.crossRegion.s3.region }}
+    repo2-s3-endpoint=s3.{{ .Values.backup.crossRegion.s3.region }}.amazonaws.com
+    repo2-cipher-type=aes-256-cbc
+    {{- end }}
+
+    [{{ .Values.global.environment }}]
+    pg1-path=/var/lib/postgresql/16/main
+    pg1-port=5432
+    pg1-host=localhost

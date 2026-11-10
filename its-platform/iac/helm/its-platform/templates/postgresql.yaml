@@ -1,0 +1,131 @@
+{{- if .Values.postgresql.enabled -}}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "its-platform.fullname" . }}-postgresql
+  labels:
+    {{- include "its-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postgresql
+spec:
+  serviceName: {{ include "its-platform.fullname" . }}-postgresql
+  replicas: {{ .Values.postgresql.replicas | default 1 }}
+  selector:
+    matchLabels:
+      {{- include "its-platform.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: postgresql
+  template:
+    metadata:
+      labels:
+        {{- include "its-platform.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: postgresql
+      annotations:
+        {{- if .Values.backup.enabled }}
+        backup.pgbackrest.io/stanza: {{ .Values.global.environment }}
+        {{- end }}
+    spec:
+      {{- if .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- range .Values.global.imagePullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+      serviceAccountName: {{ include "its-platform.serviceAccountName" . }}
+      securityContext:
+        fsGroup: 999
+        runAsUser: 999
+      containers:
+        - name: postgresql
+          image: "{{ .Values.postgresql.image.registry }}/{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
+          imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
+          ports:
+            - name: postgresql
+              containerPort: 5432
+              protocol: TCP
+          env:
+            - name: POSTGRES_DB
+              value: {{ .Values.postgresql.database | default "its_platform" }}
+            - name: POSTGRES_USER
+              value: {{ .Values.postgresql.username | default "postgres" }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "its-platform.fullname" . }}-postgresql
+                  key: password
+          resources:
+            {{- toYaml .Values.postgresql.resources | nindent 12 }}
+          volumeMounts:
+            - name: pgdata
+              mountPath: /var/lib/postgresql/data
+              subPath: postgresql
+            {{- if .Values.backup.enabled }}
+            - name: pgbackrest-config
+              mountPath: /etc/pgbackrest
+            - name: pgbackrest-spool
+              mountPath: /var/spool/pgbackrest
+            {{- end }}
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "postgres"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "postgres"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+        {{- if .Values.backup.enabled }}
+        - name: pgbackrest
+          image: ghcr.io/pgbackrest/pgbackrest:2.50
+          command: ["/bin/bash", "-c", "pgbackrest --stanza={{ .Values.global.environment }} --log-level-console=info server"]
+          env:
+            - name: PGBACKREST_CONFIG
+              value: /etc/pgbackrest/pgbackrest.conf
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "its-platform.fullname" . }}-pgbackrest-s3
+                  key: access-key
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "its-platform.fullname" . }}-pgbackrest-s3
+                  key: secret-key
+          volumeMounts:
+            - name: pgdata
+              mountPath: /var/lib/postgresql/data
+              subPath: postgresql
+            - name: pgbackrest-config
+              mountPath: /etc/pgbackrest
+            - name: pgbackrest-spool
+              mountPath: /var/spool/pgbackrest
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+        {{- end }}
+      volumes:
+        - name: pgdata
+          persistentVolumeClaim:
+            claimName: {{ include "its-platform.fullname" . }}-postgresql
+        {{- if .Values.backup.enabled }}
+        - name: pgbackrest-config
+          configMap:
+            name: {{ include "its-platform.fullname" . }}-pgbackrest-config
+        - name: pgbackrest-spool
+          emptyDir: {}
+        {{- end }}
+  {{- if .Values.postgresql.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: pgdata
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: {{ .Values.postgresql.persistence.storageClass }}
+        resources:
+          requests:
+            storage: {{ .Values.postgresql.persistence.size }}
+  {{- end }}
+{{- end }}
