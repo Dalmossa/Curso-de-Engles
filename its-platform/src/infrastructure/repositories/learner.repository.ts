@@ -28,15 +28,15 @@ import { DataSource, type QueryRunner } from 'typeorm';
  * What a caller may see of the addressed learner.
  *
  * Narrower than the DDL's row, and the difference is a decision rather than an omission:
- * `created_at` is here because `GET …/profile` publishes it as the row's own value (A7b), while
- * `last_active_at` and `updated_at` are not, because no response publishes them. A column that is
- * selected but never consumed is a claim about a consumer that does not exist (R2/R3) — and the
- * mirror image of that rule is what A7b fixed one file over, where the consumer existed and the
- * column was thrown away: `created_at` was in hand and the response answered `new Date()` instead.
+ * `created_at` is here because `GET …/profile` publishes it as the row's own value (A7b),
+ * `last_active_at` is here because `GET …/data-export` publishes it (P1.16), while
+ * `updated_at` is not, because no response publishes it. A column that is
+ * selected but never consumed is a claim about a consumer that does not exist (R2/R3).
  */
 export interface VisibleLearner {
   readonly id: string;
   readonly created_at: Date;
+  readonly last_active_at: Date | null;
 }
 
 @Injectable()
@@ -65,14 +65,14 @@ export class LearnerRepository {
    * about what it can see.
    */
   async findById(learnerId: string, tx?: QueryRunner): Promise<VisibleLearner | null> {
-    // Two columns, and both are consumed: `id` is the profile's `learner_id` and `created_at` its
-    // `created_at`. The row is returned as it came back — neither member is rewritten here.
-    const sql = 'SELECT id, created_at FROM learners WHERE id = $1';
+    // Three columns, and all three are consumed: `id` is the profile's `learner_id`, `created_at`
+    // its `created_at`, and `last_active_at` the data export's `last_active_at` (P1.16).
+    const sql = 'SELECT id, created_at, last_active_at FROM learners WHERE id = $1';
 
-    const rows: Array<{ id: string; created_at: Date }> =
+    const rows: Array<{ id: string; created_at: Date; last_active_at: Date | null }> =
       tx === undefined ? await this.dataSource.query(sql, [learnerId]) : await tx.query(sql, [learnerId]);
 
     const first = rows[0];
-    return first === undefined ? null : { id: first.id, created_at: first.created_at };
+    return first === undefined ? null : { id: first.id, created_at: first.created_at, last_active_at: first.last_active_at };
   }
 }

@@ -24,6 +24,8 @@ import { LearnerRepository } from '../../../src/infrastructure/repositories/lear
 const ADDRESSED = '9b7e4a01-8c4d-1e2f-3a4b-5c6d3f2a1c44';
 /** The row's own timestamp — the member `GET …/profile` publishes, and the reason it is selected. */
 const CREATED_AT = new Date('2020-01-01T00:00:00Z');
+/** The row's last active timestamp — the member `GET …/data-export` publishes (P1.16). */
+const LAST_ACTIVE_AT = new Date('2024-06-15T12:00:00Z');
 
 interface Call {
   readonly sql: string;
@@ -38,7 +40,7 @@ interface Harness {
   readonly tx: QueryRunner;
 }
 
-function harness(rows: Array<{ id: string; created_at: Date }>): Harness {
+function harness(rows: Array<{ id: string; created_at: Date; last_active_at: Date | null }>): Harness {
   const calls: Call[] = [];
   const record =
     (destination: 'tx' | 'pool') =>
@@ -62,12 +64,12 @@ describe('A5b — `LearnerRepository.findById`', () => {
     expect(h.calls).toHaveLength(1);
     // `$1`, not the literal: the id never enters the SQL text (the same reason `PgSessionContext`'s
     // `set_config` uses `$1`).
-    expect(h.calls[0]?.sql).toBe('SELECT id, created_at FROM learners WHERE id = $1');
+    expect(h.calls[0]?.sql).toBe('SELECT id, created_at, last_active_at FROM learners WHERE id = $1');
     expect(h.calls[0]?.parameters).toEqual([ADDRESSED]);
   });
 
   it('reads through the transaction it was given, and through nothing else', async () => {
-    const h = harness([{ id: ADDRESSED, created_at: CREATED_AT }]);
+    const h = harness([{ id: ADDRESSED, created_at: CREATED_AT, last_active_at: LAST_ACTIVE_AT }]);
 
     await h.repository.findById(ADDRESSED, h.tx);
 
@@ -75,7 +77,7 @@ describe('A5b — `LearnerRepository.findById`', () => {
   });
 
   it('reads on the pool only when no transaction is supplied', async () => {
-    const h = harness([{ id: ADDRESSED, created_at: CREATED_AT }]);
+    const h = harness([{ id: ADDRESSED, created_at: CREATED_AT, last_active_at: LAST_ACTIVE_AT }]);
 
     await h.repository.findById(ADDRESSED);
 
@@ -93,13 +95,15 @@ describe('A5b — `LearnerRepository.findById`', () => {
 
   it('returns the row as it came back, without rewriting the id or the timestamp', async () => {
     const OTHER = '3f2a1c44-9b7e-4a01-8c4d-1e2f3a4b5c6d';
-    const h = harness([{ id: OTHER, created_at: CREATED_AT }]);
+    const h = harness([{ id: OTHER, created_at: CREATED_AT, last_active_at: LAST_ACTIVE_AT }]);
 
     // Both members, because A7b made `created_at` a served value: the profile publishes this column
     // and nothing else could, so a repository that dropped it would turn a fact back into a clock.
+    // `last_active_at` is served by `GET …/data-export` (P1.16).
     await expect(h.repository.findById(ADDRESSED, h.tx)).resolves.toEqual({
       id: OTHER,
       created_at: CREATED_AT,
+      last_active_at: LAST_ACTIVE_AT,
     });
   });
 });

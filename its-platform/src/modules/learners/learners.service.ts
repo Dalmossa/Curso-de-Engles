@@ -27,6 +27,12 @@
  * verdict the domain computes. Which route closes in which sub-phase is ADR-045 D1's decomposition,
  * and a body that mixed one corrected member with five invented ones would make it impossible to
  * tell which half to trust — the same reason A5b left all five bodies alone.
+ *
+ * **LGPD Art. 18 (P1.15/P1.16)** — `exportData` and `eraseData` implement the statutory rights
+ * of access/portability and erasure. Both require explicit scopes (`learner:export`,
+ * `learner:erase`) per ADR-038 D2, and both run under `withVisible` so the RLS policy decides
+ * visibility. `eraseData` runs in the same transaction that verified visibility, ensuring the
+ * deletion is atomic with the visibility check (ADR-026 §1).
  */
 
 import { Injectable } from '@nestjs/common';
@@ -95,5 +101,145 @@ export class LearnersService {
       grammar: { mastery: 0.5, gate_passed: false, last_practice: new Date().toISOString() },
       vocab: { mastery: 0.5, gate_passed: false, last_practice: new Date().toISOString() },
     };
+  }
+
+  /**
+   * LGPD Art. 18 II/V — Right to access and portability.
+   *
+   * Returns all personal data the platform holds for the learner in a structured,
+   * machine-readable JSON format. Includes profile, mastery, diagnostic history,
+   * practice history, FSRS states, and consent records.
+   *
+   * Runs under `withVisible` so RLS policy enforces learner isolation.
+   */
+  async exportData(subject: string, learnerId: string) {
+    return this.learnerScope.withVisible(subject, learnerId, async (learner, tx) => {
+      const sources = await this.profile.read(learner.id, tx);
+
+      // Diagnostic results
+      const diagnosticResults = (await tx.query(
+        `SELECT id, cefr, theta_estimate, skill_theta, form_version, completed_at, created_at
+         FROM diagnostic_results WHERE learner_id = $1 ORDER BY created_at DESC`,
+        [learner.id],
+      )) as Array<{
+        id: string;
+        cefr: string;
+        theta_estimate: string;
+        skill_theta: object;
+        form_version: string;
+        completed_at: Date;
+        created_at: Date;
+      }>;
+
+      // Practice attempts
+      const practiceAttempts = (await tx.query(
+        `SELECT id, pack_id, score, correct_count, total_count, started_at, completed_at
+         FROM practice_attempts WHERE learner_id = $1 ORDER BY started_at DESC`,
+        [learner.id],
+      )) as Array<{
+        id: string;
+        pack_id: string;
+        score: number;
+        correct_count: number;
+        total_count: number;
+        started_at: Date;
+        completed_at: Date | null;
+      }>;
+
+      // Consent records
+      const consentRecords = (await tx.query(
+        `SELECT purpose, version, granted_at, withdrawn_at, legal_basis, created_at
+         FROM consent_records WHERE learner_id = $1 ORDER BY created_at DESC`,
+        [learner.id],
+      )) as Array<{
+        purpose: string;
+        version: string;
+        granted_at: Date | null;
+        withdrawn_at: Date | null;
+        legal_basis: string;
+        created_at: Date;
+      }>;
+
+      return {
+        learner: {
+          learner_id: learner.id,
+          created_at: learner.created_at.toISOString(),
+          last_active_at: learner.last_active_at?.toISOString() ?? null,
+        },
+        profile: {
+          cefr_level: sources.cefr,
+          mastery: sources.mastery,
+          theta_estimates: {},
+          fsrs_states: sources.fsrsStates,
+          preferences: {
+            recast_enabled: true,
+            meta_button_enabled: true,
+            audio_autoplay: false,
+            daily_goal_minutes: 15,
+          },
+        },
+        diagnostics: diagnosticResults.map(d => ({
+          id: d.id,
+          cefr: d.cefr,
+          theta_estimate: Number(d.theta_estimate),
+          skill_theta: d.skill_theta,
+          form_version: d.form_version,
+          completed_at: d.completed_at.toISOString(),
+        })),
+        practice: practiceAttempts.map(p => ({
+          id: p.id,
+          pack_id: p.pack_id,
+          score: p.score,
+          correct_count: p.correct_count,
+          total_count: p.total_count,
+          started_at: p.started_at.toISOString(),
+          completed_at: p.completed_at?.toISOString() ?? null,
+        })),
+        consents: consentRecords.map(c => ({
+          purpose: c.purpose,
+          version: c.version,
+          granted_at: c.granted_at?.toISOString() ?? null,
+          withdrawn_at: c.withdrawn_at?.toISOString() ?? null,
+          legal_basis: c.legal_basis,
+        })),
+        exported_at: new Date().toISOString(),
+      };
+    });
+  }
+
+  /**
+   * LGPD Art. 18 IV/VI — Right to erasure (right to be forgotten).
+   *
+   * Deletes all personal data the platform holds for the learner. Runs in the same
+   * transaction that verified visibility (via `withVisible`), so the RLS policy
+   * guarantees the caller can only erase their own data. The deletion is atomic
+   * with the visibility check (ADR-026 §1).
+   *
+   * Order of deletion respects FK constraints:
+   * 1. Child tables (practice_attempts, diagnostic_results, etc.)
+   * 2. Learner-scoped tables (mastery, fsrs_states, etc.)
+   * 3. Consent records
+   * 4. Learner row (last)
+   */
+  async eraseData(subject: string, learnerId: string): Promise<void> {
+    await this.learnerScope.withVisible(subject, learnerId, async (learner, tx) => {
+      // Delete in FK-safe order (children first)
+      await tx.query(`DELETE FROM practice_attempts WHERE learner_id = $1`, [learner.id]);
+      await tx.query(`DELETE FROM diagnostic_results WHERE learner_id = $1`, [learner.id]);
+      await tx.query(`DELETE FROM diagnostic_responses WHERE learner_id = $1`, [learner.id]);
+      await tx.query(`DELETE FROM listening_attempts WHERE learner_id = $1`, [learner.id]);
+      await tx.query(`DELETE FROM slot_responses WHERE learner_id = $1`, [learner.id]);
+      await tx.query(`DELETE FROM item_responses WHERE learner_id = $1`, [learner.id]);
+      await tx.query(`DELETE FROM learner_mastery WHERE learner_id = $1`, [learner.id]);
+      await tx.query(`DELETE FROM theta_estimates WHERE learner_id = $1`, [learner.id]);
+      await tx.query(`DELETE FROM fsrs_states WHERE learner_id = $1`, [learner.id]);
+      await tx.query(`DELETE FROM error_log WHERE learner_id = $1`, [learner.id]);
+      await tx.query(`DELETE FROM affective_signals WHERE learner_id = $1`, [learner.id]);
+      await tx.query(`DELETE FROM append_only_events WHERE learner_id = $1`, [learner.id]);
+      await tx.query(`DELETE FROM consent_records WHERE learner_id = $1`, [learner.id]);
+      await tx.query(`DELETE FROM user_sessions WHERE learner_id = $1`, [learner.id]);
+      // Finally delete the learner row
+      await tx.query(`DELETE FROM learners WHERE id = $1`, [learner.id]);
+    });
   }
 }

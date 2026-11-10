@@ -131,7 +131,7 @@ function scope(visible: boolean): { service: Scope; asked: Array<[string, string
 
   const service: Scope = {
     requireVisible: (subject: string, learnerId: string) =>
-      ask(subject, learnerId, () => Promise.resolve({ id: learnerId, created_at: new Date(0) })),
+      ask(subject, learnerId, () => Promise.resolve({ id: learnerId, created_at: new Date(0), last_active_at: null })),
 
     withVisible: <T>(
       subject: string,
@@ -139,7 +139,7 @@ function scope(visible: boolean): { service: Scope; asked: Array<[string, string
       work: (learner: VisibleLearner, tx: QueryRunner) => Promise<T>,
     ) =>
       ask(subject, learnerId, () =>
-        work({ id: learnerId, created_at: new Date(0) }, TX),
+        work({ id: learnerId, created_at: new Date(0), last_active_at: null }, TX),
       ),
   };
 

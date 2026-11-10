@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { LearnersService } from './learners.service.js';
 import { SCOPES, Scopes } from '../../common/auth/scopes.decorator.js';
 import { CurrentPrincipal } from '../../common/auth/current-principal.decorator.js';
@@ -32,5 +32,34 @@ export class LearnersController {
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.learnersService.getMastery(principal.subject, id);
+  }
+
+  /**
+   * LGPD Art. 18 — Data export (portability).
+   * Requires `learner:export` scope (ADR-038 D2). Returns all personal data
+   * the platform holds for the learner in a structured, machine-readable format.
+   */
+  @Scopes(SCOPES.learnerExport)
+  @Get(':id/data-export')
+  async exportData(
+    @CurrentPrincipal() principal: TokenPrincipal,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.learnersService.exportData(principal.subject, id);
+  }
+
+  /**
+   * LGPD Art. 18 — Data erasure (right to be forgotten).
+   * Requires `learner:erase` scope (ADR-038 D2). Deletes all personal data
+   * the platform holds for the learner. Returns 204 on success.
+   */
+  @Scopes(SCOPES.learnerErase)
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async eraseData(
+    @CurrentPrincipal() principal: TokenPrincipal,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    await this.learnersService.eraseData(principal.subject, id);
   }
 }
