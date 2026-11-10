@@ -1,0 +1,53 @@
+{{- if .Values.monitoring.tempo.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "its-platform.fullname" . }}-tempo
+  labels:
+    {{- include "its-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: tempo
+data:
+  tempo.yaml: |
+    server:
+      http_listen_port: 3200
+      grpc_listen_port: 9096
+
+    distributor:
+      receivers:
+        otlp:
+          protocols:
+            grpc:
+              endpoint: 0.0.0.0:4317
+            http:
+              endpoint: 0.0.0.0:4318
+
+    ingester:
+      max_block_duration: 1h
+      max_block_bytes: 1048576
+      trace_idle_period: 10s
+
+    storage:
+      trace:
+        backend: local
+        local:
+          path: /tempo/traces
+        block:
+          bloom_filter_false_positive: 0.05
+          index_downsample_bytes: 1000
+          encoding: zstd
+
+    compactor:
+      compaction:
+        block_retention: 30d
+        compacted_block_retention: 1h
+
+    metrics_generator:
+      registry:
+        external_labels:
+          cluster: {{ .Values.global.environment }}
+          platform: its-platform
+      storage:
+        path: /tempo/generator/wal
+        remote_write:
+          - url: http://prometheus:9090/api/v1/write
+            send_exemplars: true

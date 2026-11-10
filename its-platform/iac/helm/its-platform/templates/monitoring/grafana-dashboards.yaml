@@ -1,0 +1,113 @@
+{{- if .Values.monitoring.grafana.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "its-platform.fullname" . }}-grafana-dashboards
+  labels:
+    {{- include "its-platform.labels" . | nindent 4 }}
+    grafana_dashboard: "1"
+    app.kubernetes.io/component: grafana
+data:
+  its-platform-overview.json: |
+    {
+      "dashboard": {
+        "title": "ITS Platform - Overview",
+        "tags": ["its-platform", "overview"],
+        "timezone": "utc",
+        "panels": [
+          {
+            "title": "Request Rate",
+            "type": "graph",
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+            "targets": [
+              {
+                "expr": "sum(rate(http_requests_total[5m])) by (service)",
+                "legendFormat": "{{service}}"
+              }
+            ]
+          },
+          {
+            "title": "Error Rate",
+            "type": "graph",
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+            "targets": [
+              {
+                "expr": "sum(rate(http_requests_total{status=~\"5..\"}[5m])) by (service) / sum(rate(http_requests_total[5m])) by (service)",
+                "legendFormat": "{{service}}"
+              }
+            ]
+          },
+          {
+            "title": "Latency p95",
+            "type": "graph",
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, service))",
+                "legendFormat": "{{service}}"
+              }
+            ]
+          },
+          {
+            "title": "Active Learners",
+            "type": "stat",
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+            "targets": [
+              {
+                "expr": "count(count by (learner_id) (http_requests_total))",
+                "legendFormat": "Active Learners"
+              }
+            ]
+          },
+          {
+            "title": "Mastery Gate Pass Rate",
+            "type": "graph",
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+            "targets": [
+              {
+                "expr": "rate(mastery_gate_passed_total[5m]) / rate(mastery_gate_evaluated_total[5m])",
+                "legendFormat": "Pass Rate"
+              }
+            ]
+          },
+          {
+            "title": "Diagnostic Completion Rate",
+            "type": "graph",
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+            "targets": [
+              {
+                "expr": "rate(diagnostic_completed_total[5m]) / rate(diagnostic_started_total[5m])",
+                "legendFormat": "Completion Rate"
+              }
+            ]
+          },
+          {
+            "title": "Practice Submission Success Rate",
+            "type": "graph",
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
+            "targets": [
+              {
+                "expr": "rate(practice_submission_success_total[5m]) / rate(practice_submission_total[5m])",
+                "legendFormat": "Success Rate"
+              }
+            ]
+          },
+          {
+            "title": "Audio Delivery Success Rate",
+            "type": "graph",
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24},
+            "targets": [
+              {
+                "expr": "rate(audio_delivery_success_total[5m]) / rate(audio_delivery_requested_total[5m])",
+                "legendFormat": "Success Rate"
+              }
+            ]
+          }
+        ],
+        "time": {
+          "from": "now-1h",
+          "to": "now"
+        },
+        "refresh": "30s"
+      }
+    }

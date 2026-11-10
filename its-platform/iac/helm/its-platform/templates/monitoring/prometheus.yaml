@@ -1,0 +1,380 @@
+{{- if .Values.monitoring.prometheus.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "its-platform.fullname" . }}-prometheus
+  labels:
+    {{- include "its-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: prometheus
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 30s
+      evaluation_interval: 30s
+      external_labels:
+        cluster: {{ .Values.global.environment }}
+        platform: its-platform
+
+    alerting:
+      alertmanagers:
+        - static_configs:
+            - targets: ['alertmanager:9093']
+
+    rule_files:
+      - '/etc/prometheus/rules/*.yml'
+
+    scrape_configs:
+      # Kubernetes API servers
+      - job_name: 'kubernetes-apiservers'
+        kubernetes_sd_configs:
+          - role: endpoints
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+            action: keep
+            regex: default;kubernetes;https
+
+      # Kubernetes nodes
+      - job_name: 'kubernetes-nodes'
+        kubernetes_sd_configs:
+          - role: node
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        relabel_configs:
+          - action: labelmap
+            regex: __meta_kubernetes_node_label_(.+)
+
+      # Kubernetes pods (services with prometheus.io/scrape annotation)
+      - job_name: 'kubernetes-pods'
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+          - action: labelmap
+            regex: __meta_kubernetes_pod_label_(.+)
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: kubernetes_namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            action: replace
+            target_label: kubernetes_pod_name
+
+      # ITS Platform services
+      - job_name: 'its-platform-services'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - its-platform-dev
+                - its-platform-staging
+                - its-platform-prod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+          - action: labelmap
+            regex: __meta_kubernetes_pod_label_(.+)
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            action: replace
+            target_label: pod
+
+      # Node exporter
+      - job_name: 'node-exporter'
+        kubernetes_sd_configs:
+          - role: node
+        relabel_configs:
+          - action: labelmap
+            regex: __meta_kubernetes_node_label_(.+)
+
+      # cAdvisor
+      - job_name: 'cadvisor'
+        kubernetes_sd_configs:
+          - role: node
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        relabel_configs:
+          - action: labelmap
+            regex: __meta_kubernetes_node_label_(.+)
+
+      # PostgreSQL exporter
+      - job_name: 'postgresql'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - its-platform-dev
+                - its-platform-staging
+                - its-platform-prod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_component]
+            action: keep
+            regex: postgresql
+          - source_labels: [__meta_kubernetes_pod_name]
+            action: replace
+            target_label: pod
+
+      # Redis exporter
+      - job_name: 'redis'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - its-platform-dev
+                - its-platform-staging
+                - its-platform-prod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_component]
+            action: keep
+            regex: redis
+          - source_labels: [__meta_kubernetes_pod_name]
+            action: replace
+            target_label: pod
+
+      # Kong exporter
+      - job_name: 'kong'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - kong
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_name]
+            action: replace
+            target_label: pod
+
+  prometheus.rules.yml: |
+    groups:
+      - name: its-platform-critical
+        interval: 30s
+        rules:
+          - alert: ServiceDown
+            expr: up{job="its-platform-services"} == 0
+            for: 2m
+            labels:
+              severity: P1
+            annotations:
+              summary: "{{ $labels.job }} is down"
+              runbook: "https://wiki.its.example.com/runbook#p1-service-down"
+
+          - alert: HighErrorRate
+            expr: |
+              sum(rate(http_requests_total{status=~"5.."}[5m])) by (service)
+              /
+              sum(rate(http_requests_total[5m])) by (service)
+              > 0.05
+            for: 5m
+            labels:
+              severity: P1
+            annotations:
+              summary: "High error rate on {{ $labels.service }}"
+              runbook: "https://wiki.its.example.com/runbook#p1-service-down"
+
+          - alert: HighLatencyP95
+            expr: |
+              histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, service))
+              > 0.5
+            for: 10m
+            labels:
+              severity: P2
+            annotations:
+              summary: "High p95 latency on {{ $labels.service }}"
+              runbook: "https://wiki.its.example.com/runbook#p2-high-latency"
+
+          - alert: DatabaseConnectionsHigh
+            expr: |
+              pg_stat_activity_count{state="active"} / pg_settings_max_connections > 0.8
+            for: 5m
+            labels:
+              severity: P2
+            annotations:
+              summary: "Database connections > 80%"
+              runbook: "https://wiki.its.example.com/runbook#p2-database-issues"
+
+          - alert: ReplicationLagHigh
+            expr: |
+              pg_replication_lag_seconds > 30
+            for: 5m
+            labels:
+              severity: P2
+            annotations:
+              summary: "PostgreSQL replication lag > 30s"
+              runbook: "https://wiki.its.example.com/runbook#p2-database-issues"
+
+          - alert: CeleryQueueBacklog
+            expr: |
+              celery_queue_length > 1000
+            for: 10m
+            labels:
+              severity: P2
+            annotations:
+              summary: "Celery queue {{ $labels.queue }} backlog > 1000"
+              runbook: "https://wiki.its.example.com/runbook#p2-celery-backlog"
+
+          - alert: FailedLoginsSpike
+            expr: |
+              rate(auth_failed_logins_total[5m]) > 10
+            for: 5m
+            labels:
+              severity: P2
+            annotations:
+              summary: "Failed login spike detected"
+              runbook: "https://wiki.its.example.com/runbook#p2-security"
+
+          - alert: CertificateExpiring
+            expr: |
+              ssl_certificate_expiry_days < 30
+            for: 1h
+            labels:
+              severity: P3
+            annotations:
+              summary: "TLS certificate expires in {{ $value }} days"
+              runbook: "https://wiki.its.example.com/runbook#p3-cert-renewal"
+
+      - name: its-platform-warning
+        interval: 60s
+        rules:
+          - alert: HighMemoryUsage
+            expr: |
+              (container_memory_usage_bytes / container_spec_memory_limit_bytes) > 0.85
+            for: 10m
+            labels:
+              severity: P2
+            annotations:
+              summary: "Memory usage > 85% on {{ $labels.pod }}"
+
+          - alert: HighCPUUsage
+            expr: |
+              (rate(container_cpu_usage_seconds_total[5m]) / container_spec_cpu_quota / container_spec_cpu_period) > 0.85
+            for: 10m
+            labels:
+              severity: P2
+            annotations:
+              summary: "CPU usage > 85% on {{ $labels.pod }}"
+
+          - alert: DiskSpaceLow
+            expr: |
+              (node_filesystem_avail_bytes / node_filesystem_size_bytes) < 0.15
+            for: 10m
+            labels:
+              severity: P2
+            annotations:
+              summary: "Disk space < 15% on {{ $labels.instance }}"
+
+          - alert: PodRestartLoop
+            expr: |
+              rate(container_restart_count[15m]) > 0.1
+            for: 5m
+            labels:
+              severity: P2
+            annotations:
+              summary: "Pod {{ $labels.pod }} restarting frequently"
+
+      - name: its-platform-business
+        interval: 60s
+        rules:
+          - alert: LowActiveLearners
+            expr: |
+              count(count by (learner_id) (http_requests_total{job="its-platform-services"})) < 10
+            for: 30m
+            labels:
+              severity: P3
+            annotations:
+              summary: "Active learners dropped below 10"
+
+          - alert: DiagnosticFailureRate
+            expr: |
+              rate(diagnostic_failed_total[15m]) > 0.1
+            for: 5m
+            labels:
+              severity: P2
+            annotations:
+              summary: "Diagnostic failure rate > 10%"
+
+          - alert: PracticeSubmissionLatency
+            expr: |
+              histogram_quantile(0.95, rate(practice_submission_duration_seconds_bucket[5m])) > 2
+            for: 10m
+            labels:
+              severity: P2
+            annotations:
+              summary: "Practice submission p95 latency > 2s"
+
+      - name: its-platform-bucket
+        interval: 60s
+        rules:
+          - alert: MasteryGateFailureRate
+            expr: |
+              rate(mastery_gate_failed_total[15m]) > 0.2
+            for: 10m
+            labels:
+              severity: P2
+            annotations:
+              summary: "Mastery gate failure rate > 20%"
+
+          - alert: NextActivitySelectionFailures
+            expr: |
+              rate(next_activity_selection_failed_total[15m]) > 0.05
+            for: 5m
+            labels:
+              severity: P2
+            annotations:
+              summary: "Next activity selection failures > 5%"
+
+      - name: its-platform-slo
+        interval: 60s
+        rules:
+          - alert: SLOBurnRate2x
+            expr: |
+              (
+                sum(rate(http_requests_total{status=~"5.."}[1h])) by (service)
+                /
+                sum(rate(http_requests_total[1h])) by (service)
+              ) > (0.001 * 2)
+            for: 15m
+            labels:
+              severity: P1
+            annotations:
+              summary: "SLO burn rate 2x for {{ $labels.service }}"
+
+          - alert: SLOBurnRate10x
+            expr: |
+              (
+                sum(rate(http_requests_total{status=~"5.."}[1h])) by (service)
+                /
+                sum(rate(http_requests_total[1h])) by (service)
+              ) > (0.001 * 10)
+            for: 2m
+            labels:
+              severity: P1
+            annotations:
+              summary: "SLO burn rate 10x for {{ $labels.service }} - PAGE IMMEDIATELY"

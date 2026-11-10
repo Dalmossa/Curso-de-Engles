@@ -324,3 +324,39 @@ postgresql:
     limits:
       cpu: "1000m"
       memory: "2Gi"
+
+# ===========================================================================
+# Monitoring Stack (LGTM: Loki, Grafana, Tempo, Prometheus) — P2.7
+# ===========================================================================
+monitoring:
+  prometheus:
+    enabled: true
+    retention: 30d
+    storageSize: 20Gi
+    scrapeInterval: 30s
+  grafana:
+    enabled: true
+    adminPassword: ""  # Set via SealedSecrets
+    persistence:
+      enabled: true
+      size: 5Gi
+  loki:
+    enabled: true
+    persistence:
+      enabled: true
+      size: 20Gi
+    retention: 30d
+  tempo:
+    enabled: true
+    persistence:
+      enabled: true
+      size: 20Gi
+    retention: 30d
+  alertmanager:
+    enabled: true
+    smtpPassword: ""  # Set via SealedSecrets
+    pagerdutyKey: ""  # Set via SealedSecrets
+    slackWebhook: ""  # Set via SealedSecrets
+  opentelemetry:
+    enabled: true
+    collectorReplicas: 2

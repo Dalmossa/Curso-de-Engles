@@ -1,0 +1,64 @@
+{{- if .Values.monitoring.alertmanager.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "its-platform.fullname" . }}-alertmanager
+  labels:
+    {{- include "its-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: alertmanager
+data:
+  alertmanager.yml: |
+    global:
+      resolve_timeout: 5m
+      smtp_smarthost: 'smtp.example.com:587'
+      smtp_from: 'alertmanager@its-platform.example.com'
+      smtp_auth_username: 'alertmanager'
+      smtp_auth_password: '{{ .Values.monitoring.alertmanager.smtpPassword }}'
+
+    route:
+      group_by: ['alertname', 'severity']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 4h
+      receiver: 'default'
+      routes:
+        - match:
+            severity: P1
+          receiver: 'p1-pager'
+          continue: true
+        - match:
+            severity: P2
+          receiver: 'p2-slack'
+        - match:
+            severity: P3
+          receiver: 'p3-email'
+
+    receivers:
+      - name: 'default'
+        email_configs:
+          - to: 'oncall@its-platform.example.com'
+            send_resolved: true
+      - name: 'p1-pager'
+        pagerduty_configs:
+          - service_key: '{{ .Values.monitoring.alertmanager.pagerdutyKey }}'
+            severity: critical
+            details:
+              service: '{{ .Values.global.environment }}'
+      - name: 'p2-slack'
+        slack_configs:
+          - api_url: '{{ .Values.monitoring.alertmanager.slackWebhook }}'
+            channel: '#its-platform-alerts'
+            send_resolved: true
+            title: '[P2] {{ .GroupLabels.alertname }}'
+            text: '{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}'
+      - name: 'p3-email'
+        email_configs:
+          - to: 'team@its-platform.example.com'
+            send_resolved: true
+
+    inhibit_rules:
+      - source_match:
+          severity: 'P1'
+        target_match_re:
+          severity: 'P[23]'
+        equal: ['alertname', 'namespace']

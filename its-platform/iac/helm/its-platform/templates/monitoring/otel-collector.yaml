@@ -1,0 +1,88 @@
+{{- if .Values.monitoring.opentelemetry.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "its-platform.fullname" . }}-otel-collector
+  labels:
+    {{- include "its-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: otel-collector
+data:
+  otel-collector-config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: 'its-platform'
+              kubernetes_sd_configs:
+                - role: pod
+                  namespaces:
+                    names:
+                      - its-platform-dev
+                      - its-platform-staging
+                      - its-platform-prod
+              relabel_configs:
+                - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+                  action: keep
+                  regex: true
+
+    processors:
+      batch:
+        timeout: 10s
+        send_batch_size: 1000
+      memory_limiter:
+        check_interval: 1s
+        limit_mib: 512
+        spike_limit_mib: 128
+      resource:
+        attributes:
+          - key: service.name
+            value: its-platform-api
+            action: upsert
+          - key: deployment.environment
+            value: "{{ .Values.global.environment }}"
+            action: upsert
+      k8sattributes:
+        auth_type: "service_account"
+        passthrough: false
+        filter:
+          node_from_env_var: KUBE_NODE_NAME
+        extract:
+          metadata:
+            - k8s.pod.name
+            - k8s.pod.uid
+            - k8s.namespace.name
+            - k8s.deployment.name
+            - k8s.container.name
+            - k8s.pod.labels
+
+    exporters:
+      otlp:
+        endpoint: "tempo:4317"
+        tls:
+          insecure: true
+      prometheus:
+        endpoint: "0.0.0.0:8889"
+        namespace: its_platform
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [memory_limiter, batch, resource, k8sattributes]
+          exporters: [otlp]
+        metrics:
+          receivers: [otlp, prometheus]
+          processors: [memory_limiter, batch, resource, k8sattributes]
+          exporters: [prometheus, otlp]
+      telemetry:
+        logs:
+          level: info
+        metrics:
+          level: basic
+          address: 0.0.0.0:8888
