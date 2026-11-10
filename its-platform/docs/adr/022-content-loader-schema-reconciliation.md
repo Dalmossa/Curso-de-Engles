@@ -242,4 +242,4 @@ of §3 and the `items.skill_ids = [<domain_id>]` shape for legacy items.
 - `specs/curriculum-graph-spec.md` §4.3 — the lesson registry and module table
 - `content-map.md` §3 (canonical skill ids), §6.2 (voice spec)
 - `corpus/listening-corpus.md` §0, §8.1, §8.2 — inventory and durations
-- `its-platform/BACKLOG.md` P0.5, P0.7, P0.8, P0.10
+- `its-platform/BACKLOG.md` P0.5, P0.7, P0.8s, P0.10

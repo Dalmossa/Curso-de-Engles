@@ -305,8 +305,18 @@ depois.
 
 - [x] A7 — pin (`tests/integration/learner-routes-bodies.spec.ts`, 17 asserções) e o harness
       compartilhado (`tests/helpers/learner-routes-app.ts`); controle negativo de 4 mutações.
-- [ ] A7b — `GET /profile`: `created_at`, `cefr_level` (D3), `mastery`, `fsrs_states`, `preferences`
-      (D5); `streak_days`/`xp` fora (D4); `theta_estimates` **segura até H3** (D6).
+- [x] **A7b — `GET /profile` executada** (2026-10-15): `created_at`, `cefr_level` (D3), `mastery`,
+      `fsrs_states`, `preferences` (D5) vêm das tabelas que os possuem, através de
+      `LearnerScopeService.withVisible`; `streak_days`/`xp` fora do corpo **e** do documento (D4);
+      `theta_estimates` **segura em `{}`** até H3 (D6, aberta abaixo). Controle negativo de 10
+      mutações, todas vermelhas, cada uma nomeada pela asserção que a pega. O pin passa de 17 para 21
+      asserções, e ganha o fixture que torna a palavra *latest* de D3 mensurável: uma learner só deste
+      teste com três runs cujo `cefr` não é monótono no tempo — "a mais recente" não pode ser
+      satisfeita por "a primeira", "a única" nem "a mais alta". O contrato foi emendado nos dois
+      pontos (§4.4): `cefr_level` alarga para `[string, 'null']` e `streak_days`/`xp` saem.
+      Implementação: `src/infrastructure/repositories/learner-profile.repository.ts`,
+      `src/modules/learners/{learner-scope,learners}.service.ts`,
+      `src/infrastructure/repositories/learner.repository.ts`; medição: `reports/api/fase-7b.md`.
 - [ ] A7c — `GET /mastery`: as chaves (D7) e o gate calculado pelo domínio; `description` de
       `PracticeResult.mastery_updates[].gate_passed` emendada.
 - [ ] A7d — `POST /practice`: pontuação do item submetido, `prior`/`posterior` da linha, `transition`
