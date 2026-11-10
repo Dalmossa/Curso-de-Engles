@@ -12,7 +12,7 @@ name: CI Pipeline
 # cc5e28e, "implement M1.1 foundation - CI pipeline") and has never run.
 #
 # This matters because every "CI green" claim in BACKLOG.md / MEMORY.md for
-# P0.5, P0.8 and P0.9 was made about a pipeline that could not execute. The
+# P0.5, P0.8s and P0.9 was made about a pipeline that could not execute. The
 # jobs below are the same jobs, relocated and corrected:
 #
 #   * `lint` no longer installs Poetry and runs ruff/black against the Python

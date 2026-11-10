@@ -12,7 +12,7 @@
 // — an *async* function, so the callback was never called. The promise never
 // settled, `loadContent()` never returned, the event loop drained, and Node
 // exited **0** without ever reaching a single assertion (EXPECTED_SKIP_COUNT
-// included). Every "content-check PASS" recorded against P0.5/P0.8 was therefore
+// included). Every "content-check PASS" recorded against P0.5/P0.8s was therefore
 // vacuous. The harness below now supplies a callback-style connection and the
 // loader call is raced against a hard timeout, so a hang fails instead of
 // passing.
