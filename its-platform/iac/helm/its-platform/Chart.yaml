@@ -1,0 +1,15 @@
+apiVersion: v2
+name: its-platform
+description: ITS Platform — Intelligent Tutoring System for English Learning
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - its
+  - adaptive-learning
+  - english
+  - education
+  - nestjs
+maintainers:
+  - name: ITS Platform Team
+    email: its@example.com

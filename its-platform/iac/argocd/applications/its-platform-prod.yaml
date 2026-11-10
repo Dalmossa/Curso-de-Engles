@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: its-platform-prod
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  labels:
+    app.kubernetes.io/name: its-platform
+    app.kubernetes.io/part-of: its-platform
+    app.kubernetes.io/environment: prod
+spec:
+  project: its-platform
+  source:
+    repoURL: https://github.com/its-platform/its-platform.git
+    targetRevision: "v*"
+    path: iac/helm/its-platform
+    helm:
+      valueFiles:
+        - values.yaml
+        - values-prod.yaml
+      parameters:
+        - name: global.environment
+          value: "prod"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: its-platform-prod
+  syncPolicy:
+    # NO automated.sync — manual approval required for production
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas  # HPA manages replicas

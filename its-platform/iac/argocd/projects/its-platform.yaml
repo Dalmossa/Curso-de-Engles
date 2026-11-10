@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: its-platform
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: its-platform
+    app.kubernetes.io/part-of: its-platform
+spec:
+  description: ITS Platform microservices
+  sourceRepos:
+    - "https://github.com/its-platform/its-platform.git"
+  destinations:
+    - namespace: its-platform-dev
+      server: https://kubernetes.default.svc
+    - namespace: its-platform-staging
+      server: https://kubernetes.default.svc
+    - namespace: its-platform-prod
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  namespaceResourceWhitelist:
+    - group: ""
+      kind: "*"
+  roles:
+    - name: developer
+      description: Read-only access to dev
+      policies:
+        - p, proj:its-platform:developer, applications, get, its-platform/*, allow
+    - name: sre
+      description: Full access to all environments
+      policies:
+        - p, proj:its-platform:sre, applications, *, its-platform/*, allow

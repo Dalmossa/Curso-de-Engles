@@ -1,0 +1,70 @@
+# ===========================================================================
+# ITS Platform — Dev Environment Values
+# ===========================================================================
+# Auto-synced on push to main branch
+# ===========================================================================
+
+global:
+  environment: dev
+  imageRegistry: ghcr.io
+
+deployment:
+  replicas: 1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+ingress:
+  enabled: true
+  hosts:
+    - host: its-platform-dev.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: its-platform-dev-tls
+      hosts:
+        - its-platform-dev.example.com
+
+hpa:
+  enabled: false  # No autoscaling in dev
+
+networkPolicy:
+  enabled: true
+
+serviceMonitor:
+  enabled: true
+
+configMap:
+  data:
+    NODE_ENV: development
+    LOG_LEVEL: debug
+    API_PREFIX: /api/v1
+
+secrets:
+  stringData:
+    DATABASE_URL: "postgresql://test:test@postgresql-dev:5432/its_platform_dev"
+    JWT_PUBLIC_KEY: ""
+    REDIS_URL: "redis://redis-dev:6379/0"
+
+monitoring:
+  prometheus:
+    enabled: true
+  grafana:
+    enabled: true
+  loki:
+    enabled: true
+  tempo:
+    enabled: true
+
+# Disable backup in dev
+backup:
+  enabled: false
+
+# Disable tests in dev (run in CI)
+tests:
+  enabled: false

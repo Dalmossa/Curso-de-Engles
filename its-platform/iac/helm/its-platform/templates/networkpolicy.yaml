@@ -1,0 +1,25 @@
+{{- if .Values.networkPolicy.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "its-platform.fullname" . }}
+  labels:
+    {{- include "its-platform.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "its-platform.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+  ingress:
+    {{- range .Values.networkPolicy.ingress }}
+    - {{- if .from }}
+      from:
+        {{- toYaml .from | nindent 10 }}
+      {{- end }}
+      {{- if .ports }}
+      ports:
+        {{- toYaml .ports | nindent 10 }}
+      {{- end }}
+    {{- end }}
+{{- end }}

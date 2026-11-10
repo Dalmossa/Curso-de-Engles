@@ -1,0 +1,72 @@
+# ===========================================================================
+# ITS Platform — Production Environment Values
+# ===========================================================================
+# Manual sync on tag `v*`
+# ===========================================================================
+
+global:
+  environment: prod
+  imageRegistry: ghcr.io
+
+deployment:
+  replicas: 3
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "512Mi"
+    limits:
+      cpu: "2000m"
+      memory: "2Gi"
+
+ingress:
+  enabled: true
+  hosts:
+    - host: its-platform.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: its-platform-prod-tls
+      hosts:
+        - its-platform.example.com
+
+hpa:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+networkPolicy:
+  enabled: true
+
+serviceMonitor:
+  enabled: true
+
+configMap:
+  data:
+    NODE_ENV: production
+    LOG_LEVEL: warn
+    API_PREFIX: /api/v1
+
+secrets:
+  stringData:
+    DATABASE_URL: ""
+    JWT_PUBLIC_KEY: ""
+    REDIS_URL: ""
+
+monitoring:
+  prometheus:
+    enabled: true
+  grafana:
+    enabled: true
+  loki:
+    enabled: true
+  tempo:
+    enabled: true
+
+backup:
+  enabled: true
+
+tests:
+  enabled: true
