@@ -1,0 +1,9 @@
+{
+  "CI Green": 1,
+  "Code Complete": 2,
+  "Integration Tests": 1,
+  "Load Test": 1,
+  "Prod Approval": 2,
+  "Security Scan": 1,
+  "Staging Deployed": 2
+}

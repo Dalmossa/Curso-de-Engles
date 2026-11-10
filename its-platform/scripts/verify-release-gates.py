@@ -27,10 +27,16 @@ Run:  python3 its-platform/scripts/verify-release-gates.py
       python3 its-platform/scripts/verify-release-gates.py --verbose
 Exit: 0 = all gates pass, 1 = at least one FAIL.
 
-Exit code 1 is the *expected* state today, and is not by itself a failure of this script.
+Exit code 1 is the *expected* state today — but standing alone it says nothing: a fourteenth
+failing check and a repaired one both leave the exit code at 1 and both print the same ten lines
+that were already red. `scripts/_release_gates_expected_failures.json` pins the failing set, per
+gate, in the repository; a gate failing MORE than the record is a FAIL that names it, and one
+failing less is reported with the re-pin instruction. Re-pin with:
+    python3 scripts/verify-release-gates.py --update-expected-failures   (then commit)
 """
 
 import argparse
+import json
 import pathlib
 import re
 import shutil
@@ -60,6 +66,68 @@ VERBOSE = False
 # real ("Integration Tests" criteria are "on staging"), so it is modelled as state rather than
 # re-derived by matching substrings against FAILS.
 STAGING_ABSENT = {"value": False}
+
+# ---------------------------------------------------------------- the expected-failing record (I8)
+# The audit's instruction was to *substitute* the expected failures rather than encode them in an
+# allowlist keyed by check id — because with ten checks failing on every run, an eleventh failure
+# and a repaired one are indistinguishable: both print the same ten lines that were already red,
+# and the exit code is 1 either way. Nothing in this script could tell whether the repository
+# moved. That is the defect this section closes — and it closes it without turning the red
+# repository green: the seven gates still fail, exit is still 1, and the record's only job is to
+# say whether the set that fails is the set that was already failing.
+#
+# The record is a committed per-gate COUNT, read-only at check time. A gate that fails more than
+# the record says is a FAIL naming it; a gate that fails less is an `ok` with the re-pin
+# instruction. It is deliberately not symmetric: a repaired gate turning the gate red is how a
+# drift detector gets switched off within a week. The record is also the reason a new failure has
+# to be *said out loud* in a commit message rather than absorbed by a red baseline.
+EXPECTED_PATH = PLATFORM / "scripts" / "_release_gates_expected_failures.json"
+
+
+def failing_by_gate() -> dict:
+    """The failures grouped by the gate that produced them. `fail(gate, detail)` writes
+    `[FAIL] <gate>: <detail>`, so the gate is the stable identity and the detail is not (a BACKLOG
+    bug title changes on every edit; the gate does not)."""
+    c: dict = {}
+    for f in FAILS:
+        m = re.match(r"\[FAIL\] ([^:]*): ", f)
+        g = m.group(1) if m else "(unnamed check)"
+        c[g] = c.get(g, 0) + 1
+    return dict(sorted(c.items()))
+
+
+def expected_failures_ratchet() -> None:
+    """Compare the failing set with the committed record. Fail-closed (R5): a missing or
+    unreadable record is a FAIL, never a silent 'nothing changed'."""
+    now = failing_by_gate()
+    if not EXPECTED_PATH.exists():
+        fail("expected-failing record",
+             f"{EXPECTED_PATH.name} is missing, so the failures this repository starts red on "
+             f"cannot be told apart from new ones. Recreate it with "
+             f"`python3 scripts/verify-release-gates.py --update-expected-failures` and commit it")
+        return
+    try:
+        want = json.loads(EXPECTED_PATH.read_text())
+    except Exception as e:                                     # noqa: BLE001 — fail-closed
+        fail("expected-failing record", f"{EXPECTED_PATH.name} is unreadable ({e})")
+        return
+    more = {g: now[g] - want.get(g, 0) for g in now if now[g] > want.get(g, 0)}
+    less = {g: want[g] - now.get(g, 0) for g in want if now.get(g, 0) < want[g]}
+    if more:
+        fail("expected-failing record",
+             f"gate(s) failing MORE than the committed record: {more}. This is the only place a "
+             f"new failure shows up — the exit code was already 1. If the new failure is the "
+             f"repository's real state, re-pin with `--update-expected-failures` and say what "
+             f"changed in the commit message")
+    elif less:
+        ok("expected-failing record",
+           f"gate(s) failing LESS than the committed record: {less} — good news, and the record "
+           f"is now loose. Tighten it with `--update-expected-failures` and commit "
+           f"{EXPECTED_PATH.name}")
+    else:
+        ok("expected-failing record",
+           f"{sum(want.values())} failing check(s) across {len(want)} gate(s), exactly the "
+           f"committed set ({EXPECTED_PATH.name})")
 
 
 def fail(gate: str, detail: str) -> None:
@@ -743,6 +811,10 @@ def main() -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--verbose", "-v", action="store_true",
                     help="print per-check reasoning, including skipped notes")
+    ap.add_argument("--update-expected-failures", action="store_true",
+                    help="re-pin scripts/_release_gates_expected_failures.json to the set that "
+                         "fails right now, then commit it. Separate from the run on purpose: a "
+                         "check that rewrites its own baseline cannot be reviewed in git diff")
     args = ap.parse_args()
     global VERBOSE
     VERBOSE = args.verbose
@@ -794,6 +866,15 @@ def main() -> int:
     extra_action_pinning()
     print("\n[X4] Makefile parses and its recipes address reachable paths")
     extra_makefile_parses()
+
+    if args.update_expected_failures:
+        EXPECTED_PATH.write_text(json.dumps(failing_by_gate(), indent=2) + "\n")
+        print(f"\n{EXPECTED_PATH.name}: failing set re-pinned at "
+              f"{sum(failing_by_gate().values())} check(s) across {len(failing_by_gate())} "
+              f"gate(s) — commit it with the reason")
+        return 0
+    print("\n[X5] the failing set is the committed one")
+    expected_failures_ratchet()
 
     print("\n" + "=" * 78)
     for w in WARNS:
