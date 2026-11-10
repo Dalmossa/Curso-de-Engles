@@ -449,8 +449,48 @@ function parseLegacyPack(markdown: string, filename: string): PackRecord {
 }
 
 export function parsePack(markdown: string, filename: string): PackRecord {
-  // ADR-004 detection, exact: canonical first, legacy second, neither ⇒ throw.
-  if (/^pack_id:/m.test(markdown)) return parseCanonicalPack(markdown, filename);
+  // ADR-004 detection — order matters because some files have BOTH prose headers and YAML.
+  // Canonical packs (7 files): have ```yaml fence with pack_id: at the TOP (manifest before items)
+  //   OR frontmatter YAML (---) with pack_id: and lesson_id WITHOUT _v1.
+  // Legacy_v1 packs (115 files): have ```yaml fence with pack_id: at the BOTTOM (manifest after items),
+  //   and lesson_id ends in _v1.
+  // Both have "**Pack ID:**" prose header.
+  
+  // Check for fenced YAML blocks (could be multiple - top manifest and/or bottom manifest)
+  const fenceMatches = [...markdown.matchAll(/```ya?ml\r?\n([\s\S]*?)```/g)];
+  
+  // Look at the FIRST fenced YAML block (canonical manifest position)
+  const firstFence = fenceMatches[0]?.[1];
+  if (firstFence && /^pack_id:/m.test(firstFence)) {
+    // Check if this is a legacy pack by looking at lesson_id in the first fence
+    if (/lesson_id:\s*\S*_v1/.test(firstFence)) {
+      return parseLegacyPack(markdown, filename);
+    }
+    return parseCanonicalPack(markdown, filename);
+  }
+  
+  // Check the LAST fenced YAML block (legacy manifest position)
+  const lastFence = fenceMatches[fenceMatches.length - 1]?.[1];
+  if (lastFence && /^pack_id:/m.test(lastFence)) {
+    if (/lesson_id:\s*\S*_v1/.test(lastFence)) {
+      return parseLegacyPack(markdown, filename);
+    }
+    // Canonical pack with manifest only at bottom (unusual but possible)
+    return parseCanonicalPack(markdown, filename);
+  }
+  
+  // Check frontmatter YAML (---) - some canonical packs use this instead of fenced YAML
+  const frontYaml = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---\s*(?:\r?\n|$)/);
+  const frontContent = frontYaml?.[1];
+  if (frontContent && /^pack_id:/m.test(frontContent)) {
+    if (/lesson_id:\s*\S*_v1/.test(frontContent)) {
+      return parseLegacyPack(markdown, filename);
+    }
+    return parseCanonicalPack(markdown, filename);
+  }
+  
+  // Fallback: prose header "**Pack ID:**" — default to legacy (most common)
   if (/\*\*Pack ID:\*\*/i.test(markdown)) return parseLegacyPack(markdown, filename);
+  
   throw new Error(`Unknown pack schema in ${filename}`);
 }
