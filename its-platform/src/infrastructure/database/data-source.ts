@@ -13,6 +13,11 @@ export interface DatabaseConfig {
   logging: boolean;
 }
 
+const parseBool = (value: string | undefined, defaultValue: boolean): boolean => {
+  if (value === undefined || value === null) return defaultValue;
+  return value.trim().toLowerCase() === 'true';
+};
+
 export const createDataSourceOptions = (config: ConfigService): DataSourceOptions => {
   const dbConfig: DatabaseConfig = {
     host: config.get<string>('DB_HOST') ?? 'localhost',
@@ -20,9 +25,9 @@ export const createDataSourceOptions = (config: ConfigService): DataSourceOption
     username: config.get<string>('DB_USERNAME') ?? 'postgres',
     password: config.get<string>('DB_PASSWORD') ?? 'postgres',
     database: config.get<string>('DB_NAME') ?? 'its_platform',
-    ssl: config.get<boolean>('DB_SSL') ?? false,
-    synchronize: config.get<boolean>('DB_SYNCHRONIZE') ?? false,
-    logging: config.get<boolean>('DB_LOGGING') ?? false,
+    ssl: parseBool(config.get<string>('DB_SSL'), false),
+    synchronize: parseBool(config.get<string>('DB_SYNCHRONIZE'), false),
+    logging: parseBool(config.get<string>('DB_LOGGING'), false),
   };
 
   const options: DataSourceOptions = {
