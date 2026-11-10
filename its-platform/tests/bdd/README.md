@@ -2,7 +2,7 @@
 
 **Source:** `Curso-de-Ingles/PRD.md` §9 Milestones, `ITS-ARCHITECTURE.md` §10
 **Format:** Gherkin (Given/When/Then)
-**Tool:** pytest-bdd + playwright (API + UI)
+**Tool:** Jest (ESM) — steps em TypeScript, `npm run test:bdd` (Gherkin é o formato vivo dos cenários)
 **Location:** `its-platform/tests/bdd/`
 
 ---
@@ -87,8 +87,8 @@ And the pack has 7 items (3 grammar, 2 vocab, 1 pronunciation, 1 listening)
 When the learner submits responses: 5 correct, 2 incorrect
 And response times are within normal range
 Then the API returns 202 Accepted with PracticeResult
-And the Celery task "update_bkt_mastery" fires for each item (priority queue)
-And the Celery task "schedule_fsrs_review" fires for each item (standard queue)
+And the BullMQ job "updateBktMastery" fires for each item (priority queue)
+And the BullMQ job "scheduleFsrsReview" fires for each item (standard queue)
 And within 5 seconds, the learner's mastery for "grammar.present_simple" increases from 0.62 to 0.71
 And the next review for item "grm_grammar.present_simple_01" is scheduled in 3 days
 ```
@@ -99,8 +99,8 @@ Given learner "L1" submits a pronunciation item (minimal_pair_th_voiced)
 And the item has no multiple-choice options (production type)
 When the learner uploads audio via signed URL
 And the ASR worker scores the pronunciation
-Then the Celery task "update_bkt_mastery" fires with correct=true/false
-And no "schedule_fsrs_review" fires (production items use different spacing)
+Then the BullMQ job "updateBktMastery" fires with correct=true/false
+And no "scheduleFsrsReview" fires (production items use different spacing)
 ```
 
 ### Scenario: Listening pack submission
@@ -286,16 +286,16 @@ And the error states: "restricted source requires adapt_requires_permission"
 
 ```bash
 # Run all BDD scenarios
-pytest tests/bdd/ -v --tb=short
+npm run test:bdd
 
-# Run specific feature
-pytest tests/bdd/features/diagnostic.feature -v
+# Run specific scenario (Jest -t filter por nome)
+npm run test:bdd -- -t "Mastery gate unlocks"
 
-# Run with Playwright for UI scenarios
-pytest tests/bdd/ --browser=chromium --headed
+# Watch mode durante desenvolvimento
+npm run test:bdd -- --watch
 
-# Generate HTML report
-pytest tests/bdd/ --html=report/bdd.html --self-contained-html
+# Coverage
+npm run test:bdd -- --coverage
 ```
 
 ---
