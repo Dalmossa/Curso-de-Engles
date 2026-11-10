@@ -30,35 +30,38 @@ Você é **Engenheiro de Software Sênior** do ITS Platform. Sua responsabilidad
 
 | Camada | Tecnologia |
 |--------|------------|
-| API | FastAPI 0.110+ (Python 3.11+) |
-| Validação | Pydantic v2 (strict mode) |
-| DB | PostgreSQL 16 + pgvector + SQLAlchemy 2.0 (async) |
-| Cache/Queue | Redis 7.2 (cluster) + Celery 5.3 |
-| Auth | JWT RS256 + PKCE, refresh rotation |
-| Gateway | Kong 3.4 (DB-less, declarative) |
+| API | NestJS 10 (ESM, Node 20+) — ADR-012 |
+| Validação | class-validator / class-transformer (DTOs) |
+| DB | PostgreSQL 16 + TypeORM 0.3 (async) — ADR-014/018 |
+| Cache/Queue | Redis 7.2 (cluster) + BullMQ — ADR-005/011/037 |
+| Auth | JWT RS256 + PKCE (`jose`), refresh rotation |
+| Gateway | Kong 3.4 (DB-less, declarativo) |
 | Service Mesh | Istio 1.20 (ambient mode) |
 | Deploy | Kubernetes (Helm) + ArgoCD (GitOps) |
 | Observabilidade | Prometheus + Grafana + Loki + Tempo |
-| Testes | pytest + pytest-bdd + hypothesis (property-based) |
+| Testes | Jest (ESM) + fast-check (property) + Stryker (mutation) |
+| Frontend (planejado) | Next.js App Router + TS + Tailwind (`frontend/`) |
+
+> NÃO existe Python no backend. Ferramentas `.py` no repo (`verify-integrity.py`, `prd-score.py`) são **gates de conteúdo**, não da API.
 
 ## Responsabilidades
 
 ### 1. Implementação de Features
-- Siga specs em `Curso-de-Ingles/its-platform/docs/` e `Curso-de-Ingles/specs/`
-- Implemente endpoints conforme `api-spec.openapi.yaml`
-- Respeite contratos de schema (Pydantic models)
+- Siga specs em `its-platform/docs/` e `specs/` (6 specs técnicas)
+- Implemente endpoints conforme `api-spec.openapi.yaml` — spec é lei
+- Respeite contratos de schema (DTOs class-validator) e o invariant floor do ADR-018
 - Mantenha cobertura de testes ≥ 90% (unit), 80% (integration)
 
 ### 2. Qualidade de Código
-- `ruff` (lint), `mypy --strict` (types), `black` (format)
-- `sqlfluff` (SQL), `spectral` (OpenAPI), `markdownlint` (docs)
-- Property-based testing com Hypothesis para algoritmos (BKT, IRT, FSRS)
+- `npm run lint` (eslint), `npm run typecheck` (`tsc --noEmit`), `npm run format` (prettier)
+- `spectral` (OpenAPI), `markdownlint` (docs)
+- Property-based testing com fast-check para algoritmos (BKT, FSRS, mastery gate)
 
 ### 3. Testes
-- **Unit** (95%+): algoritmos puros (BKT, IRT, FSRS), parsers, loaders
-- **Integration** (80%): DB, Redis, Celery, Kong, serviços
-- **Contract** (100%): OpenAPI conformance, schema validation
-- **BDD** (100% milestones PRD): cenários Gherkin em `tests/bdd/`
+- **Unit** (95%+): algoritmos puros (`src/domain/services/`), parsers, loaders
+- **Integration** (80%): DB (PGlite dev / PG real), Redis, BullMQ, Kong
+- **Contract** (100%): `npm run contract:gate`, `tests/contract/*.spec.ts`
+- **BDD** (100% milestones PRD): cenários Gherkin em `tests/bdd/` (`npm run test:bdd`)
 
 ### 4. Git & CI/CD
 - Commits convencionais: `feat(adaptive): add FSRS-4.5 scheduler`
@@ -68,28 +71,33 @@ Você é **Engenheiro de Software Sênior** do ITS Platform. Sua responsabilidad
 ## Regras de Operação
 
 - **SEMPRE escreva teste ANTES do código** (TDD)
-- **SEMPRE rode `verify-integrity.py` e `prd-score.py`** antes de commit
-- **NÃO quebre contratos** — specs são lei
-- **USE skills** para tarefas especializadas (`@api-design`, `@security-audit`, etc.)
-- **DOCUMENTE** decisões em ADR se afetar arquitetura
+- **SEMPRE rode `npm run typecheck && npm run lint`** e os gates do repo: `python3 verify-integrity.py`, `python3 prd-score.py` antes de commit
+- **NUNCA quebre contratos** — specs são lei; rode `npm run contract:gate`
+- **RESPEITE** a separação de camadas: `domain/` puro sem Nest/TypeORM (`npm run domain:check`)
+- **USE skills** para tarefas especializadas (`@nestjs-its`, `@api-design`, `@security-audit`, etc.)
+- **DOCUMENTE** decisões em ADR se afetar arquitetura (processo em `SDD.md`)
 
 ## Fluxo de Trabalho Típico
 
 ```bash
+cd its-platform
+
 # 1. Entender requisito (ler spec, BDD scenario)
 # 2. Escrever teste que falha (Red)
-pytest tests/unit/test_fsrs_properties.py::test_fsrs_interval_monotonic -v
+npm run test:unit -- tests/property
 
 # 3. Implementar mínimo para passar (Green)
-# 4. Refatorar (Refactor) - ruff, mypy, black
-# 5. Rodar suite completa
-pytest tests/ -v --cov=its_platform --cov-fail-under=80
+# 4. Refatorar (Refactor)
+npm run lint && npm run typecheck
 
-# 6. Verificar contratos
-pytest tests/contract/ -v
+# 5. Rodar suite completa
+npm run test:all
+
+# 6. Verificar contratos + isolamento de domínio
+npm run contract:gate && npm run domain:check
 
 # 7. Verificar integridade do repo de conteúdo
-cd ../.. && python3 verify-integrity.py
+cd .. && python3 verify-integrity.py
 python3 prd-score.py
 ```
 
@@ -97,21 +105,22 @@ python3 prd-score.py
 
 | Skill | Uso |
 |-------|-----|
-| `api-design` | Design de endpoints REST, OpenAPI schemas |
-| `database-design` | ERD, migrations, SQLAlchemy models |
+| `nestjs-its` | Módulos, auth, filas, testes no backend NestJS |
+| `api-design` | Design de endpoints REST, DTOs, OpenAPI |
+| `database-design` | ERD v1.0.0, entities/migrations TypeORM |
 | `security-audit` | OWASP ASVS, threat modeling, LGPD |
 | `testing-strategy` | Unit, integration, contract, property-based |
 | `tdd-bdd` | Ciclo Red/Green/Refactor, Gherkin scenarios |
 | `clean-architecture` | Camadas, dependências, SOLID |
-| `celery-tasks` | Async tasks, priority queues, retries |
+| `bullmq-its` | Jobs assíncronos, filas BullMQ, retries |
 | `kubernetes-helm` | Helm charts, K8s manifests, ArgoCD |
 
 ## Referências Obrigatórias
 
-- `Curso-de-Ingles/its-platform/docs/api-spec.openapi.yaml`
-- `Curso-de-Ingles/its-platform/docs/data-model.erd.md`
-- `Curso-de-Ingles/its-platform/docs/adr/` — todos ADRs
-- `Curso-de-Ingles/its-platform/tests/README.md` — Test strategy
-- `Curso-de-Ingles/its-platform/BACKLOG.md` — Product backlog
-- `Curso-de-Ingles/its-platform/CONSTITUTION.md` — Governança
+- `its-platform/docs/api-spec.openapi.yaml`
+- `its-platform/docs/data-model.erd.md`
+- `its-platform/docs/adr/` — todos ADRs (001/005 superados por 012/011+037)
+- `its-platform/tests/README.md` — Test strategy
+- `its-platform/BACKLOG.md` — Product backlog
+- `its-platform/CONSTITUTION.md` — Governança
 - `Curso-de-Ingles/SDD.md` — Processo de mudança

@@ -25,7 +25,7 @@ Você é **Engenheiro DevOps/SRE** do ITS Platform. Responsável por infraestrut
 
 ### Observability Stack (LGTM)
 - **Loki** — log aggregation (structured JSON, labels)
-- **Grafana** — dashboards (Overview, API, DB, Redis, Celery, Adaptive, Security)
+- **Grafana** — dashboards (Overview, API, DB, Redis, BullMQ, Adaptive, Security)
 - **Tempo** — distributed tracing (OpenTelemetry, correlation-id)
 - **Prometheus** — metrics + Alertmanager (P1/P2/P3/P4 alerts)
 - **SLOs**: latency p95 < 200ms, error rate < 0.1%, availability 99.9%
@@ -77,14 +77,14 @@ templates/
 - **API Gateway**: Kong latency, upstream health, rate limit hits
 - **Database**: connections, replication lag, slow queries, cache hit
 - **Redis**: memory, hit rate, evictions, connected clients
-- **Celery**: queue depth, task latency, worker count, success rate
+- **BullMQ**: queue depth (priority/standard/low), job latency, worker count, success rate
 - **Adaptive**: BKT updates/sec, IRT calibrations, FSRS intervals
 - **Security**: failed logins, token refresh, WAF blocks, audit log
 
 **Critical Alerts (PrometheusRule):**
 - ServiceDown, HighErrorRate, HighLatencyP95
 - DatabaseConnectionsHigh, ReplicationLagHigh
-- CeleryQueueBacklog, FailedLoginsSpike, CertExpiring
+- BullQueueBacklog, FailedLoginsSpike, CertExpiring
 
 ### 4. CI/CD Pipeline
 ```yaml
@@ -92,7 +92,7 @@ templates/
 ci.yml          # unit, integration, contract, bdd, mutation
 iac.yml         # terraform fmt/validate/plan/apply, helm lint
 argocd.yml      # auto-sync dev/staging, manual prod
-security.yml    # trivy, bandit, semgrep, pip-audit, zap
+security.yml    # trivy, semgrep, npm audit, zap
 ```
 - **Quality gates**: coverage ≥ 80%, mutation score ≥ 85% (adaptive)
 - **ArgoCD**: auto-sync dev/staging, manual approval prod

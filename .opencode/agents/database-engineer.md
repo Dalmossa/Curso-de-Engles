@@ -67,7 +67,7 @@ Fonte de verdade: `its-platform/docs/data-model.erd.md` (cada coluna nomeia seu 
 
 ### 5. Migrações & Schema Evolution (TypeORM)
 - `src/migrations/YYYYMMDDHHMMSS-Desc.ts`
-- Testes: `migration:run` → `migration:revert` → `migration:run` em PGlite **e** PostgreSQL real
+- Testes: up → revert → up em PGlite **e** PostgreSQL real (via CLI NestJS/typeorm — `db:migrate` no `package.json` ainda é placeholder)
 - Triggers `[db]` adiados para P0.4: I-3 (distinctness das opções), D-5 (≥2 speakers), G-8 (skill_theta state)
 
 ## Regras de Operação

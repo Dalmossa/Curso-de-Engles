@@ -1,195 +1,101 @@
 ---
-name: Property-Based Testing
-description: Hypothesis property tests for algorithms (BKT, IRT, FSRS) and parsers
+name: property-testing
+description: Use ao testar algoritmos do domínio (BKT, FSRS, mastery gate) e parsers com testes de propriedade usando fast-check + Jest.
 ---
 
-# Property-Based Testing Skill — ITS Platform
+# Property-Based Testing — ITS Platform (fast-check)
+
+> Antes Hypothesis/pytest (Python). Este repo usa **fast-check ^4** (já no `devDependencies`) + Jest ESM.
 
 ## When to Use
-- Testing algorithms with mathematical properties (BKT, IRT, FSRS)
-- Testing parsers with round-trip invariants
-- Finding edge cases that example-based tests miss
 
-## Hypothesis Strategies
+- Algoritmos com propriedades matemáticas (BKT, FSRS, mastery gate) em `src/domain/services/`
+- Parsers com invariante de round-trip
+- Achar casos-limite que testes por exemplo erram
 
-### BKT Properties
-```python
-# tests/unit/test_bkt_properties.py
-from hypothesis import given, settings, strategies as st
-from its_platform.adaptive.engine.bkt import update_mastery
+## Onde
 
-@settings(max_examples=1000)
-@given(
-    prior=st.floats(min_value=0.0, max_value=1.0),
-    correct=st.booleans(),
-    slip=st.floats(min_value=0.0, max_value=0.3),
-    guess=st.floats(min_value=0.0, max_value=0.3),
-)
-def test_bkt_bounds(prior, correct, slip, guess):
-    """Posterior always in [0, 1]"""
-    posterior = update_mastery(prior, correct, slip, guess)
-    assert 0.0 <= posterior <= 1.0
+- `tests/property/*.spec.ts` — a pasta já existe (hoje vazia), padrão Jest `*.spec.ts`.
+- Rodar: `npm run test:unit -- tests/property` (Jest ESM via `--experimental-vm-modules`).
+- Alvo: camada `domain/` pura (sem Nest/DB) — ver `clean-architecture`.
 
-@given(
-    prior=st.floats(min_value=0.0, max_value=1.0),
-    slip=st.floats(min_value=0.0, max_value=0.3),
-    guess=st.floats(min_value=0.0, max_value=0.3),
-)
-def test_bkt_monotonic_correct(prior, slip, guess):
-    """Correct answer always increases or maintains mastery"""
-    post_correct = update_mastery(prior, True, slip, guess)
-    post_incorrect = update_mastery(prior, False, slip, guess)
-    assert post_correct >= post_incorrect
+## Padrão básico
 
-@given(
-    prior=st.floats(min_value=0.0, max_value=1.0),
-    slip=st.floats(min_value=0.0, max_value=0.3),
-    guess=st.floats(min_value=0.0, max_value=0.3),
-)
-def test_bkt_correct_converges_to_1(prior, slip, guess):
-    """Repeated correct answers converge to 1"""
-    post = prior
-    for _ in range(100):
-        post = update_mastery(post, True, slip, guess)
-    assert post > 0.99  # Converges to mastery
+```ts
+// tests/property/bkt-engine.property.spec.ts
+import fc from 'fast-check';
+import { BktEngine } from '../../src/domain/services/bkt-engine.service.js';
 
-@given(
-    prior=st.floats(min_value=0.0, max_value=1.0),
-    slip=st.floats(min_value=0.0, max_value=0.3),
-    guess=st.floats(min_value=0.0, max_value=0.3),
-)
-def test_bkt_incorrect_converges_to_0(prior, slip, guess):
-    """Repeated incorrect answers converge to 0"""
-    post = prior
-    for _ in range(100):
-        post = update_mastery(post, False, slip, guess)
-    assert post < 0.01  # Converges to 0
+const params = { pL0: 0.3, pT: 0.15, pS: 0.1, pG: 0.2 };
+
+// Limites: evita NaN/Infinity — sempre noNaN em floats de probabilidade
+const prob = fc.double({ min: 0, max: 1, noNaN: true });
+
+describe('BktEngine — propriedades', () => {
+  it('pKnow do posterior fica sempre em [0, 1]', () => {
+    fc.assert(
+      fc.property(prob, fc.boolean(), (pKnow, correct) => {
+        const engine = new BktEngine(params);
+        const state = { pKnow, pLearn: params.pT, pSlip: params.pS, pGuess: params.pG };
+        const result = engine.update(state, correct);
+        expect(result.stateAfter.pKnow).toBeGreaterThanOrEqual(0);
+        expect(result.stateAfter.pKnow).toBeLessThanOrEqual(1);
+      }),
+      { numRuns: 1000 },
+    );
+  });
+
+  it('resposta correta sempre supera (ou empata) a incorreta no mesmo estado', () => {
+    fc.assert(
+      fc.property(prob, (pKnow) => {
+        const engine = new BktEngine(params);
+        const base = { pKnow, pLearn: params.pT, pSlip: params.pS, pGuess: params.pG };
+        const acerto = engine.update({ ...base }, true).stateAfter.pKnow;
+        const erro = engine.update({ ...base }, false).stateAfter.pKnow;
+        expect(acerto).toBeGreaterThanOrEqual(erro);
+      }),
+      { numRuns: 1000 },
+    );
+  });
+});
 ```
 
-### IRT Properties
-```python
-# tests/unit/test_irt_properties.py
-from hypothesis import given, strategies as st
-from its_platform.adaptive.engine.irt import estimate_theta, ItemParams
+## Propriedades-alvo por módulo
 
-@given(
-    responses=st.lists(st.booleans(), min_size=1, max_size=50),
-    difficulties=st.lists(st.floats(-3, 3), min_size=1, max_size=50),
-    discriminations=st.lists(st.floats(0.5, 2.5), min_size=1, max_size=50),
-    guessings=st.lists(st.floats(0, 0.3), min_size=1, max_size=50),
-)
-@settings(max_examples=500)
-def test_irt_ci_narrows_with_more_items(responses, difficulties, discriminations, guessings):
-    """CI95 should narrow with more evidence"""
-    # This is a conceptual test - actual implementation would need
-    # equal-length lists and proper item parameter objects
-    pass
+| Módulo (arquivo real) | Propriedades |
+|---|---|
+| `bkt-engine.service.ts` | `stateAfter.pKnow ∈ [0,1]`; monotonicidade (correto ≥ incorreto); convergência: N correções → pKnow → 1; `pKnowDelta ≥ 0` após acerto |
+| `fsrs-scheduler.service.ts` | `getRetrievability(stability, elapsedDays) ∈ [0,1]` e não crescente nos `elapsedDays`; `review()` nunca produz estabilidade negativa; `FsrsRating` só aceita `1 \| 2 \| 3 \| 4` |
+| `mastery-gate.service.ts` | `allPass(map)` true ⇔ todos os `evaluate(...)` passam; resultado determinístico para a mesma evidência |
+| parsers (packs/lessons) | round-trip: `parse(serialize(x))` ≡ `x`; parser nunca lança para entrada estruturalmente válida |
 
-@given(
-    theta=st.floats(-4, 4),
-    a=st.floats(0.5, 2.5),
-    b=st.floats(-3, 3),
-    c=st.floats(0, 0.3),
-)
-def test_irt_probability_bounds(theta, a, b, c):
-    """IRT probability always in [0, 1]"""
-    prob = irt_2pl_probability(theta, a, b, c)
-    assert 0 <= prob <= 1
+## Arbitraries customizados (fc.record / fc.constantFrom)
+
+```ts
+const lessonId = fc
+  .string({ minLength: 1, maxLength: 30 })
+  .map((s) => s.toLowerCase().replace(/[^a-z0-9_]/g, ''))
+  .chain((slug) => fc.constantFrom('les', 'pack', 'dlg').map((p) => `${p}_${slug}`));
+
+const evidence = fc.record({
+  learnerId: fc.uuid(),
+  itemId: lessonId,
+  correct: fc.boolean(),
+  responseTimeMs: fc.integer({ min: 200, max: 120_000 }),
+});
 ```
 
-### FSRS Properties
-```python
-# tests/unit/test_fsrs_properties.py
-from hypothesis import given, strategies as st
-from its_platform.adaptive.engine.fsrs import next_interval
+## Reprodutibilidade e debugging
 
-@given(
-    stability=st.floats(min_value=0.1, max_value=1000.0),
-    difficulty=st.floats(min_value=0.0, max_value=10.0),
-    grade=st.integers(min_value=1, max_value=4),  # Again, Hard, Good, Easy
-)
-def test_fsrs_interval_monotonic(stability, difficulty, grade):
-    """Higher grade → longer interval (for same stability/difficulty)"""
-    intervals = [next_interval(stability, difficulty, g) for g in [1, 2, 3, 4]]
-    assert intervals == sorted(intervals)
+- Falha de `fc.assert` imprime o **seed** — reproduza com `{ seed: <n>, endOnFailure: true }`.
+- Local rápido: `{ numRuns: 100 }`; CI/nightly: `{ numRuns: 1000 }` (como no exemplo).
+- Shrink automatizado: o fast-check reduz a entrada ao contraexemplo mínimo — leia o valor reportado, não reinvente reprodução manual.
+- `numRuns` alto em CI não substitui testes por exemplo para caminhos conhecidos (boundary explícito continua sendo teste unitário).
 
-@given(
-    stability=st.floats(min_value=0.1, max_value=1000.0),
-    difficulty=st.floats(min_value=0.0, max_value=10.0),
-    grade=st.integers(min_value=1, max_value=4),
-)
-def test_fsrs_interval_positive(stability, difficulty, grade):
-    """Interval always positive"""
-    interval = next_interval(stability, difficulty, grade)
-    assert interval > 0
+## Checklist
 
-@given(
-    stability=st.floats(min_value=0.1, max_value=1000.0),
-    difficulty=st.floats(min_value=0.0, max_value=10.0),
-)
-def test_fsrs_stability_non_negative(stability, difficulty):
-    """Stability never negative"""
-    # FSRS stability update should never produce negative
-    pass
-```
-
-### Parser Round-Trip Properties
-```python
-# tests/unit/test_parser_properties.py
-from hypothesis import given, strategies as st
-from its_platform.practice.parsers import parse_canonical_pack, parse_legacy_pack
-
-@given(
-    # Generate valid pack markdown
-    pack_data=valid_pack_strategy()
-)
-def test_canonical_pack_round_trip(pack_data):
-    """Parse → serialize → parse = original"""
-    markdown = serialize_pack(pack_data)
-    parsed = parse_canonical_pack(markdown)
-    assert parsed.items == pack_data.items
-
-@given(
-    legacy_data=valid_legacy_pack_strategy()
-)
-def test_legacy_pack_round_trip(legacy_data):
-    """Legacy parser preserves all items"""
-    markdown = serialize_legacy_pack(legacy_data)
-    parsed = parse_legacy_pack(markdown)
-    assert len(parsed.items) == len(legacy_data.items)
-    assert all(p.item_id == l.item_id for p, l in zip(parsed.items, legacy_data.items))
-```
-
-## Custom Strategies
-
-```python
-# tests/strategies.py
-from hypothesis import strategies as st
-from its_platform.schemas.curriculum import NextActivity, Rationale
-
-rationale_strategy = st.builds(
-    Rationale,
-    selection_rule=st.sampled_from(["mastery_gate", "prerequisite", "spaced_review", "diagnostic_followup"]),
-    mastery_gaps=st.lists(st.text(min_size=1), min_size=0, max_size=10),
-    i_plus_1=st.booleans(),
-)
-
-next_activity_strategy = st.builds(
-    NextActivity,
-    activity_type=st.sampled_from(["lesson", "practice_pack", "listening", "review"]),
-    activity_id=st.from_regex(r"^(les|pack|dlg)_[a-z0-9_]+$", fullmatch=True),
-    rationale=rationale_strategy,
-    estimated_duration_minutes=st.integers(min_value=5, max_value=45),
-    prerequisites_met=st.booleans(),
-)
-```
-
-## CI Integration
-
-```bash
-# Run property tests with more examples in CI
-pytest tests/unit/test_bkt_properties.py -v --hypothesis-show-statistics
-pytest tests/unit/test_irt_properties.py -v --hypothesis-show-statistics
-pytest tests/unit/test_fsrs_properties.py -v --hypothesis-show-statistics
-pytest tests/unit/test_parser_properties.py -v --hypothesis-show-statistics
-```
+- [ ] Testes em `tests/property/*.spec.ts`, fast-check + Jest (nada de framework extra)
+- [ ] `noNaN: true` em floats de probabilidade
+- [ ] Propriedades do módulo tabelado cobertas (BKT primeiro — ≥ 90% do score de mutação, ver `mutation-testing`)
+- [ ] Seed anotado no CI para repro
+- [ ] `npm run test:unit -- tests/property` verde
