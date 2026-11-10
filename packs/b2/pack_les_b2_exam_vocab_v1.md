@@ -1,4 +1,5 @@
 # Practice Pack: Exam High-Frequency Vocabulary
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_b2_exam_vocab_v1`
 **Lesson:** `les_b2_exam_vocab.md`
@@ -8,6 +9,8 @@
 **Interleaved:** yes
 
 ---
+
+
 
 ### ITEM 1
 **item_id:** `vocab.exam.collocation`
@@ -23,6 +26,8 @@
 **Key:** B
 **br_pt_form:** "colocação / palavras que vão juntas"
 
+
+
 ### ITEM 2
 **item_id:** `vocab.exam.word_family`
 **domain:** `vocab`
@@ -36,6 +41,8 @@
 | D | Only adjectives |
 **Key:** B
 **br_pt_form:** "família de palavras / formas relacionadas"
+
+
 
 ### ITEM 3
 **item_id:** `vocab.exam.prefix`
@@ -51,6 +58,8 @@
 **Key:** B
 **br_pt_form:** "re- / novamente"
 
+
+
 ### ITEM 4
 **item_id:** `vocab.exam.suffix`
 **domain:** `vocab`
@@ -64,6 +73,8 @@
 | D | An adverb |
 **Key:** B
 **br_pt_form:** "-tion / substantivo"
+
+
 
 ### ITEM 5
 **item_id:** `vocab.exam.connotation`
@@ -79,6 +90,8 @@
 **Key:** B
 **br_pt_form:** "conotação / significado emocional adicional"
 
+
+
 ### ITEM 6
 **item_id:** `grammar.prefixes_suffixes`
 **domain:** `grammar`
@@ -93,6 +106,8 @@
 **Key:** B
 **br_pt_form:** "A decisão foi difícil."
 
+
+
 ### ITEM 7
 **item_id:** `vocab.exam.prereq_contextual_guess`
 **domain:** `vocab`
@@ -106,3 +121,22 @@
 | D | Asking someone |
 **Key:** B
 **br_pt_form:** "chute contextual / inferir pelo contexto"
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_b2_exam_vocab_v1
+lesson_id: les_b2_exam_vocab_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

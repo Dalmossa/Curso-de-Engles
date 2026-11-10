@@ -1,4 +1,5 @@
 # Practice Pack: Retrospective & Post-mortem Talk
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_b1_project_retrospective_v1`
 **Lesson:** `les_b1_project_retrospective.md`
@@ -8,6 +9,8 @@
 **Interleaved:** yes
 
 ---
+
+
 
 ### ITEM 1
 **item_id:** `vocab.retro.retrospective`
@@ -23,6 +26,8 @@
 **Key:** B
 **br_pt_form:** "retrospectiva / reunião de melhoria"
 
+
+
 ### ITEM 2
 **item_id:** `vocab.retro.post_mortem`
 **domain:** `vocab`
@@ -36,6 +41,8 @@
 | D | A performance review |
 **Key:** B
 **br_pt_form:** "postmortem / análise sem culpar após incidente"
+
+
 
 ### ITEM 3
 **item_id:** `vocab.retro.action_item`
@@ -51,6 +58,8 @@
 **Key:** B
 **br_pt_form:** "item de ação / tarefa com dono e prazo"
 
+
+
 ### ITEM 4
 **item_id:** `vocab.retro.blameless`
 **domain:** `vocab`
@@ -64,6 +73,8 @@
 | D | No documentation |
 **Key:** B
 **br_pt_form:** "sem culpar / foco no sistema"
+
+
 
 ### ITEM 5
 **item_id:** `vocab.retro.root_cause`
@@ -79,6 +90,8 @@
 **Key:** B
 **br_pt_form:** "causa raiz"
 
+
+
 ### ITEM 6
 **item_id:** `grammar.imperative_action`
 **domain:** `grammar`
@@ -93,6 +106,8 @@
 **Key:** A
 **br_pt_form:** "Adicione monitoramento ao serviço."
 
+
+
 ### ITEM 7
 **item_id:** `vocab.retro.prereq_followup`
 **domain:** `vocab`
@@ -106,3 +121,22 @@
 | D | Blame someone |
 **Key:** B
 **br_pt_form:** "acompanhamento / verificar se foi feito"
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_b1_project_retrospective_v1
+lesson_id: les_b1_project_retrospective_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

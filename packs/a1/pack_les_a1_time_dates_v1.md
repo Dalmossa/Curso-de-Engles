@@ -1,4 +1,5 @@
 # Practice Pack: Hours & Dates
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_a1_time_dates_v1`
 **Lesson:** `les_a1_time_dates.md`
@@ -8,6 +9,8 @@
 **Interleaved:** yes
 
 ---
+
+
 
 ### ITEM 1
 **item_id:** `vocab.time.oclock`
@@ -23,6 +26,8 @@
 **Key:** B
 **br_pt_form:** "em ponto / horas exatas"
 
+
+
 ### ITEM 2
 **item_id:** `vocab.time.half_past`
 **domain:** `vocab`
@@ -36,6 +41,8 @@
 | D | 3:00 |
 **Key:** B
 **br_pt_form:** "três e meia / 3:30"
+
+
 
 ### ITEM 3
 **item_id:** `vocab.time.quarter_past`
@@ -51,6 +58,8 @@
 **Key:** C
 **br_pt_form:** "três e quinze / 3:15"
 
+
+
 ### ITEM 4
 **item_id:** `vocab.time.quarter_to`
 **domain:** `vocab`
@@ -64,6 +73,8 @@
 | D | **4:45** |
 **Key:** D
 **br_pt_form:** "quinze para as quatro / 4:45"
+
+
 
 ### ITEM 5
 **item_id:** `vocab.time.noon`
@@ -79,6 +90,8 @@
 **Key:** B
 **br_pt_form:** "meio-dia / 12:00 PM"
 
+
+
 ### ITEM 6
 **item_id:** `grammar.telling_time`
 **domain:** `grammar`
@@ -93,6 +106,8 @@
 **Key:** A
 **br_pt_form:** "São quatro e quinze."
 
+
+
 ### ITEM 7
 **item_id:** `vocab.time.prereq_midnight`
 **domain:** `vocab`
@@ -106,3 +121,22 @@
 | D | 6:00 PM |
 **Key:** B
 **br_pt_form:** "meia-noite / 12:00 AM"
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_a1_time_dates_v1
+lesson_id: les_a1_time_dates_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

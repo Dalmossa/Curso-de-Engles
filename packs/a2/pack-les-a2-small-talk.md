@@ -1,4 +1,5 @@
 # Practice Pack — `les_a2_small_talk`
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_a2_small_talk_v1`
 **Spec:** `post-lesson-practice-spec.md` §2, §8, §9

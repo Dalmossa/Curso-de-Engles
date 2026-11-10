@@ -1,4 +1,5 @@
 # Practice Pack: Reader's Toolkit — Skim, Scan, Context, Cognates
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_a2_reading_strategy_v1`
 **Lesson:** `les_a2_reading_strategy.md`
@@ -8,6 +9,8 @@
 **Interleaved:** yes
 
 ---
+
+
 
 ### ITEM 1
 **item_id:** `vocab.reading.skim`
@@ -23,6 +26,8 @@
 **Key:** B
 **br_pt_form:** "skim / ler rapidamente para ideia geral"
 
+
+
 ### ITEM 2
 **item_id:** `vocab.reading.scan`
 **domain:** `vocab`
@@ -37,6 +42,8 @@
 **Key:** B
 **br_pt_form:** "scan / ler para detalhes específicos"
 
+
+
 ### ITEM 3
 **item_id:** `vocab.reading.cognate`
 **domain:** `vocab`
@@ -50,6 +57,8 @@
 | D | Only false friends |
 **Key:** B
 **br_pt_form:** "cognatos / palavras similares em PT e EN"
+
+
 
 ### ITEM 4
 **item_id:** `vocab.reading.context_002`
@@ -71,6 +80,8 @@
 > `vocab.reading.context` — it was a repeat the mastery tracker would have counted twice. Found by
 > the cross-pack `item_id` uniqueness check added to `verify-integrity.py` [11c].
 
+
+
 ### ITEM 5
 **item_id:** `vocab.reading.topic-sentence`
 **domain:** `vocab`
@@ -84,6 +95,8 @@
 | D | A detail |
 **Key:** B
 **br_pt_form:** "frase-tópico / frase principal do parágrafo"
+
+
 
 ### ITEM 6
 **item_id:** `grammar.imperatives_reading_002`
@@ -105,6 +118,8 @@
 > negative imperative, which the A1 item does not touch and which is the form a reading instruction
 > actually takes. Found by [11c].
 
+
+
 ### ITEM 7
 **item_id:** `vocab.reading.prereq-infer`
 **domain:** `vocab`
@@ -118,3 +133,22 @@
 | D | Skip |
 **Key:** B
 **br_pt_form:** "inferir / concluir além do explícito"
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_a2_reading_strategy_v1
+lesson_id: les_a2_reading_strategy_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

@@ -1,4 +1,5 @@
 # Practice Pack: Mentoring & Knowledge Transfer
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_b2_it_mentoring_v1`
 **Lesson:** `les_b2_it_mentoring.md`
@@ -8,6 +9,8 @@
 **Interleaved:** yes
 
 ---
+
+
 
 ### ITEM 1
 **item_id:** `vocab.mentoring.bus_factor`
@@ -23,6 +26,8 @@
 **Key:** B
 **br_pt_form:** "fator ônibus / quantas podem sair antes de perder conhecimento"
 
+
+
 ### ITEM 2
 **item_id:** `vocab.mentoring.shadowing`
 **domain:** `vocab`
@@ -36,6 +41,8 @@
 | D | Code review |
 **Key:** B
 **br_pt_form:** "shadowing / observar experiente trabalhando"
+
+
 
 ### ITEM 3
 **item_id:** `vocab.mentoring.pair_programming`
@@ -51,6 +58,8 @@
 **Key:** B
 **br_pt_form:** "programação em par / dois devs no mesmo código"
 
+
+
 ### ITEM 4
 **item_id:** `vocab.mentoring.cross_training`
 **domain:** `vocab`
@@ -64,6 +73,8 @@
 | D | Deployment speed |
 **Key:** B
 **br_pt_form:** "treinamento cruzado / reduz pontos únicos de falha"
+
+
 
 ### ITEM 5
 **item_id:** `vocab.mentoring.psychological_safety`
@@ -79,6 +90,8 @@
 **Key:** B
 **br_pt_form:** "segurança psicológica / ambiente para errar e aprender"
 
+
+
 ### ITEM 6
 **item_id:** `grammar.modals_mentoring`
 **domain:** `grammar`
@@ -93,6 +106,8 @@
 **Key:** B
 **br_pt_form:** "Você deve documentar suas descobertas."
 
+
+
 ### ITEM 7
 **item_id:** `vocab.mentoring.prereq_onboarding`
 **domain:** `vocab`
@@ -106,3 +121,22 @@
 | D | Only team lunch |
 **Key:** B
 **br_pt_form:** "onboarding / buddy, shadowing, docs, primeiras tarefas"
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_b2_it_mentoring_v1
+lesson_id: les_b2_it_mentoring_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

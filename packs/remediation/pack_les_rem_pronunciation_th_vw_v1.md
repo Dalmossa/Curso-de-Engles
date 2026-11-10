@@ -1,4 +1,5 @@
 # Practice Pack: TH, V/W Minimal Pairs (Remediation)
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_rem_pronunciation_th_vw_v1`
 **Lesson:** `les_rem_pronunciation_th_vw.md`
@@ -8,6 +9,8 @@
 **Interleaved:** yes
 
 ---
+
+
 
 ### ITEM 1
 **item_id:** `vocab.pron.th-voiceless`
@@ -23,6 +26,8 @@
 **Key:** B
 **br_pt_form:** "TH surdo / língua entre dentes, sem vibração"
 
+
+
 ### ITEM 2
 **item_id:** `vocab.pron.th-voiced`
 **domain:** `vocab`
@@ -36,6 +41,8 @@
 | D | Nose only |
 **Key:** B
 **br_pt_form:** "TH sonoro / língua entre dentes, com vibração"
+
+
 
 ### ITEM 3
 **item_id:** `vocab.pron.v-sound`
@@ -51,6 +58,8 @@
 **Key:** B
 **br_pt_form:** "V / lábio, com vibração"
 
+
+
 ### ITEM 4
 **item_id:** `vocab.pron.w-sound`
 **domain:** `vocab`
@@ -65,6 +74,8 @@
 **Key:** B
 **br_pt_form:** "W / lábio, sem vibração"
 
+
+
 ### ITEM 5
 **item_id:** `vocab.pron.minimal-pair`
 **domain:** `vocab`
@@ -78,6 +89,8 @@
 | D | Words with same pronunciation |
 **Key:** B
 **br_pt_form:** "minimal pairs / palavras que diferem em 1 som"
+
+
 
 ### ITEM 6
 **item_id:** `grammar.articles_sounds_002`
@@ -100,6 +113,8 @@ before it?
 > names the *sound value* /θ/ explicitly, which makes `a` correct by rule and puts it in direct
 > contrast with the letter-name item beside it. Found by [11c].
 
+
+
 ### ITEM 7
 **item_id:** `vocab.pron.prereq-tongue`
 **domain:** `vocab`
@@ -113,3 +128,22 @@ before it?
 | D | A nose |
 **Key:** B
 **br_pt_form:** "língua / órgão da fala"
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_rem_pronunciation_th_vw_v1
+lesson_id: les_rem_pronunciation_th_vw_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

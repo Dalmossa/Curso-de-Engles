@@ -1,4 +1,5 @@
 # Practice Pack: Prefix, Suffix & Deceptive Cognates
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_a2_it_word_formation_v1`
 **Lesson:** `les_a2_it_word_formation.md`
@@ -8,6 +9,8 @@
 **Interleaved:** yes
 
 ---
+
+
 
 ### ITEM 1
 **item_id:** `vocab.word_formation.prefix_re`
@@ -23,6 +26,8 @@
 **Key:** B
 **br_pt_form:** "novamente / de novo"
 
+
+
 ### ITEM 2
 **item_id:** `vocab.word_formation.prefix_de`
 **domain:** `vocab`
@@ -36,6 +41,8 @@
 | D | Do too much |
 **Key:** B
 **br_pt_form:** "reverso / remover / para baixo"
+
+
 
 ### ITEM 3
 **item_id:** `vocab.word_formation.suffix_tion`
@@ -51,6 +58,8 @@
 **Key:** B
 **br_pt_form:** "substantivo (ação/resultado)"
 
+
+
 ### ITEM 4
 **item_id:** `vocab.word_formation.false_cognate_actually`
 **domain:** `vocab`
@@ -65,6 +74,8 @@
 **Key:** B
 **br_pt_form:** "na verdade"
 
+
+
 ### ITEM 5
 **item_id:** `vocab.word_formation.false_cognate_pretend`
 **domain:** `vocab`
@@ -78,6 +89,8 @@
 | D | Prender |
 **Key:** B
 **br_pt_form:** "fingir"
+
+
 
 ### ITEM 6
 **item_id:** `vocab.word_formation.compound`
@@ -97,6 +110,8 @@
 > duplicate-option check added to `verify-integrity.py` [9], which globbed only `pack-les-*.md` until this date
 > and so had never seen this schema.
 
+
+
 ### ITEM 7
 **item_id:** `vocab.word_formation.prereq_deceptive_cognate`
 **domain:** `vocab`
@@ -110,3 +125,22 @@
 | D | Leitura |
 **Key:** B
 **br_pt_form:** "biblioteca"
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_a2_it_word_formation_v1
+lesson_id: les_a2_it_word_formation_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

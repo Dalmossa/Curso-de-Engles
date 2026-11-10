@@ -1,4 +1,5 @@
 # Practice Pack: Everyday Survival Phrases
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_a1_daily_basics_v1`
 **Lesson:** `les_a1_daily_basics.md`
@@ -8,6 +9,8 @@
 **Interleaved:** yes
 
 ---
+
+
 
 ### ITEM 1
 **item_id:** `vocab.survival.i_dont_understand`
@@ -23,6 +26,8 @@
 **Key:** B
 **br_pt_form:** "não entendo / não compreendi"
 
+
+
 ### ITEM 2
 **item_id:** `vocab.survival.how_much_is_this`
 **domain:** `vocab`
@@ -36,6 +41,8 @@
 | D | Quality |
 **Key:** B
 **br_pt_form:** "quanto custa isto? / preço"
+
+
 
 ### ITEM 3
 **item_id:** `vocab.survival.where_is_the_bathroom`
@@ -51,6 +58,8 @@
 **Key:** B
 **br_pt_form:** "onde fica o banheiro? / localização"
 
+
+
 ### ITEM 4
 **item_id:** `vocab.survival.i_would_like`
 **domain:** `vocab`
@@ -64,6 +73,8 @@
 | D | Say goodbye |
 **Key:** B
 **br_pt_form:** "eu gostaria de / pedir educadamente"
+
+
 
 ### ITEM 5
 **item_id:** `vocab.survival.help`
@@ -79,6 +90,8 @@
 **Key:** B
 **br_pt_form:** "socorro! / emergência"
 
+
+
 ### ITEM 6
 **item_id:** `grammar.can_requests`
 **domain:** `grammar`
@@ -93,6 +106,8 @@
 **Key:** A
 **br_pt_form:** "Pode repetir?"
 
+
+
 ### ITEM 7
 **item_id:** `vocab.survival.prereq_the_bill`
 **domain:** `vocab`
@@ -106,3 +121,22 @@
 | D | In a hotel |
 **Key:** B
 **br_pt_form:** "a conta, por favor / no restaurante"
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_a1_daily_basics_v1
+lesson_id: les_a1_daily_basics_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

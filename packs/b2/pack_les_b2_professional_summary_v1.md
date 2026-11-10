@@ -1,4 +1,5 @@
 # Practice Pack: Writing: Summarizing
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_b2_professional_summary_v1`
 **Lesson:** `les_b2_professional_summary.md`
@@ -8,6 +9,8 @@
 **Interleaved:** yes
 
 ---
+
+
 
 ### ITEM 1
 **item_id:** `vocab.summary.objective`
@@ -23,6 +26,8 @@
 **Key:** B
 **br_pt_form:** "objetivo / sem opinião pessoal"
 
+
+
 ### ITEM 2
 **item_id:** `vocab.summary.main_idea`
 **domain:** `vocab`
@@ -36,6 +41,8 @@
 | D | The conclusion only |
 **Key:** B
 **br_pt_form:** "ideia principal / ponto central"
+
+
 
 ### ITEM 3
 **item_id:** `vocab.summary.paraphrase`
@@ -51,6 +58,8 @@
 **Key:** B
 **br_pt_form:** "parafrasear / reescrever com outras palavras"
 
+
+
 ### ITEM 4
 **item_id:** `vocab.summary.abstract`
 **domain:** `vocab`
@@ -64,6 +73,8 @@
 | D | Contains only data |
 **Key:** B
 **br_pt_form:** "abstract / resumo estruturado"
+
+
 
 ### ITEM 5
 **item_id:** `vocab.summary.tldr`
@@ -79,6 +90,8 @@
 **Key:** B
 **br_pt_form:** "TL;DR / resumo rápido"
 
+
+
 ### ITEM 6
 **item_id:** `grammar.nominalization`
 **domain:** `grammar`
@@ -93,6 +106,8 @@
 **Key:** B
 **br_pt_form:** "A melhoria do sistema"
 
+
+
 ### ITEM 7
 **item_id:** `vocab.summary.prereq_condense`
 **domain:** `vocab`
@@ -106,3 +121,22 @@
 | D | Copying |
 **Key:** B
 **br_pt_form:** "condensar / reduzir mantendo essência"
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_b2_professional_summary_v1
+lesson_id: les_b2_professional_summary_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

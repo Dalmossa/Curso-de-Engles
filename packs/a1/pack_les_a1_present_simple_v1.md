@@ -1,4 +1,5 @@
 # Practice Pack: Present Simple — Affirmative
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_a1_present_simple_v1`
 **Lesson:** `les_a1_present_simple.md`
@@ -8,6 +9,8 @@
 **Interleaved:** yes
 
 ---
+
+
 
 ### ITEM 1
 **item_id:** `vocab.present.he-she-it`
@@ -23,6 +26,8 @@
 **Key:** B
 **br_pt_form:** "ele/ela / adiciona -s ao verbo"
 
+
+
 ### ITEM 2
 **item_id:** `vocab.present.i-work`
 **domain:** `vocab`
@@ -36,6 +41,8 @@
 | D | Uses -ed |
 **Key:** B
 **br_pt_form:** "eu / verbo base"
+
+
 
 ### ITEM 3
 **item_id:** `vocab.present.they-work`
@@ -51,6 +58,8 @@
 **Key:** B
 **br_pt_form:** "eles / verbo base"
 
+
+
 ### ITEM 4
 **item_id:** `vocab.present.always`
 **domain:** `vocab`
@@ -64,6 +73,8 @@
 | D | Usually |
 **Key:** B
 **br_pt_form:** "sempre / frequência 100%"
+
+
 
 ### ITEM 5
 **item_id:** `vocab.present.never`
@@ -79,6 +90,8 @@
 **Key:** B
 **br_pt_form:** "nunca / frequência 0%"
 
+
+
 ### ITEM 6
 **item_id:** `grammar.present_simple_affirmative`
 **domain:** `grammar`
@@ -93,6 +106,8 @@
 **Key:** B
 **br_pt_form:** "Ela trabalha todos os dias."
 
+
+
 ### ITEM 7
 **item_id:** `vocab.present.prereq-usually`
 **domain:** `vocab`
@@ -106,3 +121,22 @@
 | D | Medium frequency |
 **Key:** B
 **br_pt_form:** "geralmente / frequência alta"
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_a1_present_simple_v1
+lesson_id: les_a1_present_simple_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

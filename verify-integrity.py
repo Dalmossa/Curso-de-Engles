@@ -12,6 +12,7 @@ Exit: 0 = all checks pass, 1 = at least one FAIL.
 """
 
 import collections
+import json
 import pathlib
 import re
 import sys
@@ -21,6 +22,35 @@ ROOT = pathlib.Path(__file__).resolve().parent
 
 FAILS: list[str] = []
 WARNS: list[str] = []
+
+# ---------------------------------------------------------------------------------------
+# Check registry.
+#
+# The NUMBER OF CHECKS THIS SCRIPT RUNS IS DERIVED FROM THIS LIST, never typed anywhere.
+# AGENTS.md ("Run it after editing...") declared "14 checks" while `main()` called 13, and the
+# mismatch survived every edit because both numbers were maintained by hand in two files: a
+# count in prose and a count of call statements. Registering the checks makes one of them the
+# other — `[14]` reads AGENTS.md's claim back out of the document and fails if it disagrees
+# with `len(CHECKS)`, so adding a check without documenting it (or documenting one that was
+# deleted) is a red gate rather than a slower reader.
+CHECKS: list[tuple[int, "callable"]] = []
+
+
+def check(number: int):
+    """Register a check function under its bracket number. Registration order IS execution
+    order, and the numbers must be the contiguous 1..N sequence (asserted by [14])."""
+    def register(fn):
+        CHECKS.append((number, fn))
+        return fn
+    return register
+
+
+def declared_check_count(text: str) -> "int | None":
+    """The number of checks AGENTS.md says this script runs, parsed from the document.
+    Returns None when the claim is missing or unparseable — R5: an absent claim is a defect,
+    not a zero."""
+    m = re.search(r"It runs \*\*(\d+) checks?\*\*", text)
+    return int(m.group(1)) if m else None
 
 
 def fail(check: str, detail: str) -> None:
@@ -69,8 +99,35 @@ SPECS = list(SPEC_PATHS.keys())  # for backward compat in checks
 CORPUS_MD = sorted(p.name for p in (ROOT / "Ingles" / "output").glob("*.md"))
 ALL = "\n".join(DOCS.values())
 
+# Top-level governance documents that carry the same kind of claim the markdown checks read —
+# a table with a lost cell, a `§n` that resolves nowhere — but that are NOT specs, so they are
+# deliberately not added to SPEC_PATHS (that would silently widen [1] registry closure, [4] JSON
+# and [7] xrefs onto prose they were never designed to read). [10], [12] and [13] scan them.
+# `AGENTS.md` and `SDD.md` are already in SPEC_PATHS, so they are not repeated here.
+#
+# The values are PATHS relative to the repo root, because `read()` searches only the directories it
+# lists (root, specs/, corpus/, reviews/, lessons/*, packs/*, archive) and `its-platform/` is not
+# one of them. This map used to say `"BACKLOG.md": "BACKLOG.md"` with a comment claiming the
+# `read()` search "covers it if it appears" — it did not, and the name it was looking for does not
+# exist at the root at all. Result: the two documents that record this platform's own work were the
+# two the table and reference checks never opened, which is how a 6-cell row in `BACKLOG.md` survived
+# a green gate. The key stays `BACKLOG.md` (the family name the checks read) while the path points
+# where the file actually is. An absent path still contributes nothing, but that is now a measured
+# absence of a real path, not a lookup in the wrong tree.
+ROOT_DOCS = {k: read(v) for k, v in {
+    "PRD.md": "PRD.md",
+    "BACKLOG.md": "its-platform/BACKLOG.md",
+    "ITS-ARCHITECTURE.md": "ITS-ARCHITECTURE.md",
+    "MEMORY.md": "MEMORY.md",
+    # a different document from the root `MEMORY.md` above, hence its own key: `read()` is keyed by
+    # name, so mapping both to "MEMORY.md" would have one silently overwrite the other.
+    "MEMORY-its-platform.md": "its-platform/MEMORY.md",
+}.items()}
+ROOT_DOCS = {k: v for k, v in ROOT_DOCS.items() if v}   # R5: absent file = absent, never ""
+
 
 # ---------------------------------------------------------------- 1. registry closure
+@check(1)
 def check_registry() -> None:
     """Every les_/mod_/ms_/diag_ ID referenced anywhere must exist in the §4.3 registry."""
     print("\n[1] Registry closure (curriculum-graph-spec.md §4.3)")
@@ -103,6 +160,7 @@ def check_registry() -> None:
 
 
 # ---------------------------------------------------------------- 2. lesson count
+@check(2)
 def check_lesson_count() -> None:
     print("\n[2] Curriculum arithmetic (§4.3: 18 modules x 6 + 5 remediation + 10 IT expansions = 123)")
     cg = DOCS["curriculum-graph-spec.md"]
@@ -361,6 +419,7 @@ def check_lesson_count() -> None:
 
 
 # ---------------------------------------------------------------- 3. source PDFs present
+@check(3)
 def check_sources() -> None:
     print("\n[3] Source corpus (Ingles/output/)")
     if not CORPUS_MD:
@@ -446,6 +505,7 @@ def check_sources() -> None:
 
 
 # ---------------------------------------------------------------- 4. JSON blocks valid
+@check(4)
 def check_json() -> None:
     print("\n[4] JSON blocks parse")
     import json
@@ -473,6 +533,46 @@ def check_json() -> None:
 
 
 # ---------------------------------------------------------------- 5. listening corpus
+# ONE grammar for the `**Status:**` field, used by every check that reads it (5c, 5c-ii, 5d).
+#
+# There were two, and they disagreed about the same item. [5c] asked `status.strip() == "shipped"`
+# while [5c-ii] asked `status.startswith("shipped")`, so `shipped (repaired) — §9 DEF-9 · fixed
+# in-line` was *not shipped* to one and *admissible* to the other: repaired items were exempt
+# from the "a repaired item must say so" rule and counted into the §8.2 inventory anyway. The
+# comparison that matters is the STATE the field declares; everything after it is commentary.
+# A state outside the declared three is a state nobody wrote a rule for, and it used to fall
+# into the withdrawn bucket by default — a silent misclassification of the kind 5c exists to
+# prevent (see the DEF-6 history above).
+LV = ("A1", "A2", "B1")   # the levels §8.2's inventory has columns for
+STATUS_STATES = ("shipped", "shadow-only", "withdrawn")
+
+
+def status_state(status: str) -> str:
+    """The state a `**Status:**` field declares, or "unknown" if it declares none of them."""
+    s = status.strip()
+    for st in STATUS_STATES:
+        if s == st or s.startswith(st + " "):
+            return st
+    return "unknown"
+
+
+def dialogue_level(did: str) -> str:
+    """CEFR level of a dialogue id, taken from the id itself.
+
+    The old expression was `A1 if "_a1_" in did else (A2 if "_a2_" in did else "B1")`: every id
+    that was neither — a typo, a `dlg_b2_`, a new level — was filed as B1 without a word, so a
+    corpus change could move an entire level's coverage into the wrong inventory column and
+    [5c-ii] would still have reconciled the table with itself."""
+    m = re.match(r"^dlg_([a-z]\d)_", did)
+    lvl = m.group(1).upper() if m else None
+    if lvl not in LV:
+        fail("corpus", f"{did} carries no CEFR level this corpus models ({'/'.join(LV)}); its "
+                       f"level used to be inferred as B1 by default, which would file its "
+                       f"coverage under the wrong column of §8.2")
+    return lvl if lvl in LV else (lvl or "?")
+
+
+@check(5)
 def check_corpus() -> None:
     print("\n[5] Listening corpus integrity")
     t = DOCS["listening-corpus.md"]
@@ -515,18 +615,23 @@ def check_corpus() -> None:
             r"\*\*Status:\*\* ([^\n]*)\n(.*?)(?=\n### |\n---|\n# |$)", t, re.S):
         label, iid, _rest, status, body = m.groups()
         n_status += 1
+        if status_state(status) == "unknown":
+            fail("corpus", f"{label} {iid} declares Status {status.strip()!r}, which is none of "
+                           f"{STATUS_STATES} — an item whose state no check recognises is an item "
+                           f"the next one files by default")
         defs = set(re.findall(r"§9 (DEF-\d+)", body))
-        withdrawn = "withdrawn" in status
-        if defs and status.strip() == "shipped":
-            fail("corpus", f"{label} {iid} carries {sorted(defs)} in its body but declares "
-                           f"Status: shipped — a repaired item must say so")
-        elif defs:
+        named = set(re.findall(r"(DEF-\d+)", status))
+        # One rule where there were two branches: an item whose BODY cites a §9 defect must NAME
+        # that defect in its Status line. `shipped` (no name) fails, and so does a repaired status
+        # that names DEF-5 while the body also cites DEF-9 — which the old `elif` reported as a
+        # warning and then counted as repaired anyway.
+        if defs <= named and defs:
             n_repaired += 1
-            for d in sorted(defs):
-                if d not in status:
-                    warn("corpus", f"{label} {iid} body cites {d} but Status line does not "
-                                   f"name it: {status.strip()!r}")
-        if withdrawn and "§9 DEF-" not in status:
+        elif defs:
+            fail("corpus", f"{label} {iid} cites {sorted(defs)} in its body but its Status line "
+                           f"names none of {sorted(defs - named)}: {status.strip()!r} — a repaired "
+                           f"item must say so (§9)")
+        if status_state(status) == "withdrawn" and "§9 DEF-" not in status:
             fail("corpus", f"{label} {iid} is withdrawn with no §9 reference in its Status line")
     # 5c-ii. The published inventory must equal the fields.
     #
@@ -547,19 +652,22 @@ def check_corpus() -> None:
     ndlg: Counter = Counter()
     for j in range(1, len(parts_c), 2):
         did, dbody = parts_c[j], parts_c[j + 1]
-        lvl = "A1" if "_a1_" in did else ("A2" if "_a2_" in did else "B1")
+        lvl = dialogue_level(did)
         ndlg[lvl] += 1
         for k in re.finditer(r"### (L\d)-\d+ — `lst_\w+?_\d+`([^\n]*)\n"
                              r"\*\*Status:\*\* ([^\n]*)\n", dbody):
             kind, status = k.group(1), k.group(3).strip()   # kind is already "L1"/"L2"
             truth[(lvl, f"{kind}_auth")] += 1
-            if status.startswith("shipped"):
+            st = status_state(status)
+            if st == "shipped":
                 truth[(lvl, f"{kind}_adm")] += 1
-            elif status.startswith("shadow-only"):
+            elif st == "shadow-only":
                 truth[(lvl, "shadow")] += 1
-            else:
+            elif st == "withdrawn":
                 truth[(lvl, f"{kind}_wd")] += 1
-    LV = ("A1", "A2", "B1")
+            # "unknown" is counted in NO bucket on purpose: 5c already failed it, and defaulting
+            # it to the withdrawn bucket (the old `else`) is how an unlabelled item gets
+            # published as withdrawn.
     inv = re.search(r"### 8\.2 Item inventory\n+(.*?)\n\n", t, re.S)
     if not inv:
         fail("corpus", "§8.2 item inventory table not found")
@@ -614,10 +722,11 @@ def check_corpus() -> None:
         if not st:
             fail("corpus", f"{label} {iid} has no `**Status:**` line (see 5c)")
             continue
-        if "withdrawn" in st.group(1):
+        state = status_state(st.group(1))
+        if state == "withdrawn":
             ok("item withdrawn", f"{iid} (key check exempt)")
             continue
-        if "shadow-only" in st.group(1):
+        if state == "shadow-only":
             ok("item shadow-only", f"{iid} (key check exempt — Shadow CAT free-response)")
             continue
         tables = re.findall(r"(?:^\|.*\n)+", body, re.M)
@@ -712,6 +821,7 @@ def check_corpus() -> None:
 SPDX = r"CC-BY[\w.-]*|CC0[\w.-]*|MIT|Apache-2\.0|GFDL|IETF TLP"
 
 
+@check(6)
 def check_external() -> None:
     print("\n[6] External source registry")
     t = DOCS.get("external-sources.md", "")
@@ -796,6 +906,7 @@ def check_external() -> None:
 
 
 # ---------------------------------------------------------------- 7. cross-references
+@check(7)
 def check_xrefs() -> None:
     print("\n[7] Cross-references between specs")
     # Build a set of all valid referenced files (by basename) from known locations
@@ -837,6 +948,7 @@ LESSON_FILES = list(LESSON_PATHS.keys())
 REUSE_BASES = ("cite_only", "adapt_with_attribution", "adapt_requires_permission")
 
 
+@check(8)
 def check_lessons() -> None:
     print("\n[8] Authored lesson files")
     # Only membership is ever needed (`lid not in reg_rows`), and the previous version also parsed
@@ -940,40 +1052,58 @@ PACK_FILES = list(PACK_PATHS.keys())
 # check currently carries. Full analysis and the ordered migration: post-lesson-practice-spec.md §12.
 LEGACY_PACK_PATHS = {p.name: p for p in sorted(ROOT.rglob("pack_les_*_v1.md"))}
 LEGACY_PACKS = list(LEGACY_PACK_PATHS.keys())
-# Baseline: number of legacy packs at rest. Stored in the script's global state via a
-# _legacy_packs_baseline.txt file deposited alongside the repo; if absent, the first run
-# sets the baseline and every subsequent run warns if the count exceeds it.
-import json, pathlib
-_BASELINE_PATH = pathlib.Path(__file__).resolve().parent / "_legacy_packs_baseline.json"
-if not _BASELINE_PATH.exists():
-    # First run: record the baseline
-    _BASELINE = {"count": len(LEGACY_PACKS), "first_seen": pathlib.Path.cwd().resolve().name}
-    _BASELINE_PATH.write_text(json.dumps(_BASELINE, ensure_ascii=False, indent=2))
-else:
-    baseline = json.loads(_BASELINE_PATH.read_text())
-    _BASELINE = baseline
-    if len(LEGACY_PACKS) > _BASELINE["count"]:
-        # Baseline exceeded — more legacy packs appeared than recorded
-        warn("pack legacy baseline",
-             f"CATRACA: {len(LEGACY_PACKS)} legacy packs (baseline was {_BASELINE['count']}; "
-             f"first seen in {_BASELINE['first_seen']}). Legados não devem aumentar.")
-    elif len(LEGACY_PACKS) < _BASELINE["count"]:
-        # Fewer legacy packs — reset baseline (someone cleaned up)
-        _BASELINE = {"count": len(LEGACY_PACKS), "first_seen": pathlib.Path.cwd().resolve().name}
-        _BASELINE_PATH.write_text(json.dumps(_BASELINE, ensure_ascii=False, indent=2))
-    else:
-        # Count unchanged — no warning needed beyond the normal one
-        pass
+# ------------------------------------------------------------------------------------------
+# The legacy-pack count is a CATRACA (ratchet), not a permanent warning.
+#
+# A warning that fires on every run stops being read on the second run, and it never moved an
+# exit code — the migration gap has been printed as `[WARN]` for the whole life of this script,
+# and 115 packs sat outside check [9] behind it. The count is now pinned to a VERSIONED floor
+# (`_legacy_packs_baseline.json`, committed to the repo): it may fall, it may not rise, and a
+# rise is a FAIL. The floor is read-only at check time — a check that rewrites its own baseline
+# makes the gate un-reviewable in `git diff` — so tightening it is an explicit act:
+#     python3 verify-integrity.py --update-legacy-baseline   (then commit the file)
+_BASELINE_PATH = ROOT / "_legacy_packs_baseline.json"
 
-if LEGACY_PACKS:
-    n_items = sum(len(re.findall(r"^### ITEM ", LEGACY_PACK_PATHS[fn].read_text(), re.M)) for fn in LEGACY_PACKS)
-    n_noreuse = sum(1 for fn in LEGACY_PACKS if "**Reuse basis:**" not in LEGACY_PACK_PATHS[fn].read_text())
-    warn("pack schema", f"{len(LEGACY_PACKS)} of {len(LEGACY_PACKS) + len(PACK_FILES)} packs use the "
-                        f"`pack_les_<lesson>_v1.md` schema ({n_items} items) and are outside check "
-                        f"[9], which globs only `pack-les-*.md`. {n_noreuse} of them declare no "
-                        f"`**Reuse basis:**` (§0.5) and their dotted ids do not satisfy §1.2's "
-                        f"prefix↔namespace rule. [11c]/[11d]/[11e] DO cover them. The rest is "
-                        f"outstanding migration — see post-lesson-practice-spec.md §12.")
+
+def legacy_packs_ratchet() -> None:
+    """Check [9]'s coverage gap may shrink; it may not grow. R5: a missing or unreadable floor
+    fails — a ratchet with no floor is a warning with extra steps."""
+    n = len(LEGACY_PACKS)
+    if not _BASELINE_PATH.exists():
+        fail("pack legacy ratchet",
+             f"{_BASELINE_PATH.name} is missing — the legacy-pack ratchet has no floor. Recreate "
+             f"it with `python3 verify-integrity.py --update-legacy-baseline` and commit it")
+        return
+    try:
+        base = json.loads(_BASELINE_PATH.read_text())
+        floor = int(base["count"])
+    except Exception as e:                                     # noqa: BLE001 — fail-closed
+        fail("pack legacy ratchet", f"{_BASELINE_PATH.name} is unreadable ({e})")
+        return
+    if n > floor:
+        fail("pack legacy ratchet",
+             f"CATRACA: {n} `pack_les_*_v1.md` packs against a committed floor of {floor} — "
+             f"{n - floor} legacy pack(s) appeared. New content must be authored in the "
+             f"`pack-les-*.md` schema (post-lesson-practice-spec.md §12)")
+    elif n < floor:
+        ok("pack legacy ratchet", f"{n} legacy packs against a floor of {floor} — the floor is "
+                                  f"{floor - n} higher than reality; tighten it with "
+                                  f"`--update-legacy-baseline` and commit {_BASELINE_PATH.name}")
+    else:
+        ok("pack legacy ratchet", f"{n} legacy packs, exactly at the committed floor "
+                                  f"({_BASELINE_PATH.name})")
+    # The migration's own accounting, kept as INFORMATION: it is what the ratchet pins, and it
+    # is what tells a reader whether the floor is 115 packs of outstanding work or 0.
+    n_items = sum(len(re.findall(r"^### ITEM ", LEGACY_PACK_PATHS[fn].read_text(), re.M))
+                  for fn in LEGACY_PACKS)
+    n_noreuse = sum(1 for fn in LEGACY_PACKS
+                    if "**Reuse basis:**" not in LEGACY_PACK_PATHS[fn].read_text())
+    ok("pack schema", f"{n} of {n + len(PACK_FILES)} packs use the `pack_les_<lesson>_v1.md` "
+                      f"schema ({n_items} items) and stay outside check [9]'s per-distractor "
+                      f"rules; {n_noreuse} of them declare no `**Reuse basis:**` (§0.5) and their "
+                      f"dotted ids do not satisfy §1.2's prefix↔namespace rule. [10]/[12]/[13] and "
+                      f"[11c]/[11d]/[11e] DO cover them. Outstanding migration — "
+                      f"post-lesson-practice-spec.md §12")
 # assessment-item-spec.md §1.2 — id prefix IS the primary skill namespace
 PREFIX_NS = {"grm": "grammar", "voc": "vocab", "rdg": "reading",
              "prn": "pronunciation", "lst": "listening", "coh": "coherence"}
@@ -981,8 +1111,10 @@ OPTION_ROW = re.compile(r"^\|\s*([A-Z])\s*\|\s*(.+?)\s*\|\s*$", re.M)
 ITEM_HEAD = re.compile(r"^### ITEM (\d+)", re.M)
 
 
+@check(9)
 def check_packs() -> None:
     print("\n[9] Practice packs")
+    legacy_packs_ratchet()
     seen_items: dict[str, str] = {}
     for fn in PACK_FILES:
         p = PACK_PATHS[fn]
@@ -1164,30 +1296,125 @@ BRPT_TOTALS = {"filled": 0, "null_note": 0, "null_na": 0, "absent": 0}
 # treating it as one made every §-reference in AGENTS.md look self-referential. A section number is
 # followed by a dot, whitespace, or end of line — never by a hyphen.
 SECT = re.compile(r"^#{2,4}\s+(?:§)?(\d+(?:\.\d+)*)(?=[.\s]|$)", re.M)
-# the short names this repo actually uses to refer to another document mid-sentence
+
+
+def _defined_sections(text: str) -> set:
+    """The section numbers a document defines; a parent counts for its children (§8 for §8.1)."""
+    d = {m.group(1) for m in SECT.finditer(text)}
+    for parent in list(d):
+        for child in list(d):
+            if child.startswith(parent + "."):
+                d.add(parent)
+    return d
+
+
+# the short names this repo actually uses to refer to another document mid-sentence.
+# The last line was added with [10]'s scope extension to the five root documents: PRD.md,
+# MEMORY.md and ITS-ARCHITECTURE.md cite `CONSTITUTION §4.9`, `ERD §6.9`, `ADR-018 §9` and
+# `runbook §5.2` constantly, and without those names the window test read every one of those
+# as a dangling SELF-reference (15 of them, all false).
 DOC_ALIAS = re.compile(
     r"assessment-item-spec|stats-progress|stats-progress-evaluation|\bstats\b|diagnostic-spec|"
     r"\bdiagnostic\b|content-map|curriculum-graph|external-sources|listening-corpus|"
     r"post-lesson-practice|\bpack-les|\bles_[a-z0-9_]+|lesson-15min|tier-b-review|\bAGENTS\b|"
     r"verify-integrity|Ingles/output|\bIT\b|\bleia\b|\bapostila\b|\bDicionario\b|"
-    r"corpus-spec|\bBKT\b|\bFSRS\b|\bIRT\b|\bMVP\b|\bASR\b|\bTTS\b|\bMDN\b|\bRFC\b")
-# authored artifacts are not in SPECS (they are artifacts, not specs) but they carry §-references
-ARTIFACTS = {q.name: q.read_text() for q in sorted(ROOT.rglob("les_*.md")) + sorted(ROOT.rglob("pack-les-*.md"))}
+    r"corpus-spec|\bBKT\b|\bFSRS\b|\bIRT\b|\bMVP\b|\bASR\b|\bTTS\b|\bMDN\b|\bRFC\b|"
+    r"CONSTITUTION|\bBACKLOG\b|\bMEMORY\b|\bPRD\b|\bSDD\b|ITS-ARCHITECTURE|\bADR\b|\bERD\b|"
+    r"\brunbook\b|\bdomain-model\b|"
+    # `its-platform/` documents, added with the BACKLOG/MEMORY scope: they are cited across that
+    # tree by file name and without a path prefix, and a name this list omits is read as a bare
+    # `§N` — i.e. as a self-reference that cannot resolve. `iac-spec` and `audit-chain` are the two
+    # that actually appear in the two newly-scanned documents; the rest are the same tree's docs,
+    # named here while the omission is being fixed rather than one review round later.
+    r"iac-spec|audit-chain|security-spec|security-audit|threat-model|api-spec|data-model|"
+    r"postgresql-rls|openapi")
+# ...but a name that is the file's OWN name is not a cross-document reference: `MEMORY.md`
+# writing "MEMORY §4" is the same claim as a bare "§4" and must resolve locally. Without this,
+# widening [10] to documents that cite each other by name would have disabled self-reference
+# checking inside them instead of enabling cross-reference checking for them.
+SELF_ALIAS = {
+    "AGENTS.md": r"\bAGENTS\b",
+    "SDD.md": r"\bSDD\b",
+    "PRD.md": r"\bPRD\b",
+    "MEMORY.md": r"\bMEMORY\b",
+    "ITS-ARCHITECTURE.md": r"ITS-ARCHITECTURE",
+    "content-map.md": r"content-map",
+    "external-sources.md": r"external-sources",
+    "curriculum-graph-spec.md": r"curriculum-graph",
+    "diagnostic-spec.md": r"diagnostic-spec",
+    "assessment-item-spec.md": r"assessment-item-spec",
+    "listening-corpus-spec.md": r"listening-corpus-spec",
+    "listening-corpus.md": r"listening-corpus",
+    "stats-progress-evaluation-spec.md": r"stats-progress",
+    "post-lesson-practice-spec.md": r"post-lesson-practice",
+    "tier-b-review.md": r"tier-b-review",
+}
+# A file family whose governing spec is declared by the SCHEMA rather than by the file. The 115
+# `pack_les_*_v1.md` packs carry a fenced `spec_conformance:` manifest whose comments cite the
+# pack spec by section number alone (`item_count: 7   # §2.1 4–8`) and the pack never names
+# post-lesson-practice-spec.md anywhere — so the window test cannot classify the reference and
+# would report 690 dangling self-references, all the same defect, all in the wrong direction:
+# they are correct cross-document citations that the schema omits. Resolving them against the
+# governing spec is strictly STRONGER than skipping them: a manifest citing a section that no
+# longer exists now fails instead of never being looked at.
+#
+# ...and that took two attempts. Resolving against the governing spec was added first and the
+# number it produced (230 of 691) was nearly right for a reason that had nothing to do with the
+# spec: the OTHER 461 sat behind the cross-document window test, because the window opens 400
+# characters wide and the manifest's own `pack_id: pack_les_…` / `lesson_id: les_…` lines sit
+# inside it. A file's own identifier is not the name of another document — the same mistake
+# SELF_ALIAS fixes one level up — so those identifiers are masked before the window is read
+# (OWN_ID_FIELD below). With both in place: 690 of 691 manifest refs are verified against
+# post-lesson-practice-spec.md, 1 is skipped because the clause genuinely names another document,
+# and 0 fail. The negative control that found this is on record in the F1 report.
+SCHEMA_GOVERNING = {"pack_les_*_v1.md": "post-lesson-practice-spec.md"}
+# the fields a pack or lesson uses to state its OWN identity, in either schema.
+OWN_ID_FIELD = re.compile(
+    r"^\*\*(?:Pack|Lesson) ID:\*\*\s*`([^`]+)`|^(?:pack_id|lesson_id):\s*([^\s#]+)", re.M)
+
+
+def own_id_alias(name: str, text: str) -> "re.Pattern | None":
+    """A regex matching the tokens this file uses to name ITSELF, or None.
+
+    `pack_les_a1_greetings_v1.md` calling itself `pack_les_a1_greetings_v1` is the same claim as
+    a bare `§N`; only a token that names a *different* file may excuse a reference from resolving
+    here. Without this, every `§` in a legacy pack's manifest was skipped as a "cross-document"
+    reference by the file's own `lesson_id:` line — 461 of the 691 the governing spec was added
+    to verify."""
+    ids = {pathlib.PurePath(name).stem}
+    for m in OWN_ID_FIELD.finditer(text):
+        ids.add((m.group(1) or m.group(2)).strip().strip('`"'))
+    ids = {i for i in ids if re.fullmatch(r"(?:pack_les_|pack-les-|les_)[a-z0-9_.\-]+", i)}
+    if not ids:
+        return None
+    return re.compile("|".join(re.escape(i) for i in sorted(ids, key=len, reverse=True)))
+# authored artifacts are not in SPECS (they are artifacts, not specs) but they carry §-references.
+# [10], [12] and [13] previously globbed only `les_*` and `pack-les-*` — 7 of 122 packs — so the
+# second schema was invisible to the table, example and reference checks for the same reason it
+# was invisible to [9].
+ARTIFACTS = {q.name: q.read_text()
+             for q in sorted(ROOT.rglob("les_*.md")) + sorted(ROOT.rglob("pack-les-*.md"))
+                                + sorted(ROOT.rglob("pack_les_*_v1.md"))}
 GOVERNED = re.compile(r"^\*\*(Spec|Specs|Companion to):\*\*", re.M)
 
 
+@check(10)
 def check_sxrefs() -> None:
     print("\n[10] Internal section references resolve")
-    total = 0
-    for name, text in {**DOCS, **ARTIFACTS}.items():
-        defined = {m.group(1) for m in SECT.finditer(text)}
+    total = scanned = 0
+    scope = {**DOCS, **ROOT_DOCS, **ARTIFACTS}
+    governing_defined: dict[str, set] = {}
+    for name, text in scope.items():
+        scanned += 1
+        defined = _defined_sections(text)
         if not defined:
             continue  # unnumbered document (AGENTS.md): every §N in it names another file
-        # a parent section counts as defined for its children (§8 satisfies §8.1 references)
-        for d in list(defined):
-            for child in list(defined):
-                if child.startswith(d + "."):
-                    defined.add(d)
+        gov = next((spec for glob, spec in SCHEMA_GOVERNING.items() if pathlib.PurePath(name).match(glob)),
+                   None)
+        if gov and gov in DOCS:
+            governing_defined.setdefault(gov, _defined_sections(DOCS[gov]))
+        self_alias = re.compile(SELF_ALIAS[name]) if name in SELF_ALIAS else None
+        own_alias = own_id_alias(name, text)
         for m in re.finditer(r"§(\d+(?:\.\d+)*)", text):
             ref = m.group(1)
             # Cross-document references are resolved by check 7, not here. They appear in three
@@ -1206,19 +1433,44 @@ def check_sxrefs() -> None:
             # `§2.2`/`§2.3`/`§4.1` that are all post-lesson, and 45 of them are not dangling.
             if GOVERNED.search(text):
                 continue
+            total += 1
+            # Resolution first, classification second. A reference that resolves is resolved:
+            # sending it through the window test first is what let the manifest's own `lesson_id:`
+            # line file 461 correct citations as "cross-document" and stop looking at them.
+            if ref in defined:
+                continue
+            if gov and ref in governing_defined.get(gov, ()):
+                continue    # the SCHEMA, not the file, names the governing spec
             # Window is BIDIRECTIONAL: the repo also writes the document name *after* the section
             # ("§9 do `assessment-item-spec.md`"), which a backwards-only scan cannot see.
             win = text[max(0, m.start() - 400):m.start() + 90]
+            if self_alias:
+                # a token that is THIS file's own name never counts as a cross-document
+                # reference; masking it (rather than testing "did search hit my name first")
+                # keeps a clause that names both another document and this one working.
+                win = self_alias.sub(" ", win)
+            if own_alias:
+                win = own_alias.sub(" ", win)
             if DOC_ALIAS.search(win):
                 continue
-            total += 1
-            if ref not in defined:
-                line = text.count("\n", 0, m.start()) + 1
-                have = sorted(defined, key=lambda s: [int(x) for x in s.split(".")])
-                fail("sxref", f"{name}:{line} references §{ref} but that section does not exist "
-                              f"(this file defines: {', '.join(have[:16])})")
-    if total:
-        ok("sxref", f"{total} internal section references resolved")
+            line = text.count("\n", 0, m.start()) + 1
+            have = sorted(defined, key=lambda s: [int(x) for x in s.split(".")])
+            where = ("it names no document in the clause, so the reference cannot be "
+                     "resolved anywhere" if not gov else "and no governing spec covers it")
+            fail("sxref", f"{name}:{line} references §{ref} but that section does not exist "
+                          f"(this file defines: {', '.join(have[:16])}; {where})")
+    # A pass that checked nothing is the defect [12] and [13] had: the loop above is silent when
+    # the scope it walks is empty or when every reference is skipped as cross-document.
+    if scanned == 0:
+        fail("sxref", "[10] scanned 0 documents — nothing to check is a FAIL, never an ok (R5)")
+    elif total == 0:
+        fail("sxref", f"[10] checked 0 section references across {scanned} documents — a "
+                      f"reference check that finds no references is a FAIL, never an ok (R5)")
+    else:
+        # "checked", not "resolved": `total` counts every reference the check examined, including
+        # the ones it then reported as dangling. A message that says "resolved" while the gate is
+        # red reads as a contradiction and hides which number the failures came out of.
+        ok("sxref", f"{total} internal section references checked across {scanned} documents")
 
 
 # ---------------------------------------------------------------- 11. restricted reproduction
@@ -1241,6 +1493,7 @@ PUBLISHABLE_CLAIM = re.compile(
 REUSE_MARKER = re.compile(r"reuse basis", re.I)
 
 
+@check(11)
 def check_restricted_reproduction() -> None:
     print("\n[11] Restricted sources are not declared publishable")
     n_bad = 0
@@ -1435,11 +1688,14 @@ def _cells(line: str) -> int:
     return len(re.split(r"(?<!\\)\|", line.strip().strip("|")))
 
 
+@check(12)
 def check_tables() -> None:
     print("\n[12] Markdown table column consistency")
     n_tbl = n_bad = 0
-    for name, text in {**DOCS, **ARTIFACTS}.items():
+    scope = {**DOCS, **ROOT_DOCS, **ARTIFACTS}
+    for name, text in scope.items():
         lines, in_fence = text.split("\n"), False
+        doc_tbl = 0
         i = 0
         while i < len(lines):
             ln = lines[i]
@@ -1456,6 +1712,7 @@ def check_tables() -> None:
                 i = j
                 continue
             n_tbl += 1
+            doc_tbl += 1
             want = _cells(block[0])
             for k, row in enumerate(block[2:], start=i + 3):  # i is 0-based; header=+1, sep=+2
                 got = _cells(row)
@@ -1465,10 +1722,26 @@ def check_tables() -> None:
                         fail("table", f"{name}:{k} has {got} cells, its header has {want} — "
                                       f"`{row.strip()[:70]}`")
             i = j
+        # ONE line per document that carries a table, naming it and its table count. The
+        # aggregate line alone cannot show *which* documents were scanned, so a scope extension
+        # (BACKLOG.md/MEMORY-its-platform.md) whose effect is invisible is exactly the failure mode
+        # this check exists to prevent. Per-table lines were 1 838 lines of noise; per-document is
+        # ~140 and still makes every scanned document auditable.
+        if doc_tbl:
+            ok(f"table {name}", f"{doc_tbl} tables")
     if n_bad:
         fail("table", f"{n_bad} malformed table rows total")
+    elif n_tbl == 0:
+        # A pass over zero tables prints the same `ok` as a pass over 1003, and it is
+        # indistinguishable from a scope that stopped matching (a moved directory, a renamed
+        # glob). R5: zero artefacts verified is a FAIL.
+        fail("table", f"[12] found 0 markdown tables across {len(scope)} documents — a table check "
+                      f"that sees no tables is a silent pass, not a pass")
     else:
-        ok("table", f"{n_tbl} tables, all rows match their header width")
+        # The documents the per-table lines above do not name — every one that failed, and the
+        # specs/artefacts that carry no table at all — still have to be accounted for, so the
+        # aggregate line stays the count of record.
+        ok("table", f"{n_tbl} tables across {len(scope)} documents, all rows match their header width")
 
 
 # ---------------------------------------------------------------- 13. examples honour their own disclosures
@@ -1481,19 +1754,29 @@ def check_tables() -> None:
 # that parses while contradicting itself is the common case.
 #
 # Rule, in one line: a domain that a block itself declares non-reportable may not carry a `theta`.
+@check(13)
 def check_examples() -> None:
     print("\n[13] Worked examples honour their own disclosures")
-    import json as _json
-    n_block = n_bad = 0
-    for name, text in DOCS.items():
+    n_block = n_bad = n_unparseable = 0
+    scope = {**DOCS, **ROOT_DOCS, **ARTIFACTS}
+    for name, text in scope.items():
         for m in re.finditer(r"```json\n(.*?)\n```", text, re.S):
             body = m.group(1)
             if "\"skills\"" not in body:
                 continue
             try:
-                d = _json.loads(body)
-            except Exception:
-                continue          # [4] owns parse failures; not this check's business
+                d = json.loads(body)
+            except Exception as e:
+                # [4] owns parse failures *in the specs it scans* — but this check decides
+                # whether an example contradicts itself, and an example it cannot read is an
+                # example whose disclosure it cannot verify. Skipping it silently made the two
+                # checks fail different ways on the same block: [4] is silent for a block whose
+                # fence it matches differently, and [13] called the result a pass.
+                n_unparseable += 1
+                fail("example", f"{name}:{text[:m.start()].count(chr(10)) + 2} has a JSON block "
+                                f"that declares `\"skills\"` and does not parse ({e}) — [13] "
+                                f"cannot verify the disclosures of a block it cannot read")
+                continue
             n_block += 1
             skills = d.get("skills") or {}
             not_assessed = set(
@@ -1518,30 +1801,73 @@ def check_examples() -> None:
                     n_bad += 1
                     fail("example", f"{name}:{line} declares '{dom}' reportable but the example "
                                     f"carries no estimate for it")
-    if not n_bad:
-        ok("example", f"{n_block} worked example(s) — no estimate printed for a domain the "
-                      f"example itself declares non-reportable")
+    if not n_bad and not n_unparseable and n_block:
+        ok("example", f"{n_block} worked example(s) across {len(scope)} documents — no estimate "
+                      f"printed for a domain the example itself declares non-reportable")
+    elif not n_block and not n_unparseable:
+        fail("example", f"[13] found 0 JSON blocks declaring `\"skills\"` across {len(scope)} "
+                        f"documents — an example check that sees no examples is a silent pass, "
+                        f"not a pass")
 
+
+
+# ---------------------------------------------------------------- 14. the declared check count
+# The count in the documentation is the one number in this repository that no other check could
+# compare against anything: it lived in prose ("It runs **14 checks**") and in a list of call
+# statements in `main()` that nobody recounts. They disagreed for as long as the table existed.
+# Now the prose is read back and compared with `len(CHECKS)`, so the only way to change the
+# number is to change the code, and the document then fails until it follows.
+@check(14)
+def check_declared_count() -> None:
+    print("\n[14] AGENTS.md declares the real number of checks")
+    n = len(CHECKS)
+    text = DOCS.get("AGENTS.md", "")
+    if not text:
+        fail("agents count", "AGENTS.md is absent — the document that states the check count "
+                             "cannot be read, so its claim cannot be verified (R5)")
+        return
+    declared = declared_check_count(text)
+    if declared is None:
+        fail("agents count", "AGENTS.md no longer states how many checks run (`It runs **N "
+                             "checks**`) — an absent claim is a defect, not a zero (R5)")
+    elif declared != n:
+        fail("agents count", f"AGENTS.md says {declared} checks; {n} are registered in CHECKS — "
+                             f"the number is derived from the code, so the document is what has "
+                             f"to move")
+    else:
+        ok("agents count", f"AGENTS.md declares {declared}, and {n} checks are registered")
+    # The derived count only means something if the numbers are the contiguous 1..N sequence;
+    # otherwise `len(CHECKS)` counts checks a reader cannot locate in the output.
+    nums = sorted(num for num, _ in CHECKS)
+    if nums != list(range(1, n + 1)):
+        fail("agents count", f"check numbering is not the contiguous 1..{n} sequence: {nums}")
 
 
 # ---------------------------------------------------------------- main
+def write_baseline() -> None:
+    """Re-pin the legacy-pack floor. Separate from the run on purpose: a check that rewrites its
+    own baseline cannot be reviewed in `git diff`."""
+    first_seen = ""
+    if _BASELINE_PATH.exists():
+        try:
+            first_seen = json.loads(_BASELINE_PATH.read_text()).get("first_seen", "")
+        except Exception:                                       # noqa: BLE001
+            first_seen = ""
+    _BASELINE_PATH.write_text(json.dumps(
+        {"count": len(LEGACY_PACKS), "first_seen": first_seen or pathlib.Path.cwd().name},
+        ensure_ascii=False, indent=2))
+    print(f"{_BASELINE_PATH.name}: floor pinned at {len(LEGACY_PACKS)} legacy packs")
+
+
 def main() -> int:
+    if "--update-legacy-baseline" in sys.argv:
+        write_baseline()
+        return 0
     print("=" * 78)
-    print("Curso-de-Ingles — content integrity")
+    print(f"Curso-de-Ingles — content integrity ({len(CHECKS)} checks, derived from CHECKS)")
     print("=" * 78)
-    check_registry()
-    check_lesson_count()
-    check_sources()
-    check_json()
-    check_corpus()
-    check_external()
-    check_xrefs()          # [7]
-    check_lessons()        # [8]
-    check_packs()          # [9]
-    check_sxrefs()         # [10]
-    check_restricted_reproduction()  # [11]
-    check_tables()         # [12]
-    check_examples()       # [13]
+    for _number, _run in CHECKS:
+        _run()
 
     print("\n" + "=" * 78)
     for w in WARNS:

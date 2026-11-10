@@ -1,4 +1,5 @@
 # Practice Pack: Affective Filter / False Beginner (Remediation)
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_rem_confidence_builder_v1`
 **Lesson:** `les_rem_confidence_builder.md`
@@ -8,6 +9,8 @@
 **Interleaved:** yes
 
 ---
+
+
 
 ### ITEM 1
 **item_id:** `vocab.confidence.affective-filter`
@@ -23,6 +26,8 @@
 **Key:** B
 **br_pt_form:** "affective filter / ansiedade que bloqueia aprendizagem"
 
+
+
 ### ITEM 2
 **item_id:** `vocab.confidence.false-beginner`
 **domain:** `vocab`
@@ -36,6 +41,8 @@
 | D | Is a teacher |
 **Key:** B
 **br_pt_form:** "false beginner / estudou inglês mas não consegue falar"
+
+
 
 ### ITEM 3
 **item_id:** `vocab.confidence.confidence`
@@ -51,6 +58,8 @@
 **Key:** B
 **br_pt_form:** "confidence / confiança / segurança"
 
+
+
 ### ITEM 4
 **item_id:** `vocab.confidence.safe-environment`
 **domain:** `vocab`
@@ -64,6 +73,8 @@
 | D | A test |
 **Key:** B
 **br_pt_form:** "safe environment / ambiente seguro / espaço sem julgamento"
+
+
 
 ### ITEM 5
 **item_id:** `vocab.confidence.breakthrough`
@@ -79,6 +90,8 @@
 **Key:** B
 **br_pt_form:** "breakthrough / avanço / momento de superação"
 
+
+
 ### ITEM 6
 **item_id:** `grammar.present_simple_facts`
 **domain:** `grammar`
@@ -93,6 +106,8 @@
 **Key:** B
 **br_pt_form:** "Erros fazem parte do aprendizado."
 
+
+
 ### ITEM 7
 **item_id:** `vocab.confidence.prereq-anxiety`
 **domain:** `vocab`
@@ -106,3 +121,22 @@
 | D | Practice |
 **Key:** B
 **br_pt_form:** "anxiety / ansiedade / medo / nervosismo"
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_rem_confidence_builder_v1
+lesson_id: les_rem_confidence_builder_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

@@ -1,4 +1,5 @@
 # Practice Pack — `les_a2_email_basics`
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_a2_email_basics_v1`
 **Spec:** `post-lesson-practice-spec.md` §2, §8, §9

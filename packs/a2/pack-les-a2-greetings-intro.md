@@ -1,4 +1,5 @@
 # Practice Pack — `les_a2_greetings_intro`
+**Reuse basis:** adapt_requires_permission
 
 **Pack ID:** `pack_les_a2_greetings_intro_v1`
 **Spec:** `post-lesson-practice-spec.md` §2, §8

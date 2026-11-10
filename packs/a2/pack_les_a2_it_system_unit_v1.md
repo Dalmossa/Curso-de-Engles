@@ -10,6 +10,8 @@
 
 ---
 
+
+
 ### ITEM 1
 **item_id:** `grm_preposition_on_surface_001`
 **domain:** `grammar`
@@ -23,6 +25,8 @@
 | D | by |
 **Key:** B
 **br_pt_form:** "o dissipador é montado **sobre** o processador"
+
+
 
 ### ITEM 2
 **item_id:** `grm_preposition_in_slot_001`
@@ -38,6 +42,8 @@
 **Key:** C
 **br_pt_form:** "o módulo de memória vai **na** ranhura"
 
+
+
 ### ITEM 3
 **item_id:** `voc_motherboard_001`
 **domain:** `vocab`
@@ -51,6 +57,8 @@
 | D | The operating system |
 **Key:** B
 **br_pt_form:** "placa-mãe"
+
+
 
 ### ITEM 4
 **item_id:** `voc_heatsink_001`
@@ -66,6 +74,8 @@
 **Key:** A
 **br_pt_form:** "dissipador de calor"
 
+
+
 ### ITEM 5
 **item_id:** `grm_noun_modifier_order_001`
 **domain:** `grammar`
@@ -79,6 +89,8 @@
 | D | the fan processor CPU |
 **Key:** B
 **br_pt_form:** "ventoinha do processador" — em inglês o substantivo principal vem **no fim**
+
+
 
 ### ITEM 6
 **item_id:** `voc_drive_bay_001`
@@ -94,6 +106,8 @@
 **Key:** B
 **br_pt_form:** "bay / suporte de disco"
 
+
+
 ### ITEM 7
 **item_id:** `voc_psu_location_001`
 **domain:** `vocab`
@@ -107,3 +121,23 @@
 | D | On the CPU |
 **Key:** A
 **br_pt_form:** "atrás ou na parte de baixo do gabinete"
+
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_a2_it_system_unit_v1
+lesson_id: les_a2_it_system_unit_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

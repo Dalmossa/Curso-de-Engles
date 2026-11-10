@@ -1,4 +1,5 @@
 # Practice Pack: Incident Postmortems
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_b2_it_incident_postmortem_v1`
 **Lesson:** `les_b2_it_incident_postmortem.md`
@@ -8,6 +9,8 @@
 **Interleaved:** yes
 
 ---
+
+
 
 ### ITEM 1
 **item_id:** `vocab.postmortem.blameless`
@@ -23,6 +26,8 @@
 **Key:** B
 **br_pt_form:** "sem culpar / melhorias no sistema"
 
+
+
 ### ITEM 2
 **item_id:** `vocab.postmortem.root_cause`
 **domain:** `vocab`
@@ -36,6 +41,8 @@
 | D | The alert that fired |
 **Key:** B
 **br_pt_form:** "causa raiz / origem fundamental"
+
+
 
 ### ITEM 3
 **item_id:** `vocab.postmortem.contributing_factors`
@@ -51,6 +58,8 @@
 **Key:** B
 **br_pt_form:** "fatores contribuintes / condições que agravaram"
 
+
+
 ### ITEM 4
 **item_id:** `vocab.postmortem.action_items`
 **domain:** `vocab`
@@ -64,6 +73,8 @@
 | D | Are feature requests |
 **Key:** B
 **br_pt_form:** "itens de ação / tarefas com dono e prazo"
+
+
 
 ### ITEM 5
 **item_id:** `vocab.postmortem.mttr`
@@ -79,6 +90,8 @@
 **Key:** B
 **br_pt_form:** "MTTR / tempo médio de recuperação"
 
+
+
 ### ITEM 6
 **item_id:** `grammar.past_perfect_timeline`
 **domain:** `grammar`
@@ -93,6 +106,8 @@
 **Key:** B
 **br_pt_form:** "O índice tinha estado ausente antes do incidente."
 
+
+
 ### ITEM 7
 **item_id:** `vocab.postmortem.prereq_severity`
 **domain:** `vocab`
@@ -106,3 +121,22 @@
 | D | Documentation update |
 **Key:** B
 **br_pt_form:** "SEV-1 / crítico, todos mobilizados"
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_b2_it_incident_postmortem_v1
+lesson_id: les_b2_it_incident_postmortem_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

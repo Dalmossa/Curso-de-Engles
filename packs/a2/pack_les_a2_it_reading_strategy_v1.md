@@ -10,6 +10,8 @@
 
 ---
 
+
+
 ### ITEM 1
 **item_id:** `voc_replication_lag_001`
 **domain:** `vocab`
@@ -23,6 +25,8 @@
 | D | The log retention policy changed |
 **Key:** B
 **br_pt_form:** "atraso de replicação"
+
+
 
 ### ITEM 2
 **item_id:** `voc_caveat_001`
@@ -38,6 +42,8 @@
 **Key:** B
 **br_pt_form:** "ressalva"
 
+
+
 ### ITEM 3
 **item_id:** `grm_unless_subtractive_001`
 **domain:** `grammar`
@@ -51,6 +57,8 @@
 | D | so that |
 **Key:** B
 **br_pt_form:** "a menos que"
+
+
 
 ### ITEM 4
 **item_id:** `voc_promote_verb_001`
@@ -66,6 +74,8 @@
 **Key:** B
 **br_pt_form:** "promover / elevar"
 
+
+
 ### ITEM 5
 **item_id:** `rdg_caveat_skim_001`
 **domain:** `reading`
@@ -79,6 +89,8 @@
 | D | "The primary streams its change log to the replicas." |
 **Key:** C
 **br_pt_form:** "escritas em trânsito são perdidas a menos que a réplica tenha confirmado"
+
+
 
 ### ITEM 6
 **item_id:** `voc_post_expansion_001`
@@ -94,6 +106,8 @@
 **Key:** B
 **br_pt_form:** "Power-On Self-Test — o teste automático da placa"
 
+
+
 ### ITEM 7
 **item_id:** `voc_skimming_001`
 **domain:** `vocab`
@@ -107,3 +121,23 @@
 | D | Reading the references first |
 **Key:** B
 **br_pt_form:** "leitura de reconhecimento — obter a estrutura, não o detalhe"
+
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_a2_it_reading_strategy_v1
+lesson_id: les_a2_it_reading_strategy_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

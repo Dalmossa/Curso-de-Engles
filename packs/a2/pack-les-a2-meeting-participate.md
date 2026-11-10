@@ -1,4 +1,5 @@
 # Practice Pack — `les_a2_meeting_participate`
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_a2_meeting_participate_v1`
 **Spec:** `post-lesson-practice-spec.md` §2, §8, §9

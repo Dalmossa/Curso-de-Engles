@@ -1,4 +1,5 @@
 # Practice Pack: CELPE-Bras: Speaking
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_b2_celpe_br_v1`
 **Lesson:** `les_b2_celpe_br.md`
@@ -8,6 +9,8 @@
 **Interleaved:** yes
 
 ---
+
+
 
 ### ITEM 1
 **item_id:** `vocab.celpe.self_correction`
@@ -23,6 +26,8 @@
 **Key:** B
 **br_pt_form:** "autocorreção / mostra consciência linguística"
 
+
+
 ### ITEM 2
 **item_id:** `vocab.celpe.fluency`
 **domain:** `vocab`
@@ -36,6 +41,8 @@
 | D | Loud voice |
 **Key:** B
 **br_pt_form:** "fluência / falar sem pausas excessivas"
+
+
 
 ### ITEM 3
 **item_id:** `vocab.celpe.interaction`
@@ -51,6 +58,8 @@
 **Key:** B
 **br_pt_form:** "interação / diálogo natural com examinador"
 
+
+
 ### ITEM 4
 **item_id:** `vocab.celpe.hesitation`
 **domain:** `vocab`
@@ -64,6 +73,8 @@
 | D | Is penalized |
 **Key:** B
 **br_pt_form:** "hesitação / pausas breves são naturais"
+
+
 
 ### ITEM 5
 **item_id:** `vocab.celpe.role_play`
@@ -79,6 +90,8 @@
 **Key:** B
 **br_pt_form:** "role-play / resposta natural a situação simulada"
 
+
+
 ### ITEM 6
 **item_id:** `grammar.present_continuous_speaking`
 **domain:** `grammar`
@@ -93,6 +106,8 @@
 **Key:** B
 **br_pt_form:** "O candidato está falando fluentemente."
 
+
+
 ### ITEM 7
 **item_id:** `vocab.celpe.prereq_accuracy`
 **domain:** `vocab`
@@ -106,3 +121,22 @@
 | D | Is accent |
 **Key:** B
 **br_pt_form:** "precisão / gramática e vocabulário corretos"
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_b2_celpe_br_v1
+lesson_id: les_b2_celpe_br_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

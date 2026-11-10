@@ -1,4 +1,5 @@
 # Practice Pack: Stress-Timing & Word Stress
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_a2_stress_timing_v1`
 **Lesson:** `les_a2_stress_timing.md`
@@ -8,6 +9,8 @@
 **Interleaved:** yes
 
 ---
+
+
 
 ### ITEM 1
 **item_id:** `vocab.stress.word-stress`
@@ -23,6 +26,8 @@
 **Key:** B
 **br_pt_form:** "word stress / sílaba pronunciada com mais força"
 
+
+
 ### ITEM 2
 **item_id:** `vocab.stress.photograph`
 **domain:** `vocab`
@@ -36,6 +41,8 @@
 | D | No stress |
 **Key:** A
 **br_pt_form:** "PHO-to-graph / primeira sílaba"
+
+
 
 ### ITEM 3
 **item_id:** `vocab.stress.photography`
@@ -51,6 +58,8 @@
 **Key:** B
 **br_pt_form:** "pho-TOG-ra-phy / segunda sílaba"
 
+
+
 ### ITEM 4
 **item_id:** `vocab.stress.schwa`
 **domain:** `vocab`
@@ -64,6 +73,8 @@
 | D | A diphthong |
 **Key:** B
 **br_pt_form:** "schwa / som neutro /ə/ em sílabas átonas"
+
+
 
 ### ITEM 5
 **item_id:** `vocab.stress.content-word`
@@ -79,6 +90,8 @@
 **Key:** B
 **br_pt_form:** "palavras de conteúdo / substantivos, verbos, adjetivos, advérbios"
 
+
+
 ### ITEM 6
 **item_id:** `grammar.word_stress`
 **domain:** `grammar`
@@ -93,6 +106,8 @@
 **Key:** D
 **br_pt_form:** "PHO / TOG / RA / todos corretos"
 
+
+
 ### ITEM 7
 **item_id:** `vocab.stress.prereq-rhythm`
 **domain:** `vocab`
@@ -106,3 +121,22 @@
 | D | Only for poetry |
 **Key:** B
 **br_pt_form:** "ritmo / stress-timed"
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_a2_stress_timing_v1
+lesson_id: les_a2_stress_timing_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

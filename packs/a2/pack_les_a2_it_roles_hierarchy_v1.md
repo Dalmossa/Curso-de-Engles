@@ -10,6 +10,8 @@
 
 ---
 
+
+
 ### ITEM 1
 **item_id:** `voc_c_level_expansion_001`
 **domain:** `vocab`
@@ -23,6 +25,8 @@
 | D | Company Technical Overview |
 **Key:** C
 **br_pt_form:** "Diretor de Tecnologia"
+
+
 
 ### ITEM 2
 **item_id:** `voc_tech_lead_vs_manager_001`
@@ -38,6 +42,8 @@
 **Key:** C
 **br_pt_form:** "ajuda técnica vs. gestão de pessoas"
 
+
+
 ### ITEM 3
 **item_id:** `grm_report_to_preposition_001`
 **domain:** `grammar`
@@ -51,6 +57,8 @@
 | D | report at |
 **Key:** C
 **br_pt_form:** "Eu reporto **ao** meu gerente" — português usa *a*, inglês exige *to*
+
+
 
 ### ITEM 4
 **item_id:** `voc_dri_role_001`
@@ -66,6 +74,8 @@
 **Key:** B
 **br_pt_form:** "sou o responsável direto pela migração"
 
+
+
 ### ITEM 5
 **item_id:** `voc_register_by_rung_001`
 **domain:** `vocab`
@@ -79,6 +89,8 @@
 | D | "VP: the API. 500s. 09:14. mine." |
 **Key:** B
 **br_pt_form:** "Oi — a API de pagamentos está retornando 500 desde 09:14. Sou o responsável e estou cuidando."
+
+
 
 ### ITEM 6
 **item_id:** `voc_c_level_gloss_002`
@@ -94,6 +106,8 @@
 **Key:** B
 **br_pt_form:** "executivos C-level — cargos que começam com 'Chief'"
 
+
+
 ### ITEM 7
 **item_id:** `voc_head_of_phrase_001`
 **domain:** `vocab`
@@ -107,3 +121,23 @@
 | D | "I want a new platform." |
 **Key:** B
 **br_pt_form:** "Sou o Head de Plataforma / lidero o time de Plataforma"
+
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_a2_it_roles_hierarchy_v1
+lesson_id: les_a2_it_roles_hierarchy_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

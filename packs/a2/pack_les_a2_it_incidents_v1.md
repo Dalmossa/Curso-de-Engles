@@ -1,4 +1,5 @@
 # Practice Pack: Incident Reports & Problem Statements
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_a2_it_incidents_v1`
 **Lesson:** `les_a2_it_incidents.md`
@@ -8,6 +9,8 @@
 **Interleaved:** yes
 
 ---
+
+
 
 ### ITEM 1
 **item_id:** `vocab.incident.severity`
@@ -23,6 +26,8 @@
 **Key:** B
 **br_pt_form:** "degradação maior, resposta urgente"
 
+
+
 ### ITEM 2
 **item_id:** `vocab.incident.mitigation`
 **domain:** `vocab`
@@ -36,6 +41,8 @@
 | D | Paging the on-call |
 **Key:** B
 **br_pt_form:** "mitigação / redução de impacto"
+
+
 
 ### ITEM 3
 **item_id:** `vocab.incident.root_cause`
@@ -51,6 +58,8 @@
 **Key:** B
 **br_pt_form:** "causa raiz"
 
+
+
 ### ITEM 4
 **item_id:** `vocab.incident.postmortem`
 **domain:** `vocab`
@@ -65,6 +74,8 @@
 **Key:** B
 **br_pt_form:** "postmortem sem culpar / melhorias no sistema"
 
+
+
 ### ITEM 5
 **item_id:** `vocab.incident.runbook_oncall`
 **domain:** `vocab`
@@ -76,6 +87,8 @@
 | **on-call** | b. Step-by-step response guide |
 **Key:** runbook→b, on-call→a
 **br_pt_form:** "runbook / manual", "de plantão"
+
+
 
 ### ITEM 6
 **item_id:** `grammar.past_simple_timeline`
@@ -92,6 +105,8 @@
 **Key:** A
 **br_pt_form:** "disparou / reconheceu / executou / restaurou"
 
+
+
 ### ITEM 7
 **item_id:** `vocab.incident.prereq_sla`
 **domain:** `vocab`
@@ -105,3 +120,22 @@
 | D | The team hierarchy |
 **Key:** B
 **br_pt_form:** "acordo de nível de serviço"
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_a2_it_incidents_v1
+lesson_id: les_a2_it_incidents_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

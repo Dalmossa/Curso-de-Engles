@@ -1,4 +1,5 @@
 # Practice Pack: Algorithms & Data Structures Basics — Big O, Arrays, Hash Maps
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_a2_it_algorithms_basics_v1`
 **Lesson:** `les_a2_it_algorithms_basics.md`
@@ -8,6 +9,8 @@
 **Interleaved:** yes
 
 ---
+
+
 
 ### ITEM 1
 **item_id:** `vocab.algorithms.big_o`
@@ -23,6 +26,8 @@
 **Key:** B
 **br_pt_form:** "Big O / notação assintótica"
 
+
+
 ### ITEM 2
 **item_id:** `vocab.algorithms.array_vs_hashmap`
 **domain:** `vocab`
@@ -36,6 +41,8 @@
 | D | O(n²) |
 **Key:** B
 **br_pt_form:** "O(1) médio"
+
+
 
 ### ITEM 3
 **item_id:** `vocab.algorithms.linked_list_insert`
@@ -51,6 +58,8 @@
 **Key:** B
 **br_pt_form:** "O(1)"
 
+
+
 ### ITEM 4
 **item_id:** `vocab.algorithms.tree_search`
 **domain:** `vocab`
@@ -64,6 +73,8 @@
 | D | O(n log n) |
 **Key:** C
 **br_pt_form:** "O(log n)"
+
+
 
 ### ITEM 5
 **item_id:** `vocab.algorithms.space_complexity`
@@ -79,6 +90,8 @@
 **Key:** C
 **br_pt_form:** "O(n)"
 
+
+
 ### ITEM 6
 **item_id:** `grammar.comparatives`
 **domain:** `grammar`
@@ -93,6 +106,8 @@
 **Key:** A
 **br_pt_form:** "mais rápido que"
 
+
+
 ### ITEM 7
 **item_id:** `vocab.algorithms.prereq_binary_search`
 **domain:** `vocab`
@@ -106,3 +121,22 @@
 | D | Unique values only |
 **Key:** B
 **br_pt_form:** "ordenado"
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_a2_it_algorithms_basics_v1
+lesson_id: les_a2_it_algorithms_basics_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

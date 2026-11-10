@@ -1,4 +1,5 @@
 # Practice Pack: TypeScript Basics — Types, Interfaces, Generics, Async
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_a2_it_typescript_basics_v1`
 **Lesson:** `les_a2_it_typescript_basics.md`
@@ -8,6 +9,8 @@
 **Interleaved:** yes
 
 ---
+
+
 
 ### ITEM 1
 **item_id:** `vocab.typescript.interface`
@@ -23,6 +26,8 @@
 **Key:** B
 **br_pt_form:** "interface"
 
+
+
 ### ITEM 2
 **item_id:** `vocab.typescript.generic`
 **domain:** `vocab`
@@ -36,6 +41,8 @@
 | D | Tuple |
 **Key:** B
 **br_pt_form:** "genérico"
+
+
 
 ### ITEM 3
 **item_id:** `vocab.typescript.union_type`
@@ -51,6 +58,8 @@
 **Key:** B
 **br_pt_form:** "tipo união"
 
+
+
 ### ITEM 4
 **item_id:** `vocab.typescript.async_await`
 **domain:** `vocab`
@@ -64,6 +73,8 @@
 | D | Generators |
 **Key:** B
 **br_pt_form:** "assíncrono / esperar"
+
+
 
 ### ITEM 5
 **item_id:** `vocab.typescript.type_guard`
@@ -79,6 +90,8 @@
 **Key:** B
 **br_pt_form:** "guarda de tipo"
 
+
+
 ### ITEM 6
 **item_id:** `grammar.modals_obligation`
 **domain:** `grammar`
@@ -93,6 +106,8 @@
 **Key:** B
 **br_pt_form:** "deve"
 
+
+
 ### ITEM 7
 **item_id:** `vocab.typescript.prereq_type_inference`
 **domain:** `vocab`
@@ -106,3 +121,22 @@
 | D | unknown |
 **Key:** B
 **br_pt_form:** "inferência de tipo"
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_a2_it_typescript_basics_v1
+lesson_id: les_a2_it_typescript_basics_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```

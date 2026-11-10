@@ -1,4 +1,5 @@
 # Practice Pack: To Be + Pronouns (Remediation)
+**Reuse basis:** cite_only
 
 **Pack ID:** `pack_les_rem_grammar_be_pronouns_v1`
 **Lesson:** `les_rem_grammar_be_pronouns.md`
@@ -8,6 +9,8 @@
 **Interleaved:** yes
 
 ---
+
+
 
 ### ITEM 1
 **item_id:** `vocab.tobe.negative_contraction_001`
@@ -30,6 +33,8 @@
 > of `les_rem_grammar_be_pronouns`. **The A1 item's duplicate options are still open** and are
 > recorded in `post-lesson-practice-spec.md` §12. Found by [11c].
 
+
+
 ### ITEM 2
 **item_id:** `vocab.tobe.subject-pronoun`
 **domain:** `vocab`
@@ -43,6 +48,8 @@
 | D | mine, yours, his, hers, ours, theirs |
 **Key:** B
 **br_pt_form:** "pronomes sujeito / I, you, he, she, it, we, they"
+
+
 
 ### ITEM 3
 **item_id:** `vocab.tobe.affirmative`
@@ -58,6 +65,8 @@
 **Key:** B
 **br_pt_form:** "afirmativa / frases positivas"
 
+
+
 ### ITEM 4
 **item_id:** `vocab.tobe.negative`
 **domain:** `vocab`
@@ -71,6 +80,8 @@
 | D | Are commands |
 **Key:** B
 **br_pt_form:** "negativa / contêm not"
+
+
 
 ### ITEM 5
 **item_id:** `vocab.tobe.short-answer`
@@ -86,6 +97,8 @@
 **Key:** B
 **br_pt_form:** "Sim, estou. / resposta curta"
 
+
+
 ### ITEM 6
 **item_id:** `grammar.to_be_pronouns`
 **domain:** `grammar`
@@ -100,6 +113,8 @@
 **Key:** B
 **br_pt_form:** "Ela é inteligente."
 
+
+
 ### ITEM 7
 **item_id:** `vocab.tobe.prereq-object-pronoun`
 **domain:** `vocab`
@@ -113,3 +128,22 @@
 | D | mine, yours, his, hers, ours, theirs |
 **Key:** B
 **br_pt_form:** "pronomes objeto / me, you, him, her, it, us, them"
+
+## 1. MANIFEST
+
+```yaml
+pack_id: pack_les_rem_grammar_be_pronouns_v1
+lesson_id: les_rem_grammar_be_pronouns_v1
+learner_profile: default
+estimated_minutes: 4 min
+spec_conformance:
+  item_count: 7                       # §2.1 4–8            ✅
+  time_cap: "3–5 min"                 # §2.1 hard cap       ✅
+  split: 5 current / 2 prereq         # §2.1 55–75 / 25–45  ✅ (assumed)
+  interleaved: true                   # §2.1                ✅ (G, V, R, G, V, G, P)
+  max_per_domain: 3                   # §2.2 grammar        ✅
+  listening_items: 0                  # deferred until render + ear-check
+  br_pt_form_coverage: 7/7 scored items
+  speaking_writing_items: 0           # §2.4                ✅
+  authored_illustrative_parameters: true
+```
