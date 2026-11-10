@@ -1153,6 +1153,170 @@ paths:
               schema:
                 $ref: '#/components/schemas/Problem'
 
+  /learners/{learner_id}/data-export:
+    get:
+      tags: [learners]
+      summary: Export all personal data (LGPD Art. 18)
+      description: |
+        Returns all personal data the platform holds for the learner in a structured,
+        machine-readable JSON format. Implements LGPD Art. 18 II/V (access & portability).
+        Requires `learner:export` scope.
+      operationId: exportLearnerData
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: learner_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Complete personal data export
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [learner, profile, diagnostics, practice, consents, exported_at]
+                properties:
+                  learner:
+                    type: object
+                    required: [learner_id, created_at]
+                    properties:
+                      learner_id:
+                        type: string
+                        format: uuid
+                      created_at:
+                        type: string
+                        format: date-time
+                      last_active_at:
+                        type: [string, 'null']
+                        format: date-time
+                  profile:
+                    type: object
+                    required: [cefr_level, mastery, theta_estimates, fsrs_states, preferences]
+                    properties:
+                      cefr_level:
+                        type: [string, 'null']
+                        pattern: '^(A1|A2|B1|B2|C1|C2)$'
+                      mastery:
+                        type: object
+                        additionalProperties:
+                          type: number
+                          minimum: 0
+                          maximum: 1
+                      theta_estimates:
+                        type: object
+                      fsrs_states:
+                        type: object
+                      preferences:
+                        type: object
+                        required: [recast_enabled, meta_button_enabled, audio_autoplay, daily_goal_minutes]
+                        properties:
+                          recast_enabled: { type: boolean }
+                          meta_button_enabled: { type: boolean }
+                          audio_autoplay: { type: boolean }
+                          daily_goal_minutes: { type: integer }
+                  diagnostics:
+                    type: array
+                    items:
+                      type: object
+                      required: [id, cefr, theta_estimate, skill_theta, form_version, completed_at]
+                      properties:
+                        id: { type: string, format: uuid }
+                        cefr: { type: string, pattern: '^(A1|A2|B1|B2|C1|C2)$' }
+                        theta_estimate: { type: number }
+                        skill_theta: { type: object }
+                        form_version: { type: string }
+                        completed_at: { type: string, format: date-time }
+                  practice:
+                    type: array
+                    items:
+                      type: object
+                      required: [id, pack_id, score, correct_count, total_count, started_at]
+                      properties:
+                        id: { type: string, format: uuid }
+                        pack_id: { type: string }
+                        score: { type: number }
+                        correct_count: { type: integer }
+                        total_count: { type: integer }
+                        started_at: { type: string, format: date-time }
+                        completed_at: { type: [string, 'null'], format: date-time }
+                  consents:
+                    type: array
+                    items:
+                      type: object
+                      required: [purpose, version, legal_basis]
+                      properties:
+                        purpose: { type: string }
+                        version: { type: string }
+                        granted_at: { type: [string, 'null'], format: date-time }
+                        withdrawn_at: { type: [string, 'null'], format: date-time }
+                        legal_basis: { type: string }
+                  exported_at:
+                    type: string
+                    format: date-time
+        '401':
+          description: Unauthorized — a valid bearer token is required (ADR-038 D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the `learner:export` authority (ADR-038 D2/D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Learner not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /learners/{learner_id}:
+    delete:
+      tags: [learners]
+      summary: Erase all personal data (LGPD Art. 18)
+      description: |
+        Deletes all personal data the platform holds for the learner. Implements
+        LGPD Art. 18 IV/VI (right to erasure / right to be forgotten).
+        Requires `learner:erase` scope.
+        The deletion is atomic with the visibility check (ADR-026 §1).
+      operationId: eraseLearnerData
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: learner_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: All personal data erased
+        '401':
+          description: Unauthorized — a valid bearer token is required (ADR-038 D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the `learner:erase` authority (ADR-038 D2/D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Learner not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
   /learners/{learner_id}/profile:
     get:
       tags: [learners]

@@ -20,6 +20,11 @@ import * as path from 'path';
  * would abort a plain transaction, the work is wrapped in a `SAVEPOINT` so one
  * bad file is reported in `report.errors` instead of aborting the load — but a
  * non-empty `errors[]` still fails the content gate, so the loudness is preserved.
+ *
+ * P1.18 — Pre-publish licence check: blocks loading lessons/packs with
+ * `adapt_*` reuse basis when derived from restricted sources (AGENTS.md licensing,
+ * ADR-006). The check runs before any INSERT, so the transaction never persists
+ * non-compliant content.
  */
 
 const CEFR_SEED: Array<{ code: string; sort_order: number }> = [
@@ -34,6 +39,46 @@ const CEFR_SEED: Array<{ code: string; sort_order: number }> = [
 // The seven domains the content refers to. `vocab` (not `vocabulary`), and no
 // `coherence` — the DDL CHECK forbids `items.domain_id = 'coherence'` (ADR-022 §3).
 const DOMAIN_SEED = ['vocab', 'grammar', 'reading', 'listening', 'pronunciation', 'speaking', 'writing'];
+
+// Restricted source markers (per AGENTS.md Licensing § and verify-integrity.py check [3]).
+// These are the local PDFs that carry BaixeLivros notices or have no licence grant.
+const RESTRICTED_SOURCE_PATTERNS = [
+  /dicion[aá]rio/i,           // Dicionario-de-Siglas...
+  /frases-ingles-trabalho/i,  // frases-ingles-trabalho
+  /leia-e-escreva/i,          // leia-e-escreva-melhor-em-ingles
+];
+
+/**
+ * Checks if a source text references a restricted local PDF.
+ * Uses the same logic as verify-integrity.py check [3] and [11].
+ */
+function isRestrictedSource(sourceText: string | null | undefined): boolean {
+  if (!sourceText) return false;
+  return RESTRICTED_SOURCE_PATTERNS.some(pattern => pattern.test(sourceText));
+}
+
+/**
+ * P1.18 — Pre-publish licence check.
+ * Validates that content with `adapt_*` reuse basis is not derived from restricted sources.
+ * Throws if the check fails, preventing the transaction from persisting non-compliant content.
+ */
+function checkLicenceCompliance(
+  reuseBasis: string | null | undefined,
+  sourceText: string | null | undefined,
+  artefactType: 'lesson' | 'pack',
+  artefactId: string,
+): void {
+  if (!reuseBasis || !reuseBasis.startsWith('adapt_')) {
+    return; // Only adapt_* bases require licence verification
+  }
+  if (isRestrictedSource(sourceText)) {
+    throw new Error(
+      `[P1.18] ${artefactType} ${artefactId} has reuse_basis "${reuseBasis}" but references a restricted source: ${sourceText?.slice(0, 100)}. ` +
+      `Per AGENTS.md Licensing and ADR-006, adapt_* reuse basis is not permitted for restricted sources. ` +
+      `Use cite_only or obtain written permission (external-sources.md §7.0).`
+    );
+  }
+}
 
 let savepointCounter = 0;
 
@@ -168,6 +213,8 @@ export async function loadContent(dataSource: DataSource, contentRoot: string): 
           if (!lesson.cefr_level) {
             throw new Error(`unresolved CEFR for lesson ${lesson.id}`);
           }
+          // P1.18 — Pre-publish licence check: block adapt_* on restricted sources
+          checkLicenceCompliance(lesson.reuse_basis, lesson.source_ref, 'lesson', lesson.id);
           await qr.query(
             `INSERT INTO lessons (id, module_id, title, cefr_level, reuse_basis,
                                   authoring_state, publication_state, permission_state,
@@ -227,6 +274,10 @@ export async function loadContent(dataSource: DataSource, contentRoot: string): 
         if (!pack.lesson_id || !lessonIds.has(pack.lesson_id)) {
           throw new Error(`pack ${pack.id} references unknown lesson ${pack.lesson_id || '<none>'}`);
         }
+        // P1.18 — Pre-publish licence check: block adapt_* on restricted sources
+        // Pack source is derived from the lesson's source_ref
+        const lessonSource = lessonById.get(pack.lesson_id)?.source_ref ?? null;
+        checkLicenceCompliance(pack.reuse_basis, lessonSource, 'pack', pack.id);
 
         // `packs.item_ids` records only what was actually inserted (ADR-022 §3),
         // so it is computed here, from the same list that is inserted below.
