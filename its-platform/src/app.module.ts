@@ -4,6 +4,7 @@ import { TelemetryModule } from './infrastructure/telemetry/telemetry.module.js'
 import { ResilienceModule } from './infrastructure/resilience/resilience.module.js';
 import { HealthModule } from './health/health.module.js';
 import { DatabaseModule } from './infrastructure/database/database.module.js';
+import { AuthModule } from './modules/auth/auth.module.js';
 import { ContentModule } from './modules/content/content.module.js';
 import { LearnersModule } from './modules/learners/learners.module.js';
 import { PracticeModule } from './modules/practice/practice.module.js';
@@ -23,6 +24,7 @@ import { AuditModule } from './modules/audit/audit.module.js';
       cache: true,
     }),
     DatabaseModule,
+    AuthModule,
     HealthModule,
     ContentModule,
     LearnersModule,

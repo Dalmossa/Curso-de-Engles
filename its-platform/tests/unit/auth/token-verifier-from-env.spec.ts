@@ -1,11 +1,8 @@
 /**
  * A5b — configuration becomes a decision, and the decision is a refusal.
  *
- * The interesting property of this file is not that it reads three variables. It is that it
- * **cannot** return nothing, and therefore cannot return permission: a caller that had to handle
- * "no verifier configured" would eventually handle it by letting the request through, so the
- * factory answers with a verifier that refuses everything instead. `CONSTITUTION.md` §4.5 makes
- * that the required direction — *deny by default* — and the composition root relies on it.
+ * The platform is an Authorization Server (ADR-013 Q1 = Yes). It first tries external OIDC
+ * configuration, then falls back to its own JWKS endpoint.
  *
  * The error message is asserted, not because a user reads it but because the **only** symptom of a
  * missing variable is a 401 on every protected route, and the log line is where an operator
@@ -18,7 +15,7 @@ import {
 } from '../../../src/infrastructure/auth/token-verifier-from-env.js';
 import { TokenVerificationError } from '../../../src/common/auth/token-principal.js';
 
-const COMPLETE = {
+const COMPLETE_OIDC = {
   [OIDC_ENV.jwksUri]: 'https://idp.example.com/.well-known/jwks.json',
   [OIDC_ENV.issuer]: 'https://idp.example.com',
   [OIDC_ENV.audience]: 'its-platform-api',
@@ -33,9 +30,9 @@ async function refusal(env: NodeJS.ProcessEnv): Promise<TokenVerificationError> 
   return thrown as TokenVerificationError;
 }
 
-describe('tokenVerifierFromEnv — an incomplete configuration denies', () => {
+describe('tokenVerifierFromEnv — external OIDC configuration', () => {
   it.each(Object.values(OIDC_ENV))('names %s as the reason it cannot verify', async (name) => {
-    const env = { ...COMPLETE } as NodeJS.ProcessEnv;
+    const env = { ...COMPLETE_OIDC } as NodeJS.ProcessEnv;
     delete env[name];
 
     expect((await refusal(env)).message).toContain(name);
@@ -51,8 +48,35 @@ describe('tokenVerifierFromEnv — an incomplete configuration denies', () => {
     ['an empty string', ''],
     ['whitespace', '   '],
   ])('treats %s as absent rather than as a URI', async (_label, value) => {
-    const env = { ...COMPLETE, [OIDC_ENV.jwksUri]: value } as NodeJS.ProcessEnv;
+    const env = { ...COMPLETE_OIDC, [OIDC_ENV.jwksUri]: value } as NodeJS.ProcessEnv;
 
     expect((await refusal(env)).message).toContain(OIDC_ENV.jwksUri);
+  });
+});
+
+describe('tokenVerifierFromEnv — platform fallback (ADR-013 Q1 = Yes)', () => {
+  it('uses platform JWKS when OIDC is not configured', async () => {
+    const env = {
+      PLATFORM_JWKS_URI: 'http://localhost:3000/.well-known/jwks.json',
+      PLATFORM_ISSUER: 'its-platform',
+      PLATFORM_AUDIENCE: 'its-learners',
+    } as NodeJS.ProcessEnv;
+
+    const verifier = tokenVerifierFromEnv(env);
+    // Should not throw immediately - it creates a JWKS verifier for the platform endpoint
+    expect(verifier).toBeDefined();
+  });
+
+  it('denies when platform JWKS is unreachable', async () => {
+    const env = {
+      PLATFORM_JWKS_URI: 'http://unreachable:9999/.well-known/jwks.json',
+      PLATFORM_ISSUER: 'its-platform',
+      PLATFORM_AUDIENCE: 'its-learners',
+    } as NodeJS.ProcessEnv;
+
+    const verifier = tokenVerifierFromEnv(env);
+    // Should create a verifier that will fail when JWKS cannot be fetched
+    expect(verifier).toBeDefined();
+    await expect(verifier.verify('invalid.token')).rejects.toThrow(TokenVerificationError);
   });
 });

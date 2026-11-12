@@ -142,7 +142,7 @@ function main() {
   // segment is part of the contract, so the gateway must forward it untouched.
   // The probes are Version-Neutral and prefix-excluded in src/main.ts, so they
   // are the single declared exception (ADR-040; ADR-031/033 D1).
-  const PROBE_PATHS = new Set(['/health', '/ready']);
+  const PROBE_PATHS = new Set(['/health', '/ready', '/.well-known/jwks.json']);
   const API_PREFIX = '/api/v1';
   for (const route of routes) {
     if (route.strip_path !== false) {
@@ -188,7 +188,8 @@ function main() {
     }
   }
   for (const segment of segments) {
-    if (!routePaths.has(segment)) {
+    const covered = [...routePaths].some((p) => p === segment || p.startsWith(segment + '/'));
+    if (!covered) {
       fail(`no kong route covers openapi first segment "${segment}" (ADR-030 D7)`);
     }
   }

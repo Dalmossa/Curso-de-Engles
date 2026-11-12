@@ -14,7 +14,7 @@ import type { INestApplication } from '@nestjs/common';
 import { ProblemExceptionFilter } from './common/filters/problem-exception.filter.js';
 import { correlationIdMiddleware } from './common/http/correlation.js';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard.js';
-import { tokenVerifierFromEnv } from './infrastructure/auth/token-verifier-from-env.js';
+import { TOKEN_VERIFIER } from './modules/auth/auth.module.js';
 
 export function configureApp(app: INestApplication): INestApplication {
   // CONSTITUTION.md §4.4 — URL path versioning is mandatory and is the only
@@ -50,7 +50,7 @@ export function configureApp(app: INestApplication): INestApplication {
   // The verifier is configuration, and an incomplete configuration denies everything rather than
   // verifying nothing (`token-verifier-from-env.ts`). So there is no branch here in which the
   // application starts without authentication.
-  app.useGlobalGuards(new JwtAuthGuard(tokenVerifierFromEnv()));
+  app.useGlobalGuards(new JwtAuthGuard(app.get(TOKEN_VERIFIER)));
 
   app.useGlobalPipes(
     new ValidationPipe({

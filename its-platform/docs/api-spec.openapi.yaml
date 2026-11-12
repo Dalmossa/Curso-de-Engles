@@ -89,13 +89,55 @@ components:
       # required, not *which* authority — the scope each route requires is in the decorator on the
       # controller (`src/common/auth/scopes.decorator.ts`) and in ADR-038 D2.
       description: >-
-        A JWT access token issued by the platform's external IdP, presented as
-        `Authorization: Bearer <token>`. The platform is a Resource Server: it verifies tokens
-        (RS256, `iss`/`aud`/`exp`/`nbf`, per `CONSTITUTION.md` §4.5 and ADR-013) and never issues
-        one. A request without a valid token answers `401`; a valid token whose scopes do not
-        authorise the operation answers `403` (ADR-038 D4).
+        A JWT access token issued by the platform (Authorization Server), presented as
+        `Authorization: Bearer <token>`. The platform issues and validates tokens (RS256,
+        `iss`/`aud`/`exp`/`nbf`, per `CONSTITUTION.md` §4.5 and ADR-013). A request without a valid
+        token answers `401`; a valid token whose scopes do not authorise the operation answers `403`
+        (ADR-038 D4).
 
   schemas:
+    # ============================================================
+    # Auth
+    # ============================================================
+    SessionPayload:
+      type: object
+      required: [sessionId, token, accessToken, expiresAt, user]
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+        token:
+          type: string
+          description: Rotating refresh token
+        accessToken:
+          type: string
+          description: RS256 access token the BFF presents as `Authorization Bearer` (~15 min)
+        expiresAt:
+          type: string
+          format: date-time
+        user:
+          type: object
+          required: [id, email, emailVerified, provider]
+          properties:
+            id:
+              type: string
+              format: uuid
+            email:
+              type: string
+              format: email
+            displayName:
+              type: string
+              nullable: true
+            learnerId:
+              type: string
+              format: uuid
+              nullable: true
+            emailVerified:
+              type: boolean
+            provider:
+              type: string
+
+
     # ============================================================
     # Placement / Diagnostic
     # ============================================================
@@ -818,6 +860,242 @@ security:
   - BearerAuth: []
 
 paths:
+  /auth/login:
+    post:
+      tags: [auth]
+      summary: Login with email and password
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              additionalProperties: false
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionPayload'
+        '401':
+          description: Invalid credentials
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /auth/register:
+    post:
+      tags: [auth]
+      summary: Register new user
+      operationId: register
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              additionalProperties: false
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                displayName:
+                  type: string
+      responses:
+        '201':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionPayload'
+        '409':
+          description: Email already exists
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /auth/refresh:
+    post:
+      tags: [auth]
+      summary: Refresh access token using refresh token
+      operationId: refreshAccessToken
+      security: []  # Public endpoint - uses refresh token in body/cookie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refresh_token]
+              additionalProperties: false
+              properties:
+                refresh_token:
+                  type: string
+                  description: Refresh token from previous login
+      responses:
+        '200':
+          description: New access token and rotated refresh token
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [access_token, expires_in, refresh_token]
+                properties:
+                  access_token:
+                    type: string
+                    description: New JWT access token (RS256, ~15 min)
+                  expires_in:
+                    type: integer
+                    description: Access token lifetime in seconds
+                    example: 900
+                  refresh_token:
+                    type: string
+                    description: Rotated refresh token (reuse detection enabled)
+        '400':
+          description: Invalid or missing refresh token
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Refresh token expired, revoked, or reuse detected
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /auth/logout:
+    post:
+      tags: [auth]
+      summary: Logout and revoke session
+      operationId: logout
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok]
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /auth/me:
+    get:
+      tags: [auth]
+      summary: Get current user profile
+      operationId: getCurrentUser
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Current user profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  email:
+                    type: string
+                    format: email
+                  displayName:
+                    type: string
+                    nullable: true
+                  learnerId:
+                    type: string
+                    format: uuid
+                    nullable: true
+                  emailVerified:
+                    type: boolean
+                  provider:
+                    type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /.well-known/jwks.json:
+    get:
+      tags: [auth]
+      summary: Get JWKS for token verification
+      operationId: getJwks
+      security: []
+      responses:
+        '200':
+          description: JWKS keys
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [keys]
+                properties:
+                  keys:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        kty:
+                          type: string
+                          example: RSA
+                        use:
+                          type: string
+                          example: sig
+                        kid:
+                          type: string
+                          example: its-platform-1
+                        alg:
+                          type: string
+                          example: RS256
+                        n:
+                          type: string
+                        e:
+                          type: string
+        '503':
+          description: JWKS temporarily unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
   /learners/{learner_id}/placement:
     post:
       tags: [placement]

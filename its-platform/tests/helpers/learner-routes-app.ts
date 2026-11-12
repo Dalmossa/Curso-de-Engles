@@ -33,6 +33,8 @@ import { configureApp } from '../../src/app.setup.js';
 import { PgSessionContext } from '../../src/infrastructure/persistence/pg-session-context.js';
 import { LearnerProfileRepository } from '../../src/infrastructure/repositories/learner-profile.repository.js';
 import { LearnerRepository } from '../../src/infrastructure/repositories/learner.repository.js';
+import { TOKEN_VERIFIER } from '../../src/modules/auth/tokens.js';
+import { tokenVerifierFromEnv } from '../../src/infrastructure/auth/token-verifier-from-env.js';
 import { CurriculumController } from '../../src/modules/curriculum/curriculum.controller.js';
 import { CurriculumService } from '../../src/modules/curriculum/curriculum.service.js';
 import { LearnerScopeService } from '../../src/modules/learners/learner-scope.service.js';
@@ -76,6 +78,11 @@ export function learnerRoutesModule(dataSource: DataSource): new () => unknown {
       PgSessionContext,
       // The token is the class: `LearnerRepository` and `PgSessionContext` both ask for `DataSource`.
       { provide: DataSource, useValue: dataSource },
+      // Provide TOKEN_VERIFIER for the global guard (tests use real JWKS fixture via OIDC env vars)
+      {
+        provide: TOKEN_VERIFIER,
+        useFactory: () => tokenVerifierFromEnv(),
+      },
     ],
   })
   class LearnerRoutesHttpModule {}

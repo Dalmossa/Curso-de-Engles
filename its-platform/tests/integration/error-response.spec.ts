@@ -33,6 +33,8 @@ import { IsString } from 'class-validator';
 import type { AddressInfo } from 'net';
 
 import { configureApp } from '../../src/app.setup.js';
+import { TOKEN_VERIFIER } from '../../src/modules/auth/tokens.js';
+import { tokenVerifierFromEnv } from '../../src/infrastructure/auth/token-verifier-from-env.js';
 import { ContentController } from '../../src/modules/content/content.controller.js';
 import { ContentService } from '../../src/modules/content/content.service.js';
 import { LearnersController } from '../../src/modules/learners/learners.controller.js';
@@ -121,6 +123,10 @@ const learnerProfileStub = {
     LearnersService,
     { provide: LearnerScopeService, useValue: learnerScopeStub },
     { provide: LearnerProfileRepository, useValue: learnerProfileStub },
+    {
+      provide: TOKEN_VERIFIER,
+      useFactory: () => tokenVerifierFromEnv(),
+    },
   ],
 })
 class ErrorContractModule {}

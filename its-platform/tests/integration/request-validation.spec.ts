@@ -39,6 +39,8 @@ import { NestFactory } from '@nestjs/core';
 import type { AddressInfo } from 'net';
 
 import { configureApp } from '../../src/app.setup.js';
+import { TOKEN_VERIFIER } from '../../src/modules/auth/tokens.js';
+import { tokenVerifierFromEnv } from '../../src/infrastructure/auth/token-verifier-from-env.js';
 import { PlacementController } from '../../src/modules/placement/placement.controller.js';
 import { PlacementService } from '../../src/modules/placement/placement.service.js';
 import { PracticeController } from '../../src/modules/practice/practice.controller.js';
@@ -79,6 +81,10 @@ const learnerScopeStub = {
     PlacementService,
     PracticeService,
     { provide: LearnerScopeService, useValue: learnerScopeStub },
+    {
+      provide: TOKEN_VERIFIER,
+      useFactory: () => tokenVerifierFromEnv(),
+    },
   ],
 })
 class RequestValidationModule {}

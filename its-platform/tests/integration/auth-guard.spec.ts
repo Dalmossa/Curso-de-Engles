@@ -31,6 +31,8 @@ import { ContentController } from '../../src/modules/content/content.controller.
 import { ContentService } from '../../src/modules/content/content.service.js';
 import { LearnersController } from '../../src/modules/learners/learners.controller.js';
 import { LearnersService } from '../../src/modules/learners/learners.service.js';
+import { TOKEN_VERIFIER } from '../../src/modules/auth/tokens.js';
+import { tokenVerifierFromEnv } from '../../src/infrastructure/auth/token-verifier-from-env.js';
 import {
   authorization,
   clearOidcEnv,
@@ -61,6 +63,10 @@ const learnersStub = {
   providers: [
     { provide: ContentService, useValue: contentStub },
     { provide: LearnersService, useValue: learnersStub },
+    {
+      provide: TOKEN_VERIFIER,
+      useFactory: () => tokenVerifierFromEnv(),
+    },
   ],
 })
 class AuthContractModule {}
@@ -74,7 +80,15 @@ class ProbeController {
   }
 }
 
-@Module({ controllers: [HealthController, ProbeController] })
+@Module({
+  controllers: [HealthController, ProbeController],
+  providers: [
+    {
+      provide: TOKEN_VERIFIER,
+      useFactory: () => tokenVerifierFromEnv(),
+    },
+  ],
+})
 class ProbeModule {}
 
 async function boot(module: unknown): Promise<{ app: INestApplication; base: string }> {

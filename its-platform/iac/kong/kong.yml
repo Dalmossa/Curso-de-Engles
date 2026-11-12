@@ -42,6 +42,26 @@ services:
         paths: ["/ready"]
         strip_path: false
 
+      # JWKS — GET /.well-known/jwks.json (RFC 8414). Public, no auth, generous
+      # rate limit to prevent abuse while allowing legitimate token verification.
+      - name: jwks-route
+        paths: ["/.well-known/jwks.json"]
+        strip_path: false
+        plugins:
+          - name: rate-limiting
+            config:
+              minute: 1000
+              policy: redis
+              limit_by: ip
+              fault_tolerant: true
+              headers: true
+              error_message: "Too many requests — JWKS limit 1000/min per IP"
+              redis_host: redis-cluster
+              redis_port: 6379
+              redis_database: 2
+              redis_username: "${KONG_REDIS_USERNAME}"
+              redis_password: "${KONG_REDIS_PASSWORD}"
+
       # Auth — POST /api/v1/auth/refresh (501 until P1.15–P1.17). S-03 credential
       # stuffing: 5 req/min per IP (threat-model.md S-03; BDD "6th -> 429").
       - name: auth-route

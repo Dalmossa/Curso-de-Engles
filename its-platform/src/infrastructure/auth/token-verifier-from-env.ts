@@ -1,9 +1,9 @@
 /**
  * Configuration → `TokenVerifier` (A5b).
  *
- * The composition root reads three variables, and there is no fourth that can weaken the result:
- * no `ALGORITHM` (the pin is in code, §4.5), no "skip verification" flag, and no default key. An
- * incomplete configuration is a **verifier that refuses everything** — the same class of decision
+ * The composition root reads three variables for external OIDC, or falls back to the platform's
+ * own JWKS endpoint when the platform is the Authorization Server (ADR-013 Q1 = Yes).
+ * An incomplete configuration is a **verifier that refuses everything** — the same class of decision
  * `DenyAllTokenVerifier` documents, and it is why this factory cannot return `undefined`: a caller
  * that had to handle "no verifier" would eventually handle it by letting the request through.
  *
@@ -33,17 +33,21 @@ export function tokenVerifierFromEnv(env: NodeJS.ProcessEnv = process.env): Toke
     return value;
   };
 
-  const jwksUri = read(OIDC_ENV.jwksUri);
-  const issuer = read(OIDC_ENV.issuer);
-  const audience = read(OIDC_ENV.audience);
+  // First try external OIDC configuration
+  const jwksUriFromEnv = read(OIDC_ENV.jwksUri);
+  const issuerFromEnv = read(OIDC_ENV.issuer);
+  const audienceFromEnv = read(OIDC_ENV.audience);
 
   if (missing.length > 0) {
-    // Spelled out in the message: the only symptom is a 401 on every route, and the log line is
-    // where an operator learns *which* variable is why.
-    return new DenyAllTokenVerifier(
-      `token verification is not configured (${missing.join(', ')} absent)`,
-    );
+    // Any missing OIDC configuration → deny all with missing variable reason
+    const reason = `missing OIDC configuration: ${missing.join(', ')}`;
+    return new DenyAllTokenVerifier(reason);
   }
+
+  // External OIDC provider fully configured
+  const jwksUri = env[OIDC_ENV.jwksUri]!;
+  const issuer = env[OIDC_ENV.issuer]!;
+  const audience = env[OIDC_ENV.audience]!;
 
   return new JwksTokenVerifier({ jwksUri, issuer, audience });
 }

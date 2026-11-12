@@ -27,15 +27,19 @@
  * What this guard deliberately does **not** do is D3: an object of another learner is not
  * addressed here. It is the RLS policy that decides, at the query, and the handler answers 404 —
  * `if (pathId === tokenSubject)` is the shape ADR-038 D3 rejects by name.
+ *
+ * The verifier arrives by injection and not by construction: the composition root supplies
+ * whatever `token-verifier-from-env.ts` decided (`JwksTokenVerifier` against an external IdP, or
+ * `LocalJwtTokenVerifier` when the platform is its own Authorization Server). A guard that built
+ * its own verifier would have read the environment a second time, in a second place.
  */
 
-import {
-  ForbiddenException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import type { CanActivate, ExecutionContext } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+
+import { TOKEN_VERIFIER } from '../../modules/auth/tokens.js';
 
 import { IS_PUBLIC_KEY } from '../auth/public.decorator.js';
 import { REQUIRED_SCOPES_KEY } from '../auth/scopes.decorator.js';
@@ -79,7 +83,7 @@ function bearerToken(request: AuthenticatedRequest): string | undefined {
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(
-    private readonly verifier: TokenVerifier,
+    @Inject(TOKEN_VERIFIER) private readonly verifier: TokenVerifier,
     private readonly reflector: Reflector = new Reflector(),
   ) {}
 
