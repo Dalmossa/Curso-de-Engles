@@ -48,14 +48,16 @@ function parseModuleCatalogTable(markdown: string): Map<string, ModuleInfo> {
           const title = parts[1]!.replace(/[`*]/g, '').trim();
           const cefr = parts[2]!.replace(/[`*]/g, '').trim();
           const sourceMarkdown = parts[3]!.replace(/[`*]/g, '').trim();
-          const track = parts[4]!.replace(/[`*]/g, '').trim();
+          const trackRaw = parts[4]!.replace(/[`*]/g, '').trim();
           const lessonsStr = parts[5]!.replace(/[`*]/g, '').trim();
           if (modId.startsWith('mod_')) {
+            // Normalize track: "IT Track" -> "IT", "General" -> "General", "Both" -> "Both"
+            const track = trackRaw === 'IT Track' ? 'IT' : trackRaw as Track;
             const mod: ModuleInfo = {
               id: modId,
               title,
               cefrLevel: cefr as CEFRLevel,
-              track: track as Track,
+              track,
               sourceMarkdowns: sourceMarkdown.split(',').map(s => s.trim()).filter(Boolean),
               sortOrder: modules.size,
               expectedLessons: parseInt(lessonsStr, 10) || 0,
@@ -126,8 +128,9 @@ function parseLessonRegistry(markdown: string, modules: Map<string, ModuleInfo>)
       continue;
     }
 
-    // Detect lesson table header
-    if (line.includes('| Lesson ID | Title | Source | Status |')) {
+    // Detect lesson table header (both 4-column legacy and 6-column ADR-021 formats)
+    if (line.includes('| Lesson ID | Title | Source | Status |') || 
+        line.includes('| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |')) {
       inLessonTable = true;
       lessonTableHeaderSkipped = false;
       inRemediationTable = false;
@@ -158,11 +161,49 @@ function parseLessonRegistry(markdown: string, modules: Map<string, ModuleInfo>)
       }
       if (lessonTableHeaderSkipped) {
         const parts = line.split('|').slice(1, -1).map(p => p.trim());
-        if (parts.length >= 4) {
+        // ADR-021: Expect 6 columns now: Lesson ID | Title | Source | New skills | Prerequisite skills | Status
+        // Support both 4-column (legacy) and 6-column (ADR-021) formats
+        const lessonIdCandidate = (parts[0] ?? '').replace(/[`*]/g, '').trim();
+        const isLessonRow = lessonIdCandidate.startsWith('les_');
+        const isNoteRow = lessonIdCandidate.startsWith('↳') || lessonIdCandidate.startsWith('>');
+        
+        // Skip note rows (not lesson rows)
+        if (isNoteRow) {
+          continue;
+        }
+        
+        if (isLessonRow && parts.length < 4) {
+          throw new Error(`Lesson row has ${parts.length} columns, expected at least 4: ${line}`);
+        }
+        if (isLessonRow) {
           const lessonId = parts[0]!.replace(/[`*]/g, '').trim();
           const title = parts[1]!.replace(/[`*]/g, '').trim();
           const source = parts[2]!.replace(/[`*]/g, '').trim();
-          const status = parts[3]!.replace(/[`*]/g, '').trim();
+          
+          // Support both 4-column (legacy) and 6-column (ADR-021) formats
+          let newSkillsStr = '';
+          let prereqSkillsStr = '';
+          let status: string;
+          
+          if (parts.length >= 6) {
+            // 6-column format (ADR-021): Lesson ID | Title | Source | New skills | Prerequisite skills | Status
+            newSkillsStr = parts[3]!.replace(/[`*]/g, '').trim();
+            prereqSkillsStr = parts[4]!.replace(/[`*]/g, '').trim();
+            status = parts[5]!.replace(/[`*]/g, '').trim();
+          } else {
+            // 4-column format (legacy): Lesson ID | Title | Source | Status
+            newSkillsStr = '';
+            prereqSkillsStr = '';
+            status = parts[3]!.replace(/[`*]/g, '').trim();
+          }
+          
+          const cleanStatus = status.replace(/[✅`*]/g, '').trim();
+          let nodeStatus: CurriculumNode['status'] = 'authored';
+          if (cleanStatus.includes('blocked')) nodeStatus = 'blocked_no_adequate_source';
+
+          const newSkills = newSkillsStr ? newSkillsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+          const prereqSkills = prereqSkillsStr ? prereqSkillsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+          
           if (lessonId.startsWith('les_') && currentModuleId) {
             const cleanStatus = status.replace(/[✅`*]/g, '').trim();
             let nodeStatus: CurriculumNode['status'] = 'authored';
@@ -177,6 +218,10 @@ function parseLessonRegistry(markdown: string, modules: Map<string, ModuleInfo>)
               moduleId: currentModuleId,
               sourceRef: source,
               status: nodeStatus,
+              metadata: {
+                newSkills,
+                skills: prereqSkills,
+              },
             };
             nodes.set(node.id, node);
 

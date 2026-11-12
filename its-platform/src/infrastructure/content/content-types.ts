@@ -174,6 +174,7 @@ export interface LoadReport {
   items: number;
   options: number;
   clips: number;
+  skills: number;
   skips: Array<{ type: string; ref_id: string; reason: string }>;
   errors: string[];
 }

@@ -3,7 +3,8 @@ import type { LessonRecord, LoadReport, PackRecord } from './content-types.js';
 import { parseLesson } from './lesson-parser.js';
 import { parsePack } from './pack-parser.js';
 import { parseListeningCorpus } from './listening-parser.js';
-import { parseCurriculum } from './curriculum-parser.js';
+import { parseCurriculumSpec } from '../curriculum/curriculum-parser.js';
+import type { CurriculumGraph, ModuleInfo } from '../curriculum/curriculum-types.js';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -134,6 +135,7 @@ export async function loadContent(dataSource: DataSource, contentRoot: string): 
     items: 0,
     options: 0,
     clips: 0,
+    skills: 0,
     skips: [],
     errors: [],
   };
@@ -163,11 +165,68 @@ export async function loadContent(dataSource: DataSource, contentRoot: string): 
       );
     }
 
+    // --- 1b. skills (from curriculum graph spec ADR-021) --------------------
+    // Read the curriculum graph spec markdown
+    const curriculumSpecPath = path.resolve('/home/dalmo/Documentos/Curso-de-Ingles/specs/curriculum-graph-spec.md');
+    const curriculumSpecMarkdown = fs.readFileSync(curriculumSpecPath, 'utf-8');
+    const curriculumGraph = parseCurriculumSpec(curriculumSpecMarkdown);
+    
+    const allSkills = new Set<string>();
+    for (const node of curriculumGraph.nodes.values()) {
+      if (node.type !== 'lesson') continue;
+      const meta = node.metadata as Record<string, unknown> | undefined;
+      if (meta?.[`newSkills`] && Array.isArray(meta[`newSkills`])) {
+        for (const s of meta[`newSkills`] as string[]) allSkills.add(s);
+      }
+      if (meta?.[`skills`] && Array.isArray(meta[`skills`])) {
+        for (const s of meta[`skills`] as string[]) allSkills.add(s);
+      }
+    }
+    // Also collect skills from remediation nodes
+    for (const rem of curriculumGraph.remediationNodes.values()) {
+      if (rem.targetSkill) allSkills.add(rem.targetSkill);
+    }
+    // Map skill ID -> domain_id
+    const skillDomainMap = new Map<string, string>();
+    for (const skillId of allSkills) {
+      // Infer domain from skill ID prefix
+      const prefix = skillId.split('.')[0];
+      const domainMap: Record<string, string> = {
+        vocab: 'vocab',
+        vocabulary: 'vocab',
+        grammar: 'grammar',
+        listening: 'listening',
+        pronunciation: 'pronunciation',
+        reading: 'reading',
+        writing: 'writing',
+        speaking: 'speaking',
+        coherence: 'coherence',
+      };
+      const domain = prefix && domainMap[prefix] ? domainMap[prefix] : 'vocab'; // default fallback
+      skillDomainMap.set(skillId, domain);
+    }
+    for (const [skillId, domainId] of skillDomainMap) {
+      await qr.query(
+        `INSERT INTO skills (id, domain_id, label, description)
+         VALUES ($1, $2, $3, $4)
+         ON CONFLICT (id) DO UPDATE SET domain_id = $2, label = $3, description = $4`,
+        [skillId, domainId, skillId, `Auto-seeded from curriculum graph`],
+      );
+      report.skills = (report.skills ?? 0) + 1;
+    }
+    // Seed BKT skill params with defaults
+    for (const skillId of allSkills) {
+      await qr.query(
+        `INSERT INTO bkt_skill_params (skill_id, p_l0, p_t, p_s, source)
+         VALUES ($1, 0.15, 0.25, 0.10, 'judgement_anchor')
+         ON CONFLICT (skill_id) DO UPDATE SET p_l0 = 0.15, p_t = 0.25, p_s = 0.10, source = 'judgement_anchor'`,
+        [skillId],
+      );
+    }
     // --- 2. curriculum ----------------------------------------------------
-    const curriculum = parseCurriculum(contentRoot);
-    const moduleIds = new Set(curriculum.modules.map(m => m.id));
-
-    for (const mod of curriculum.modules) {
+    const moduleIds = new Set<string>();
+    for (const mod of curriculumGraph.modules.values()) {
+      moduleIds.add(mod.id);
       await qr.query(
         `INSERT INTO modules (id, title, cefr_level, track, source_markdowns, sort_order, expected_lessons)
          VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -177,13 +236,21 @@ export async function loadContent(dataSource: DataSource, contentRoot: string): 
         [
           mod.id,
           mod.title,
-          mod.cefr_level,
+          mod.cefrLevel,
           mod.track,
-          mod.source_markdowns,
-          mod.sort_order,
-          mod.expected_lessons,
+          mod.sourceMarkdowns,
+          mod.sortOrder,
+          mod.expectedLessons,
         ],
       );
+    }
+
+    // Build lessonModules map for lesson parser (lesson_id -> module_id)
+    const lessonModules: Record<string, string> = {};
+    for (const node of curriculumGraph.nodes.values()) {
+      if (node.type === 'lesson' && node.moduleId) {
+        lessonModules[node.id] = node.moduleId;
+      }
     }
 
     // --- 3. lessons -------------------------------------------------------
@@ -202,7 +269,7 @@ export async function loadContent(dataSource: DataSource, contentRoot: string): 
           const md = fs.readFileSync(filePath, 'utf-8');
           const lesson = parseLesson(md, file, {
             dirCefr: cefrFromDir,
-            lessonModules: curriculum.lesson_modules,
+            lessonModules,
           });
           if (!lesson.module_id) {
             throw new Error(`unresolved module for lesson ${lesson.id}`);
@@ -245,6 +312,23 @@ export async function loadContent(dataSource: DataSource, contentRoot: string): 
       }
     }
 
+    // Seed skill prerequisites from lesson metadata (only for loaded lessons)
+    for (const node of curriculumGraph.nodes.values()) {
+      if (node.type !== 'lesson') continue;
+      if (!lessonIds.has(node.id)) continue; // Only for lessons that were actually loaded
+      const meta = node.metadata as Record<string, unknown> | undefined;
+      if (meta?.[`skills`] && Array.isArray(meta[`skills`])) {
+        for (const skillId of meta[`skills`] as string[]) {
+          await qr.query(
+            `INSERT INTO skill_prerequisite (lesson_id, skill_id, weight)
+             VALUES ($1, $2, 1.0)
+             ON CONFLICT (lesson_id, skill_id) DO NOTHING`,
+            [node.id, skillId],
+          );
+        }
+      }
+    }
+
     // --- 4. lesson prerequisites (§1: JSON column → edge table) -----------
     for (const edge of prereqEdges) {
       const targets = edge.prereqs.filter(p => lessonIds.has(p) && p !== edge.lesson_id);
@@ -258,8 +342,7 @@ export async function loadContent(dataSource: DataSource, contentRoot: string): 
         );
       }
     }
-    // `skill_prerequisite` is intentionally not populated (ADR-022 §4): the loaded
-    // lessons declare no `skill_items`, and `skills` is seeded by ADR-021.
+    // `skill_prerequisite` is populated from curriculum graph skill metadata (ADR-021)
 
     // --- 5. packs and their items ----------------------------------------
     const packsRoot = path.join(contentRoot, 'packs');
