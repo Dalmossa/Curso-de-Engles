@@ -3,7 +3,11 @@ import { Card, CardBody, CardHeader, CardTitle } from '@/presentation/components
 import { buttonClasses } from '@/presentation/components/ui/button';
 import { routes } from '@/shared/routes';
 
-export default async function RegisterPage({ searchParams }: { searchParams?: Promise<{ error?: string }> }) {
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ error?: string; next?: string }>;
+}) {
   const params = (await searchParams) || {};
   return (
     <div className="mx-auto flex w-full max-w-lg flex-1 items-start justify-center pt-12">
@@ -18,7 +22,13 @@ export default async function RegisterPage({ searchParams }: { searchParams?: Pr
           {params.error === 'exists' && (
             <p className="text-sm text-red-600">Este e-mail já está cadastrado.</p>
           )}
+          {params.error === 'unavailable' && (
+            <p className="text-sm text-red-600">
+              Não conseguimos falar com o servidor agora. Tente novamente em instantes.
+            </p>
+          )}
           <form action="/api/auth/register" method="post" className="flex flex-col gap-3">
+            <input type="hidden" name="next" value={params.next ?? '/'} />
             <label className="flex flex-col gap-1 text-sm">
               <span>Nome</span>
               <input name="displayName" type="text" className="rounded-lg border border-subtle px-3 py-2" />

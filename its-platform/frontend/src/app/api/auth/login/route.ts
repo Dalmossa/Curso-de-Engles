@@ -1,27 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  apiFetch,
+  applySessionCookies,
+  isAuthSessionPayload,
+} from '@/infrastructure/auth/bff-session.server';
+import { safeRedirectPath } from '@/shared/safe-redirect';
 
 export async function POST(req: NextRequest) {
-  const apiUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
   const form = await req.formData();
-  const body = {
-    email: form.get('email'),
-    password: form.get('password'),
-  };
-  const res = await fetch(`${apiUrl}/api/v1/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-    cache: 'no-store',
-  });
-  await res.json().catch(() => ({}));
-  if (!res.ok) {
-    return NextResponse.redirect(new URL('/login?error=invalid', req.url));
+  const next = safeRedirectPath(form.get('next'));
+
+  let response: Response;
+  try {
+    response = await apiFetch('/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: form.get('email'),
+        password: form.get('password'),
+      }),
+    });
+  } catch {
+    return NextResponse.redirect(new URL('/login?error=unavailable', req.url));
   }
-  // proxy cookies
-  const setCookies = res.headers.getSetCookie?.() ?? [];
-  const resp = NextResponse.redirect(new URL('/', req.url));
-  for (const c of setCookies) {
-    resp.headers.append('set-cookie', c);
+
+  const payload = await response.json().catch(() => null);
+
+  // A successful status with no session body is not a login: without the identifiers there is
+  // nothing to put in the cookies, and redirecting to `/` would send the learner straight back
+  // here through the proxy — the loop this handler exists to close.
+  if (!response.ok || !isAuthSessionPayload(payload)) {
+    const target = new URL('/login', req.url);
+    target.searchParams.set('error', response.status === 401 ? 'invalid' : 'unavailable');
+    target.searchParams.set('next', next);
+    return NextResponse.redirect(target);
   }
-  return resp;
+
+  const redirect = NextResponse.redirect(new URL(next, req.url));
+  applySessionCookies(redirect, payload);
+  return redirect;
 }

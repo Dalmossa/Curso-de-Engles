@@ -1,16 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { apiFetch, clearSessionCookies } from '@/infrastructure/auth/bff-session.server';
+import { SESSION_TOKEN_COOKIE } from '@/shared/auth-cookies';
 
 export async function POST(req: NextRequest) {
-  const apiUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-  const res = await fetch(`${apiUrl}/api/v1/auth/logout`, {
-    method: 'POST',
-    headers: { cookie: req.headers.get('cookie') || '' },
-    cache: 'no-store',
-  });
-  const setCookies = res.headers.getSetCookie?.() ?? [];
-  const resp = NextResponse.redirect(new URL('/login', req.url));
-  for (const c of setCookies) {
-    resp.headers.append('set-cookie', c);
+  const accessToken = req.cookies.get(SESSION_TOKEN_COOKIE)?.value;
+
+  // Revoking server-side is best effort: the browser's session is cleared regardless, and a
+  // backend that is down must not leave the user unable to log out.
+  if (accessToken !== undefined) {
+    try {
+      await apiFetch('/auth/logout', {
+        method: 'POST',
+        headers: { authorization: `Bearer ${accessToken}` },
+      });
+    } catch {
+      // Intentionally ignored — see above.
+    }
   }
-  return resp;
+
+  const response = NextResponse.redirect(new URL('/login', req.url));
+  clearSessionCookies(response);
+  return response;
 }

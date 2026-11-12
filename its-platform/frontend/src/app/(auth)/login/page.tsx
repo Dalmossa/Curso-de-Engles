@@ -3,7 +3,11 @@ import { Card, CardBody, CardHeader, CardTitle } from '@/presentation/components
 import { buttonClasses } from '@/presentation/components/ui/button';
 import { routes } from '@/shared/routes';
 
-export default async function LoginPage({ searchParams }: { searchParams?: Promise<{ error?: string }> }) {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ error?: string; next?: string }>;
+}) {
   const params = (await searchParams) || {};
   return (
     <div className="mx-auto flex w-full max-w-lg flex-1 items-start justify-center pt-12">
@@ -18,7 +22,13 @@ export default async function LoginPage({ searchParams }: { searchParams?: Promi
           {params.error === 'invalid' && (
             <p className="text-sm text-red-600">E-mail ou senha inválidos.</p>
           )}
+          {params.error === 'unavailable' && (
+            <p className="text-sm text-red-600">
+              Não conseguimos falar com o servidor agora. Tente novamente em instantes.
+            </p>
+          )}
           <form action="/api/auth/login" method="post" className="flex flex-col gap-3">
+            <input type="hidden" name="next" value={params.next ?? '/'} />
             <label className="flex flex-col gap-1 text-sm">
               <span>E-mail</span>
               <input name="email" type="email" required className="rounded-lg border border-subtle px-3 py-2" />
