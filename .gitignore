@@ -32,6 +32,17 @@ pnpm-debug.log*
 Thumbs.db
 .idea/
 *.swp
+
+# Artefatos do test:typecheck (saída de tests/, não versionar)
+its-platform/tests/**/*.spec.js
+its-platform/tests/**/*.spec.js.map
+its-platform/tests/**/*.spec.d.ts
+its-platform/tests/**/*.spec.d.ts.map
+its-platform/tests/helpers/*.js
+its-platform/tests/helpers/*.js.map
+its-platform/tests/helpers/*.d.ts
+its-platform/tests/helpers/*.d.ts.map
+
 # Livros protegidos (corpus de referência local)
 Ingles/output/
 Ingles/

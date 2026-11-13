@@ -1,15 +1,22 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "CommonJS",
-    "moduleResolution": "NodeNext",
+    "rootDir": ".",
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "#domain/*": ["src/domain/*"],
+      "#infrastructure/*": ["src/infrastructure/*"],
+      "#modules/*": ["src/modules/*"],
+      "#common/*": ["src/common/*"]
+    },
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": false,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "allowImportingTsExtensions": true
+    "types": ["jest", "node"]
   },
-  "include": ["tests/**/*", "src/**/*"],
+  "include": ["tests/**/*", "src/**/*", "express.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
