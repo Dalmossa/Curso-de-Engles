@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { getServerContext } from '@/infrastructure/composition/server-container';
 import { resolveActivityDestination } from '@/core';
 import { NextActivityCard } from '@/presentation/components/next-activity-card';
@@ -8,6 +9,7 @@ import { Card, CardBody, CardHeader, CardTitle } from '@/presentation/components
 import { buttonClasses } from '@/presentation/components/ui/button';
 import { CourseRoadmap, type RoadmapModule } from '@/presentation/components/dashboard/course-roadmap';
 import { routes } from '@/shared/routes';
+import { isAuthenticationFailure } from '@/core/errors/domain-error';
 
 export const dynamic = 'force-dynamic';
 
@@ -55,8 +57,16 @@ function buildPlaceholderRoadmap(): RoadmapModule[] {
 }
 
 export default async function DashboardPage() {
-  const { useCases, learnerId } = await getServerContext();
-  const dashboard = await useCases.getLearnerDashboard.execute(learnerId);
+  let dashboard;
+  try {
+    const { useCases, learnerId } = await getServerContext();
+    dashboard = await useCases.getLearnerDashboard.execute(learnerId);
+  } catch (error) {
+    if (isAuthenticationFailure(error)) {
+      redirect('/login');
+    }
+    throw error;
+  }
   const modules = buildPlaceholderRoadmap();
 
   const totalLessons = modules.reduce((acc, m) => acc + m.lessons.length, 0);

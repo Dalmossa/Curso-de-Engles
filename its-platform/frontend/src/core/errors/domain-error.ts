@@ -92,6 +92,10 @@ export function isDomainError(value: unknown): value is DomainError {
   return value instanceof DomainError;
 }
 
+export function isAuthenticationFailure(value: unknown): boolean {
+  return isDomainError(value) && value.isAuthenticationFailure;
+}
+
 /** Normalises anything a `catch` can produce into a `DomainError`. */
 export function toDomainError(value: unknown): DomainError {
   if (isDomainError(value)) return value;

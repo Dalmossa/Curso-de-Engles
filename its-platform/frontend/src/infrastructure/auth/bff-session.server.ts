@@ -5,8 +5,12 @@ import {
   SESSION_COOKIE_MAX_AGE_SECONDS,
   SESSION_ID_COOKIE,
   SESSION_LEARNER_COOKIE,
+  SESSION_REFRESH_COOKIE,
   SESSION_TOKEN_COOKIE,
 } from '@/shared/auth-cookies';
+import { apiBaseUrl as sharedApiBaseUrl, apiUrl } from '@/shared/api-url';
+
+export { apiUrl };
 
 /**
  * Everything the auth route handlers share.
@@ -35,17 +39,9 @@ export interface AuthSessionPayload {
   readonly user: AuthSessionUser;
 }
 
-/** `ITS_API_BASE_URL` already carries `/api/v1`; the defaults keep a fresh clone working. */
+/** `ITS_API_BASE_URL` already carries `/api/v1`; see `shared/api-url.ts` for the defaults. */
 export function apiBaseUrl(): string {
-  const configured = process.env.ITS_API_BASE_URL?.trim();
-  return (configured && configured.length > 0 ? configured : 'http://localhost:3000/api/v1').replace(
-    /\/+$/,
-    '',
-  );
-}
-
-export function apiUrl(path: string): string {
-  return `${apiBaseUrl()}${path.startsWith('/') ? path : `/${path}`}`;
+  return sharedApiBaseUrl();
 }
 
 function nonEmptyString(value: unknown): value is string {
@@ -92,11 +88,17 @@ export function applySessionCookies(response: NextResponse, payload: AuthSession
     value: payload.accessToken ?? payload.token,
     ...cookieOptions(),
   });
+  response.cookies.set({ name: SESSION_REFRESH_COOKIE, value: payload.token, ...cookieOptions() });
   response.cookies.set({ name: SESSION_LEARNER_COOKIE, value: learnerId, ...cookieOptions() });
 }
 
 export function clearSessionCookies(response: NextResponse): void {
-  for (const name of [SESSION_ID_COOKIE, SESSION_TOKEN_COOKIE, SESSION_LEARNER_COOKIE]) {
+  for (const name of [
+    SESSION_ID_COOKIE,
+    SESSION_TOKEN_COOKIE,
+    SESSION_REFRESH_COOKIE,
+    SESSION_LEARNER_COOKIE,
+  ]) {
     response.cookies.set({ name, value: '', path: '/', maxAge: 0 });
   }
 }

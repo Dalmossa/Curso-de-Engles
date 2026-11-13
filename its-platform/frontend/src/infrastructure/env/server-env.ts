@@ -27,8 +27,18 @@ const ServerEnvSchema = z.object({
     .string()
     .optional()
     .transform((value) => (value === undefined || value.trim() === '' ? null : value.trim())),
-  /** Mocked learner identity until ADR-013 closes. Must be a UUID — the API validates it. */
-  ITS_LEARNER_ID: z.uuid(),
+  /**
+   * Mocked/server-to-server learner identity until ADR-013 closes, used only when the session
+   * cookies are absent. Must be a UUID — the API validates it. Optional because the login flow
+   * (cookies) is the primary identity and a fresh clone needs no learner in the environment.
+   */
+  ITS_LEARNER_ID: z
+    .string()
+    .optional()
+    .transform((value) => (value === undefined || value.trim() === '' ? null : value.trim()))
+    .refine((value) => value === null || z.uuid().safeParse(value).success, {
+      message: 'Invalid UUID',
+    }),
   ITS_API_TIMEOUT_MS: z.coerce.number().int().positive().max(60_000).default(10_000),
 });
 

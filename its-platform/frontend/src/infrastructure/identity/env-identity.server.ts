@@ -1,27 +1,45 @@
 import 'server-only';
 
 import { cookies } from 'next/headers';
-import type { AccessTokenProvider, LearnerIdentity } from '@/core';
+import { DomainError, type AccessTokenProvider, type LearnerIdentity } from '@/core';
 import { SESSION_LEARNER_COOKIE, SESSION_TOKEN_COOKIE } from '@/shared/auth-cookies';
 import { getServerEnv } from '../env/server-env';
 
 /**
- * Who the current learner is.
+ * Who the current learner is, and which credential speaks for them.
  *
- * The login flow puts the learner id in an httpOnly cookie, and that is the identity every page
- * uses. `ITS_LEARNER_ID` remains the fallback for the mocked/unauthenticated deployment the
- * project started with; it is not a second identity while a session exists, because the token and
- * the addressed learner would then disagree and the API would answer 404 by policy.
+ * The BFF writes the session cookies after a successful login, and those are the identity every
+ * page uses. `ITS_LEARNER_ID` / `ITS_API_TOKEN` remain support for the server-to-server deployment
+ * (workers, scripts, the mocked deployment the project started with) — never a second identity
+ * while a session cookie exists, because the token and the addressed learner would then disagree
+ * and the API answers `404` by policy.
+ *
+ * With neither a cookie nor the environment fallback there is no identity at all. That is an
+ * authentication failure, not a configuration crash: callers catch it and send the learner to
+ * `/login` instead of rendering a 500.
  */
+function unauthorized(detail: string): DomainError {
+  return new DomainError({
+    kind: 'unauthorized',
+    status: 401,
+    title: 'Not authenticated',
+    detail,
+    problemType: null,
+    requestId: null,
+    retryAfterSeconds: null,
+  });
+}
+
 export function createEnvLearnerIdentity(): LearnerIdentity {
   return {
     async getLearnerId() {
-      // The BFF writes the learner id the API session belongs to. The environment value remains
-      // the fallback for the mocked/unauthenticated deployment described below.
       const fromSession = (await cookies()).get(SESSION_LEARNER_COOKIE)?.value?.trim();
-      return fromSession !== undefined && fromSession.length > 0
-        ? fromSession
-        : getServerEnv().ITS_LEARNER_ID;
+      if (fromSession !== undefined && fromSession.length > 0) return fromSession;
+
+      const fromEnv = getServerEnv().ITS_LEARNER_ID;
+      if (fromEnv !== null) return fromEnv;
+
+      throw unauthorized('There is no session and no configured learner identity.');
     },
   };
 }
@@ -30,19 +48,19 @@ export function createEnvLearnerIdentity(): LearnerIdentity {
  * The credential presented to the platform.
  *
  * A login writes the API's RS256 access token to an httpOnly cookie and it is presented as-is.
- * When no session cookie exists, `ITS_API_TOKEN` is used — the server-to-server deployment.
- * With both empty this returns `null`, no `Authorization` header is sent, and every protected
- * call answers `401`, which the UI renders as an "unauthorized" state rather than as data.
+ * `ITS_API_TOKEN` is the optional server-to-server fallback. When neither exists we raise
+ * `unauthorized` so the page redirects instead of firing a request the API would refuse.
  */
 export function createEnvAccessTokenProvider(): AccessTokenProvider {
   return {
     async getAccessToken() {
-      // The token minted by the login flow wins over the environment token: it is the credential
-      // whose `sub` matches the learner the cookies address. `ITS_API_TOKEN` stays as the
-      // server-to-server/mock fallback.
       const fromSession = (await cookies()).get(SESSION_TOKEN_COOKIE)?.value?.trim();
       if (fromSession !== undefined && fromSession.length > 0) return fromSession;
-      return getServerEnv().ITS_API_TOKEN;
+
+      const fromEnv = getServerEnv().ITS_API_TOKEN;
+      if (fromEnv !== null) return fromEnv;
+
+      throw unauthorized('There is no session and no configured API token.');
     },
   };
 }

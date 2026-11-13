@@ -3,12 +3,19 @@ import { Card, CardBody, CardHeader, CardTitle } from '@/presentation/components
 import { buttonClasses } from '@/presentation/components/ui/button';
 import { routes } from '@/shared/routes';
 
+const DEV_EMAIL = 'dev@its.local';
+const DEV_PASSWORD = 'dev12345';
+
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ error?: string; next?: string }>;
+  searchParams?: Promise<{ error?: string; next?: string; dev?: string }>;
 }) {
   const params = (await searchParams) || {};
+  const isDevelopment = process.env.NODE_ENV !== 'production';
+  const useDevCredentials = isDevelopment && params.dev === '1';
+  const next = params.next ?? '/';
+
   return (
     <div className="mx-auto flex w-full max-w-lg flex-1 items-start justify-center pt-12">
       <Card className="w-full">
@@ -27,15 +34,47 @@ export default async function LoginPage({
               Não conseguimos falar com o servidor agora. Tente novamente em instantes.
             </p>
           )}
+          {params.error === 'session' && (
+            <p className="text-sm text-red-600">
+              Sua sessão expirou. Entre novamente para continuar de onde parou.
+            </p>
+          )}
+          {isDevelopment && (
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-subtle px-3 py-2 text-xs text-ink-600">
+              <span>
+                Ambiente de desenvolvimento: usuário <span className="font-mono">{DEV_EMAIL}</span>
+              </span>
+              <Link
+                href={`/login?dev=1&next=${encodeURIComponent(next)}`}
+                className={buttonClasses('ghost', 'sm')}
+              >
+                Preencher credenciais
+              </Link>
+            </div>
+          )}
           <form action="/api/auth/login" method="post" className="flex flex-col gap-3">
-            <input type="hidden" name="next" value={params.next ?? '/'} />
+            <input type="hidden" name="next" value={next} />
             <label className="flex flex-col gap-1 text-sm">
               <span>E-mail</span>
-              <input name="email" type="email" required className="rounded-lg border border-subtle px-3 py-2" />
+              <input
+                name="email"
+                type="email"
+                required
+                autoComplete="email"
+                defaultValue={useDevCredentials ? DEV_EMAIL : undefined}
+                className="rounded-lg border border-subtle px-3 py-2"
+              />
             </label>
             <label className="flex flex-col gap-1 text-sm">
               <span>Senha</span>
-              <input name="password" type="password" required className="rounded-lg border border-subtle px-3 py-2" />
+              <input
+                name="password"
+                type="password"
+                required
+                autoComplete="current-password"
+                defaultValue={useDevCredentials ? DEV_PASSWORD : undefined}
+                className="rounded-lg border border-subtle px-3 py-2"
+              />
             </label>
             <button type="submit" className={buttonClasses('primary', 'lg')}>
               Entrar
@@ -54,9 +93,6 @@ export default async function LoginPage({
           <a href="/api/auth/google" className={buttonClasses('secondary', 'lg')}>
             Continuar com Google
           </a>
-          <p className="text-xs text-ink-500">
-            Em modo desenvolvimento ainda é possível usar o painel com `ITS_API_TOKEN` configurado no servidor.
-          </p>
           <Link href={routes.home} className="text-sm text-ink-600 underline">
             Ir para o painel
           </Link>
