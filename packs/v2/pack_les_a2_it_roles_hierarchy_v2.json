@@ -1,0 +1,647 @@
+{
+  "pack_id": "pack_les_a2_it_roles_hierarchy_v2",
+  "schema_version": "2.0",
+  "lesson_id": "les_a2_it_roles_hierarchy",
+  "reuse_basis": "cite_only` — every item is original. `Dicionario-de-Siglas-e-Termos-Profissionais-em-Ingles.md` Ch3 is cited as bibliography and nothing from it is reproduced.",
+  "items": [
+    {
+      "item_id": "voc_c_level_expansion_001",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.general"
+      ],
+      "lesson_id": "les_a2_it_roles_hierarchy",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "In a tech company, the CTO is the CTO of what?",
+      "options": [
+        "Client Transaction Operations",
+        "Central Testing Office",
+        "Chief Technology Officer",
+        "Company Technical Overview"
+      ],
+      "key": "C",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Client Transaction Operations",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Central Testing Office",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Chief Technology Officer",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Company Technical Overview",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:voc_c_level_expansion_001"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_roles_hierarchy_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.136252",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "voc_tech_lead_vs_manager_001",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.general"
+      ],
+      "lesson_id": "les_a2_it_roles_hierarchy",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "Your tech lead helps you with code, but your Engineering Manager handles your time off. What is the difference?",
+      "options": [
+        "The tech lead is more senior",
+        "The manager is not a real role",
+        "Technical unblocking vs. managing people",
+        "The tech lead works part-time"
+      ],
+      "key": "C",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "The tech lead is more senior",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "The manager is not a real role",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Technical unblocking vs. managing people",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "The tech lead works part-time",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:voc_tech_lead_vs_manager_001"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_roles_hierarchy_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.136263",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "grm_report_to_preposition_001",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "grammar.general"
+      ],
+      "lesson_id": "les_a2_it_roles_hierarchy",
+      "cefr": "L1",
+      "domain": "grammar",
+      "type": "form_selection",
+      "modality": "text",
+      "stem": "Choose the correct preposition: \"I ______ my manager.\"",
+      "options": [
+        "report for",
+        "report with",
+        "report to",
+        "report at"
+      ],
+      "key": "C",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "report for",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "report with",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "report to",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "report at",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "grammar:grm_report_to_preposition_001"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_roles_hierarchy_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.136271",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "voc_dri_role_001",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.general"
+      ],
+      "lesson_id": "les_a2_it_roles_hierarchy",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "In a stand-up, \"I'm the DRI for the migration\" means:",
+      "options": [
+        "\"I will do all the migration work myself.\"",
+        "\"I am the one person answerable for the migration.\"",
+        "\"I am the designer of the migration.\"",
+        "\"I report the migration to the DRI.\""
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "\"I will do all the migration work myself.\"",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "\"I am the one person answerable for the migration.\"",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "\"I am the designer of the migration.\"",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "\"I report the migration to the DRI.\"",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:voc_dri_role_001"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_roles_hierarchy_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.136278",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "voc_register_by_rung_001",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.general"
+      ],
+      "lesson_id": "les_a2_it_roles_hierarchy",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "Which is the right way to address the VP about a production incident?",
+      "options": [
+        "\"Hey VP, prod is down lol, can you look?\"",
+        "\"Hi — the payments API has been returning 500s since 09:14. I'm the DRI and I'm on it.\"",
+        "\"Dear Sir, a system failure is ongoing.\"",
+        "\"VP: the API. 500s. 09:14. mine.\""
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "\"Hey VP, prod is down lol, can you look?\"",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "14. I'm the DRI and I'm on it.\"",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "\"Dear Sir, a system failure is ongoing.\"",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "the API. 500s. 09:14. mine.\"",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:voc_register_by_rung_001"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_roles_hierarchy_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.136286",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "voc_c_level_gloss_002",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.general"
+      ],
+      "lesson_id": "les_a2_it_roles_hierarchy",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "[Prereq] \"C-level\" in a tech company refers to:",
+      "options": [
+        "All engineers who work with C code",
+        "Executives whose titles start with \"Chief\"",
+        "The team that works on the C programming language",
+        "Anyone who joined in the same year"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "All engineers who work with C code",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Executives whose titles start with \"Chief\"",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "The team that works on the C programming language",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Anyone who joined in the same year",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:voc_c_level_gloss_002"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_roles_hierarchy_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.136293",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "voc_head_of_phrase_001",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.general"
+      ],
+      "lesson_id": "les_a2_it_roles_hierarchy",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "[Prereq] \"I am the Head of Platform\" is equivalent to:",
+      "options": [
+        "\"I am the platform user.\"",
+        "\"I lead the Platform team.\"",
+        "\"I am under the platform.\"",
+        "\"I want a new platform.\""
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "\"I am the platform user.\"",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "\"I lead the Platform team.\"",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "\"I am under the platform.\"",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "\"I want a new platform.\"",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:voc_head_of_phrase_001"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_roles_hierarchy_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.136300",
+        "review_due": "2027-03-30"
+      }
+    }
+  ],
+  "manifest": {
+    "title": "Les A2 It Roles Hierarchy",
+    "time_cap_minutes": 4,
+    "split": "57% current / 43% prereq",
+    "interleaved": true,
+    "item_count": 7
+  },
+  "version": "2.0",
+  "migrated_at": "2026-11-12T06:21:15.136303"
+}

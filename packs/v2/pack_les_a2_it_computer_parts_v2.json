@@ -1,0 +1,647 @@
+{
+  "pack_id": "pack_les_a2_it_computer_parts_v2",
+  "schema_version": "2.0",
+  "lesson_id": "les_a2_it_computer_parts",
+  "reuse_basis": "cite_only` — every item is original. `Ingles-Tecnico-Para-Informatica.md` (CETAM, ©) Aula 4 is cited as bibliography; no text, diagram, or activity from it is reproduced.",
+  "items": [
+    {
+      "item_id": "voc_storage_category_001",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.general"
+      ],
+      "lesson_id": "les_a2_it_computer_parts",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "Which of these is a storage device?",
+      "options": [
+        "The monitor",
+        "The microphone",
+        "The SSD",
+        "The speakers"
+      ],
+      "key": "C",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "The monitor",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "The microphone",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "The SSD",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "The speakers",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:voc_storage_category_001"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_computer_parts_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.132873",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "voc_peripheral_001",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.general"
+      ],
+      "lesson_id": "les_a2_it_computer_parts",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "A peripheral is:",
+      "options": [
+        "Any part that stores data",
+        "Anything attached to the computer that is not the computer itself",
+        "The CPU",
+        "Any device that needs electricity"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Any part that stores data",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Anything attached to the computer that is not the computer itself",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "The CPU",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Any device that needs electricity",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:voc_peripheral_001"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_computer_parts_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.132884",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "grm_there_are_agreement_001",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "grammar.general"
+      ],
+      "lesson_id": "les_a2_it_computer_parts",
+      "cefr": "L1",
+      "domain": "grammar",
+      "type": "form_selection",
+      "modality": "text",
+      "stem": "Choose the correct form: \"On my desk ______ three keyboards.\"",
+      "options": [
+        "there is",
+        "there are",
+        "it has",
+        "have"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "there is",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "there are",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "it has",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "have",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "grammar:grm_there_are_agreement_001"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_computer_parts_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.132891",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "grm_irregular_plural_mice_001",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "grammar.general"
+      ],
+      "lesson_id": "les_a2_it_computer_parts",
+      "cefr": "L1",
+      "domain": "grammar",
+      "type": "form_selection",
+      "modality": "text",
+      "stem": "\"A desk has one mouse and two ______ .\"",
+      "options": [
+        "mouses",
+        "mice",
+        "mices",
+        "mouse"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "mouses",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "mice",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "mices",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "mouse",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "grammar:grm_irregular_plural_mice_001"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_computer_parts_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.132898",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "voc_cable_port_driver_001",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.general"
+      ],
+      "lesson_id": "les_a2_it_computer_parts",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "A peripheral fails in one of three places. Which is not one of them?",
+      "options": [
+        "The cable",
+        "The port",
+        "The driver",
+        "The monitor's brightness setting"
+      ],
+      "key": "D",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "The cable",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "The port",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "The driver",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "The monitor's brightness setting",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:voc_cable_port_driver_001"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_computer_parts_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.132905",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "voc_ram_category_001",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.general"
+      ],
+      "lesson_id": "les_a2_it_computer_parts",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "[Prereq] RAM belongs to which category?",
+      "options": [
+        "Output",
+        "Input",
+        "Storage",
+        "Not a part"
+      ],
+      "key": "C",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Output",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Input",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Storage",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Not a part",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:voc_ram_category_001"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_computer_parts_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.132912",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "voc_port_socket_001",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.general"
+      ],
+      "lesson_id": "les_a2_it_computer_parts",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "[Prereq] A port on a computer is:",
+      "options": [
+        "A number that identifies a computer on the network",
+        "A socket that a cable plugs into",
+        "The folder a file is saved into",
+        "A USB brand name"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "A number that identifies a computer on the network",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "A socket that a cable plugs into",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "The folder a file is saved into",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "A USB brand name",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:voc_port_socket_001"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_computer_parts_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.132919",
+        "review_due": "2027-03-30"
+      }
+    }
+  ],
+  "manifest": {
+    "title": "Les A2 It Computer Parts",
+    "time_cap_minutes": 4,
+    "split": "57% current / 43% prereq",
+    "interleaved": true,
+    "item_count": 7
+  },
+  "version": "2.0",
+  "migrated_at": "2026-11-12T06:21:15.132921"
+}

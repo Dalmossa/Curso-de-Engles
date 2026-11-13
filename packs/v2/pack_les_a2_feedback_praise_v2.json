@@ -1,0 +1,647 @@
+{
+  "pack_id": "pack_les_a2_feedback_praise_v2",
+  "schema_version": "2.0",
+  "lesson_id": "les_a2_feedback_praise",
+  "reuse_basis": "cite_only",
+  "items": [
+    {
+      "item_id": "vocab.feedback.constructive",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.constructive"
+      ],
+      "lesson_id": "les_a2_feedback_praise",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "Constructive feedback is:",
+      "options": [
+        "Only negative",
+        "Helpful and actionable",
+        "Only positive",
+        "Vague"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Only negative",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Helpful and actionable",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Only positive",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Vague",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:constructive"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_feedback_praise_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.130849",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "vocab.feedback.well-done",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.well-done"
+      ],
+      "lesson_id": "les_a2_feedback_praise",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "Well done is used to:",
+      "options": [
+        "Apologize",
+        "Praise",
+        "Request help",
+        "Give feedback"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Apologize",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Praise",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Request help",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Give feedback",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:well-done"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_feedback_praise_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.130860",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "vocab.feedback.im-sorry",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.im-sorry"
+      ],
+      "lesson_id": "les_a2_feedback_praise",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "I'm sorry is used to:",
+      "options": [
+        "Praise",
+        "Apologize",
+        "Request help",
+        "Give feedback"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Praise",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Apologize",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Request help",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Give feedback",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:im-sorry"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_feedback_praise_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.130870",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "vocab.feedback.my-fault",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.my-fault"
+      ],
+      "lesson_id": "les_a2_feedback_praise",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "My fault means:",
+      "options": [
+        "Not my responsibility",
+        "Taking responsibility for a mistake",
+        "Blaming someone else",
+        "Ignoring the problem"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Not my responsibility",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Taking responsibility for a mistake",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Blaming someone else",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Ignoring the problem",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:my-fault"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_feedback_praise_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.130878",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "vocab.feedback.keep-it-up",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.keep-it-up"
+      ],
+      "lesson_id": "les_a2_feedback_praise",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "Keep it up is used to:",
+      "options": [
+        "Criticize",
+        "Encourage",
+        "Apologize",
+        "Request help"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Criticize",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Encourage",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Apologize",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Request help",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:keep-it-up"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_feedback_praise_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.130886",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "grammar.past_simple_feedback",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "grammar.past_simple_feedback"
+      ],
+      "lesson_id": "les_a2_feedback_praise",
+      "cefr": "L1",
+      "domain": "grammar",
+      "type": "form_selection",
+      "modality": "text",
+      "stem": "Choose the correct past simple:",
+      "options": [
+        "You do a great job.",
+        "You did a great job.",
+        "You doing a great job.",
+        "You done a great job."
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "You do a great job.",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "You did a great job.",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "You doing a great job.",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "You done a great job.",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "grammar:past_simple_feedback"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_feedback_praise_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.130895",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "vocab.feedback.prereq-no-problem",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.prereq-no-problem"
+      ],
+      "lesson_id": "les_a2_feedback_praise",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "[Prereq] No problem is used to:",
+      "options": [
+        "Refuse an apology",
+        "Accept an apology",
+        "Give feedback",
+        "Request help"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Refuse an apology",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Accept an apology",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Give feedback",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Request help",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:prereq-no-problem"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_feedback_praise_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.130903",
+        "review_due": "2027-03-30"
+      }
+    }
+  ],
+  "manifest": {
+    "title": "Les A2 Feedback Praise",
+    "time_cap_minutes": 4,
+    "split": "57% current / 43% prereq",
+    "interleaved": true,
+    "item_count": 7
+  },
+  "version": "2.0",
+  "migrated_at": "2026-11-12T06:21:15.130905"
+}

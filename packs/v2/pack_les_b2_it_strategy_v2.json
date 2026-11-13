@@ -1,0 +1,647 @@
+{
+  "pack_id": "pack_les_b2_it_strategy_v2",
+  "schema_version": "2.0",
+  "lesson_id": "les_b2_it_strategy",
+  "reuse_basis": "cite_only",
+  "items": [
+    {
+      "item_id": "vocab.strategy.okr",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.okr"
+      ],
+      "lesson_id": "les_b2_it_strategy",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "OKR stands for:",
+      "options": [
+        "Objectives and Key Responsibilities",
+        "Objectives and Key Results",
+        "Operational Knowledge Review",
+        "Objective Key Resources"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Objectives and Key Responsibilities",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Objectives and Key Results",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Operational Knowledge Review",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Objective Key Resources",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:okr"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_b2_it_strategy_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.156218",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "vocab.strategy.vision",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.vision"
+      ],
+      "lesson_id": "les_b2_it_strategy",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "Vision in strategy is:",
+      "options": [
+        "Current state",
+        "Desired future state",
+        "Past achievements",
+        "Daily tasks"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Current state",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Desired future state",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Past achievements",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Daily tasks",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:vision"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_b2_it_strategy_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.156229",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "vocab.strategy.roadmap",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.roadmap"
+      ],
+      "lesson_id": "les_b2_it_strategy",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "A roadmap provides:",
+      "options": [
+        "Daily task list",
+        "Temporal plan of deliverables and milestones",
+        "Code architecture",
+        "Team org chart"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Daily task list",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Temporal plan of deliverables and milestones",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Code architecture",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Team org chart",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:roadmap"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_b2_it_strategy_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.156238",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "vocab.strategy.kpi",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.kpi"
+      ],
+      "lesson_id": "les_b2_it_strategy",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "A KPI (Key Performance Indicator):",
+      "options": [
+        "Is subjective",
+        "Measures performance against a target",
+        "Tracks attendance",
+        "Measures code lines"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Is subjective",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Measures performance against a target",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Tracks attendance",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Measures code lines",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:kpi"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_b2_it_strategy_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.156246",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "vocab.strategy.stakeholder_buy_in",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.stakeholder_buy_in"
+      ],
+      "lesson_id": "les_b2_it_strategy",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "Stakeholder buy-in means:",
+      "options": [
+        "Stakeholders pay for project",
+        "Stakeholders support and commit to the strategy",
+        "Stakeholders attend meetings",
+        "Stakeholders write code"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Stakeholders pay for project",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Stakeholders support and commit to the strategy",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Stakeholders attend meetings",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Stakeholders write code",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:stakeholder_buy_in"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_b2_it_strategy_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.156254",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "grammar.future_forms",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "grammar.future_forms"
+      ],
+      "lesson_id": "les_b2_it_strategy",
+      "cefr": "L1",
+      "domain": "grammar",
+      "type": "form_selection",
+      "modality": "text",
+      "stem": "Choose the correct future form for a planned roadmap:",
+      "options": [
+        "We migrate to K8s next quarter.",
+        "We are migrate to K8s next quarter.",
+        "We will migrate to K8s next quarter.",
+        "We migrating to K8s next quarter."
+      ],
+      "key": "C",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "We migrate to K8s next quarter.",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "We are migrate to K8s next quarter.",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "We will migrate to K8s next quarter.",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "We migrating to K8s next quarter.",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "grammar:future_forms"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_b2_it_strategy_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.156263",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "vocab.strategy.prereq_alignment",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.prereq_alignment"
+      ],
+      "lesson_id": "les_b2_it_strategy",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "[Prereq] Alignment in strategy means:",
+      "options": [
+        "Teams work independently",
+        "Sync between teams and shared goals",
+        "Same office location",
+        "Same tech stack"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Teams work independently",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Sync between teams and shared goals",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Same office location",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Same tech stack",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:prereq_alignment"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_b2_it_strategy_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.156271",
+        "review_due": "2027-03-30"
+      }
+    }
+  ],
+  "manifest": {
+    "title": "Les B2 It Strategy",
+    "time_cap_minutes": 4,
+    "split": "57% current / 43% prereq",
+    "interleaved": true,
+    "item_count": 7
+  },
+  "version": "2.0",
+  "migrated_at": "2026-11-12T06:21:15.156273"
+}

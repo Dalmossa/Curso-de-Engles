@@ -1,0 +1,647 @@
+{
+  "pack_id": "pack_les_a2_it_typescript_basics_v2",
+  "schema_version": "2.0",
+  "lesson_id": "les_a2_it_typescript_basics",
+  "reuse_basis": "cite_only",
+  "items": [
+    {
+      "item_id": "vocab.typescript.interface",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.interface"
+      ],
+      "lesson_id": "les_a2_it_typescript_basics",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "An interface in TypeScript defines:",
+      "options": [
+        "A class implementation",
+        "The shape of an object (contract)",
+        "A runtime validator",
+        "A database table"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "A class implementation",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "The shape of an object (contract)",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "A runtime validator",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "A database table",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:interface"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_typescript_basics_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.137306",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "vocab.typescript.generic",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.generic"
+      ],
+      "lesson_id": "les_a2_it_typescript_basics",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "`Array<string>` uses a:",
+      "options": [
+        "Union type",
+        "Generic",
+        "Type guard",
+        "Tuple"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Union type",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Generic",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Type guard",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Tuple",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:generic"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_typescript_basics_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.137316",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "vocab.typescript.union_type",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.union_type"
+      ],
+      "lesson_id": "les_a2_it_typescript_basics",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "`string | number` is a:",
+      "options": [
+        "Intersection type",
+        "Union type",
+        "Generic constraint",
+        "Tuple type"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Intersection type",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Union type",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Generic constraint",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Tuple type",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:union_type"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_typescript_basics_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.137324",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "vocab.typescript.async_await",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.async_await"
+      ],
+      "lesson_id": "les_a2_it_typescript_basics",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "async / await is syntactic sugar for:",
+      "options": [
+        "Callbacks",
+        "Promises",
+        "Event emitters",
+        "Generators"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Callbacks",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Promises",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Event emitters",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Generators",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:async_await"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_typescript_basics_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.137331",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "vocab.typescript.type_guard",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.type_guard"
+      ],
+      "lesson_id": "les_a2_it_typescript_basics",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "A type guard narrows a type at:",
+      "options": [
+        "Compile time only",
+        "Runtime",
+        "Build time only",
+        "Deploy time"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "Compile time only",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Runtime",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Build time only",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "Deploy time",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:type_guard"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_typescript_basics_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.137338",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "grammar.modals_obligation",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "grammar.modals_obligation"
+      ],
+      "lesson_id": "les_a2_it_typescript_basics",
+      "cefr": "L1",
+      "domain": "grammar",
+      "type": "form_selection",
+      "modality": "text",
+      "stem": "Complete: \"If a variable `x` has type `string | null`, you ______ check if it's null before using it.\"",
+      "options": [
+        "can",
+        "must",
+        "might",
+        "should not"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "can",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "must",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "might",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "should not",
+          "type": "overgeneralization",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "grammar:modals_obligation"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_typescript_basics_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.137346",
+        "review_due": "2027-03-30"
+      }
+    },
+    {
+      "item_id": "vocab.typescript.prereq_type_inference",
+      "schema_version": "2.0",
+      "skill_ids": [
+        "vocab.prereq_type_inference"
+      ],
+      "lesson_id": "les_a2_it_typescript_basics",
+      "cefr": "L1",
+      "domain": "vocabulary",
+      "type": "definition_match",
+      "modality": "text",
+      "stem": "[Prereq] TypeScript can infer the type of `let x = 42` as:",
+      "options": [
+        "string",
+        "number",
+        "any",
+        "unknown"
+      ],
+      "key": "B",
+      "n_options": 4,
+      "distractors": [
+        {
+          "option": "string",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "number",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "any",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        },
+        {
+          "option": "unknown",
+          "type": "semantic_plausible",
+          "br_pt_form": "",
+          "expected_share": 0.25
+        }
+      ],
+      "br_pt_tags": [
+        "vocab:prereq_type_inference"
+      ],
+      "calibration": {
+        "status": "expert_anchored",
+        "a": 1.2,
+        "b": -0.5,
+        "c": 0.0,
+        "n_responses": 0,
+        "a_se": null,
+        "b_se": null,
+        "anchored_by": [
+          "migration_script"
+        ],
+        "last_refit": null
+      },
+      "quality": {
+        "infit_mnsq": null,
+        "outfit_mnsq": null,
+        "point_biserial": null,
+        "difficulty_p": null,
+        "dif_flags": [],
+        "retired": false,
+        "retired_reason": null
+      },
+      "provenance": {
+        "kind": "source_derived",
+        "source_file": "les_a2_it_typescript_basics_v1.md",
+        "source_locator": "migrated from v1",
+        "authored": null,
+        "reviewed_by": null
+      },
+      "assets": {
+        "tts_required": false,
+        "tts_refs": [],
+        "assist_tts_refs": []
+      },
+      "metadata": {
+        "estimated_time_sec": 15,
+        "p_random": 0.25,
+        "authored_at": "2026-11-12T06:21:15.137353",
+        "review_due": "2027-03-30"
+      }
+    }
+  ],
+  "manifest": {
+    "title": "Les A2 It Typescript Basics",
+    "time_cap_minutes": 4,
+    "split": "57% current / 43% prereq",
+    "interleaved": true,
+    "item_count": 7
+  },
+  "version": "2.0",
+  "migrated_at": "2026-11-12T06:21:15.137356"
+}

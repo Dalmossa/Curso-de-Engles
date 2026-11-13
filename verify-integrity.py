@@ -189,8 +189,16 @@ def check_lesson_count() -> None:
     REGISTRY_STATUS: dict[str, str] = {}
     for line in cg.split("\n"):
         rm = re.match(r"^\|\s*`(les_[a-z0-9_]+)`\s*\|", line)
-        if rm and len(line.split("|")) - 2 == 4:  # §4.3 rows only; §1.x/§5.x tables differ
-            REGISTRY_STATUS.setdefault(rm.group(1), line.split("|")[4].strip())
+        if rm:
+            parts = line.split("|")
+            # Support both 4-column (legacy) and 6-column (ADR-021) formats
+            # 4-col: | ID | Title | Source | Status | (4 data cols, 6 total with empty first/last)
+            # 6-col: | ID | Title | Source | New skills | Prereq skills | Status | (6 data cols, 8 total)
+            numDataCols = len(parts) - 2
+            if numDataCols == 4:
+                REGISTRY_STATUS.setdefault(rm.group(1), parts[4].strip())
+            elif numDataCols == 6:
+                REGISTRY_STATUS.setdefault(rm.group(1), parts[6].strip())
     # Match on the DECLARED `**Lesson ID:**`, never the filename. `les_a2_greetings_intro` is
     # authored in `lesson-15min-workplace-greetings.md`, so a stem-based set reported a
     # well-documented lesson as missing AND its file as an orphan — two failures from one wrong

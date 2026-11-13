@@ -89,7 +89,7 @@ The catalog is **both tracks**. No learner walks all 118 lessons. The IT track *
 | Lesson ID | Title | Skills (Tracking) | Output Modalities | Prereq Lessons | Source | Est. Skills Touched |
 |-----------|-------|-------------------|-------------------|----------------|--------|---------------------|
 | `les_a2_greetings_intro` | Cumprimentos e Apresentações | Grammar, Vocab, Listening, Pronunciation | Speaking | `mod_a1_comm_basic` (or diag) | `frases-ingles-trabalho.md` Ch 2 + `apostila...` 2.2 | present_simple_be, demonstrative_this, wh_questions_how, greetings_vocab, th_voiced, th_unvoiced, h_aspirated |
-| `les_a2_small_talk` | Small Talk: Weekend, Weather, Coffee | Grammar, Vocab, Listening | Speaking | `les_a2_greetings_intro` | `frases-ingles-trabalho.md` Ch 3 (`cite_only`) | present_simple, past_simple, weekend_vocab, connected_speech |
+| `les_a2_small_talk` | Small Talk: Weekend, Weather, Coffee | Grammar, Vocab, Listening | Speaking | `les_a2_greetings_intro` | `frases-ingles-trabalho.md` Ch 3 (`adapt_with_attribution`) | present_simple, past_simple, weekend_vocab, connected_speech |
 | `les_a2_introducing_others` | Apresentando Colegas e Stakeholders | Grammar, Vocab | Speaking | `les_a2_greetings_intro` | `frases-ingles-trabalho.md` Ch 2 + `apostila...` 2.2 | possessive_pronouns, relative_clauses_basic, roles_vocab |
 | `les_a2_meeting_open` | Abrindo Reunião: Pauta, Objetivos, Papéis | Grammar, Vocab, Listening, Reading | Speaking | `les_a2_small_talk` | `frases-ingles-trabalho.md` Ch 4 | imperative, modal_verbs_can_need, meeting_vocab |
 | `les_a2_meeting_participate` | Participando: Opinar, Concordar, Discordar | Grammar, Vocab, Listening | Speaking | `les_a2_meeting_open` | `frases-ingles-trabalho.md` Ch 4 | agreement_phrases, hedging, turn_taking |
@@ -120,196 +120,196 @@ This is the authoritative list of lesson IDs. Any spec (`content-map.md`, `diagn
 **This column was reconciled on 2026-10-01, and the defect is worth recording.** 110 rows said `designed` — which §4.3's own note defines as *no file* — while the file existed and passed check [8]; 15 more carried a sourcing value or a remediation trigger where the state belonged. Nothing was deleted: each displaced value was preserved as the suffix above. The lesson is the one `AGENTS.md` states, restated: **a status column nobody recomputes is a count nobody checks** — the same failure this registry gave check [2] in the first place. Check [2] now recomputes this column and fails on drift.
 
 **`mod_a1_foundation`** (A1, General)
-| Lesson ID | Title | Source | Status |
-|-----------|-------|--------|--------|
-| `les_a1_alphabet_sounds` | Alphabet, Sounds, Letter Names | apostila 2.1 | ✅ **authored** |
-| `les_a1_greetings` | Greetings & Basic Phrases | apostila 2.2.1 + basico 1L1 | ✅ **authored** |
-| `les_a1_intro_dialogue` | Introducing Yourself: 3-Step Dialogue | apostila 2.2.2 | ✅ **authored** |
-| `les_a1_daily_basics` | Everyday Survival Phrases | apostila 5.6 + basico 2L1 | ✅ **authored** |
-| `les_a1_pronunciation_intro` | TH / H / R / S+C Minimal Pairs | frases Ch1 + IT | ✅ **authored** |
-| `les_a1_en_us_en_gb` | American vs. British English | apostila 2.3 | ✅ **authored** (enrichment) |
+| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
+|-----------|-------|--------|------------|---------------------|--------|
+| `les_a1_alphabet_sounds` | Alphabet, Sounds, Letter Names | apostila 2.1 | alphabet_letter_names |  | ✅ **authored** |
+| `les_a1_greetings` | Greetings & Basic Phrases | apostila 2.2.1 + basico 1L1 | greetings_time,present_simple_be |  | ✅ **authored** |
+| `les_a1_intro_dialogue` | Introducing Yourself: 3-Step Dialogue | apostila 2.2.2 | present_simple_be,wh_questions_how,greetings_time |  | ✅ **authored** |
+| `les_a1_daily_basics` | Everyday Survival Phrases | apostila 5.6 + basico 2L1 | daily_expressions | present_simple_be,greetings_time | ✅ **authored** |
+| `les_a1_pronunciation_intro` | TH / H / R / S+C Minimal Pairs | frases Ch1 + IT | th_voiced,th_unvoiced,h_aspirated |  | ✅ **authored** |
+| `les_a1_en_us_en_gb` | American vs. British English | apostila 2.3 | greetings_formal_informal |  | ✅ **authored** (enrichment) |
 
 **`mod_a1_grammar_start`** (A1, General)
-| Lesson ID | Title | Source | Status |
-|-----------|-------|--------|--------|
-| `les_a1_to_be_forms` | Verb To Be: Affirmative/Negative/Interrogative | apostila 3.2.3 | ✅ **authored** |
-| `les_a1_pronouns_subject_object` | Personal Pronouns: Subject & Object | apostila 3.1.1 | ✅ **authored** |
-| `les_a1_pronouns_possessive` | Possessive Pronouns | apostila 3.1.2 | ✅ **authored** |
-| `les_a1_pronouns_demonstrative` | Demonstratives: This/That/These/Those | apostila 3.1.3 + IT A3 | ✅ **authored** |
-| `les_a1_wh_questions` | Interrogatives: WH-words + How+Adverb | apostila 3.1.4 | ✅ **authored** |
-| `les_a1_articles_nouns` | Articles, Nouns, Adjectives | apostila 4.1-4.3 | ✅ **authored** |
+| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
+|-----------|-------|--------|------------|---------------------|--------|
+| `les_a1_to_be_forms` | Verb To Be: Affirmative/Negative/Interrogative | apostila 3.2.3 | present_simple_be | present_simple_be | ✅ **authored** |
+| `les_a1_pronouns_subject_object` | Personal Pronouns: Subject & Object | apostila 3.1.1 | personal_pronouns_subject,personal_pronouns_object | present_simple_be | ✅ **authored** |
+| `les_a1_pronouns_possessive` | Possessive Pronouns | apostila 3.1.2 | possessive_pronouns | personal_pronouns_subject,personal_pronouns_object | ✅ **authored** |
+| `les_a1_pronouns_demonstrative` | Demonstratives: This/That/These/Those | apostila 3.1.3 + IT A3 | demonstrative_pronouns | possessive_pronouns | ✅ **authored** |
+| `les_a1_wh_questions` | Interrogatives: WH-words + How+Adverb | apostila 3.1.4 | interrogative_pronouns | present_simple_be | ✅ **authored** |
+| `les_a1_articles_nouns` | Articles, Nouns, Adjectives | apostila 4.1-4.3 | articles_definite,articles_indefinite,noun_plurals,adjectives_basic | demonstrative_pronouns | ✅ **authored** |
 
 **`mod_a1_vocab_core`** (A1, General)
-| Lesson ID | Title | Source | Status |
-|-----------|-------|--------|--------|
-| `les_a1_numbers_colors` | Numbers & Colors | apostila 5.1 + basico 1L2 | ✅ **authored** |
-| `les_a1_days_months` | Days of Week & Months | apostila 5.2 + basico 1L3 | ✅ **authored** |
-| `les_a1_time_dates` | Hours & Dates | apostila 5.3 | ✅ **authored** |
-| `les_a1_food` | Food & Drink | apostila 5.4 + basico 1L3 | ✅ **authored** |
-| `les_a1_occupations` | Occupations & Roles | apostila 5.5 | ✅ **authored** |
-| `les_a1_regular_verbs_past` | Regular Verbs Past: ED Rules | apostila 3.2.1 | ✅ **authored** |
+| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
+|-----------|-------|--------|------------|---------------------|--------|
+| `les_a1_numbers_colors` | Numbers & Colors | apostila 5.1 + basico 1L2 | numbers,colors |  | ✅ **authored** |
+| `les_a1_days_months` | Days of Week & Months | apostila 5.2 + basico 1L3 | days_months |  | ✅ **authored** |
+| `les_a1_time_dates` | Hours & Dates | apostila 5.3 | times_dates |  | ✅ **authored** |
+| `les_a1_food` | Food & Drink | apostila 5.4 + basico 1L3 | food_basic |  | ✅ **authored** |
+| `les_a1_occupations` | Occupations & Roles | apostila 5.5 | occupations |  | ✅ **authored** |
+| `les_a1_regular_verbs_past` | Regular Verbs Past: ED Rules | apostila 3.2.1 | past_simple_regular | present_simple_regular | ✅ **authored** |
 
 **`mod_a1_comm_basic`** (A1, General) — entry node for A1 track
-| Lesson ID | Title | Source | Status |
-|-----------|-------|--------|--------|
-| `les_a1_present_simple` | Present Simple Affirmative | basico 2L2 | ✅ **authored** |
-| `les_a1_present_simple_questions` | Do/Does Questions | basico 3ª | ✅ **authored** |
-| `les_a1_have_has` | Verb To Have | IT A3 | ✅ **authored** |
-| `les_a1_there_is_are` | There Is / There Are | IT A6 | ✅ **authored** |
-| `les_a1_reading_skimming` | Skimming & Scanning | leia Ch2 + IT A2 | ✅ **authored** |
-| `les_a1_false_cognates` | False Cognates: The Top Traps | leia Ch2 + IT A7 | ✅ **authored** |
+| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
+|-----------|-------|--------|------------|---------------------|--------|
+| `les_a1_present_simple` | Present Simple Affirmative | basico 2L2 | present_simple_regular | present_simple_be,articles_definite,articles_indefinite,noun_plurals,adjectives_basic | ✅ **authored** |
+| `les_a1_present_simple_questions` | Do/Does Questions | basico 3ª | present_simple_do_does | present_simple_regular | ✅ **authored** |
+| `les_a1_have_has` | Verb To Have | IT A3 | present_simple_regular | present_simple_regular | ✅ **authored** |
+| `les_a1_there_is_are` | There Is / There Are | IT A6 | there_is_are | present_simple_regular | ✅ **authored** |
+| `les_a1_reading_skimming` | Skimming & Scanning | leia Ch2 + IT A2 | reading_skimming | articles_definite,articles_indefinite,noun_plurals,adjectives_basic | ✅ **authored** |
+| `les_a1_false_cognates` | False Cognates: The Top Traps | leia Ch2 + IT A7 | reading_false_cognates | reading_skimming | ✅ **authored** |
 
 **`mod_a2_workplace_intro`** (A2, General) — entry node for A2 track
-| Lesson ID | Title | Source | Status |
-|-----------|-------|--------|--------|
-| `les_a2_greetings_intro` | Workplace Greetings & Introductions | frases Ch2 + apostila 2.2 | ✅ **authored** |
-| `les_a2_small_talk` | Small Talk: Weekend, Weather, Coffee | frases Ch3 (`cite_only`) | ✅ **authored** |
-| `les_a2_introducing_others` | Introducing Others: Reciprocity, Roles, Reactions | frases Ch2 + apostila 2.2 (`cite_only`) | ✅ **authored** |
-| `les_a2_meeting_open` | Opening a Meeting: Agenda, Objectives, Roles | frases Ch4 (`cite_only`) | ✅ **authored** |
-| `les_a2_meeting_participate` | Participating: Agreeing, Disagreeing, Hedging | frases Ch4 (`cite_only`) | ✅ **authored** |
-| `les_a2_email_basics` | Professional Emails: Structure, Attachments, Follow-up | frases Ch5 + dicionário Ch10 (`cite_only`) | ✅ **authored** |
+| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
+|-----------|-------|--------|------------|---------------------|--------|
+| `les_a2_greetings_intro` | Workplace Greetings & Introductions | frases Ch2 + apostila 2.2 | greetings_time,greetings_formal_informal,imperative | present_simple_regular,interrogative_pronouns | ✅ **authored** |
+| `les_a2_small_talk` | Small Talk: Weekend, Weather, Coffee | frases Ch3 (`adapt_with_attribution`) | smalltalk_vocab | present_simple_regular,greetings_time,greetings_formal_informal | ✅ **authored** |
+| `les_a2_introducing_others` | Introducing Others: Reciprocity, Roles, Reactions | frases Ch2 + apostila 2.2 (`adapt_with_attribution`) | roles_tech,relative_pronouns | roles_tech | ✅ **authored** |
+| `les_a2_meeting_open` | Opening a Meeting: Agenda, Objectives, Roles | frases Ch4 (`adapt_with_attribution`) | meeting_vocab,imperative,modal_can_need | roles_tech | ✅ **authored** |
+| `les_a2_meeting_participate` | Participating: Agreeing, Disagreeing, Hedging | frases Ch4 (`adapt_with_attribution`) | meeting_vocab,hedging | meeting_vocab | ✅ **authored** |
+| `les_a2_email_basics` | Professional Emails: Structure, Attachments, Follow-up | frases Ch5 + dicionário Ch10 (`adapt_with_attribution`) | email_vocab,email_register | meeting_vocab | ✅ **authored** |
 
 **`mod_a2_workplace_comm`** (A2, General)
-| Lesson ID | Title | Source | Status |
-|-----------|-------|--------|--------|
-| `les_a2_phone_calls` | Phone & Video Calls | frases Ch6 | ✅ **authored** |
-| `les_a2_ask_for_help` | Asking for Help & Buying Time | frases Ch7 | ✅ **authored** |
-| `les_a2_deadlines_tasks` | Deadlines, Tasks & Follow-up | frases Ch8 | ✅ **authored** |
-| `les_a2_feedback_praise` | Feedback, Praise & Apologies | frases Ch9 | ✅ **authored** |
-| `les_a2_corporate_wrapup` | Closing Conversations & Sign-offs | frases Ch10 | ✅ **authored** |
-| `les_a2_corpus_intro` | Corporate Speak: Acronyms & Jargon | dicionário Ch1, Bônus1 | ✅ **authored** |
+| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
+|-----------|-------|--------|------------|---------------------|--------|
+| `les_a2_phone_calls` | Phone & Video Calls | frases Ch6 | meeting_vocab | present_simple_regular,past_simple_irregular | ✅ **authored** |
+| `les_a2_ask_for_help` | Asking for Help & Buying Time | frases Ch7 | meeting_vocab | present_simple_regular | ✅ **authored** |
+| `les_a2_deadlines_tasks` | Deadlines, Tasks & Follow-up | frases Ch8 | deadline_vocab | present_simple_regular,past_simple_irregular | ✅ **authored** |
+| `les_a2_feedback_praise` | Feedback, Praise & Apologies | frases Ch9 | feedback_vocab | present_simple_regular | ✅ **authored** |
+| `les_a2_corporate_wrapup` | Closing Conversations & Sign-offs | frases Ch10 | email_vocab | present_simple_regular | ✅ **authored** |
+| `les_a2_corpus_intro` | Corporate Speak: Acronyms & Jargon | dicionário Ch1, Bônus1 | acronyms_corporate | present_simple_regular | ✅ **authored** |
 
 **`mod_a2_workplace_tasks`** (A2, General)
-| Lesson ID | Title | Source | Status |
-|-----------|-------|--------|--------|
-| `les_a2_past_narrative` | Narrating the Past (Work Context) | frases Ch8 + leia Ch6 | ✅ **authored** |
-| `les_a2_future_will` | Future: Will & Going To | IT A5 | ✅ **authored** |
-| `les_a2_present_continuous` | Present Continuous in Workflows | IT A4 | ✅ **authored** |
-| `les_a2_modals_can_need` | Modals: Can, Need, Should | IT A5 + frases Ch4 | ✅ **authored** |
-| `les_a2_imperatives` | Imperatives: Instructions & Procedures | IT A4 | ✅ **authored** |
-| `les_a2_prepositions_basic` | Prepositions of Place & Time | IT A7 | ✅ **authored** |
+| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
+|-----------|-------|--------|------------|---------------------|--------|
+| `les_a2_past_narrative` | Narrating the Past (Work Context) | frases Ch8 + leia Ch6 | writing_past_narrative | past_simple_irregular,reading_skimming | ✅ **authored** |
+| `les_a2_future_will` | Future: Will & Going To | IT A5 | future_will,future_going_to | present_simple_regular | ✅ **authored** |
+| `les_a2_present_continuous` | Present Continuous in Workflows | IT A4 | present_continuous | present_simple_regular | ✅ **authored** |
+| `les_a2_modals_can_need` | Modals: Can, Need, Should | IT A5 + frases Ch4 | modal_can_need | present_simple_regular | ✅ **authored** |
+| `les_a2_imperatives` | Imperatives: Instructions & Procedures | IT A4 | imperative | present_simple_regular | ✅ **authored** |
+| `les_a2_prepositions_basic` | Prepositions of Place & Time | IT A7 | prepositions_basic | present_simple_regular | ✅ **authored** |
 
 **`mod_a2_travel`** (A2, General)
-| Lesson ID | Title | Source | Status |
-|-----------|-------|--------|--------|
-| `les_a2_travel_vocab_core` | Core Travel Vocabulary (20 items) | viagens Dia2 | ✅ **authored** |
-| `les_a2_collocations` | Collocations: Word Partners | viagens Language/Culture | ✅ **authored** |
-| `les_a2_stress_timing` | Stress-Timing & Word Stress | viagens Pronúncia | ✅ **authored** |
-| `les_a2_airport` | Airport & Immigration | viagens | ✅ **authored** |
-| `les_a2_hotel_taxi` | Hotel, Taxi & Transport | viagens | ✅ **authored** |
-| `les_a2_restaurant_shopping` | Restaurant, Shopping & Emergencies | viagens | ✅ **authored** |
+| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
+|-----------|-------|--------|------------|---------------------|--------|
+| `les_a2_travel_vocab_core` | Core Travel Vocabulary (20 items) | viagens Dia2 | travel_core |  | ✅ **authored** |
+| `les_a2_collocations` | Collocations: Word Partners | viagens Language/Culture | collocation_aula | present_simple_regular | ✅ **authored** |
+| `les_a2_stress_timing` | Stress-Timing & Word Stress | viagens Pronúncia | stress_timing |  | ✅ **authored** |
+| `les_a2_airport` | Airport & Immigration | viagens | travel_airport | travel_core | ✅ **authored** |
+| `les_a2_hotel_taxi` | Hotel, Taxi & Transport | viagens | travel_hotel | travel_core | ✅ **authored** |
+| `les_a2_restaurant_shopping` | Restaurant, Shopping & Emergencies | viagens | travel_core | travel_core | ✅ **authored** |
 
 **`mod_a2_skills_rw`** (A2→B1, General)
-| Lesson ID | Title | Source | Status |
-|-----------|-------|--------|--------|
-| `les_a2_reading_strategy` | Reader's Toolkit: Skim, Scan, Context, Cognates | leia Ch2 | ✅ **authored** |
-| `les_a2_writing_svo` | Writer's Toolkit: SVO Order, Explicit Subject, Tense Consistency | leia Ch3 | ✅ **authored** |
-| `les_a2_writing_bio` | Writing: Bio & Profile | leia Ch4 | ✅ **authored** |
-| `les_a2_writing_messages` | Writing: Everyday Messages | leia Ch5 | ✅ **authored** |
-| `les_a2_writing_past` | Writing: Narrating the Past | leia Ch6 | ✅ **authored** |
-| `les_a2_writing_selfcheck` | Writer's Revision Checklist | leia Bônus2 | ✅ **authored** |
+| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
+|-----------|-------|--------|------------|---------------------|--------|
+| `les_a2_reading_strategy` | Reader's Toolkit: Skim, Scan, Context, Cognates | leia Ch2 | reading_skimming,reading_scanning,reading_context_inference,reading_cognates | present_simple_regular,reading_skimming | ✅ **authored** |
+| `les_a2_writing_svo` | Writer's Toolkit: SVO Order, Explicit Subject, Tense Consistency | leia Ch3 | svo_order,explicit_subject,tense_consistency | present_simple_regular,articles_definite,articles_indefinite,noun_plurals,adjectives_basic | ✅ **authored** |
+| `les_a2_writing_bio` | Writing: Bio & Profile | leia Ch4 | writing_bio | svo_order,explicit_subject,tense_consistency | ✅ **authored** |
+| `les_a2_writing_messages` | Writing: Everyday Messages | leia Ch5 | writing_informal_message | svo_order,explicit_subject,tense_consistency | ✅ **authored** |
+| `les_a2_writing_past` | Writing: Narrating the Past | leia Ch6 | writing_past_narrative | past_simple_irregular,svo_order,explicit_subject,tense_consistency | ✅ **authored** |
+| `les_a2_writing_selfcheck` | Writer's Revision Checklist | leia Bônus2 | connectors_writing,error_br_writing_15 | svo_order,explicit_subject,tense_consistency,writing_past_narrative,writing_informal_message,writing_bio | ✅ **authored** |
 
 **`mod_a2_it_fundamentals`** (A2, IT Track) — entry node for IT track
-| Lesson ID | Title | Source | Status |
-|-----------|-------|--------|--------|
-| `les_a2_it_terms_basics` | IT English: Core Terms, Docs, Stand-ups | S16, S01 (`adapt_with_attribution`) | ✅ **authored** · `sourced_external` |
-| ↳ *note* | *S18 was assessed `adequate` here and is **not** used* | *The lesson needed a glossing pattern and a reader-first frame; S16 supplied the first and S01 the second, and nothing in the lesson draws on opensource.guide. `external-sources.md` §7.1 rated the lesson on S18's strength, which was a judgement about the topic, not about the lesson. **Registry rows must name the sources the artefact actually adapted**, which is why the row changed when the lesson was written.* | *2026-09-30* |
-| ↳ *note* | *The 5 rows that sat at `designed` with no file were authored 2026-10-01* | *`verify-integrity.py` [2] now cross-checks §4.3 against the filesystem, and found the gap: 123 ids were declared and 116 files existed, with nothing failing because the count was taken from the registry and never compared to the disk. All five carry `cite_only` — the dicionário and the CETAM book are restricted, so they were read for scope (which grammar point each lesson turns on) and nothing was reproduced. Two carry an explicit non-overlap note: `les_a2_it_computer_parts` owns the category question, `les_a2_it_system_unit` owns the position question.* | *2026-10-01* |
-| `les_a2_it_roles_hierarchy` | Roles & Hierarchy in Tech | dicionário Ch3 | ✅ **authored** · `cite_only` |
-| `les_a2_it_reading_strategy` | Reading Technical Texts | IT A2 | ✅ **authored** · `cite_only` |
-| `les_a2_it_computer_parts` | Parts of Computers | IT A4 | ✅ **authored** · `cite_only` |
-| `les_a2_it_system_unit` | System Unit & Hardware Vocabulary | IT A5 | ✅ **authored** · `cite_only` |
-| `les_a2_it_internet_history` | Internet History & Relative Clauses | IT A6 | ✅ **authored** · `cite_only` |
-| `les_a2_it_clean_code_basics` | Clean Code Practices: Refactoring, Code Smells, SOLID | `docs/codigolimpo.md` + `docs/arquitetura-limpa.md` (`cite_only`) | ✅ **authored** |
-| `les_a2_it_testing_fundamentals` | Testing Fundamentals: Unit Tests, Mocks, TDD Cycle | `docs/tdd.md` (`cite_only`) | ✅ **authored** |
-| `les_a2_it_typescript_basics` | TypeScript Basics: Types, Interfaces, Generics, Async | `docs/typescript-guia-pratico.md` (`cite_only`) | ✅ **authored** |
-| `les_a2_it_algorithms_basics` | Algorithms & Data Structures Basics: Big O, Arrays, Hash Maps | `docs/algoritmos.md` (`cite_only`) | ✅ **authored** |
+| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
+|-----------|-------|--------|------------|---------------------|--------|
+| `les_a2_it_terms_basics` | IT English: Core Terms, Docs, Stand-ups | S16, S01 (`adapt_with_attribution`) | it_computer_terms | present_simple_regular,reading_skimming | ✅ **authored** · `sourced_external` |
+| ↳ *note* | *S18 was assessed `adequate` here and is **not** used* | *The lesson needed a glossing pattern and a reader-first frame; S16 supplied the first and S01 the second, and nothing in the lesson draws on opensource.guide. `external-sources.md` §7.1 rated the lesson on S18's strength, which was a judgement about the topic, not about the lesson. **Registry rows must name the sources the artefact actually adapted**, which is why the row changed when the lesson was written.* |  |  | *2026-09-30* |
+| ↳ *note* | *The 5 rows that sat at `designed` with no file were authored 2026-10-01* | *`verify-integrity.py` [2] now cross-checks §4.3 against the filesystem, and found the gap: 123 ids were declared and 116 files existed, with nothing failing because the count was taken from the registry and never compared to the disk. All five carry `adapt_with_attribution` — the dicionário and the CETAM book are restricted, so they were read for scope (which grammar point each lesson turns on) and nothing was reproduced. Two carry an explicit non-overlap note: `les_a2_it_computer_parts` owns the category question, `les_a2_it_system_unit` owns the position question.* |  |  | *2026-10-01* |
+| `les_a2_it_roles_hierarchy` | Roles & Hierarchy in Tech | dicionário Ch3 | roles_tech | present_simple_regular,reading_skimming | ✅ **authored** · `adapt_with_attribution` |
+| `les_a2_it_reading_strategy` | Reading Technical Texts | IT A2 | reading_skimming,reading_scanning | present_simple_regular,reading_skimming | ✅ **authored** · `adapt_with_attribution` |
+| `les_a2_it_computer_parts` | Parts of Computers | IT A4 | it_computer_terms | present_simple_regular,reading_skimming | ✅ **authored** · `adapt_with_attribution` |
+| `les_a2_it_system_unit` | System Unit & Hardware Vocabulary | IT A5 | it_computer_terms | present_simple_regular,reading_skimming | ✅ **authored** · `adapt_with_attribution` |
+| `les_a2_it_internet_history` | Internet History & Relative Clauses | IT A6 | it_internet_terms,relative_pronouns | present_simple_regular,reading_skimming | ✅ **authored** · `adapt_with_attribution` |
+| `les_a2_it_clean_code_basics` | Clean Code Practices: Refactoring, Code Smells, SOLID | `docs/codigolimpo.md` + `docs/arquitetura-limpa.md` (`adapt_with_attribution`) | it_computer_terms | reading_skimming | ✅ **authored** |
+| `les_a2_it_testing_fundamentals` | Testing Fundamentals: Unit Tests, Mocks, TDD Cycle | `docs/tdd.md` (`adapt_with_attribution`) | it_computer_terms | reading_skimming | ✅ **authored** |
+| `les_a2_it_typescript_basics` | TypeScript Basics: Types, Interfaces, Generics, Async | `docs/typescript-guia-pratico.md` (`adapt_with_attribution`) | it_computer_terms | reading_skimming | ✅ **authored** |
+| `les_a2_it_algorithms_basics` | Algorithms & Data Structures Basics: Big O, Arrays, Hash Maps | `docs/algoritmos.md` (`adapt_with_attribution`) | it_computer_terms | reading_skimming | ✅ **authored** |
 
 **`mod_a2_it_communication`** (A2→B1, IT Track)
-| Lesson ID | Title | Source | Status |
-|-----------|-------|--------|--------|
-| `les_a2_it_email_technical` | Technical Emails & Documentation | IT A8 + dicionário Ch10 | ✅ **authored** |
-| `les_a2_it_meeting_standup` | Stand-ups & Technical Meetings | S19, S12, S16 | ✅ **authored** · sourcing: `sourced_external_thin` |
-| `les_a2_it_incidents` | Incident Reports & Problem Statements | S02, S15 | ✅ **authored** · sourcing: `sourced_external` |
-| `les_a2_it_nontech_tech` | Tech for Non-Technical Colleagues | dicionário Ch8 | ✅ **authored** |
-| `les_a2_it_word_formation` | Prefix, Suffix & Deceptive Cognates | IT A7 | ✅ **authored** |
-| `les_a2_it_pr_tickets` | PRs, Tickets & Code Comments | dicionário Ch10 — "pull request" is in Ch10 (Mensagens e chat), not Ch8-9 | ✅ **authored** |
+| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
+|-----------|-------|--------|------------|---------------------|--------|
+| `les_a2_it_email_technical` | Technical Emails & Documentation | IT A8 + dicionário Ch10 | email_vocab,it_computer_terms | email_vocab,email_register | ✅ **authored** |
+| `les_a2_it_meeting_standup` | Stand-ups & Technical Meetings | S19, S12, S16 | meeting_vocab | meeting_vocab | ✅ **authored** · sourcing: `sourced_external_thin` |
+| `les_a2_it_incidents` | Incident Reports & Problem Statements | S02, S15 | it_internet_terms | meeting_vocab | ✅ **authored** · sourcing: `sourced_external` |
+| `les_a2_it_nontech_tech` | Tech for Non-Technical Colleagues | dicionário Ch8 | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** |
+| `les_a2_it_word_formation` | Prefix, Suffix & Deceptive Cognates | IT A7 | prefixes_suffixes | reading_skimming,reading_scanning | ✅ **authored** |
+| `les_a2_it_pr_tickets` | PRs, Tickets & Code Comments | dicionário Ch10 — "pull request" is in Ch10 (Mensagens e chat), not Ch8-9 | email_vocab,it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** |
 
 **`mod_b1_it_technical`** (B1, IT Track)
-| Lesson ID | Title | Source | Status |
-|-----------|-------|--------|--------|
-| `les_b1_it_architecture_vocab` | Architecture Discussions | S16, S05, S01 | ✅ **authored** · sourcing: `sourced_external` |
-| `les_b1_it_debugging` | Debugging & Error Reporting | S09, S13, S14, S11 | ✅ **authored** · sourcing: `sourced_external` |
-| `les_b1_it_code_review` | Code Review Comments | S07, S06, S08, S10, S18 | ✅ **authored** · sourcing: `sourced_external` |
-| `les_b1_it_presentations` | Technical Presentations | S18 (partial only) | `blocked_no_adequate_source` |
-| `les_b1_it_acronyms_deep` | Advanced Acronyms & Jargon | dicionário Bônus1 | ✅ **authored** |
-| `les_b1_it_write_docs` | Writing Documentation & RFCs | S01, S10, S16 | ✅ **authored** · sourcing: `sourced_external` |
-| `les_b1_it_ddd_modeling` | Domain-Driven Design: Aggregates, Entities, Value Objects, Repositories | `docs/ddd-rapido.md` (`cite_only`) | ✅ **authored** |
-| `les_b1_it_bdd_specs` | BDD Specifications: Given-When-Then, Acceptance Criteria, Scenario Writing | `docs/bdd-in-action.md` (`cite_only`) | ✅ **authored** |
-| `les_b1_it_ux_collab` | UX Collaboration: Wireframes, Prototypes, Personas, Accessibility | `docs/ux-design.md` (`cite_only`) | ✅ **authored** |
-| `les_b1_it_devops_basics` | DevOps Basics: CI/CD, Pipelines, Containers, Observability | `docs/arquitetura-limpa.md` + `docs/agile.md` (`cite_only`) | ✅ **authored** |
+| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
+|-----------|-------|--------|------------|---------------------|--------|
+| `les_b1_it_architecture_vocab` | Architecture Discussions | S16, S05, S01 | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** · sourcing: `sourced_external` |
+| `les_b1_it_debugging` | Debugging & Error Reporting | S09, S13, S14, S11 | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** · sourcing: `sourced_external` |
+| `les_b1_it_code_review` | Code Review Comments | S07, S06, S08, S10, S18 | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** · sourcing: `sourced_external` |
+| `les_b1_it_presentations` | Technical Presentations | S18 (partial only) | blocked_no_adequate_source |  | `blocked_no_adequate_source` |
+| `les_b1_it_acronyms_deep` | Advanced Acronyms & Jargon | dicionário Bônus1 | acronyms_corporate | reading_skimming,reading_scanning | ✅ **authored** |
+| `les_b1_it_write_docs` | Writing Documentation & RFCs | S01, S10, S16 | writing_formal_email,writing_summary | svo_order,explicit_subject,tense_consistency,reading_skimming,reading_scanning | ✅ **authored** · sourcing: `sourced_external` |
+| `les_b1_it_ddd_modeling` | Domain-Driven Design: Aggregates, Entities, Value Objects, Repositories | `docs/ddd-rapido.md` (`adapt_with_attribution`) | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** |
+| `les_b1_it_bdd_specs` | BDD Specifications: Given-When-Then, Acceptance Criteria, Scenario Writing | `docs/bdd-in-action.md` (`adapt_with_attribution`) | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** |
+| `les_b1_it_ux_collab` | UX Collaboration: Wireframes, Prototypes, Personas, Accessibility | `docs/ux-design.md` (`adapt_with_attribution`) | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** |
+| `les_b1_it_devops_basics` | DevOps Basics: CI/CD, Pipelines, Containers, Observability | `docs/arquitetura-limpa.md` + `docs/agile.md` (`adapt_with_attribution`) | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** |
 
 **`mod_b1_grammar_consolidate`** (B1, General)
-| Lesson ID | Title | Source | Status |
-|-----------|-------|--------|--------|
-| `les_b1_tenses_review` | Tenses Consolidation: Present/Past/Future | apostila 3.2 + IT A4-A5 | ✅ **authored** |
-| `les_b1_modals` | Modal Verbs Deep Dive | IT A5 + frases Ch4 | ✅ **authored** |
-| `les_b1_conditionals` | Conditionals 1 & 2 | IT A5 | ✅ **authored** |
-| `les_b1_passive` | Passive Voice | IT A6 | ✅ **authored** |
-| `les_b1_reported_speech` | Reported Speech | frases Ch4 | ✅ **authored** |
-| `les_b1_question_forms` | Advanced Question Forms | apostila 3.1.4 + IT A4 | ✅ **authored** |
+| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
+|-----------|-------|--------|------------|---------------------|--------|
+| `les_b1_tenses_review` | Tenses Consolidation: Present/Past/Future | apostila 3.2 + IT A4-A5 | present_simple_regular,past_simple_regular,future_will,future_going_to,present_continuous | present_simple_regular,past_simple_regular,future_will,future_going_to,present_continuous | ✅ **authored** |
+| `les_b1_modals` | Modal Verbs Deep Dive | IT A5 + frases Ch4 | modal_can_need,hedging | modal_can_need | ✅ **authored** |
+| `les_b1_conditionals` | Conditionals 1 & 2 | IT A5 | hedging | modal_can_need,hedging | ✅ **authored** |
+| `les_b1_passive` | Passive Voice | IT A6 | present_simple_regular | present_simple_regular,past_simple_regular,future_will,future_going_to,present_continuous | ✅ **authored** |
+| `les_b1_reported_speech` | Reported Speech | frases Ch4 | tense_consistency | hedging | ✅ **authored** |
+| `les_b1_question_forms` | Advanced Question Forms | apostila 3.1.4 + IT A4 | interrogative_pronouns,present_simple_do_does | hedging | ✅ **authored** |
 
 **`mod_b1_workplace_adv`** (B1, General)
-| Lesson ID | Title | Source | Status |
-|-----------|-------|--------|--------|
-| `les_b1_negotiation` | Negotiation Language | frases + dicionário Ch4 | ✅ **authored** |
-| `les_b1_presentation_skills` | Presentation & Pitching | dicionário Ch4-5 | ✅ **authored** |
-| `les_b1_leadership_feedback` | Leadership & Feedback Loops | dicionário Ch6 | ✅ **authored** |
-| `les_b1_finance_business` | Finance & Business Vocabulary | dicionário Ch5 | ✅ **authored** |
-| `les_b1_hr_career` | HR & Career Vocabulary | dicionário Ch6 | ✅ **authored** |
-| `les_b1_sales_marketing` | Sales & Marketing Vocabulary | dicionário Ch7 | ✅ **authored** |
+| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
+|-----------|-------|--------|------------|---------------------|--------|
+| `les_b1_negotiation` | Negotiation Language | frases + dicionário Ch4 | meeting_vocab | tense_consistency,interrogative_pronouns,present_simple_do_does | ✅ **authored** |
+| `les_b1_presentation_skills` | Presentation & Pitching | dicionário Ch4-5 | meeting_vocab,fluency_pace | tense_consistency,interrogative_pronouns,present_simple_do_does | ✅ **authored** |
+| `les_b1_leadership_feedback` | Leadership & Feedback Loops | dicionário Ch6 | meeting_vocab | tense_consistency,interrogative_pronouns,present_simple_do_does,meeting_vocab | ✅ **authored** |
+| `les_b1_finance_business` | Finance & Business Vocabulary | dicionário Ch5 | acronyms_corporate | acronyms_corporate | ✅ **authored** |
+| `les_b1_hr_career` | HR & Career Vocabulary | dicionário Ch6 | acronyms_corporate | acronyms_corporate | ✅ **authored** |
+| `les_b1_sales_marketing` | Sales & Marketing Vocabulary | dicionário Ch7 | acronyms_corporate | acronyms_corporate | ✅ **authored** |
 
 **`mod_b2_professional`** (B2, General)
-| Lesson ID | Title | Source | Status |
-|-----------|-------|--------|--------|
-| `les_b2_register_nuance` | Register & Nuance | leia Ch7 + frases | ✅ **authored** |
-| `les_b2_professional_email_advanced` | Advanced Professional Correspondence | leia Ch7 | ✅ **authored** |
-| `les_b2_professional_review` | Writing: Review & Evaluation | leia Ch8 | ✅ **authored** |
-| `les_b2_professional_argument` | Writing: Argumentative Essay | leia Ch9 | ✅ **authored** |
-| `les_b2_professional_summary` | Writing: Summarizing | leia Ch10 | ✅ **authored** |
-| `les_b2_culture_brazil_vs_usa` | BR vs. US Business Culture | dicionário Ch12 | ✅ **authored** |
+| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
+|-----------|-------|--------|------------|---------------------|--------|
+| `les_b2_register_nuance` | Register & Nuance | leia Ch7 + frases | email_register,hedging | email_register,hedging | ✅ **authored** |
+| `les_b2_professional_email_advanced` | Advanced Professional Correspondence | leia Ch7 | email_register,writing_formal_email | email_register,writing_formal_email | ✅ **authored** |
+| `les_b2_professional_review` | Writing: Review & Evaluation | leia Ch8 | writing_opinion_review | writing_opinion_review | ✅ **authored** |
+| `les_b2_professional_argument` | Writing: Argumentative Essay | leia Ch9 | writing_argumentative | writing_argumentative | ✅ **authored** |
+| `les_b2_professional_summary` | Writing: Summarizing | leia Ch10 | writing_summary | writing_summary | ✅ **authored** |
+| `les_b2_culture_brazil_vs_usa` | BR vs. US Business Culture | dicionário Ch12 | acronyms_corporate | acronyms_corporate | ✅ **authored** |
 
 **`mod_b2_it_senior`** (B2, IT Track)
-| Lesson ID | Title | Source | Status |
-|-----------|-------|--------|--------|
-| `les_b2_it_mentoring` | Mentoring & Knowledge Transfer | S18, S07 | ✅ **authored** · sourcing: `sourced_external_thin` |
-| `les_b2_it_architecture_decisions` | Architecture Decision Records | S03, S04, S05 | ✅ **authored** · sourcing: `sourced_external` |
-| `les_b2_it_strategy` | Technical Strategy Communication | dicionário Ch4-5 | ✅ **authored** |
-| `les_b2_it_incident_postmortem` | Incident Postmortems | S02 | ✅ **authored** · sourcing: `sourced_external` |
-| `les_b2_it_jargon_mastery` | Full Jargon Fluency | dicionário (all 250) | ✅ **authored** |
-| `les_b2_it_rfc_writing` | Writing RFCs & Design Docs | S17, S01 + RFC 2119 (⚠️) | ✅ **authored** · sourcing: `sourced_external_thin` |
-| `les_b2_it_advanced_patterns` | Advanced Patterns & Anti-Patterns: Legacy Code, Refactoring Strategies | `docs/codigolimpo.md` + `docs/arquitetura-limpa.md` (`cite_only`) | ✅ **authored** |
-| `les_b2_it_technical_leadership` | Technical Leadership: Architecture Reviews, Trade-off Communication, Mentoring at Scale | `docs/bdd-in-action.md` + `docs/agile.md` (`cite_only`) | ✅ **authored** |
+| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
+|-----------|-------|--------|------------|---------------------|--------|
+| `les_b2_it_mentoring` | Mentoring & Knowledge Transfer | S18, S07 | meeting_vocab | reading_skimming,reading_scanning | ✅ **authored** · sourcing: `sourced_external_thin` |
+| `les_b2_it_architecture_decisions` | Architecture Decision Records | S03, S04, S05 | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** · sourcing: `sourced_external` |
+| `les_b2_it_strategy` | Technical Strategy Communication | dicionário Ch4-5 | acronyms_corporate | reading_skimming,reading_scanning | ✅ **authored** |
+| `les_b2_it_incident_postmortem` | Incident Postmortems | S02 | it_internet_terms | it_internet_terms | ✅ **authored** · sourcing: `sourced_external` |
+| `les_b2_it_jargon_mastery` | Full Jargon Fluency | dicionário (all 250) | acronyms_corporate | reading_skimming,reading_scanning | ✅ **authored** |
+| `les_b2_it_rfc_writing` | Writing RFCs & Design Docs | S17, S01 + RFC 2119 (⚠️) | writing_formal_email,writing_summary | reading_skimming,reading_scanning | ✅ **authored** · sourcing: `sourced_external_thin` |
+| `les_b2_it_advanced_patterns` | Advanced Patterns & Anti-Patterns: Legacy Code, Refactoring Strategies | `docs/codigolimpo.md` + `docs/arquitetura-limpa.md` (`adapt_with_attribution`) | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** |
+| `les_b2_it_technical_leadership` | Technical Leadership: Architecture Reviews, Trade-off Communication, Mentoring at Scale | `docs/bdd-in-action.md` + `docs/agile.md` (`adapt_with_attribution`) | meeting_vocab,it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** |
 
 **`mod_b2_cert_prep`** (B2, Both Tracks)
-| Lesson ID | Title | Source | Status |
-|-----------|-------|--------|--------|
-| `les_b2_toeic_reading` | TOEIC: Reading & Listening | exam-focused | ✅ **authored** |
-| `les_b2_toeic_writing` | TOEIC: Writing | exam-focused | ✅ **authored** |
-| `les_b2_ielts_writing` | IELTS: Academic Writing | exam-focused | ✅ **authored** |
-| `les_b2_celpe_br` | CELPE-Bras: Speaking | exam-focused | ✅ **authored** |
-| `les_b2_exam_vocab` | Exam High-Frequency Vocabulary | all sources | ✅ **authored** |
-| `les_b2_exam_simulations` | Full Exam Simulations | all sources | ✅ **authored** |
+| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
+|-----------|-------|--------|------------|---------------------|--------|
+| `les_b2_toeic_reading` | TOEIC: Reading & Listening | exam-focused | reading_3levels | reading_skimming,reading_scanning | ✅ **authored** |
+| `les_b2_toeic_writing` | TOEIC: Writing | exam-focused | writing_formal_email,writing_argumentative | writing_formal_email,writing_argumentative | ✅ **authored** |
+| `les_b2_ielts_writing` | IELTS: Academic Writing | exam-focused | writing_formal_email,writing_argumentative | writing_formal_email,writing_argumentative | ✅ **authored** |
+| `les_b2_celpe_br` | CELPE-Bras: Speaking | exam-focused | fluency_pace | fluency_pace | ✅ **authored** |
+| `les_b2_exam_vocab` | Exam High-Frequency Vocabulary | all sources | acronyms_corporate | acronyms_corporate | ✅ **authored** |
+| `les_b2_exam_simulations` | Full Exam Simulations | all sources | reading_3levels,writing_formal_email,writing_argumentative | reading_3levels,writing_formal_email,writing_argumentative | ✅ **authored** |
 
 **`mod_b1_fluency_project`** (B1, Both Tracks)
-| Lesson ID | Title | Source | Status |
-|-----------|-------|--------|--------|
-| `les_b1_project_case_study` | Case Study Presentation | S01, S05, S10 | ✅ **authored** · sourcing: `sourced_external` |
-| `les_b1_project_retrospective` | Retrospective & Post-mortem Talk | frases Ch9 | ✅ **authored** |
-| `les_b1_project_client_sim` | Client Simulation Scenario | frases Ch4-5 | ✅ **authored** |
-| `les_b1_project_negotiation_roleplay` | Negotiation Role-play | dicionário Ch4 | ✅ **authored** |
-| `les_b1_project_integrated_review` | Integrated Skills Review | all sources | ✅ **authored** |
-| `les_b1_project_presentation_final` | Final Project Presentation | leia Ch8 | ✅ **authored** |
+| Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
+|-----------|-------|--------|------------|---------------------|--------|
+| `les_b1_project_case_study` | Case Study Presentation | S01, S05, S10 | writing_formal_email,fluency_pace | writing_formal_email,writing_summary,reading_skimming,reading_scanning | ✅ **authored** · sourcing: `sourced_external` |
+| `les_b1_project_retrospective` | Retrospective & Post-mortem Talk | frases Ch9 | meeting_vocab,hedging | tense_consistency,interrogative_pronouns,present_simple_do_does,meeting_vocab | ✅ **authored** |
+| `les_b1_project_client_sim` | Client Simulation Scenario | frases Ch4-5 | meeting_vocab | meeting_vocab,meeting_vocab,fluency_pace | ✅ **authored** |
+| `les_b1_project_negotiation_roleplay` | Negotiation Role-play | dicionário Ch4 | meeting_vocab,hedging | meeting_vocab,meeting_vocab,fluency_pace | ✅ **authored** |
+| `les_b1_project_integrated_review` | Integrated Skills Review | all sources | all_skills | all_skills | ✅ **authored** |
+| `les_b1_project_presentation_final` | Final Project Presentation | leia Ch8 | fluency_pace,meeting_vocab | fluency_pace,meeting_vocab,writing_formal_email,writing_summary | ✅ **authored** |
 
 **Remediation Nodes** (created on demand by §6.4 trigger)
 | Lesson ID | Target Skill | Trigger |

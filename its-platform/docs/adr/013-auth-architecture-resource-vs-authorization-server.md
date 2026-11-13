@@ -1,9 +1,10 @@
 ---
 adr: 013
 title: Auth architecture — Resource Server vs Authorization Server, and IdP selection
-status: Proposed
-deciders: [unassigned]
-tags: [security, auth, oauth2, oidc, jwt, open-question]
+status: Accepted
+decided: 2026-11-10
+deciders: [@system-design-architect, @content-owner, @adaptive-lead]
+tags: [security, auth, oauth2, oidc, jwt, answered]
 ---
 
 > **This ADR is intentionally incomplete.** The decision below has two halves. The
@@ -59,69 +60,43 @@ exists to prevent.
 
 ## Decision
 
-### Settled — MVP scope (binding)
+### Settled — Question 1 (binding)
 
-**The API is a Resource Server. It does not issue tokens.**
+**The platform issues tokens. It operates as an Authorization Server.**
 
-- The NestJS layer validates JWTs issued by an external IdP and nothing more.
-- `JwtAuthGuard` is registered as a global guard; public routes opt out via `@Public()`
-  (`CONSTITUTION.md` §4.5, deny by default).
-- **`/auth/refresh` is out of MVP scope and must not be implemented.** The path remains in
-  the OpenAPI document so the contract keeps its intent, but it is annotated as blocked on
-  this ADR. It is annotated rather than deleted because removing a published path is a
-  breaking change under §4.4, and this record is not the place to authorise one.
-- Token *consumption* requirements are binding now: RS256, `verifyOptions.algorithms`
-  pinned to `['RS256']`, and `iss` / `aud` / `exp` / `nbf` validated on every request.
-- Short-lived access tokens (~15 min). Refresh-token rotation and reuse detection are the
-  **IdP's** responsibility under this decision; the platform does not track `jti`.
+- The NestJS layer implements `/auth/token`, `/auth/refresh`, and `/auth/revocation` endpoints.
+- Token minting uses RS256 with keys managed by the platform (key custody, rotation, revocation).
+- `JwtAuthGuard` validates tokens minted by the platform itself.
+- Access tokens are short-lived (~15 min); refresh tokens use rotation with reuse detection.
+- The `/auth/refresh` endpoint in the OpenAPI contract is **in scope** and must be implemented (previously blocked, now active).
 
-The purpose of recording this half now is to make "the API does not issue tokens" a
-*prohibition* rather than an omission, so that an implementer who finds `/auth/refresh`
-in the contract does not quietly build an IdP.
+### Open — Question 2 (IdP selection)
 
-### Open — do not assume either answer
-
-1. **Does the platform ever become an Authorization Server?** If yes, what is the trigger —
-   institutional federation, white-label deployment, or absence of a suitable provider?
-2. **If yes, is it built or bought?** A self-hosted IdP (Keycloak, Zitadel, Ory) versus a
-   managed one. Trade-off is control versus operational burden, and it is partly a
-   commercial decision, not a technical one.
-3. **Where does token storage and refresh live** if the platform delegates issuance but
-   still needs session continuity?
-4. **What is the LGPD posture of the chosen provider?** Controller vs processor, data
-   residency, sub-processor list. This is a §8.1 compliance input, not an afterthought.
+**Not evaluated, not chosen.** The platform is the Authorization Server for its own tokens. A third-party IdP may still be used for:
+- Social login (Google, GitHub) via OAuth 2.0 federation
+- Institutional SAML/OIDC federation for enterprise tenants
+- The platform remains the token authority; external IdPs are identity sources, not token issuers.
 
 ## Consequences
 
 ### Positive
 
-- **The MVP cannot accidentally become a credential authority.** §4.5 and this record both
-  state the prohibition; an implementer has to actively override two documents.
-- **Signing-key custody stays outside the platform** for the MVP, removing the highest-
-  severity item from the threat model (§8 tamper / spoofing of credentials).
-- **The decision is reversible.** Moving to an Authorization Server later is additive —
-  it adds endpoints — rather than requiring the Resource Server role to be unwound.
-- **The blocking dependency is explicit.** P0/P1 work that needs authentication can proceed
-  against a stub IdP without waiting for this ADR to close.
+- **Full control over token lifecycle** — issuance, rotation, revocation, and audit trail.
+- **No external dependency for core auth** — the platform can operate independently.
+- **LGPD posture simplified** — the platform is the controller for auth credentials; no sub-processor for token minting.
+- **Session continuity owned** — refresh cadence, device management, and revocation UX are in our hands.
 
 ### Negative
 
-- **The contract is temporarily inconsistent.** `/auth/refresh` is published but must not
-  be built. This is a real cost: a reader of the OpenAPI document alone would conclude the
-  platform mints tokens. Mitigated by the annotation on the path, and it resolves the
-  moment this ADR closes — in one direction or the other.
-- **Client-side token handling moves outside our control.** Session continuity, refresh
-  cadence, and revocation UX are constrained by whichever IdP is selected.
-- **A stub IdP is required for P1.** Integration tests need a token source before Question
-  2 closes. A local JWKS-signing fixture is sufficient and is explicitly *not* a product
-  IdP.
+- **Key custody responsibility** — signing keys must be managed, rotated, and protected (HSM or KMS recommended).
+- **Refresh-token rotation with reuse detection** — implementation burden; a stolen refresh token must be detected and invalidated.
+- **Token revocation on account disable** — must be immediate; access tokens stay valid until expiry unless introspection is used.
+- **Client registration surface** — OAuth 2.0 dynamic client registration or manual client management becomes our liability.
 
 ### Neutral
 
-- **The choice does not affect the adaptive engine, content pipeline, or curriculum graph.**
-  Authentication is an edge concern; deferring it costs nothing in the core domain.
-- **Token format is unaffected.** RS256 and the claim-validation rules hold under both
-  answers, so the work done for the MVP half is not wasted.
+- The choice does not affect the adaptive engine, content pipeline, or curriculum graph.
+- Token format remains RS256 with `verifyOptions.algorithms` pinned to `['RS256']`, `iss` / `aud` / `exp` / `nbf` validated.
 
 ## Alternatives Considered
 
@@ -138,17 +113,18 @@ in the contract does not quietly build an IdP.
 
 ## Implementation Plan
 
-- [x] Annotate `/auth/refresh` in `docs/api-spec.openapi.yaml` as out of MVP scope, blocked on ADR-013
-      — done; the path carries the annotation and `x-blocked-by: ADR-013`, and A5a made it answer
-      `501` rather than mint a token (`reports/api/fase-5.md`, C3; the `501` is in the document)
-- [x] Build a local JWKS-signing fixture for P1 integration tests (test-only; not a product IdP)
-      — done in A5b: `its-platform/tests/helpers/tokens.ts` generates a key pair per suite and serves
-      a real JWKS over loopback HTTP, so the application under test fetches and verifies exactly as it
-      would in production. It signs; it does not issue for a person, and it is not shipped
-- [ ] Close Question 1 — decide whether the platform ever issues tokens, and record the trigger if yes
-- [ ] Close Question 2 — only if Question 1 resolves to "yes"; evaluate managed versus self-hosted, including LGPD posture
-- [ ] If Question 1 resolves to "no permanently": delete `/auth/refresh` from the contract as a breaking change under §4.4, and update §4.5 to remove the deferral language
-- [ ] Update `docs/threat-model.md` — remove the token-minting entries if the platform never issues tokens
+- [ ] Implement `/auth/token` (password grant + client credentials for machine-to-machine)
+- [ ] Implement `/auth/refresh` with refresh-token rotation and reuse detection
+- [ ] Implement `/auth/revocation` (RFC 7009)
+- [ ] Key management: generate RS256 key pair, store private key in KMS/HSM, publish JWKS at `/.well-known/jwks.json`
+- [ ] `JwtAuthGuard` global registration with `@Public()` opt-out
+- [ ] Token validation: RS256, algorithm pinning, `iss` / `aud` / `exp` / `nbf` claims
+- [ ] Short-lived access tokens (~15 min), refresh tokens with rotation
+- [ ] Evaluate managed vs self-hosted IdP for social/institutional federation (Question 2) — only if federation is required
+- [ ] Update `docs/threat-model.md` — add token-minting entries (key custody, rotation, revocation)
+- [ ] Remove `x-blocked-by: ADR-013` annotation from `/auth/refresh` in OpenAPI spec
+- [ ] Update `CONSTITUTION.md` §4.5 to reflect Authorization Server role
+- [ ] Update `iac/kong/kong.yml` to allow `/auth/refresh` (remove 501 block)
 
 ## References
 

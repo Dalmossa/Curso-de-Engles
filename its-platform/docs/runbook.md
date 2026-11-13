@@ -53,6 +53,104 @@ kubectl -n its-platform-prod rollout undo deploy/its-platform
 | Differential | Every 6 hours | 7 days |
 | WAL archiving | Continuous | 7 days |
 
+### 3.1.1 Backup Repository Setup (S3 + KMS)
+
+#### S3 Provider Selection
+| Environment | Provider | Bucket | Region |
+|-------------|----------|--------|--------|
+| dev | MinIO (local) | its-platform-pgbackrest-dev | local |
+| staging | AWS S3 | its-platform-pgbackrest-staging | us-east-1 |
+| prod | AWS S3 | its-platform-pgbackrest-prod | us-east-1 |
+
+#### S3 Bucket Configuration
+```bash
+# Create bucket with versioning
+aws s3api create-bucket \
+  --bucket its-platform-pgbackrest-prod \
+  --region us-east-1
+
+# Enable versioning
+aws s3api put-bucket-versioning \
+  --bucket its-platform-pgbackrest-prod \
+  --versioning-configuration Status=Enabled
+
+# Enable server-side encryption with KMS
+aws s3api put-bucket-encryption \
+  --bucket its-platform-pgbackrest-prod \
+  --server-side-encryption-configuration '{
+    "Rules": [{
+      "ApplyServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "aws:kms",
+        "KMSMasterKeyID": "arn:aws:kms:us-east-1:123456789012:key/xxx"
+      }
+    }]
+  }'
+```
+
+#### KMS Key Configuration
+```bash
+# Create KMS key with automatic rotation (90 days)
+aws kms create-key \
+  --description "pgBackRest backup encryption key for its-platform" \
+  --key-usage ENCRYPT_DECRYPT \
+  --origin AWS_KMS \
+  --policy '{
+    "Version": "2012-10-17",
+    "Statement": [{
+      "Sid": "Allow pgBackRest role",
+      "Effect": "Allow",
+      "Principal": {"AWS": "arn:aws:iam::123456789012:role/pgbackrest-role"},
+      "Action": ["kms:Encrypt", "kms:Decrypt", "kms:ReEncrypt*", "kms:GenerateDataKey*", "kms:DescribeKey"],
+      "Resource": "*"
+    }]
+  }'
+```
+
+#### IAM Policy for pgBackRest
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "pgBackRestBucketAccess",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:ListBucket",
+        "s3:DeleteObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::its-platform-pgbackrest-*",
+        "arn:aws:s3:::its-platform-pgbackrest-*/*"
+      ]
+    },
+    {
+      "Sid": "KMSKeyUsage",
+      "Effect": "Allow",
+      "Action": [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*",
+        "kms:DescribeKey"
+      ],
+      "Resource": "arn:aws:kms:us-east-1:123456789012:key/xxx"
+    }
+  ]
+}
+```
+
+#### Kubernetes Secret Creation
+```bash
+# Create secret for each environment
+kubectl create secret generic its-platform-pgbackrest-s3 \
+  --namespace its-platform-prod \
+  --from-literal=access-key=<AWS_ACCESS_KEY_ID> \
+  --from-literal=secret-key=<AWS_SECRET_ACCESS_KEY> \
+  --from-literal=endpoint=s3.us-east-1.amazonaws.com
+```
+
 ### 3.2 Backup Status Check
 ```bash
 # Check backup status

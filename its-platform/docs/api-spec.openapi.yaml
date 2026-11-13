@@ -42,7 +42,7 @@ info:
     derived-at: 2026-10-14
     spec-blobs:
       specs/assessment-item-spec.md: ccad934d366d82e3051f14274e994f207b35b47f
-      specs/curriculum-graph-spec.md: b809be2ab388d109dece8a800872aade5424b16c
+      specs/curriculum-graph-spec.md: f1f19744ff49bccd8c402026e1a3f86cc07b3e86
       specs/listening-corpus-spec.md: 295e1b8546d0bd1fc6852b363d35e93947535f2f
       specs/post-lesson-practice-spec.md: 9566fe6088035f5a8bd88ac754503c26c7dd9c59
       specs/stats-progress-evaluation-spec.md: a8ae6bb6812a2da4ef3380879e105a7184d86cc8
@@ -137,6 +137,67 @@ components:
             provider:
               type: string
 
+    # ============================================================
+    # Consent (LGPD)
+    # ============================================================
+    ConsentPurpose:
+      type: string
+      enum: [analytics, marketing, personalization, third_party_sharing, sensitive_processing]
+      description: Finalidade do consentimento LGPD (Art. 7, 8 - granular, específico, informado)
+
+    Consent:
+      type: object
+      required: [consentId, learnerId, purpose, granted, version]
+      properties:
+        consentId:
+          type: string
+          format: uuid
+        learnerId:
+          type: string
+          format: uuid
+        purpose:
+          $ref: '#/components/schemas/ConsentPurpose'
+        granted:
+          type: boolean
+          description: Se o consentimento está ativo (true) ou revogado (false)
+        grantedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Timestamp quando o consentimento foi concedido
+        withdrawnAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Timestamp quando o consentimento foi revogado (LGPD Art. 8)
+        version:
+          type: string
+          description: Versão da política de privacidade no momento do consentimento
+        ipHash:
+          type: string
+          nullable: true
+          description: Hash do IP para auditoria (LGPD Art. 7, §1)
+        userAgent:
+          type: string
+          nullable: true
+          description: User agent para auditoria
+
+    GrantConsentRequest:
+      type: object
+      required: [purpose]
+      additionalProperties: false
+      properties:
+        purpose:
+          $ref: '#/components/schemas/ConsentPurpose'
+
+    ConsentListResponse:
+      type: object
+      required: [consents]
+      properties:
+        consents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Consent'
 
     # ============================================================
     # Placement / Diagnostic
@@ -305,7 +366,7 @@ components:
             properties:
               item_id:
                 type: string
-                pattern: '^(grm|voc|rdg|prn|lst|coh)_[a-z0-9_.-]+$'
+                pattern: '^((grm|voc|rdg|prn|lst|coh)_[a-z0-9_.-]+|(grammar|vocab|reading|pronunciation|listening|coherence)\.[a-z0-9_.-]+)$'
               response:
                 oneOf:
                   - type: string
@@ -1014,6 +1075,38 @@ paths:
               schema:
                 $ref: '#/components/schemas/Problem'
 
+  /auth/revocation:
+    post:
+      tags: [auth]
+      summary: Revoke a token (RFC 7009)
+      operationId: revokeToken
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [token]
+              additionalProperties: false
+              properties:
+                token:
+                  type: string
+                  description: The token to revoke
+                token_type_hint:
+                  type: string
+                  enum: [access_token, refresh_token]
+                  description: Hint about the type of token (optional)
+      responses:
+        '200':
+          description: Token revoked successfully (or was already invalid). Empty body per RFC 7009.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                description: Empty response body per RFC 7009
+
   /auth/me:
     get:
       tags: [auth]
@@ -1091,6 +1184,151 @@ paths:
                           type: string
         '503':
           description: JWKS temporarily unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  # ============================================================
+  # Consent (LGPD)
+  # ============================================================
+  /learners/{learner_id}/consents:
+    get:
+      tags: [consent]
+      summary: List all consents for a learner
+      operationId: listConsents
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: learner_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of consents
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the authority this operation requires
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Learner not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+    post:
+      tags: [consent]
+      summary: Grant consent for a specific purpose
+      operationId: grantConsent
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: learner_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrantConsentRequest'
+      responses:
+        '201':
+          description: Consent granted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Consent'
+        '400':
+          description: Invalid request or consent already granted
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the authority this operation requires
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Learner not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Consent already granted for this purpose
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /learners/{learner_id}/consents/{purpose}:
+    delete:
+      tags: [consent]
+      summary: Withdraw consent for a specific purpose (LGPD Art. 8)
+      operationId: withdrawConsent
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: learner_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: purpose
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ConsentPurpose'
+      responses:
+        '200':
+          description: Consent withdrawn
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Consent'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the authority this operation requires
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Learner not found or consent not found
           content:
             application/problem+json:
               schema:

@@ -1,8 +1,9 @@
 ---
 adr: 021
 title: Per-lesson skill metadata — canonical source, canonical ids, and fail-closed gating
-status: Proposed
+status: Accepted
 date: 2026-10-10
+decided: 2026-11-10
 authors: [@system-design-architect]
 deciders: [@system-design-architect, @content-owner, @adaptive-lead]
 consulted: [@backend-lead, @qa-sdet]
