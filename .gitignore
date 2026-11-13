@@ -32,3 +32,6 @@ pnpm-debug.log*
 Thumbs.db
 .idea/
 *.swp
+# Livros protegidos (corpus de referência local)
+Ingles/output/
+Ingles/
