@@ -160,6 +160,30 @@ data:
             action: replace
             target_label: pod
 
+      # pgBackRest exporter (backup metrics)
+      - job_name: 'pgbackrest'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - its-platform-dev
+                - its-platform-staging
+                - its-platform-prod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_component]
+            action: keep
+            regex: postgresql
+          - source_labels: [__meta_kubernetes_pod_name]
+            action: replace
+            target_label: pod
+          - source_labels: [__meta_kubernetes_pod_container_name]
+            action: keep
+            regex: pgbackrest
+          - action: replace
+            regex: (.*):(\d+)
+            target_label: __address__
+            replacement: $1:8432
+
       # Kong exporter
       - job_name: 'kong'
         kubernetes_sd_configs:
@@ -183,7 +207,7 @@ data:
             labels:
               severity: P1
             annotations:
-              summary: "{{ $labels.job }} is down"
+              summary: "{{ `{{ $labels.job }}` }} is down"
               runbook: "https://wiki.its.example.com/runbook#p1-service-down"
 
           - alert: HighErrorRate
@@ -196,7 +220,7 @@ data:
             labels:
               severity: P1
             annotations:
-              summary: "High error rate on {{ $labels.service }}"
+              summary: "High error rate on {{ `{{ $labels.service }}` }}"
               runbook: "https://wiki.its.example.com/runbook#p1-service-down"
 
           - alert: HighLatencyP95
@@ -207,7 +231,7 @@ data:
             labels:
               severity: P2
             annotations:
-              summary: "High p95 latency on {{ $labels.service }}"
+              summary: "High p95 latency on {{ `{{ $labels.service }}` }}"
               runbook: "https://wiki.its.example.com/runbook#p2-high-latency"
 
           - alert: DatabaseConnectionsHigh
@@ -237,7 +261,7 @@ data:
             labels:
               severity: P2
             annotations:
-              summary: "Celery queue {{ $labels.queue }} backlog > 1000"
+              summary: "Celery queue {{ `{{ $labels.queue }}` }} backlog > 1000"
               runbook: "https://wiki.its.example.com/runbook#p2-celery-backlog"
 
           - alert: FailedLoginsSpike
@@ -257,7 +281,7 @@ data:
             labels:
               severity: P3
             annotations:
-              summary: "TLS certificate expires in {{ $value }} days"
+              summary: "TLS certificate expires in {{ `{{ $value }}` }} days"
               runbook: "https://wiki.its.example.com/runbook#p3-cert-renewal"
 
       - name: its-platform-warning
@@ -270,7 +294,7 @@ data:
             labels:
               severity: P2
             annotations:
-              summary: "Memory usage > 85% on {{ $labels.pod }}"
+              summary: "Memory usage > 85% on {{ `{{ $labels.pod }}` }}"
 
           - alert: HighCPUUsage
             expr: |
@@ -279,7 +303,7 @@ data:
             labels:
               severity: P2
             annotations:
-              summary: "CPU usage > 85% on {{ $labels.pod }}"
+              summary: "CPU usage > 85% on {{ `{{ $labels.pod }}` }}"
 
           - alert: DiskSpaceLow
             expr: |
@@ -288,7 +312,7 @@ data:
             labels:
               severity: P2
             annotations:
-              summary: "Disk space < 15% on {{ $labels.instance }}"
+              summary: "Disk space < 15% on {{ `{{ $labels.instance }}` }}"
 
           - alert: PodRestartLoop
             expr: |
@@ -297,7 +321,7 @@ data:
             labels:
               severity: P2
             annotations:
-              summary: "Pod {{ $labels.pod }} restarting frequently"
+              summary: "Pod {{ `{{ $labels.pod }}` }} restarting frequently"
 
       - name: its-platform-business
         interval: 60s
@@ -350,6 +374,59 @@ data:
             annotations:
               summary: "Next activity selection failures > 5%"
 
+      - name: its-platform-backup
+        interval: 60s
+        rules:
+          - alert: PgBackRestBackupFailed
+            expr: |
+              pgbackrest_backup_status{status="failed"} == 1
+            for: 1m
+            labels:
+              severity: P1
+            annotations:
+              summary: "pgBackRest backup failed for stanza {{ `{{ $labels.stanza }}` }}"
+              runbook: "https://wiki.its.example.com/runbook#p1-pgbackrest-backup-failed"
+
+          - alert: PgBackRestBackupTimeout
+            expr: |
+              pgbackrest_backup_duration_seconds > 3600
+            for: 5m
+            labels:
+              severity: P2
+            annotations:
+              summary: "pgBackRest backup taking longer than 1 hour"
+              runbook: "https://wiki.its.example.com/runbook#p2-pgbackrest-timeout"
+
+          - alert: PgBackRestWalArchivalLag
+            expr: |
+              pgbackrest_wal_archival_lag_seconds > 300
+            for: 5m
+            labels:
+              severity: P2
+            annotations:
+              summary: "pgBackRest WAL archival lag > 5 minutes"
+              runbook: "https://wiki.its.example.com/runbook#p2-wal-lag"
+
+          - alert: PgBackRestRestoreTestFailed
+            expr: |
+              pgbackrest_restore_test_status{status="failed"} == 1
+            for: 1m
+            labels:
+              severity: P1
+            annotations:
+              summary: "Weekly pgBackRest restore test failed"
+              runbook: "https://wiki.its.example.com/runbook#p1-restore-test-failed"
+
+          - alert: PgBackRestRepositoryUnreachable
+            expr: |
+              pgbackrest_repo_reachable == 0
+            for: 1m
+            labels:
+              severity: P1
+            annotations:
+              summary: "pgBackRest repository unreachable"
+              runbook: "https://wiki.its.example.com/runbook#p1-repo-unreachable"
+
       - name: its-platform-slo
         interval: 60s
         rules:
@@ -364,7 +441,7 @@ data:
             labels:
               severity: P1
             annotations:
-              summary: "SLO burn rate 2x for {{ $labels.service }}"
+              summary: "SLO burn rate 2x for {{ `{{ $labels.service }}` }}"
 
           - alert: SLOBurnRate10x
             expr: |
@@ -377,4 +454,5 @@ data:
             labels:
               severity: P1
             annotations:
-              summary: "SLO burn rate 10x for {{ $labels.service }} - PAGE IMMEDIATELY"
+              summary: "SLO burn rate 10x for {{ `{{ $labels.service }}` }} - PAGE IMMEDIATELY"
+{{- end }}

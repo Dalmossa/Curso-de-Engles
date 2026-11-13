@@ -1,0 +1,144 @@
+# ===========================================================================
+# ITS Platform — Grafana Datasources
+# ===========================================================================
+# Data source configuration for Grafana.
+# Includes Prometheus, Loki, Tempo, and Alertmanager.
+# ---------------------------------------------------------------------------
+apiVersion: 1
+
+datasources:
+  # ---------------------------------------------------------------------------
+  # Prometheus - Metrics
+  # ---------------------------------------------------------------------------
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
+    jsonData:
+      timeInterval: "30s"
+      queryTimeout: "60s"
+      httpMethod: "POST"
+      # Exemplar support for trace correlation
+      exemplarTraceIdDestinations:
+        - name: traceID
+          datasourceUid: tempo
+    secureJsonData: {}
+
+  # ---------------------------------------------------------------------------
+  # Loki - Logs
+  # ---------------------------------------------------------------------------
+  - name: Loki
+    type: loki
+    uid: loki
+    access: proxy
+    url: http://loki:3100
+    editable: false
+    jsonData:
+      maxLines: 1000
+      derivedFields:
+        # Link trace IDs to Tempo
+        - name: trace_id
+          matcherRegex: 'trace_id=([a-f0-9]{32})'
+          url: '$${__value.raw}'
+          datasourceUid: tempo
+        # Link span IDs to Tempo
+        - name: span_id
+          matcherRegex: 'span_id=([a-f0-9]{16})'
+          url: '$${__value.raw}'
+          datasourceUid: tempo
+        # Link learner IDs to custom dashboard
+        - name: learner_id
+          matcherRegex: 'learner_id=([a-f0-9-]{36})'
+          url: '/d/learner-dashboard?var-learner_id=${__value.raw}'
+        # Link session IDs to custom dashboard
+        - name: session_id
+          matcherRegex: 'session_id=([a-f0-9-]{36})'
+          url: '/d/session-dashboard?var-session_id=${__value.raw}'
+        # Link lesson IDs to custom dashboard
+        - name: lesson_id
+          matcherRegex: 'lesson_id=(les_[a-z0-9_]+)'
+          url: '/d/lesson-dashboard?var-lesson_id=${__value.raw}'
+    secureJsonData: {}
+
+  # ---------------------------------------------------------------------------
+  # Tempo - Traces
+  # ---------------------------------------------------------------------------
+  - name: Tempo
+    type: tempo
+    uid: tempo
+    access: proxy
+    url: http://tempo:3200
+    editable: false
+    jsonData:
+      # Trace to logs correlation
+      tracesToLogs:
+        datasourceUid: loki
+        tags: ['service.name', 'service.namespace', 'service.instance.id']
+        spanStartTimeShift: '-1h'
+        spanEndTimeShift: '1h'
+        filterByTraceID: true
+        filterBySpanID: true
+      # Logs to traces correlation
+      logsToTraces:
+        datasourceUid: loki
+        tags: ['trace_id', 'span_id']
+      # Metrics to traces correlation
+      metricsToTraces:
+        datasourceUid: prometheus
+        tags: ['service.name', 'service.namespace']
+      # Service map
+      serviceMap:
+        datasourceUid: prometheus
+      # Search configuration
+      search:
+        enabled: true
+        defaultTag: service.name
+      # Node graph (service map)
+      nodeGraph:
+        enabled: true
+    secureJsonData: {}
+
+  # ---------------------------------------------------------------------------
+  # Alertmanager - Alerting
+  # ---------------------------------------------------------------------------
+  - name: Alertmanager
+    type: alertmanager
+    uid: alertmanager
+    access: proxy
+    url: http://alertmanager:9093
+    editable: false
+    jsonData:
+      implementation: "prometheus"
+    secureJsonData: {}
+
+  # ---------------------------------------------------------------------------
+  # Prometheus (Backup/DR) - Secondary metrics source
+  # ---------------------------------------------------------------------------
+  - name: Prometheus-DR
+    type: prometheus
+    uid: prometheus-dr
+    access: proxy
+    url: http://prometheus-dr:9090
+    editable: false
+    jsonData:
+      timeInterval: "30s"
+      queryTimeout: "60s"
+      httpMethod: "POST"
+    secureJsonData: {}
+
+  # ---------------------------------------------------------------------------
+  # Jaeger (Legacy/Alternative) - Traces
+  # ---------------------------------------------------------------------------
+  - name: Jaeger
+    type: jaeger
+    uid: jaeger
+    access: proxy
+    url: http://jaeger:16686
+    editable: false
+    jsonData:
+      tracesToLogs:
+        datasourceUid: loki
+    secureJsonData: {}

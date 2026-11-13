@@ -1,0 +1,260 @@
+{
+  "dashboard": {
+    "title": "ITS Platform - Infrastructure Overview",
+    "tags": ["its-platform", "infrastructure", "kubernetes"],
+    "timezone": "utc",
+    "refresh": "30s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "title": "Cluster Health",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+        "targets": [
+          {
+            "expr": "count(up{job=\"kubernetes-nodes\"} == 1)",
+            "legendFormat": "Ready Nodes",
+            "refId": "A"
+          },
+          {
+            "expr": "count(up{job=\"kubernetes-nodes\"})",
+            "legendFormat": "Total Nodes",
+            "refId": "B"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": null},
+                {"color": "green", "value": 1}
+              ]
+            }
+          }
+        },
+        "options": {
+          "reduceOptions": {"values": false, "calcs": ["lastNotNull"], "fields": ""},
+          "orientation": "auto",
+          "textMode": "value",
+          "colorMode": "value"
+        }
+      },
+      {
+        "title": "Pod Status",
+        "type": "piechart",
+        "gridPos": {"h": 8, "w": 6, "x": 6, "y": 0},
+        "targets": [
+          {
+            "expr": "count(kube_pod_status_phase{phase=\"Running\",namespace=~\"its-platform-.*\"}) by (phase)",
+            "legendFormat": "Running",
+            "refId": "A"
+          },
+          {
+            "expr": "count(kube_pod_status_phase{phase=\"Pending\",namespace=~\"its-platform-.*\"}) by (phase)",
+            "legendFormat": "Pending",
+            "refId": "B"
+          },
+          {
+            "expr": "count(kube_pod_status_phase{phase=\"Failed\",namespace=~\"its-platform-.*\"}) by (phase)",
+            "legendFormat": "Failed",
+            "refId": "C"
+          },
+          {
+            "expr": "count(kube_pod_status_phase{phase=\"Succeeded\",namespace=~\"its-platform-.*\"}) by (phase)",
+            "legendFormat": "Succeeded",
+            "refId": "D"
+          },
+          {
+            "expr": "count(kube_pod_status_phase{phase=\"Unknown\",namespace=~\"its-platform-.*\"}) by (phase)",
+            "legendFormat": "Unknown",
+            "refId": "E"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": null}
+              ]
+            }
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "table", "placement": "right"},
+          "tooltip": {"mode": "single"}
+        }
+      },
+      {
+        "title": "CPU Usage by Namespace",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+        "targets": [
+          {
+            "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=~\"its-platform-.*\",container!=\"\"}[5m])) by (namespace)",
+            "legendFormat": "{{namespace}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "cpu",
+            "min": 0
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom"},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "Memory Usage by Namespace",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+        "targets": [
+          {
+            "expr": "sum(container_memory_usage_bytes{namespace=~\"its-platform-.*\",container!=\"\"}) by (namespace)",
+            "legendFormat": "{{namespace}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "bytes",
+            "min": 0
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom"},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "Network I/O",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+        "targets": [
+          {
+            "expr": "sum(rate(node_network_receive_bytes_total[5m])) by (instance)",
+            "legendFormat": "RX - {{instance}}",
+            "refId": "A"
+          },
+          {
+            "expr": "sum(rate(node_network_transmit_bytes_total[5m])) by (instance)",
+            "legendFormat": "TX - {{instance}}",
+            "refId": "B"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "Bps",
+            "min": 0
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom"},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "Disk Usage",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+        "targets": [
+          {
+            "expr": "(node_filesystem_size_bytes - node_filesystem_avail_bytes) / node_filesystem_size_bytes * 100",
+            "legendFormat": "{{instance}} - {{device}} ({{fstype}})",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "orange", "value": 80},
+                {"color": "red", "value": 90}
+              ]
+            }
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom"},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "PVC Usage",
+        "type": "table",
+        "gridPos": {"h": 10, "w": 24, "x": 0, "y": 24},
+        "targets": [
+          {
+            "expr": "kubelet_volume_stats_capacity_bytes",
+            "legendFormat": "Capacity",
+            "refId": "A",
+            "format": "table"
+          },
+          {
+            "expr": "kubelet_volume_stats_available_bytes",
+            "legendFormat": "Available",
+            "refId": "B",
+            "format": "table"
+          },
+          {
+            "expr": "kubelet_volume_stats_used_bytes",
+            "legendFormat": "Used",
+            "refId": "C",
+            "format": "table"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "bytes"
+          },
+          "overrides": [
+            {
+              "matcher": {"type": "byName", "options": "Capacity"},
+              "properties": [{"id": "unit", "value": "bytes"}]
+            },
+            {
+              "matcher": {"type": "byName", "options": "Available"},
+              "properties": [{"id": "unit", "value": "bytes"}]
+            },
+            {
+              "matcher": {"type": "byName", "options": "Used"},
+              "properties": [{"id": "unit", "value": "bytes"}]
+            }
+          ]
+        },
+        "options": {
+          "showHeader": true,
+          "cellHeight": "sm"
+        }
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "name": "namespace",
+          "type": "query",
+          "datasource": "Prometheus",
+          "query": "label_values(kube_pod_info, namespace)",
+          "refresh": 1,
+          "multi": true,
+          "includeAll": true,
+          "allValue": ".*"
+        }
+      ]
+    }
+  },
+  "overwrite": true
+}

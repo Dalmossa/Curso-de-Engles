@@ -75,6 +75,7 @@ spec:
                 name: {{ include "its-platform.fullname" . }}-pgbackrest-config
             - name: pgbackrest-spool
               emptyDir: {}
+{{- end }}
 ---
 apiVersion: batch/v1
 kind: CronJob

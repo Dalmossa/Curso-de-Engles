@@ -1,0 +1,221 @@
+{
+  "dashboard": {
+    "title": "ITS Platform - Distributed Tracing",
+    "tags": ["its-platform", "tracing", "tempo", "opentelemetry"],
+    "timezone": "utc",
+    "refresh": "30s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "title": "Service Map",
+        "type": "nodeGraph",
+        "gridPos": {"h": 12, "w": 24, "x": 0, "y": 0},
+        "datasource": "Tempo",
+        "targets": [
+          {
+            "queryType": "serviceGraph",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "custom": {"nodeGraph": {"nodeColorField": "throughput", "showCircularNodes": true}}
+          }
+        },
+        "options": {
+          "nodeGraph": {
+            "showLegend": true,
+            "layout": {"type": "hierarchical"},
+            "nodes": {"showLabels": true},
+            "edges": {"showLabels": true}
+          }
+        }
+      },
+      {
+        "title": "Trace Rate by Service",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+        "datasource": "Tempo",
+        "targets": [
+          {
+            "expr": "sum(rate(tempo_spanmetrics_calls_total[5m])) by (service_name)",
+            "legendFormat": "{{service_name}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ops",
+            "min": 0
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom", "calcs": ["mean", "max", "lastNotNull"]},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "Error Rate by Service (from Traces)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
+        "datasource": "Tempo",
+        "targets": [
+          {
+            "expr": "sum(rate(tempo_spanmetrics_calls_total{status_code=~\"5..\"}[5m])) by (service_name) / sum(rate(tempo_spanmetrics_calls_total[5m])) by (service_name)",
+            "legendFormat": "{{service_name}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "min": 0,
+            "max": 1,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "orange", "value": 0.01},
+                {"color": "red", "value": 0.05}
+              ]
+            }
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom", "calcs": ["mean", "max", "lastNotNull"]},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "Latency p50/p95/p99 by Service (from Traces)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20},
+        "datasource": "Tempo",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, sum(rate(tempo_spanmetrics_latency_bucket[5m])) by (le, service_name))",
+            "legendFormat": "p50 - {{service_name}}",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(tempo_spanmetrics_latency_bucket[5m])) by (le, service_name))",
+            "legendFormat": "p95 - {{service_name}}",
+            "refId": "B"
+          },
+          {
+            "expr": "histogram_quantile(0.99, sum(rate(tempo_spanmetrics_latency_bucket[5m])) by (le, service_name))",
+            "legendFormat": "p99 - {{service_name}}",
+            "refId": "C"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "min": 0
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom"},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "Span Kind Distribution",
+        "type": "piechart",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20},
+        "datasource": "Tempo",
+        "targets": [
+          {
+            "expr": "sum(rate(tempo_spanmetrics_calls_total[5m])) by (span_kind)",
+            "legendFormat": "{{span_kind}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [{"color": "green", "value": null}]
+            }
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "table", "placement": "right", "calcs": ["mean", "lastNotNull"]},
+          "tooltip": {"mode": "single"}
+        }
+      },
+      {
+        "title": "Top Operations by Latency",
+        "type": "table",
+        "gridPos": {"h": 10, "w": 24, "x": 0, "y": 28},
+        "datasource": "Tempo",
+        "targets": [
+          {
+            "expr": "topk(20, histogram_quantile(0.95, sum(rate(tempo_spanmetrics_latency_bucket[5m])) by (le, service_name, operation_name)))",
+            "legendFormat": "{{service_name}} - {{operation_name}}",
+            "refId": "A",
+            "format": "table"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        },
+        "options": {
+          "showHeader": true,
+          "cellHeight": "sm",
+          "sortBy": "Value",
+          "sortDesc": true
+        }
+      },
+      {
+        "title": "Recent Traces",
+        "type": "logs",
+        "gridPos": {"h": 12, "w": 24, "x": 0, "y": 38},
+        "datasource": "Tempo",
+        "targets": [
+          {
+            "queryType": "traceql",
+            "expr": "{span.status = error} | limit 50",
+            "legendFormat": "Error Traces",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "custom": {}
+          }
+        },
+        "options": {
+          "showTime": true,
+          "showLabels": true,
+          "wrap": true,
+          "prettifyLogMessage": true,
+          "enableLogDetails": true,
+          "order": "Descending",
+          "limit": 50
+        }
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "name": "service_name",
+          "type": "query",
+          "datasource": "Tempo",
+          "query": "label_values(tempo_spanmetrics_calls_total, service_name)",
+          "refresh": 1,
+          "multi": true,
+          "includeAll": true,
+          "allValue": ".*"
+        }
+      ]
+    }
+  },
+  "overwrite": true
+}

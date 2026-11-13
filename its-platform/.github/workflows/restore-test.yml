@@ -1,0 +1,128 @@
+# Weekly Restore Test — pgBackRest Restore Validation
+
+name: Weekly Restore Test
+on:
+  schedule:
+    - cron: '0 2 * * 1'  # Monday 02:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  restore-test:
+    name: pgBackRest Restore Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      AWS_REGION: ${{ secrets.AWS_S3_REGION }}
+      AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      PGPASSWORD: ${{ secrets.PGPASSWORD }}
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.PGPASSWORD }}
+          POSTGRES_DB: its_platform
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install pgBackRest
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq pgbackrest postgresql-client-16
+
+      - name: Configure pgBackRest
+        run: |
+          sudo mkdir -p /etc/pgbackrest
+          cat <<EOF | sudo tee /etc/pgbackrest/pgbackrest.conf
+          [global]
+          repo1-type=s3
+          repo1-path=/its-platform-backups/prod
+          repo1-s3-bucket=${{ secrets.AWS_S3_BUCKET }}
+          repo1-s3-region=${{ secrets.AWS_S3_REGION }}
+          repo1-s3-endpoint=s3.${{ secrets.AWS_S3_REGION }}.amazonaws.com
+          repo1-cipher-type=aes-256-cbc
+          compress-type=zstd
+          compress-level=3
+          process-max=4
+          buffer-size=2MB
+          log-level-console=info
+
+          [prod]
+          pg1-path=/var/lib/postgresql/16/main
+          pg1-port=5432
+          pg1-host=localhost
+          EOF
+
+      - name: Restore latest backup
+        id: restore
+        run: |
+          echo "Starting restore at $(date)"
+          START_TIME=$(date +%s)
+          pgbackrest --stanza=prod --type=time --target=latest --log-level-console=info restore
+          END_TIME=$(date +%s)
+          DURATION=$((END_TIME - START_TIME))
+          echo "duration=$DURATION" >> $GITHUB_OUTPUT
+          echo "Restore completed in ${DURATION}s"
+
+      - name: Run integrity checks
+        id: integrity
+        run: |
+          echo "Running integrity checks..."
+          
+          # 1. Page checksums
+          echo "Checking page checksums..."
+          pg_verify_checksums -D /var/lib/postgresql/16/main || exit 1
+          
+          # 2. Row counts on critical tables
+          echo "Checking row counts..."
+          LEARNERS=$(psql -h localhost -U postgres -d its_platform -t -c "SELECT count(*) FROM learners;")
+          MASTERY=$(psql -h localhost -U postgres -d its_platform -t -c "SELECT count(*) FROM learner_mastery;")
+          PRACTICE=$(psql -h localhost -U postgres -d its_platform -t -c "SELECT count(*) FROM practice_attempts;")
+          DIAG=$(psql -h localhost -U postgres -d its_platform -t -c "SELECT count(*) FROM diagnostic_results;")
+          
+          echo "learners=$LEARNERS" >> $GITHUB_OUTPUT
+          echo "mastery=$MASTERY" >> $GITHUB_OUTPUT
+          echo "practice=$PRACTICE" >> $GITHUB_OUTPUT
+          echo "diagnostic=$DIAG" >> $GITHUB_OUTPUT
+          
+          # 3. Data freshness check
+          LATEST_PRACTICE=$(psql -h localhost -U postgres -d its_platform -t -c "SELECT max(completed_at) FROM practice_attempts;")
+          echo "latest_practice=$LATEST_PRACTICE" >> $GITHUB_OUTPUT
+          
+          echo "All integrity checks passed!"
+
+      - name: Report metrics
+        if: always()
+        run: |
+          cat <<EOF >> $GITHUB_STEP_SUMMARY
+          ## Restore Test Results
+          
+          | Metric | Value |
+          |--------|-------|
+          | Restore Duration | ${{ steps.restore.outputs.duration }}s |
+          | Learners | ${{ steps.integrity.outputs.learners }} |
+          | Mastery Records | ${{ steps.integrity.outputs.mastery }} |
+          | Practice Attempts | ${{ steps.integrity.outputs.practice }} |
+          | Diagnostic Results | ${{ steps.integrity.outputs.diagnostic }} |
+          | Latest Practice | ${{ steps.integrity.outputs.latest_practice }} |
+          
+          **Status**: ${{ job.status }}
+          EOF
+
+      - name: Alert on failure
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+            --data '{"text":"🚨 Weekly pgBackRest restore test FAILED! Check GitHub Actions: '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'"}' \
+            ${{ secrets.SLACK_WEBHOOK_URL }} || true

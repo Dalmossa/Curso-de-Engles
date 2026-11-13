@@ -131,4 +131,23 @@ services:
           redis_username: "${KONG_REDIS_USERNAME}"
           redis_password: "${KONG_REDIS_PASSWORD}"
 
+      # Correlation-ID — ADR-031 / P0.8: propagate X-Correlation-ID through the
+      # gateway to the upstream. Header name matches the NestJS interceptor
+      # (src/common/http/correlation.ts) and the OpenAPI contract (docs/api-spec.openapi.yaml).
+      - name: correlation-id
+        config:
+          header_name: "X-Correlation-ID"
+          generator: uuid
+          echo_downstream: true
+
+      # Prometheus — ADR-006 / P2.3 observability: expose /metrics for Prometheus
+      # scraping. The ServiceMonitor (iac/prometheus/servicemonitor-kong.yaml) selects
+      # the Kong pods and scrapes this endpoint.
+      - name: prometheus
+        config:
+          per_consumer: false
+          latency_buckets: [5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000]
+          bandwidth_buckets: [50, 100, 250, 500, 1000, 5000]
+          upstream_health_buckets: [50, 100, 250, 500, 1000, 5000]
+
 # Consumers and jwt land with P1.15–P1.17 — none defined here (ADR-013 open).

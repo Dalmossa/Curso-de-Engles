@@ -1,0 +1,18 @@
+{{- if .Values.postgresql.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "its-platform.fullname" . }}-postgresql-config
+  labels:
+    {{- include "its-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postgresql
+data:
+  postgresql.conf: |
+    # pgBackRest archive configuration
+    archive_mode = on
+    archive_command = 'pgbackrest --stanza={{ .Values.global.environment }} --log-level-console=info archive-push %p'
+    archive_timeout = 60
+    max_wal_senders = 10
+    wal_level = replica
+    hot_standby = on
+{{- end }}

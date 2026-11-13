@@ -1,0 +1,194 @@
+# ===========================================================================
+# ITS Platform — Tempo Configuration
+# ===========================================================================
+# Distributed tracing backend for ITS Platform.
+# Receives traces via OTLP (gRPC/HTTP) from OpenTelemetry Collector.
+# Stores traces locally with block retention.
+# Generates metrics from traces for Prometheus (exemplars, RED metrics).
+# ---------------------------------------------------------------------------
+server:
+  http_listen_port: 3200
+  grpc_listen_port: 9096
+  log_level: info
+
+# Distributor receives traces and distributes to ingesters
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
+  # Ring configuration for distributor
+  ring:
+    kvstore:
+      store: inmemory
+    replication_factor: 1
+
+# Ingester writes traces to storage
+ingester:
+  max_block_duration: 1h
+  max_block_bytes: 1048576  # 1MB
+  trace_idle_period: 10s
+  max_traces_per_user: 0
+  # Ring configuration for ingester
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1
+
+# Storage configuration
+storage:
+  trace:
+    backend: local
+    local:
+      path: /tempo/traces
+    block:
+      bloom_filter_false_positive: 0.05
+      index_downsample_bytes: 1000
+      encoding: zstd
+    # Wal configuration for durability
+    wal:
+      path: /tempo/wal
+      encoding: zstd
+
+# Compactor compacts blocks and handles retention
+compactor:
+  compaction:
+    block_retention: 30d
+    compacted_block_retention: 1h
+    compaction_window: 1h
+    max_block_bytes: 1048576
+    split_and_merge_blocks: true
+    # Retention for traces
+    retention: 30d
+
+# Metrics generator creates Prometheus metrics from traces
+# This enables RED metrics (Rate, Errors, Duration) from traces
+metrics_generator:
+  registry:
+    external_labels:
+      cluster: '{{ .Environment }}'
+      platform: its-platform
+  storage:
+    path: /tempo/generator/wal
+    remote_write:
+      - url: http://prometheus:9090/api/v1/write
+        send_exemplars: true
+  processor:
+    service_graphs:
+      # Generate service graph metrics
+      enabled: true
+      dimensions:
+        - service.namespace
+        - service.name
+    span_metrics:
+      # Generate RED metrics from spans
+      enabled: true
+      dimensions:
+        - service.name
+        - span.kind
+        - status_code
+      histogram:
+        # Latency buckets for RED metrics
+        buckets: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10]
+    local_blocks:
+      # Generate metrics from local blocks (for querying)
+      enabled: true
+
+# Query frontend for better query performance
+query_frontend:
+  search:
+    max_duration: 30s
+    max_chunks: 1000
+  max_outstanding_per_tenant: 2048
+
+# Querier for executing queries
+querier:
+  max_queriers_per_tenant: 10
+  # Enable query sharding
+  query_sharding: true
+
+# Query scheduler
+query_scheduler:
+  max_outstanding_requests_per_tenant: 100
+
+# Frontend worker
+frontend_worker:
+  frontend_address: tempo-query-frontend:9095
+  parallelism: 10
+
+# Overrides for multi-tenancy (not used but required)
+overrides:
+  defaults:
+    # Maximum ingestion rate per tenant
+    ingestion_rate_limit_mb: 50
+    ingestion_burst_size_mb: 100
+    # Maximum trace size
+    max_trace_size: 10485760  # 10MB
+    # Retention
+    retention: 30d
+
+# ---------------------------------------------------------------------------
+# Pipeline Stages for Trace Processing
+# ---------------------------------------------------------------------------
+# The following spans attributes are expected from the ITS Platform services:
+#
+# Required attributes (from OpenTelemetry semantic conventions):
+# - service.name: "its-platform-api"
+# - service.namespace: "its-platform"
+# - service.instance.id: "<pod-name>"
+# - deployment.environment: "dev|staging|prod"
+#
+# HTTP span attributes:
+# - http.method: "GET|POST|PUT|DELETE|PATCH"
+# - http.route: "/api/v1/lessons/{lesson_id}"
+# - http.target: "/api/v1/lessons/les_a1_greetings"
+# - http.status_code: 200
+# - http.scheme: "http|https"
+# - http.host: "its-platform.example.com"
+# - net.peer.ip: "10.0.0.1"
+# - net.peer.port: 443
+#
+# Custom ITS Platform attributes:
+# - its.learner_id: "uuid..."
+# - its.session_id: "uuid..."
+# - its.lesson_id: "les_..."
+# - its.item_id: "item_..."
+# - its.activity_type: "diagnostic|practice|mastery_gate|audio"
+# - its.skill_ids: ["skill_...", "skill_..."]
+# - its.trace_type: "request|background_job|async_task"
+#
+# Database span attributes:
+# - db.system: "postgresql"
+# - db.operation: "SELECT|INSERT|UPDATE|DELETE"
+# - db.statement: "SELECT * FROM lessons WHERE id = $1"
+# - db.collection: "lessons"
+# - db.postgresql.oid: 16384
+#
+# Message queue span attributes:
+# - messaging.system: "bullmq|celery"
+# - messaging.operation: "send|receive|process"
+# - messaging.destination: "queue:name"
+# - messaging.destination_kind: "queue"
+# - messaging.message_id: "job_id"
+#
+# External API span attributes:
+# - http.url: "https://api.openai.com/v1/chat/completions"
+# - http.method: "POST"
+# - peer.service: "openai"
+#
+# ---------------------------------------------------------------------------
+# Sampling Configuration (applied in OpenTelemetry Collector)
+# ---------------------------------------------------------------------------
+# Head-based sampling:
+# - Always sample: errors, high latency (> 500ms), audit events
+# - Probabilistic: 10% of successful requests
+# - Rate limiting: max 100 traces/second per service instance
+#
+# Tail-based sampling (in collector):
+# - Always keep: traces with errors, latency > 1s, audit events
+# - Probabilistic: 5% of remaining traces
+# - Policy: per-service adaptive sampling

@@ -1,0 +1,190 @@
+# ===========================================================================
+# ITS Platform — Loki Alerting Rules
+# ===========================================================================
+# Log-based alerting rules for Loki.
+# These complement Prometheus metric-based alerts.
+# ---------------------------------------------------------------------------
+groups:
+  - name: its-platform-logs-critical
+    interval: 60s
+    rules:
+      # Alert on audit log write failures
+      - alert: AuditLogWriteFailure
+        expr: |
+          sum by (namespace, pod) (rate({job="its-platform-audit"} |= "audit_write_failed" [5m])) > 0
+        for: 1m
+        labels:
+          severity: P1
+          team: platform
+        annotations:
+          summary: "Audit log write failures detected on {{ $labels.pod }}"
+          description: |
+            {{ $value }} audit log write failures per second.
+            Immutable audit trail at risk.
+          runbook_url: "https://wiki.its.example.com/runbooks/audit-write-failure"
+
+      # Alert on audit chain verification failures
+      - alert: AuditChainVerificationFailed
+        expr: |
+          sum by (namespace, pod) (rate({job="its-platform-audit"} |= "chain_verification_failed" [5m])) > 0
+        for: 1m
+        labels:
+          severity: P1
+          team: security
+        annotations:
+          summary: "Audit hash chain verification failed on {{ $labels.pod }}"
+          description: |
+            Hash chain integrity check failed. Possible tampering or corruption.
+          runbook_url: "https://wiki.its.example.com/runbooks/audit-chain-failed"
+
+      # Alert on application errors (error level logs)
+      - alert: ApplicationErrorRateHigh
+        expr: |
+          sum by (namespace, service) (rate({job="its-platform-application"} |~ "level.*error" [5m])) > 10
+        for: 5m
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "High application error rate on {{ $labels.service }}"
+          description: |
+            Service {{ $labels.service }} logging {{ $value }} errors per second.
+
+      # Alert on panic/fatal logs
+      - alert: ApplicationPanic
+        expr: |
+          sum by (namespace, service) (rate({job="its-platform-application"} |~ "level.*(panic|fatal)" [5m])) > 0
+        for: 1m
+        labels:
+          severity: P1
+          team: platform
+        annotations:
+          summary: "Panic/fatal log detected on {{ $labels.service }}"
+          description: |
+            Application {{ $labels.service }} logged a panic or fatal error.
+            Immediate investigation required.
+
+  - name: its-platform-logs-warning
+    interval: 60s
+    rules:
+      # Alert on high warning log rate
+      - alert: ApplicationWarningRateHigh
+        expr: |
+          sum by (namespace, service) (rate({job="its-platform-application"} |~ "level.*warn" [5m])) > 50
+        for: 10m
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "High warning log rate on {{ $labels.service }}"
+          description: |
+            Service {{ $labels.service }} logging {{ $value }} warnings per second.
+
+      # Alert on authentication failures (from audit logs)
+      - alert: AuthFailureRateHigh
+        expr: |
+          sum by (namespace) (rate({job="its-platform-audit"} |~ "event_type.*auth_failure" [5m])) > 10
+        for: 5m
+        labels:
+          severity: P2
+          team: security
+        annotations:
+          summary: "High authentication failure rate"
+          description: |
+            {{ $value }} authentication failures per second. Possible brute force attack.
+
+      # Alert on access denied events (from audit logs)
+      - alert: AccessDeniedRateHigh
+        expr: |
+          sum by (namespace) (rate({job="its-platform-audit"} |~ "event_type.*access_denied" [5m])) > 50
+        for: 5m
+        labels:
+          severity: P2
+          team: security
+        annotations:
+          summary: "High access denied rate"
+          description: |
+            {{ $value }} access denied events per second. Possible authorization issue.
+
+      # Alert on validation failures (from audit logs)
+      - alert: ValidationFailureRateHigh
+        expr: |
+          sum by (namespace) (rate({job="its-platform-audit"} |~ "event_type.*validation_failure" [5m])) > 100
+        for: 5m
+        labels:
+          severity: P2
+          team: security
+        annotations:
+          summary: "High validation failure rate"
+          description: |
+            {{ $value }} validation failures per second. Possible malformed requests.
+
+      # Alert on Kong 5xx responses
+      - alert: KongErrorRateHigh
+        expr: |
+          sum by (namespace, pod) (rate({job="kong-access"} |~ "status.*5.." [5m])) > 10
+        for: 5m
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "High Kong 5xx error rate on {{ $labels.pod }}"
+          description: |
+            Kong gateway returning {{ $value }} 5xx responses per second.
+
+      # Alert on Kong high latency
+      - alert: KongHighLatency
+        expr: |
+          histogram_quantile(0.95, sum by (le, pod) (rate({job="kong-access"} |~ "latency_ms.*" [5m]))) > 500
+        for: 10m
+        labels:
+          severity: P2
+          team: platform
+          slo: latency_p95
+        annotations:
+          summary: "Kong p95 latency > 500ms on {{ $labels.pod }}"
+          description: |
+            Kong gateway p95 latency is {{ $value }}ms. Upstream services may be slow.
+
+  - name: its-platform-logs-info
+    interval: 300s
+    rules:
+      # Info: Audit log volume
+      - alert: AuditLogVolumeHigh
+        expr: |
+          sum by (namespace) (rate({job="its-platform-audit"} [1h])) > 1000
+        for: 10m
+        labels:
+          severity: P3
+          team: platform
+        annotations:
+          summary: "High audit log volume"
+          description: |
+            Audit log generating {{ $value }} entries per second.
+            Check for excessive logging.
+
+      # Info: New deployment detected (from kubernetes events)
+      - alert: NewDeployment
+        expr: |
+          sum by (namespace, object_name) (rate({job="kubernetes-events"} |~ "reason.*Created" [5m])) > 0
+        for: 1m
+        labels:
+          severity: P3
+          team: platform
+        annotations:
+          summary: "New deployment created: {{ $labels.object_name }}"
+          description: |
+            Deployment {{ $labels.object_name }} created in {{ $labels.namespace }}.
+
+      # Info: Pod scaling events
+      - alert: PodScalingEvent
+        expr: |
+          sum by (namespace, object_name) (rate({job="kubernetes-events"} |~ "reason.*ScalingReplicaSet" [5m])) > 0
+        for: 1m
+        labels:
+          severity: P3
+          team: platform
+        annotations:
+          summary: "Pod scaling event for {{ $labels.object_name }}"
+          description: |
+            ReplicaSet {{ $labels.object_name }} scaled in {{ $labels.namespace }}.

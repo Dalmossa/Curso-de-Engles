@@ -1,0 +1,244 @@
+{
+  "dashboard": {
+    "title": "ITS Platform - Backup Dashboard",
+    "tags": ["its-platform", "backup", "pgbackrest"],
+    "timezone": "utc",
+    "refresh": "60s",
+    "time": {
+      "from": "now-24h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "title": "Backup Status",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+        "targets": [
+          {
+            "expr": "pgbackrest_backup_status{status=\"success\"}",
+            "legendFormat": "Last Backup Success",
+            "refId": "A"
+          },
+          {
+            "expr": "pgbackrest_backup_status{status=\"failed\"}",
+            "legendFormat": "Last Backup Failed",
+            "refId": "B"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": null},
+                {"color": "green", "value": 1}
+              ]
+            },
+            "mappings": [
+              {"type": "value", "options": {"0": {"text": "FAILED", "color": "red"}, "1": {"text": "SUCCESS", "color": "green"}}}
+            ]
+          }
+        },
+        "options": {
+          "reduceOptions": {"values": false, "calcs": ["lastNotNull"], "fields": ""},
+          "orientation": "auto",
+          "textMode": "value",
+          "colorMode": "value"
+        }
+      },
+      {
+        "title": "Backup Duration",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 6, "y": 0},
+        "targets": [
+          {
+            "expr": "pgbackrest_backup_duration_seconds",
+            "legendFormat": "{{stanza}} - {{type}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "orange", "value": 1800},
+                {"color": "red", "value": 3600}
+              ]
+            }
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom", "calcs": ["mean", "max", "lastNotNull"]},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "WAL Archival Lag",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 6, "y": 8},
+        "targets": [
+          {
+            "expr": "pgbackrest_wal_archival_lag_seconds",
+            "legendFormat": "{{stanza}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "orange", "value": 60},
+                {"color": "red", "value": 300}
+              ]
+            }
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom", "calcs": ["mean", "max", "lastNotNull"]},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "Repository Reachable",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0},
+        "targets": [
+          {
+            "expr": "pgbackrest_repo_reachable",
+            "legendFormat": "Repo Reachable",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": null},
+                {"color": "green", "value": 1}
+              ]
+            },
+            "mappings": [
+              {"type": "value", "options": {"0": {"text": "UNREACHABLE", "color": "red"}, "1": {"text": "REACHABLE", "color": "green"}}}
+            ]
+          }
+        },
+        "options": {
+          "reduceOptions": {"values": false, "calcs": ["lastNotNull"], "fields": ""},
+          "orientation": "auto",
+          "textMode": "value",
+          "colorMode": "value"
+        }
+      },
+      {
+        "title": "Backup Size",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+        "targets": [
+          {
+            "expr": "pgbackrest_backup_size_bytes",
+            "legendFormat": "{{stanza}} - {{type}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "bytes",
+            "min": 0
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom", "calcs": ["mean", "max", "lastNotNull"]},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "Restore Test Status",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 16},
+        "targets": [
+          {
+            "expr": "pgbackrest_restore_test_status{status=\"success\"}",
+            "legendFormat": "Last Restore Test",
+            "refId": "A"
+          },
+          {
+            "expr": "pgbackrest_restore_test_status{status=\"failed\"}",
+            "legendFormat": "Last Restore Test Failed",
+            "refId": "B"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": null},
+                {"color": "green", "value": 1}
+              ]
+            },
+            "mappings": [
+              {"type": "value", "options": {"0": {"text": "FAILED", "color": "red"}, "1": {"text": "SUCCESS", "color": "green"}}}
+            ]
+          }
+        },
+        "options": {
+          "reduceOptions": {"values": false, "calcs": ["lastNotNull"], "fields": ""},
+          "orientation": "auto",
+          "textMode": "value",
+          "colorMode": "value"
+        }
+      },
+      {
+        "title": "Backup History",
+        "type": "table",
+        "gridPos": {"h": 16, "w": 24, "x": 0, "y": 20},
+        "targets": [
+          {
+            "expr": "pgbackrest_backup_info",
+            "legendFormat": "Backup Info",
+            "refId": "A",
+            "format": "table"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "custom": {}
+          }
+        },
+        "options": {
+          "showHeader": true,
+          "cellHeight": "sm",
+          "sortBy": "timestamp",
+          "sortDesc": true
+        }
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "name": "stanza",
+          "type": "query",
+          "datasource": "Prometheus",
+          "query": "label_values(pgbackrest_backup_status, stanza)",
+          "refresh": 1,
+          "multi": true,
+          "includeAll": true,
+          "allValue": ".*"
+        }
+      ]
+    }
+  },
+  "overwrite": true
+}

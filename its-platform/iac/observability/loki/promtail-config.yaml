@@ -1,0 +1,391 @@
+# ===========================================================================
+# ITS Platform — Promtail Configuration (Loki Log Collection)
+# ===========================================================================
+# Collects logs from:
+# - ITS Platform application pods (structured JSON)
+# - Audit logs (P2.2 immutable trail)
+# - Kong API Gateway access logs
+# - Kubernetes pod logs (stdout/stderr)
+# - Kubernetes events
+# ---------------------------------------------------------------------------
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+  log_level: info
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+    batchwait: 1s
+    batchsize: 102400
+    timeout: 10s
+    backoff_config:
+      min_period: 100ms
+      max_period: 10s
+      max_retries: 10
+
+positions:
+  filename: /tmp/positions.yaml
+
+scrape_configs:
+  # ---------------------------------------------------------------------------
+  # ITS Platform Application Logs (Structured JSON)
+  # ---------------------------------------------------------------------------
+  - job_name: its-platform-application
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+            - its-platform-dev
+            - its-platform-staging
+            - its-platform-prod
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: its-platform-api
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: pod
+      - source_labels: [__meta_kubernetes_namespace]
+        target_label: namespace
+      - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_component]
+        target_label: component
+      - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_instance]
+        target_label: instance
+    pipeline_stages:
+      # Parse JSON log line
+      - json:
+          expressions:
+            timestamp: timestamp
+            level: level
+            message: message
+            service: service
+            trace_id: trace_id
+            span_id: span_id
+            learner_id: learner_id
+            session_id: session_id
+            lesson_id: lesson_id
+            item_id: item_id
+            metadata: metadata
+      # Use timestamp from log entry
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+          location: UTC
+      # Add labels for querying
+      - labels:
+          service:
+          level:
+          trace_id:
+          span_id:
+      # Extract structured metadata as labels
+      - labels:
+          learner_id:
+          session_id:
+          lesson_id:
+          item_id:
+      # Output stage
+      - output:
+          source: message
+
+  # ---------------------------------------------------------------------------
+  # Audit Logs (P2.2 - Immutable, Hash-Chained)
+  # Separate job for audit logs to ensure they're indexed differently
+  # ---------------------------------------------------------------------------
+  - job_name: its-platform-audit
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+            - its-platform-dev
+            - its-platform-staging
+            - its-platform-prod
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: its-platform-api
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: pod
+      - source_labels: [__meta_kubernetes_namespace]
+        target_label: namespace
+      - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_component]
+        target_label: component
+    pipeline_stages:
+      # Parse JSON log line
+      - json:
+          expressions:
+            timestamp: timestamp
+            level: level
+            message: message
+            service: service
+            audit: audit
+      # Use timestamp from log entry
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+          location: UTC
+      # Extract audit fields
+      - json:
+          source: audit
+          expressions:
+            seq: seq
+            event_id: event_id
+            event_type: event_type
+            learner_id: learner_id
+            session_id: session_id
+            lesson_id: lesson_id
+            item_id: item_id
+            skill_ids: skill_ids
+            occurred_at: occurred_at
+            payload: payload
+            prev_hash: prev_hash
+            row_hash: row_hash
+      # Add labels for querying (high cardinality - use sparingly)
+      - labels:
+          event_type:
+          service:
+      # Output stage - include audit data in log line
+      - template:
+          source: audit
+          template: '{{ .audit | toJson }}'
+      - output:
+          source: template
+
+  # ---------------------------------------------------------------------------
+  # Kong API Gateway Access Logs
+  # ---------------------------------------------------------------------------
+  - job_name: kong-access
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+            - kong
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: pod
+      - source_labels: [__meta_kubernetes_namespace]
+        target_label: namespace
+    pipeline_stages:
+      # Parse JSON log line (Kong logs in JSON format)
+      - json:
+          expressions:
+            timestamp: timestamp
+            level: level
+            message: message
+            service: service
+            request: request
+            response: response
+            client: client
+            upstream: upstream
+            auth: auth
+      # Use timestamp from log entry
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+          location: UTC
+      # Extract request/response fields
+      - json:
+          source: request
+          expressions:
+            method: method
+            path: path
+            query: query
+            size: size
+      - json:
+          source: response
+          expressions:
+            status: status
+            latency_ms: latency_ms
+            size: size
+      - json:
+          source: client
+          expressions:
+            ip: ip
+            user_agent: user_agent
+      - json:
+          source: upstream
+          expressions:
+            host: host
+            latency_ms: upstream_latency_ms
+      - json:
+          source: auth
+          expressions:
+            consumer: consumer
+            credential: credential
+      # Add labels for querying
+      - labels:
+          service:
+          method:
+          status:
+          consumer:
+      # Output stage
+      - template:
+          template: '{{ .message }} method={{ .method }} path={{ .path }} status={{ .status }} latency_ms={{ .latency_ms }} consumer={{ .consumer }}'
+      - output:
+          source: template
+
+  # ---------------------------------------------------------------------------
+  # Kubernetes Pod Logs (stdout/stderr) - General
+  # ---------------------------------------------------------------------------
+  - job_name: kubernetes-pods
+    kubernetes_sd_configs:
+      - role: pod
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: drop
+        regex: its-platform-api
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: pod
+      - source_labels: [__meta_kubernetes_namespace]
+        target_label: namespace
+      - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_component]
+        target_label: component
+      - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_instance]
+        target_label: instance
+      - source_labels: [__meta_kubernetes_pod_container_name]
+        target_label: container
+      - action: labelmap
+        regex: __meta_kubernetes_pod_label_(.+)
+    pipeline_stages:
+      # Try to parse as JSON, fallback to raw
+      - json:
+          expressions:
+            timestamp: timestamp
+            level: level
+            message: message
+            service: service
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+          location: UTC
+      - labels:
+          level:
+          service:
+      - output:
+          source: message
+
+  # ---------------------------------------------------------------------------
+  # Kubernetes Events (from kube-event-exporter)
+  # ---------------------------------------------------------------------------
+  - job_name: kubernetes-events
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+            - monitoring
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: kube-event-exporter
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: pod
+    pipeline_stages:
+      - json:
+          expressions:
+            timestamp: timestamp
+            level: level
+            message: message
+            event: event
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+          location: UTC
+      - json:
+          source: event
+          expressions:
+            type: type
+            reason: reason
+            object_kind: object_kind
+            object_name: object_name
+            object_namespace: object_namespace
+            component: component
+            host: host
+      - labels:
+          type:
+          reason:
+          object_kind:
+          component:
+      - output:
+          source: message
+
+  # ---------------------------------------------------------------------------
+  # Node Exporter Logs
+  # ---------------------------------------------------------------------------
+  - job_name: node-exporter
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+            - monitoring
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: node-exporter
+    pipeline_stages:
+      - json:
+          expressions:
+            timestamp: timestamp
+            level: level
+            message: message
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+          location: UTC
+      - labels:
+          level:
+      - output:
+          source: message
+
+  # ---------------------------------------------------------------------------
+  # Prometheus Logs
+  # ---------------------------------------------------------------------------
+  - job_name: prometheus
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+            - monitoring
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: prometheus
+    pipeline_stages:
+      - json:
+          expressions:
+            timestamp: timestamp
+            level: level
+            message: message
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+          location: UTC
+      - labels:
+          level:
+      - output:
+          source: message
+
+  # ---------------------------------------------------------------------------
+  # Grafana Logs
+  # ---------------------------------------------------------------------------
+  - job_name: grafana
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+            - monitoring
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: grafana
+    pipeline_stages:
+      - json:
+          expressions:
+            timestamp: timestamp
+            level: level
+            message: message
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+          location: UTC
+      - labels:
+          level:
+      - output:
+          source: message

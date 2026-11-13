@@ -1,0 +1,325 @@
+# ===========================================================================
+# ITS Platform — Alertmanager Configuration
+# ===========================================================================
+# Alert routing, inhibition, and notification configuration.
+# Supports multiple receivers: PagerDuty, Slack, Email, Webhook.
+# ---------------------------------------------------------------------------
+global:
+  resolve_timeout: 5m
+  # SMTP configuration for email notifications
+  smtp_smarthost: 'smtp.example.com:587'
+  smtp_from: 'alertmanager@its-platform.example.com'
+  smtp_auth_username: 'alertmanager'
+  smtp_auth_password: '${SMTP_PASSWORD}'
+  smtp_require_tls: true
+  smtp_hello: 'its-platform.example.com'
+
+# Route configuration - defines how alerts are grouped and routed
+route:
+  # Group by alertname and severity for deduplication
+  group_by: ['alertname', 'severity', 'slo', 'team']
+  # Wait before sending initial notification
+  group_wait: 30s
+  # Wait before sending subsequent notifications for same group
+  group_interval: 5m
+  # Repeat notifications for firing alerts
+  repeat_interval: 4h
+  # Default receiver
+  receiver: 'default'
+  # Sub-routes for different severity levels
+  routes:
+    # P1 - Critical alerts (pages immediately)
+    - match:
+        severity: P1
+      receiver: 'p1-pager'
+      continue: true
+      group_wait: 0s
+      group_interval: 5m
+      repeat_interval: 1h
+
+    # P1 - SLO burn rate alerts (page immediately)
+    - match:
+        severity: P1
+      match_re:
+        slo: '.*'
+      receiver: 'p1-pager-slo'
+      continue: true
+      group_wait: 0s
+      group_interval: 2m
+      repeat_interval: 30m
+
+    # P2 - Warning alerts (Slack notification)
+    - match:
+        severity: P2
+      receiver: 'p2-slack'
+      group_wait: 30s
+      group_interval: 10m
+      repeat_interval: 4h
+
+    # P2 - Database alerts (dedicated channel)
+    - match:
+        severity: P2
+      match_re:
+        team: 'platform'
+      receiver: 'p2-slack-platform'
+      continue: true
+
+    # P2 - Security alerts (dedicated channel)
+    - match:
+        severity: P2
+      match:
+        team: 'security'
+      receiver: 'p2-slack-security'
+      continue: true
+
+    # P3 - Info alerts (email digest)
+    - match:
+        severity: P3
+      receiver: 'p3-email'
+      group_wait: 5m
+      group_interval: 1h
+      repeat_interval: 24h
+
+    # Business metrics alerts (product team)
+    - match:
+        team: 'product'
+      receiver: 'p2-slack-product'
+      group_wait: 30s
+      group_interval: 10m
+      repeat_interval: 4h
+
+    # Backup alerts (platform team + oncall)
+    - match_re:
+        alertname: 'PgBackRest.*'
+      receiver: 'p1-pager-backup'
+      continue: true
+
+# Inhibition rules - suppress lower severity alerts when higher severity firing
+inhibit_rules:
+  # Inhibit P2/P3 when P1 for same alertname/namespace is firing
+  - source_match:
+      severity: 'P1'
+    target_match_re:
+      severity: 'P[23]'
+    equal: ['alertname', 'namespace', 'service']
+
+  # Inhibit warning when critical for same service
+  - source_match:
+      severity: 'P1'
+    target_match:
+      severity: 'P2'
+    equal: ['service', 'namespace']
+
+  # Inhibit backup alerts when repository unreachable (root cause)
+  - source_match:
+      alertname: 'PgBackRestRepositoryUnreachable'
+    target_match_re:
+      alertname: 'PgBackRest.*'
+    equal: ['stanza']
+
+  # Inhibit node-level alerts when cluster-level alert firing
+  - source_match:
+      alertname: 'ClusterUnreachable'
+    target_match_re:
+      alertname: '.*'
+    equal: ['cluster']
+
+# Receivers - notification destinations
+receivers:
+  # Default receiver (email)
+  - name: 'default'
+    email_configs:
+      - to: 'oncall@its-platform.example.com'
+        send_resolved: true
+        headers:
+          subject: '[ITS Platform] {{ .GroupLabels.alertname }}'
+        html: |
+          {{ range .Alerts }}
+          <b>Alert:</b> {{ .Labels.alertname }}<br/>
+          <b>Severity:</b> {{ .Labels.severity }}<br/>
+          <b>Service:</b> {{ .Labels.service }}<br/>
+          <b>Namespace:</b> {{ .Labels.namespace }}<br/>
+          <b>Summary:</b> {{ .Annotations.summary }}<br/>
+          <b>Description:</b> {{ .Annotations.description }}<br/>
+          <b>Runbook:</b> <a href="{{ .Annotations.runbook_url }}">{{ .Annotations.runbook_url }}</a><br/>
+          <b>Starts At:</b> {{ .StartsAt }}<br/>
+          {{ if .EndsAt }}<b>Ends At:</b> {{ .EndsAt }}<br/>{{ end }}
+          <hr/>
+          {{ end }}
+
+  # P1 - PagerDuty for critical alerts
+  - name: 'p1-pager'
+    pagerduty_configs:
+      - service_key: '${PAGERDUTY_SERVICE_KEY}'
+        severity: critical
+        details:
+          service: 'its-platform'
+          environment: '{{ .CommonLabels.environment | default "unknown" }}'
+          team: '{{ .CommonLabels.team | default "platform" }}'
+        description: '{{ .CommonAnnotations.summary }}'
+        client: 'ITS Platform Alertmanager'
+        client_url: 'https://grafana.its-platform.example.com'
+
+  # P1 - SLO-specific pager with enriched context
+  - name: 'p1-pager-slo'
+    pagerduty_configs:
+      - service_key: '${PAGERDUTY_SERVICE_KEY_SLO}'
+        severity: critical
+        details:
+          service: 'its-platform'
+          slo: '{{ .CommonLabels.slo }}'
+          slo_target: '{{ .CommonLabels.slo_target }}'
+          burn_rate: '{{ .CommonLabels.burn_rate | default "unknown" }}'
+        description: |
+          SLO Burn Rate Alert
+          Service: {{ .CommonLabels.service }}
+          SLO: {{ .CommonLabels.slo }} (target: {{ .CommonLabels.slo_target }})
+          {{ .CommonAnnotations.description }}
+        client: 'ITS Platform SLO Monitor'
+        client_url: 'https://grafana.its-platform.example.com/d/slo-dashboard'
+
+  # P1 - Backup alerts (separate pagerduty service)
+  - name: 'p1-pager-backup'
+    pagerduty_configs:
+      - service_key: '${PAGERDUTY_SERVICE_KEY_BACKUP}'
+        severity: critical
+        details:
+          service: 'its-platform-backup'
+          stanza: '{{ .CommonLabels.stanza }}'
+        description: '{{ .CommonAnnotations.summary }}: {{ .CommonAnnotations.description }}'
+        client: 'ITS Platform Backup Monitor'
+        client_url: 'https://grafana.its-platform.example.com/d/backup-dashboard'
+
+  # P2 - Slack for platform team
+  - name: 'p2-slack'
+    slack_configs:
+      - api_url: '${SLACK_WEBHOOK_URL}'
+        channel: '#its-platform-alerts'
+        send_resolved: true
+        title: '[{{ .CommonLabels.severity }}] {{ .CommonLabels.alertname }}'
+        text: |
+          {{ range .Alerts }}
+          *Alert:* {{ .Labels.alertname }}
+          *Severity:* {{ .Labels.severity }}
+          *Service:* {{ .Labels.service }}
+          *Namespace:* {{ .Labels.namespace }}
+          *Summary:* {{ .Annotations.summary }}
+          *Description:* {{ .Annotations.description }}
+          *Runbook:* <{{ .Annotations.runbook_url }}|Runbook>
+          *Starts At:* {{ .StartsAt }}
+          {{ if .EndsAt }}*Ends At:* {{ .EndsAt }}{{ end }}
+          {{ end }}
+        color: '{{ if eq .CommonLabels.severity "P1" }}danger{{ else if eq .CommonLabels.severity "P2" }}warning{{ else }}good{{ end }}'
+        fields:
+          - title: Environment
+            value: '{{ .CommonLabels.environment | default "unknown" }}'
+            short: true
+          - title: Team
+            value: '{{ .CommonLabels.team | default "platform" }}'
+            short: true
+
+  # P2 - Platform team dedicated channel
+  - name: 'p2-slack-platform'
+    slack_configs:
+      - api_url: '${SLACK_WEBHOOK_URL}'
+        channel: '#its-platform-platform-alerts'
+        send_resolved: true
+        title: '[P2] {{ .CommonLabels.alertname }}'
+        text: |
+          {{ range .Alerts }}
+          *Alert:* {{ .Labels.alertname }}
+          *Service:* {{ .Labels.service }}
+          *Namespace:* {{ .Labels.namespace }}
+          *Summary:* {{ .Annotations.summary }}
+          *Runbook:* <{{ .Annotations.runbook_url }}|Runbook>
+          {{ end }}
+
+  # P2 - Security team dedicated channel
+  - name: 'p2-slack-security'
+    slack_configs:
+      - api_url: '${SLACK_WEBHOOK_URL}'
+        channel: '#its-platform-security-alerts'
+        send_resolved: true
+        title: '[SECURITY P2] {{ .CommonLabels.alertname }}'
+        text: |
+          {{ range .Alerts }}
+          *Alert:* {{ .Labels.alertname }}
+          *Service:* {{ .Labels.service }}
+          *Summary:* {{ .Annotations.summary }}
+          *Description:* {{ .Annotations.description }}
+          *Runbook:* <{{ .Annotations.runbook_url }}|Runbook>
+          {{ end }}
+        color: 'danger'
+
+  # P2 - Product team dedicated channel
+  - name: 'p2-slack-product'
+    slack_configs:
+      - api_url: '${SLACK_WEBHOOK_URL}'
+        channel: '#its-platform-product-alerts'
+        send_resolved: true
+        title: '[PRODUCT P2] {{ .CommonLabels.alertname }}'
+        text: |
+          {{ range .Alerts }}
+          *Alert:* {{ .Labels.alertname }}
+          *Summary:* {{ .Annotations.summary }}
+          *Description:* {{ .Annotations.description }}
+          *Runbook:* <{{ .Annotations.runbook_url }}|Runbook>
+          {{ end }}
+
+  # P3 - Email digest for info alerts
+  - name: 'p3-email'
+    email_configs:
+      - to: 'team@its-platform.example.com'
+        send_resolved: true
+        headers:
+          subject: '[ITS Platform P3] {{ .GroupLabels.alertname }}'
+        html: |
+          <h2>ITS Platform Info Alerts</h2>
+          {{ range .Alerts }}
+          <div style="border: 1px solid #ddd; padding: 10px; margin: 10px 0;">
+            <b>Alert:</b> {{ .Labels.alertname }}<br/>
+            <b>Severity:</b> {{ .Labels.severity }}<br/>
+            <b>Service:</b> {{ .Labels.service }}<br/>
+            <b>Namespace:</b> {{ .Labels.namespace }}<br/>
+            <b>Summary:</b> {{ .Annotations.summary }}<br/>
+            <b>Description:</b> {{ .Annotations.description }}<br/>
+            <b>Runbook:</b> <a href="{{ .Annotations.runbook_url }}">{{ .Annotations.runbook_url }}</a><br/>
+            <b>Starts At:</b> {{ .StartsAt }}<br/>
+            {{ if .EndsAt }}<b>Ends At:</b> {{ .EndsAt }}<br/>{{ end }}
+          </div>
+          {{ end }}
+
+  # Webhook for custom integrations (e.g., incident management)
+  - name: 'webhook-incident'
+    webhook_configs:
+      - url: 'https://incident.its-platform.example.com/api/alerts'
+        http_config:
+          bearer_token: '${INCIDENT_WEBHOOK_TOKEN}'
+        send_resolved: true
+
+  # Opsgenie integration (alternative to PagerDuty)
+  - name: 'opsgenie'
+    opsgenie_configs:
+      - api_key: '${OPSGENIE_API_KEY}'
+        api_url: 'https://api.opsgenie.com'
+        message: '{{ .CommonAnnotations.summary }}'
+        description: '{{ .CommonAnnotations.description }}'
+        priority: 'P1'
+        tags: ['its-platform', '{{ .CommonLabels.severity }}', '{{ .CommonLabels.team }}']
+        details:
+          service: '{{ .CommonLabels.service }}'
+          namespace: '{{ .CommonLabels.namespace }}'
+          environment: '{{ .CommonLabels.environment | default "unknown" }}'
+
+# Templates for notification formatting
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'
+
+# High availability configuration
+ha:
+  # Enable HA mode
+  enabled: true
+  # Listen address for HA gossip
+  listen_address: '0.0.0.0:9094'
+  # Cluster peers (configured via service discovery)
+  peer_prefix: 'alertmanager'

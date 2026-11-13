@@ -1,0 +1,438 @@
+{
+  "dashboard": {
+    "title": "ITS Platform - SLO Dashboard",
+    "tags": ["its-platform", "slo", "overview"],
+    "timezone": "utc",
+    "refresh": "30s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "title": "SLO Overview - Error Budget Remaining",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+        "targets": [
+          {
+            "expr": "slos:error_budget:latency_p95_remaining_30d",
+            "legendFormat": "Latency p95 Budget",
+            "refId": "A"
+          },
+          {
+            "expr": "slos:error_budget:error_rate_remaining_30d",
+            "legendFormat": "Error Rate Budget",
+            "refId": "B"
+          },
+          {
+            "expr": "slos:error_budget:availability_remaining_30d",
+            "legendFormat": "Availability Budget",
+            "refId": "C"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "min": 0,
+            "max": 1,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": null},
+                {"color": "orange", "value": 0.1},
+                {"color": "yellow", "value": 0.5},
+                {"color": "green", "value": 0.9}
+              ]
+            },
+            "mappings": [
+              {"type": "value", "options": {"0": {"text": "Exhausted", "color": "red"}}}
+            ]
+          }
+        },
+        "options": {
+          "reduceOptions": {"values": false, "calcs": ["lastNotNull"], "fields": ""},
+          "orientation": "auto",
+          "textMode": "value",
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto"
+        }
+      },
+      {
+        "title": "Latency p95 (SLO: < 200ms)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 6, "y": 0},
+        "targets": [
+          {
+            "expr": "slos:latency_p95:ratio_rate5m",
+            "legendFormat": "{{service}} - Current",
+            "refId": "A"
+          },
+          {
+            "expr": "0.999",
+            "legendFormat": "SLO Target (99.9th %ile < 200ms)",
+            "refId": "B"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "min": 0.9,
+            "max": 1,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "red", "value": 0.999}
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {"type": "byName", "options": "SLO Target (99.9th %ile < 200ms)"},
+              "properties": [
+                {"id": "lineWidth", "value": 2},
+                {"id": "lineStyle", "value": "dash"},
+                {"id": "color", "value": {"mode": "fixed", "fixedColor": "red"}}
+              ]
+            }
+          ]
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom", "calcs": ["mean", "lastNotNull"]},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "Error Rate (SLO: < 0.1%)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 18, "y": 0},
+        "targets": [
+          {
+            "expr": "slos:error_rate:ratio_rate5m * 100",
+            "legendFormat": "{{service}} - 5m",
+            "refId": "A"
+          },
+          {
+            "expr": "slos:error_rate:ratio_rate1h * 100",
+            "legendFormat": "{{service}} - 1h",
+            "refId": "B"
+          },
+          {
+            "expr": "0.1",
+            "legendFormat": "SLO Target (0.1%)",
+            "refId": "C"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "orange", "value": 0.05},
+                {"color": "red", "value": 0.1}
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {"type": "byName", "options": "SLO Target (0.1%)"},
+              "properties": [
+                {"id": "lineWidth", "value": 2},
+                {"id": "lineStyle", "value": "dash"},
+                {"id": "color", "value": {"mode": "fixed", "fixedColor": "red"}}
+              ]
+            }
+          ]
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom", "calcs": ["mean", "lastNotNull"]},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "Availability (SLO: > 99.9%)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 6, "y": 8},
+        "targets": [
+          {
+            "expr": "slos:availability:ratio_rate5m * 100",
+            "legendFormat": "{{service}} - 5m",
+            "refId": "A"
+          },
+          {
+            "expr": "slos:availability:ratio_rate1h * 100",
+            "legendFormat": "{{service}} - 1h",
+            "refId": "B"
+          },
+          {
+            "expr": "99.9",
+            "legendFormat": "SLO Target (99.9%)",
+            "refId": "C"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 99,
+            "max": 100,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": null},
+                {"color": "orange", "value": 99.9},
+                {"color": "green", "value": 99.95}
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {"type": "byName", "options": "SLO Target (99.9%)"},
+              "properties": [
+                {"id": "lineWidth", "value": 2},
+                {"id": "lineStyle", "value": "dash"},
+                {"id": "color", "value": {"mode": "fixed", "fixedColor": "red"}}
+              ]
+            }
+          ]
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom", "calcs": ["mean", "lastNotNull"]},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "Throughput (Requests/sec)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 18, "y": 8},
+        "targets": [
+          {
+            "expr": "slos:throughput:rate5m",
+            "legendFormat": "{{service}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "min": 0
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom", "calcs": ["mean", "max", "lastNotNull"]},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "Latency Distribution (p50, p95, p99)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+        "targets": [
+          {
+            "expr": "slos:latency_p50:ratio_rate5m",
+            "legendFormat": "p50 - {{service}}",
+            "refId": "A"
+          },
+          {
+            "expr": "slos:latency_p95:ratio_rate5m",
+            "legendFormat": "p95 - {{service}}",
+            "refId": "B"
+          },
+          {
+            "expr": "slos:latency_p99:ratio_rate5m",
+            "legendFormat": "p99 - {{service}}",
+            "refId": "C"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "min": 0.9,
+            "max": 1
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom"},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "Burn Rate (1h vs 5m)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+        "targets": [
+          {
+            "expr": "slos:burn_rate:latency_p95_1h_vs_5m",
+            "legendFormat": "Latency p95 - {{service}}",
+            "refId": "A"
+          },
+          {
+            "expr": "slos:burn_rate:error_rate_1h_vs_5m",
+            "legendFormat": "Error Rate - {{service}}",
+            "refId": "B"
+          },
+          {
+            "expr": "slos:burn_rate:availability_1h_vs_5m",
+            "legendFormat": "Availability - {{service}}",
+            "refId": "C"
+          },
+          {
+            "expr": "2",
+            "legendFormat": "2x Threshold",
+            "refId": "D"
+          },
+          {
+            "expr": "10",
+            "legendFormat": "10x Threshold",
+            "refId": "E"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "orange", "value": 2},
+                {"color": "red", "value": 10}
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {"type": "byName", "options": "2x Threshold"},
+              "properties": [
+                {"id": "lineWidth", "value": 1},
+                {"id": "lineStyle", "value": "dash"},
+                {"id": "color", "value": {"mode": "fixed", "fixedColor": "orange"}}
+              ]
+            },
+            {
+              "matcher": {"type": "byName", "options": "10x Threshold"},
+              "properties": [
+                {"id": "lineWidth", "value": 1},
+                {"id": "lineStyle", "value": "dash"},
+                {"id": "color", "value": {"mode": "fixed", "fixedColor": "red"}}
+              ]
+            }
+          ]
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom"},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "SLO Status by Service",
+        "type": "table",
+        "gridPos": {"h": 12, "w": 24, "x": 0, "y": 24},
+        "targets": [
+          {
+            "expr": "slos:latency_p95:ratio_rate5m",
+            "legendFormat": "Latency p95",
+            "refId": "A",
+            "format": "table"
+          },
+          {
+            "expr": "slos:error_rate:ratio_rate5m",
+            "legendFormat": "Error Rate",
+            "refId": "B",
+            "format": "table"
+          },
+          {
+            "expr": "slos:availability:ratio_rate5m",
+            "legendFormat": "Availability",
+            "refId": "C",
+            "format": "table"
+          },
+          {
+            "expr": "slos:throughput:rate5m",
+            "legendFormat": "Throughput",
+            "refId": "D",
+            "format": "table"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "custom": {}
+          },
+          "overrides": [
+            {
+              "matcher": {"type": "byName", "options": "Latency p95"},
+              "properties": [
+                {"id": "unit", "value": "percentunit"},
+                {"id": "cellOptions", "value": {"type": "gauge", "min": 0.9, "max": 1}}
+              ]
+            },
+            {
+              "matcher": {"type": "byName", "options": "Error Rate"},
+              "properties": [
+                {"id": "unit", "value": "percent"},
+                {"id": "cellOptions", "value": {"type": "gauge", "min": 0, "max": 0.2}}
+              ]
+            },
+            {
+              "matcher": {"type": "byName", "options": "Availability"},
+              "properties": [
+                {"id": "unit", "value": "percent"},
+                {"id": "cellOptions", "value": {"type": "gauge", "min": 99, "max": 100}}
+              ]
+            },
+            {
+              "matcher": {"type": "byName", "options": "Throughput"},
+              "properties": [
+                {"id": "unit", "value": "reqps"}
+              ]
+            }
+          ]
+        },
+        "options": {
+          "showHeader": true,
+          "cellHeight": "sm",
+          "footer": {"show": false, "reducer": ["sum", "mean"], "countRows": false}
+        }
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "name": "environment",
+          "type": "query",
+          "datasource": "Prometheus",
+          "query": "label_values(up, environment)",
+          "refresh": 1,
+          "multi": true,
+          "includeAll": true,
+          "allValue": ".*"
+        },
+        {
+          "name": "service",
+          "type": "query",
+          "datasource": "Prometheus",
+          "query": "label_values(http_requests_total{environment=~\"$environment\"}, service)",
+          "refresh": 1,
+          "multi": true,
+          "includeAll": true,
+          "allValue": ".*"
+        }
+      ]
+    },
+    "annotations": {
+      "list": [
+        {
+          "name": "Deployments",
+          "datasource": "Prometheus",
+          "enable": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "query": "kube_deployment_created{environment=~\"$environment\"}"
+        }
+      ]
+    }
+  },
+  "overwrite": true
+}

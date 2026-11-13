@@ -1,0 +1,303 @@
+# ===========================================================================
+# ITS Platform — ServiceMonitor for ITS Platform Services
+# ===========================================================================
+# Scrapes application metrics from ITS Platform pods.
+# Requires Prometheus Operator CRDs installed in the cluster.
+# ---------------------------------------------------------------------------
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: its-platform-services
+  namespace: monitoring
+  labels:
+    app: its-platform
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: its-platform-api
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+      # Health/readiness probe metrics
+      relabelings:
+        - sourceLabels: [__name__]
+          action: keep
+          regex: '(http_requests_total|http_request_duration_seconds_bucket|up|process_.*|nodejs_.*|go_.*|audit_.*|diagnostic_.*|mastery_.*|practice_.*|audio_.*)'
+  namespaceSelector:
+    matchNames:
+      - its-platform-dev
+      - its-platform-staging
+      - its-platform-prod
+---
+# ===========================================================================
+# ServiceMonitor for Kong API Gateway
+# ===========================================================================
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kong
+  namespace: monitoring
+  labels:
+    app: kong
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: kong
+  endpoints:
+    - port: kong-admin
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+      - kong
+---
+# ===========================================================================
+# ServiceMonitor for PostgreSQL Exporter
+# ===========================================================================
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: postgresql
+  namespace: monitoring
+  labels:
+    app: postgresql
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: postgresql
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+      - its-platform-dev
+      - its-platform-staging
+      - its-platform-prod
+---
+# ===========================================================================
+# ServiceMonitor for Redis Exporter
+# ===========================================================================
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: redis
+  namespace: monitoring
+  labels:
+    app: redis
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: redis
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+      - its-platform-dev
+      - its-platform-staging
+      - its-platform-prod
+---
+# ===========================================================================
+# ServiceMonitor for pgBackRest Exporter
+# ===========================================================================
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: pgbackrest
+  namespace: monitoring
+  labels:
+    app: pgbackrest
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: postgresql
+  endpoints:
+    - port: pgbackrest-metrics
+      path: /metrics
+      interval: 60s
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+      - its-platform-dev
+      - its-platform-staging
+      - its-platform-prod
+---
+# ===========================================================================
+# ServiceMonitor for Node Exporter
+# ===========================================================================
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: node-exporter
+  namespace: monitoring
+  labels:
+    app: node-exporter
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: node-exporter
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+      - monitoring
+---
+# ===========================================================================
+# ServiceMonitor for kube-state-metrics
+# ===========================================================================
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kube-state-metrics
+  namespace: monitoring
+  labels:
+    app: kube-state-metrics
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: kube-state-metrics
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+      - monitoring
+---
+# ===========================================================================
+# ServiceMonitor for OpenTelemetry Collector
+# ===========================================================================
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: otel-collector
+  namespace: monitoring
+  labels:
+    app: otel-collector
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: otel-collector
+  endpoints:
+    - port: prometheus
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+      - monitoring
+---
+# ===========================================================================
+# ServiceMonitor for Alertmanager
+# ===========================================================================
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: alertmanager
+  namespace: monitoring
+  labels:
+    app: alertmanager
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: alertmanager
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+      - monitoring
+---
+# ===========================================================================
+# ServiceMonitor for Loki
+# ===========================================================================
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: loki
+  namespace: monitoring
+  labels:
+    app: loki
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: loki
+  endpoints:
+    - port: http-metrics
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+      - monitoring
+---
+# ===========================================================================
+# ServiceMonitor for Tempo
+# ===========================================================================
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: tempo
+  namespace: monitoring
+  labels:
+    app: tempo
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: tempo
+  endpoints:
+    - port: http-metrics
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+      - monitoring
+---
+# ===========================================================================
+# ServiceMonitor for Grafana
+# ===========================================================================
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: grafana
+  namespace: monitoring
+  labels:
+    app: grafana
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: grafana
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+      - monitoring

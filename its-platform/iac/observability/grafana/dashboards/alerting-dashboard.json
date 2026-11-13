@@ -1,0 +1,223 @@
+{
+  "dashboard": {
+    "title": "ITS Platform - Alerting Dashboard",
+    "tags": ["its-platform", "alerting", "alertmanager"],
+    "timezone": "utc",
+    "refresh": "30s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "title": "Active Alerts by Severity",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+        "datasource": "Alertmanager",
+        "targets": [
+          {
+            "expr": "count(alertmanager_alerts{state=\"firing\",severity=\"P1\"})",
+            "legendFormat": "P1 Critical",
+            "refId": "A"
+          },
+          {
+            "expr": "count(alertmanager_alerts{state=\"firing\",severity=\"P2\"})",
+            "legendFormat": "P2 Warning",
+            "refId": "B"
+          },
+          {
+            "expr": "count(alertmanager_alerts{state=\"firing\",severity=\"P3\"})",
+            "legendFormat": "P3 Info",
+            "refId": "C"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": null}
+              ]
+            }
+          }
+        },
+        "options": {
+          "reduceOptions": {"values": false, "calcs": ["lastNotNull"], "fields": ""},
+          "orientation": "auto",
+          "textMode": "value",
+          "colorMode": "value"
+        }
+      },
+      {
+        "title": "Firing Alerts",
+        "type": "table",
+        "gridPos": {"h": 16, "w": 24, "x": 0, "y": 4},
+        "datasource": "Alertmanager",
+        "targets": [
+          {
+            "expr": "alertmanager_alerts{state=\"firing\"}",
+            "legendFormat": "Firing Alerts",
+            "refId": "A",
+            "format": "table"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "custom": {}
+          },
+          "overrides": [
+            {
+              "matcher": {"type": "byName", "options": "severity"},
+              "properties": [
+                {"id": "cellOptions", "value": {"type": "single-stat", "color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null, "index": 0}, {"color": "orange", "value": "P2", "index": 1}, {"color": "green", "value": "P3", "index": 2}]}}}
+              ]
+            }
+          ]
+        },
+        "options": {
+          "showHeader": true,
+          "cellHeight": "sm",
+          "sortBy": "severity",
+          "sortDesc": true
+        }
+      },
+      {
+        "title": "Alert History (24h)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20},
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "sum by (alertname, severity) (rate(alertmanager_alerts_fired_total[5m]))",
+            "legendFormat": "{{alertname}} ({{severity}})",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ops",
+            "min": 0
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom", "calcs": ["mean", "max", "lastNotNull"]},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "Alert Resolution Rate",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20},
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "sum by (alertname) (rate(alertmanager_alerts_resolved_total[5m]))",
+            "legendFormat": "{{alertname}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ops",
+            "min": 0
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom", "calcs": ["mean", "max", "lastNotNull"]},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "Inhibited Alerts",
+        "type": "table",
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 28},
+        "datasource": "Alertmanager",
+        "targets": [
+          {
+            "expr": "alertmanager_alerts{state=\"suppressed\"}",
+            "legendFormat": "Suppressed Alerts",
+            "refId": "A",
+            "format": "table"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "custom": {}
+          }
+        },
+        "options": {
+          "showHeader": true,
+          "cellHeight": "sm"
+        }
+      },
+      {
+        "title": "Notification Latency",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 36},
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(alertmanager_notification_latency_seconds_bucket[5m]))",
+            "legendFormat": "p95",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.50, rate(alertmanager_notification_latency_seconds_bucket[5m]))",
+            "legendFormat": "p50",
+            "refId": "B"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "min": 0
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom"},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      },
+      {
+        "title": "Notification Success Rate",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 36},
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "sum(rate(alertmanager_notifications_sent_total[5m])) by (integration) / sum(rate(alertmanager_notifications_total[5m])) by (integration)",
+            "legendFormat": "{{integration}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "min": 0,
+            "max": 1
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "list", "placement": "bottom", "calcs": ["mean", "lastNotNull"]},
+          "tooltip": {"mode": "single", "sort": "none"}
+        }
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "name": "severity",
+          "type": "query",
+          "datasource": "Alertmanager",
+          "query": "label_values(alertmanager_alerts, severity)",
+          "refresh": 1,
+          "multi": true,
+          "includeAll": true,
+          "allValue": ".*"
+        }
+      ]
+    }
+  },
+  "overwrite": true
+}

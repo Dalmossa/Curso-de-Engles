@@ -1,0 +1,28 @@
+# ===========================================================================
+# ITS Platform — Prometheus ServiceMonitor for Kong
+# ===========================================================================
+# Selects the Kong pods and scrapes the /metrics endpoint exposed by the
+# prometheus plugin declared in iac/kong/kong.yml.
+#
+# Requires: Prometheus Operator CRDs installed in the cluster.
+# ---------------------------------------------------------------------------
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kong
+  namespace: monitoring
+  labels:
+    app: kong
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: kong
+  endpoints:
+    - port: kong-admin
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+      - its-platform

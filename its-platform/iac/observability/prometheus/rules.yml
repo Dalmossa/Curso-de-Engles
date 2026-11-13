@@ -1,0 +1,762 @@
+# ===========================================================================
+# ITS Platform — Prometheus Alerting Rules
+# ===========================================================================
+# SLO-based alerting rules for critical service level objectives.
+# Rules organized by severity: P1 (page immediately), P2 (page within hours),
+# P3 (ticket/notification).
+# ===========================================================================
+
+groups:
+  # ---------------------------------------------------------------------------
+  # SLO Alerting Rules (Critical - P1)
+  # Based on: API latency p95 < 200ms, error rate < 0.1%, availability > 99.9%
+  # ---------------------------------------------------------------------------
+  - name: its-platform-slo-critical
+    interval: 30s
+    rules:
+      # SLO: API Latency p95 < 200ms
+      # Burn rate alerting: 2x budget = 15m window, 10x budget = 2m window (page immediately)
+      - alert: SLOLatencyP95BurnRate2x
+        expr: |
+          (
+            sum(rate(http_request_duration_seconds_bucket{le="0.2"}[1h])) by (service)
+            /
+            sum(rate(http_request_duration_seconds_count[1h])) by (service)
+          ) < 0.999
+        for: 15m
+        labels:
+          severity: P1
+          slo: latency_p95
+          slo_target: "200ms"
+          team: platform
+        annotations:
+          summary: "SLO burn rate 2x: API latency p95 exceeding 200ms for {{ $labels.service }}"
+          description: |
+            Service {{ $labels.service }} latency p95 has exceeded 200ms for 15 minutes.
+            Current p95: {{ $value | humanizePercentage }} of requests > 200ms.
+            This consumes error budget at 2x the sustainable rate.
+          runbook_url: "https://wiki.its.example.com/runbooks/slo-latency-p95"
+
+      - alert: SLOLatencyP95BurnRate10x
+        expr: |
+          (
+            sum(rate(http_request_duration_seconds_bucket{le="0.2"}[5m])) by (service)
+            /
+            sum(rate(http_request_duration_seconds_count[5m])) by (service)
+          ) < 0.99
+        for: 2m
+        labels:
+          severity: P1
+          slo: latency_p95
+          slo_target: "200ms"
+          team: platform
+        annotations:
+          summary: "SLO burn rate 10x: API latency p95 critically degraded for {{ $labels.service }} - PAGE IMMEDIATELY"
+          description: |
+            Service {{ $labels.service }} latency p95 has exceeded 200ms for 2 minutes.
+            Current p95: {{ $value | humanizePercentage }} of requests > 200ms.
+            This consumes error budget at 10x the sustainable rate. Immediate action required.
+          runbook_url: "https://wiki.its.example.com/runbooks/slo-latency-p95"
+
+      # SLO: Error Rate < 0.1% (5xx errors)
+      - alert: SLOErrorRateBurnRate2x
+        expr: |
+          (
+            sum(rate(http_requests_total{status=~"5.."}[1h])) by (service)
+            /
+            sum(rate(http_requests_total[1h])) by (service)
+          ) > 0.002
+        for: 15m
+        labels:
+          severity: P1
+          slo: error_rate
+          slo_target: "0.1%"
+          team: platform
+        annotations:
+          summary: "SLO burn rate 2x: Error rate exceeding 0.1% for {{ $labels.service }}"
+          description: |
+            Service {{ $labels.service }} 5xx error rate is {{ $value | humanizePercentage }} over 1h.
+            SLO target is < 0.1%. This consumes error budget at 2x the sustainable rate.
+          runbook_url: "https://wiki.its.example.com/runbooks/slo-error-rate"
+
+      - alert: SLOErrorRateBurnRate10x
+        expr: |
+          (
+            sum(rate(http_requests_total{status=~"5.."}[5m])) by (service)
+            /
+            sum(rate(http_requests_total[5m])) by (service)
+          ) > 0.01
+        for: 2m
+        labels:
+          severity: P1
+          slo: error_rate
+          slo_target: "0.1%"
+          team: platform
+        annotations:
+          summary: "SLO burn rate 10x: Error rate critically high for {{ $labels.service }} - PAGE IMMEDIATELY"
+          description: |
+            Service {{ $labels.service }} 5xx error rate is {{ $value | humanizePercentage }} over 5m.
+            SLO target is < 0.1%. This consumes error budget at 10x the sustainable rate.
+            Immediate action required.
+          runbook_url: "https://wiki.its.example.com/runbooks/slo-error-rate"
+
+      # SLO: Availability > 99.9%
+      - alert: SLOAvailabilityBurnRate2x
+        expr: |
+          (
+            sum(rate(http_requests_total{status!~"5.."}[1h])) by (service)
+            /
+            sum(rate(http_requests_total[1h])) by (service)
+          ) < 0.999
+        for: 15m
+        labels:
+          severity: P1
+          slo: availability
+          slo_target: "99.9%"
+          team: platform
+        annotations:
+          summary: "SLO burn rate 2x: Availability below 99.9% for {{ $labels.service }}"
+          description: |
+            Service {{ $labels.service }} availability is {{ $value | humanizePercentage }} over 1h.
+            SLO target is > 99.9%. This consumes error budget at 2x the sustainable rate.
+          runbook_url: "https://wiki.its.example.com/runbooks/slo-availability"
+
+      - alert: SLOAvailabilityBurnRate10x
+        expr: |
+          (
+            sum(rate(http_requests_total{status!~"5.."}[5m])) by (service)
+            /
+            sum(rate(http_requests_total[5m])) by (service)
+          ) < 0.99
+        for: 2m
+        labels:
+          severity: P1
+          slo: availability
+          slo_target: "99.9%"
+          team: platform
+        annotations:
+          summary: "SLO burn rate 10x: Availability critically low for {{ $labels.service }} - PAGE IMMEDIATELY"
+          description: |
+            Service {{ $labels.service }} availability is {{ $value | humanizePercentage }} over 5m.
+            SLO target is > 99.9%. This consumes error budget at 10x the sustainable rate.
+            Immediate action required.
+          runbook_url: "https://wiki.its.example.com/runbooks/slo-availability"
+
+      # Multi-window, multi-burn-rate composite alert (covers all SLOs)
+      - alert: SLOMultiWindowBurnRate
+        expr: |
+          (
+            (
+              sum(rate(http_requests_total{status=~"5.."}[5m])) by (service)
+              /
+              sum(rate(http_requests_total[5m])) by (service)
+            ) > 0.01
+            OR
+            (
+              sum(rate(http_request_duration_seconds_bucket{le="0.2"}[5m])) by (service)
+              /
+              sum(rate(http_request_duration_seconds_count[5m])) by (service)
+            ) < 0.99
+          )
+          AND
+          (
+            (
+              sum(rate(http_requests_total{status=~"5.."}[1h])) by (service)
+              /
+              sum(rate(http_requests_total[1h])) by (service)
+            ) > 0.002
+            OR
+            (
+              sum(rate(http_request_duration_seconds_bucket{le="0.2"}[1h])) by (service)
+              /
+              sum(rate(http_request_duration_seconds_count[1h])) by (service)
+            ) < 0.999
+          )
+        for: 5m
+        labels:
+          severity: P1
+          slo: composite
+          team: platform
+        annotations:
+          summary: "SLO multi-window burn rate alert for {{ $labels.service }}"
+          description: |
+            Service {{ $labels.service }} is burning error budget in both short (5m) and long (1h) windows.
+            This indicates a sustained issue requiring immediate investigation.
+          runbook_url: "https://wiki.its.example.com/runbooks/slo-composite"
+
+  # ---------------------------------------------------------------------------
+  # Service Health (Critical - P1)
+  # ---------------------------------------------------------------------------
+  - name: its-platform-critical
+    interval: 30s
+    rules:
+      - alert: ServiceDown
+        expr: up{job="its-platform-services"} == 0
+        for: 2m
+        labels:
+          severity: P1
+          team: platform
+        annotations:
+          summary: "Service {{ $labels.pod }} in {{ $labels.namespace }} is down"
+          description: |
+            Pod {{ $labels.pod }} has been down for 2 minutes.
+            Check deployment status and pod logs.
+          runbook_url: "https://wiki.its.example.com/runbooks/service-down"
+
+      - alert: DeploymentReplicasMismatch
+        expr: |
+          kube_deployment_status_replicas_available{namespace=~"its-platform-.*"} 
+          < kube_deployment_spec_replicas{namespace=~"its-platform-.*"}
+        for: 5m
+        labels:
+          severity: P1
+          team: platform
+        annotations:
+          summary: "Deployment {{ $labels.deployment }} has unavailable replicas"
+          description: |
+            Deployment {{ $labels.deployment }} in {{ $labels.namespace }} has 
+            {{ $value }} available replicas vs {{ kube_deployment_spec_replicas{deployment="{{$labels.deployment}}",namespace="{{$labels.namespace"}} }} desired.
+          runbook_url: "https://wiki.its.example.com/runbooks/deployment-replicas"
+
+      - alert: PodCrashLooping
+        expr: |
+          rate(container_restart_count{namespace=~"its-platform-.*", container!="istio-proxy"}[15m]) > 0.1
+        for: 5m
+        labels:
+          severity: P1
+          team: platform
+        annotations:
+          summary: "Pod {{ $labels.pod }} is crash looping"
+          description: |
+            Pod {{ $labels.pod }} in {{ $labels.namespace }} has restarted 
+            {{ $value | humanizeDuration }} times per minute.
+          runbook_url: "https://wiki.its.example.com/runbooks/pod-crashloop"
+
+  # ---------------------------------------------------------------------------
+  # Infrastructure Warnings (P2)
+  # ---------------------------------------------------------------------------
+  - name: its-platform-warning
+    interval: 60s
+    rules:
+      - alert: HighMemoryUsage
+        expr: |
+          (container_memory_usage_bytes{namespace=~"its-platform-.*"} 
+           / container_spec_memory_limit_bytes{namespace=~"its-platform-.*"}) > 0.85
+        for: 10m
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "Memory usage > 85% on {{ $labels.pod }}"
+          description: |
+            Pod {{ $labels.pod }} in {{ $labels.namespace }} is using 
+            {{ $value | humanizePercentage }} of its memory limit.
+
+      - alert: HighCPUUsage
+        expr: |
+          (rate(container_cpu_usage_seconds_total{namespace=~"its-platform-.*"}[5m]) 
+           / (container_spec_cpu_quota{namespace=~"its-platform-.*"} 
+              / container_spec_cpu_period{namespace=~"its-platform-.*"})) > 0.85
+        for: 10m
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "CPU usage > 85% on {{ $labels.pod }}"
+          description: |
+            Pod {{ $labels.pod }} in {{ $labels.namespace }} is using 
+            {{ $value | humanizePercentage }} of its CPU limit.
+
+      - alert: DiskSpaceLow
+        expr: |
+          (node_filesystem_avail_bytes / node_filesystem_size_bytes) < 0.15
+        for: 10m
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "Disk space < 15% on {{ $labels.instance }}"
+          description: |
+            Node {{ $labels.instance }} has only {{ $value | humanizePercentage }} disk space remaining.
+
+      - alert: PVCSpaceLow
+        expr: |
+          (kubelet_volume_stats_available_bytes / kubelet_volume_stats_capacity_bytes) < 0.15
+        for: 10m
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "PVC {{ $labels.persistentvolumeclaim }} space < 15%"
+          description: |
+            PVC {{ $labels.persistentvolumeclaim }} in {{ $labels.namespace }} has 
+            {{ $value | humanizePercentage }} space remaining.
+
+      - alert: HighNetworkErrors
+        expr: |
+          rate(node_network_receive_errs_total[5m]) + rate(node_network_transmit_errs_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "High network errors on {{ $labels.instance }}"
+          description: |
+            Node {{ $labels.instance }} is experiencing {{ $value }} network errors per second.
+
+  # ---------------------------------------------------------------------------
+  # Database Alerts (P2)
+  # ---------------------------------------------------------------------------
+  - name: its-platform-database
+    interval: 60s
+    rules:
+      - alert: DatabaseConnectionsHigh
+        expr: |
+          pg_stat_activity_count{state="active"} / pg_settings_max_connections > 0.8
+        for: 5m
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "Database connections > 80%"
+          description: |
+            PostgreSQL has {{ $value | humanizePercentage }} of max connections active.
+            Consider connection pooling or increasing max_connections.
+
+      - alert: ReplicationLagHigh
+        expr: |
+          pg_replication_lag_seconds > 30
+        for: 5m
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "PostgreSQL replication lag > 30s"
+          description: |
+            Replica is {{ $value | humanizeDuration }} behind primary.
+            Check network and replica load.
+
+      - alert: DatabaseSizeHigh
+        expr: |
+          pg_database_size_bytes / pg_settings_max_connections > 10000000000
+        for: 1h
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "Database size growing rapidly"
+          description: |
+            Database {{ $labels.database }} is {{ $value | humanize1024 }} in size.
+            Consider archiving or partitioning.
+
+      - alert: LongRunningQueries
+        expr: |
+          pg_stat_activity_max_tx_duration_seconds > 300
+        for: 5m
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "Long running transaction > 5 minutes"
+          description: |
+            Transaction on database {{ $labels.datname }} has been running for 
+            {{ $value | humanizeDuration }}. Query: {{ $labels.query }}
+
+  # ---------------------------------------------------------------------------
+  # Cache/Redis Alerts (P2)
+  # ---------------------------------------------------------------------------
+  - name: its-platform-cache
+    interval: 60s
+    rules:
+      - alert: RedisMemoryHigh
+        expr: |
+          redis_memory_used_bytes / redis_memory_max_bytes > 0.85
+        for: 10m
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "Redis memory usage > 85%"
+          description: |
+            Redis instance {{ $labels.instance }} is using {{ $value | humanizePercentage }} of max memory.
+
+      - alert: RedisConnectionsHigh
+        expr: |
+          redis_connected_clients / redis_config_maxclients > 0.8
+        for: 5m
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "Redis connections > 80%"
+          description: |
+            Redis has {{ $value | humanizePercentage }} of max connections in use.
+
+      - alert: RedisReplicationBroken
+        expr: |
+          redis_replication_connected_slaves == 0
+        for: 1m
+        labels:
+          severity: P1
+          team: platform
+        annotations:
+          summary: "Redis replication broken"
+          description: |
+            Redis master {{ $labels.instance }} has no connected replicas.
+
+  # ---------------------------------------------------------------------------
+  # Message Queue Alerts (P2)
+  # ---------------------------------------------------------------------------
+  - name: its-platform-queue
+    interval: 60s
+    rules:
+      - alert: CeleryQueueBacklog
+        expr: |
+          celery_queue_length > 1000
+        for: 10m
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "Celery queue {{ $labels.queue }} backlog > 1000"
+          description: |
+            Queue {{ $labels.queue }} has {{ $value }} pending tasks.
+            Consider scaling workers.
+
+      - alert: CeleryWorkerDown
+        expr: |
+          celery_worker_heartbeat_timestamp < time() - 60
+        for: 2m
+        labels:
+          severity: P1
+          team: platform
+        annotations:
+          summary: "Celery worker {{ $labels.worker }} appears down"
+          description: |
+            Worker hasn't sent heartbeat in over 60 seconds.
+
+      - alert: BullMQQueueStalled
+        expr: |
+          rate(bullmq_jobs_failed_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "BullMQ queue {{ $labels.queue }} high failure rate"
+          description: |
+            Queue {{ $labels.queue }} has {{ $value }} failures per second.
+
+  # ---------------------------------------------------------------------------
+  # Business Metrics (P3)
+  # ---------------------------------------------------------------------------
+  - name: its-platform-business
+    interval: 60s
+    rules:
+      - alert: LowActiveLearners
+        expr: |
+          count(count by (learner_id) (http_requests_total{job="its-platform-services"})) < 10
+        for: 30m
+        labels:
+          severity: P3
+          team: product
+        annotations:
+          summary: "Active learners dropped below 10"
+          description: |
+            Only {{ $value }} active learners in the last hour. Possible service issue.
+
+      - alert: DiagnosticFailureRate
+        expr: |
+          rate(diagnostic_failed_total[15m]) > 0.1
+        for: 5m
+        labels:
+          severity: P2
+          team: product
+        annotations:
+          summary: "Diagnostic failure rate > 10%"
+          description: |
+            Diagnostic assessments are failing at {{ $value | humanizePercentage }} rate.
+
+      - alert: PracticeSubmissionLatency
+        expr: |
+          histogram_quantile(0.95, rate(practice_submission_duration_seconds_bucket[5m])) > 2
+        for: 10m
+        labels:
+          severity: P2
+          team: product
+        annotations:
+          summary: "Practice submission p95 latency > 2s"
+          description: |
+            Practice submissions taking {{ $value | humanizeDuration }} at p95.
+
+      - alert: MasteryGateFailureRate
+        expr: |
+          rate(mastery_gate_failed_total[15m]) > 0.2
+        for: 10m
+        labels:
+          severity: P2
+          team: product
+        annotations:
+          summary: "Mastery gate failure rate > 20%"
+          description: |
+            Learners failing mastery gates at {{ $value | humanizePercentage }} rate.
+            Check content quality or difficulty calibration.
+
+      - alert: NextActivitySelectionFailures
+        expr: |
+          rate(next_activity_selection_failed_total[15m]) > 0.05
+        for: 5m
+        labels:
+          severity: P2
+          team: product
+        annotations:
+          summary: "Next activity selection failures > 5%"
+          description: |
+            Adaptive engine failing to select next activity at {{ $value | humanizePercentage }} rate.
+
+  # ---------------------------------------------------------------------------
+  # Backup Alerts (P1/P2)
+  # ---------------------------------------------------------------------------
+  - name: its-platform-backup
+    interval: 60s
+    rules:
+      - alert: PgBackRestBackupFailed
+        expr: |
+          pgbackrest_backup_status{status="failed"} == 1
+        for: 1m
+        labels:
+          severity: P1
+          team: platform
+        annotations:
+          summary: "pgBackRest backup failed for stanza {{ $labels.stanza }}"
+          description: |
+            Backup for stanza {{ $labels.stanza }} has failed.
+            Check pgBackRest logs immediately.
+          runbook_url: "https://wiki.its.example.com/runbooks/pgbackrest-backup-failed"
+
+      - alert: PgBackRestBackupTimeout
+        expr: |
+          pgbackrest_backup_duration_seconds > 3600
+        for: 5m
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "pgBackRest backup taking longer than 1 hour"
+          description: |
+            Backup running for {{ $value | humanizeDuration }}. Check for stuck backup.
+
+      - alert: PgBackRestWalArchivalLag
+        expr: |
+          pgbackrest_wal_archival_lag_seconds > 300
+        for: 5m
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "pgBackRest WAL archival lag > 5 minutes"
+          description: |
+            WAL archival is {{ $value | humanizeDuration }} behind.
+            Risk of data loss on primary failure.
+
+      - alert: PgBackRestRestoreTestFailed
+        expr: |
+          pgbackrest_restore_test_status{status="failed"} == 1
+        for: 1m
+        labels:
+          severity: P1
+          team: platform
+        annotations:
+          summary: "Weekly pgBackRest restore test failed"
+          description: |
+            Automated restore verification failed. Backup integrity not confirmed.
+          runbook_url: "https://wiki.its.example.com/runbooks/pgbackrest-restore-test-failed"
+
+      - alert: PgBackRestRepositoryUnreachable
+        expr: |
+          pgbackrest_repo_reachable == 0
+        for: 1m
+        labels:
+          severity: P1
+          team: platform
+        annotations:
+          summary: "pgBackRest repository unreachable"
+          description: |
+            Cannot connect to backup repository. Backups cannot proceed.
+          runbook_url: "https://wiki.its.example.com/runbooks/pgbackrest-repo-unreachable"
+
+  # ---------------------------------------------------------------------------
+  # Security Alerts (P1/P2)
+  # ---------------------------------------------------------------------------
+  - name: its-platform-security
+    interval: 60s
+    rules:
+      - alert: FailedLoginsSpike
+        expr: |
+          rate(auth_failed_logins_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: P2
+          team: security
+        annotations:
+          summary: "Failed login spike detected"
+          description: |
+            {{ $value }} failed login attempts per second. Possible brute force attack.
+
+      - alert: AccessDeniedSpike
+        expr: |
+          rate(access_denied_total[5m]) > 50
+        for: 5m
+        labels:
+          severity: P2
+          team: security
+        annotations:
+          summary: "Access denied spike detected"
+          description: |
+            {{ $value }} access denied events per second. Possible authorization issue or attack.
+
+      - alert: ValidationFailureSpike
+        expr: |
+          rate(validation_failure_total[5m]) > 100
+        for: 5m
+        labels:
+          severity: P2
+          team: security
+        annotations:
+          summary: "Validation failure spike detected"
+          description: |
+            {{ $value }} validation failures per second. Possible malformed requests or attack.
+
+      - alert: CertificateExpiring
+        expr: |
+          ssl_certificate_expiry_days < 30
+        for: 1h
+        labels:
+          severity: P3
+          team: platform
+        annotations:
+          summary: "TLS certificate expires in {{ $value }} days"
+          description: |
+            Certificate for {{ $labels.domain }} expires in {{ $value }} days.
+            Plan renewal.
+
+  # ---------------------------------------------------------------------------
+  # Audit Log Alerts (P2)
+  # ---------------------------------------------------------------------------
+  - name: its-platform-audit
+    interval: 60s
+    rules:
+      - alert: AuditLogWriteFailure
+        expr: |
+          rate(audit_write_failed_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: P1
+          team: platform
+        annotations:
+          summary: "Audit log write failures detected"
+          description: |
+            {{ $value }} audit log write failures per second.
+            Immutable audit trail at risk.
+
+      - alert: AuditChainVerificationFailed
+        expr: |
+          audit_chain_verification_failed_total > 0
+        for: 1m
+        labels:
+          severity: P1
+          team: security
+        annotations:
+          summary: "Audit hash chain verification failed"
+          description: |
+            Hash chain integrity check failed. Possible tampering or corruption.
+          runbook_url: "https://wiki.its.example.com/runbooks/audit-chain-failed"
+
+      - alert: AuditLogGrowthRate
+        expr: |
+          rate(audit_log_size_bytes_total[1h]) > 100000000
+        for: 10m
+        labels:
+          severity: P2
+          team: platform
+        annotations:
+          summary: "Audit log growing rapidly (>100MB/h)"
+          description: |
+            Audit log growing at {{ $value | humanize1024 }}/hour.
+            Check for excessive logging or retention policy.
+
+  # ---------------------------------------------------------------------------
+  # Recording Rules for SLO Calculations
+  # ---------------------------------------------------------------------------
+  - name: its-platform-slo-recording
+    interval: 30s
+    rules:
+      # SLI: Request Latency (p50, p95, p99)
+      - record: slos:latency_p50:ratio_rate5m
+        expr: |
+          histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, service))
+
+      - record: slos:latency_p95:ratio_rate5m
+        expr: |
+          histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, service))
+
+      - record: slos:latency_p99:ratio_rate5m
+        expr: |
+          histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, service))
+
+      # SLI: Error Rate (5xx)
+      - record: slos:error_rate:ratio_rate5m
+        expr: |
+          sum(rate(http_requests_total{status=~"5.."}[5m])) by (service)
+          /
+          sum(rate(http_requests_total[5m])) by (service)
+
+      - record: slos:error_rate:ratio_rate1h
+        expr: |
+          sum(rate(http_requests_total{status=~"5.."}[1h])) by (service)
+          /
+          sum(rate(http_requests_total[1h])) by (service)
+
+      # SLI: Availability (non-5xx / total)
+      - record: slos:availability:ratio_rate5m
+        expr: |
+          sum(rate(http_requests_total{status!~"5.."}[5m])) by (service)
+          /
+          sum(rate(http_requests_total[5m])) by (service)
+
+      - record: slos:availability:ratio_rate1h
+        expr: |
+          sum(rate(http_requests_total{status!~"5.."}[1h])) by (service)
+          /
+          sum(rate(http_requests_total[1h])) by (service)
+
+      # SLI: Throughput (requests per second)
+      - record: slos:throughput:rate5m
+        expr: |
+          sum(rate(http_requests_total[5m])) by (service)
+
+      # Error Budget Remaining (for dashboarding)
+      - record: slos:error_budget:latency_p95_remaining_30d
+        expr: |
+          1 - (1 - slos:latency_p95:ratio_rate5m) / (1 - 0.999)
+
+      - record: slos:error_budget:error_rate_remaining_30d
+        expr: |
+          1 - slos:error_rate:ratio_rate5m / 0.001
+
+      - record: slos:error_budget:availability_remaining_30d
+        expr: |
+          1 - (1 - slos:availability:ratio_rate5m) / (1 - 0.999)
+
+      # Burn Rate (for alerting)
+      - record: slos:burn_rate:latency_p95_1h_vs_5m
+        expr: |
+          (1 - slos:latency_p95:ratio_rate5m) / (1 - slos:latency_p95:ratio_rate1h)
+
+      - record: slos:burn_rate:error_rate_1h_vs_5m
+        expr: |
+          slos:error_rate:ratio_rate5m / slos:error_rate:ratio_rate1h
+
+      - record: slos:burn_rate:availability_1h_vs_5m
+        expr: |
+          (1 - slos:availability:ratio_rate5m) / (1 - slos:availability:ratio_rate1h)

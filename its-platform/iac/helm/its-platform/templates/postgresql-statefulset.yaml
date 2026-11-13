@@ -57,6 +57,9 @@ spec:
             - name: pgdata
               mountPath: /var/lib/postgresql/data
               subPath: postgresql
+            - name: postgresql-config
+              mountPath: /etc/postgresql
+              subPath: postgresql.conf
             {{- if .Values.backup.enabled }}
             - name: pgbackrest-config
               mountPath: /etc/pgbackrest
@@ -77,6 +80,10 @@ spec:
         - name: pgbackrest
           image: ghcr.io/pgbackrest/pgbackrest:2.50
           command: ["/bin/bash", "-c", "pgbackrest --stanza={{ .Values.global.environment }} --log-level-console=info server"]
+          ports:
+            - name: pgbackrest
+              containerPort: 8432
+              protocol: TCP
           env:
             - name: PGBACKREST_CONFIG
               value: /etc/pgbackrest/pgbackrest.conf
@@ -105,11 +112,33 @@ spec:
             limits:
               cpu: "500m"
               memory: "512Mi"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8432
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8432
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
         {{- end }}
       volumes:
         - name: pgdata
           persistentVolumeClaim:
             claimName: {{ include "its-platform.fullname" . }}-postgresql
+        - name: postgresql-config
+          configMap:
+            name: {{ include "its-platform.fullname" . }}-postgresql-config
+            items:
+              - key: postgresql.conf
+                path: postgresql.conf
         {{- if .Values.backup.enabled }}
         - name: pgbackrest-config
           configMap:
@@ -127,5 +156,5 @@ spec:
         resources:
           requests:
             storage: {{ .Values.postgresql.persistence.size }}
-  {{- end }}
+{{- end }}
 {{- end }}

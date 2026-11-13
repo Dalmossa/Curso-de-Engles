@@ -49,8 +49,8 @@ data:
           - api_url: '{{ .Values.monitoring.alertmanager.slackWebhook }}'
             channel: '#its-platform-alerts'
             send_resolved: true
-            title: '[P2] {{ .GroupLabels.alertname }}'
-            text: '{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}'
+            title: '[P2] {{ "{{ .GroupLabels.alertname }}" }}'
+            text: '{{ "{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}" }}'
       - name: 'p3-email'
         email_configs:
           - to: 'team@its-platform.example.com'
@@ -62,3 +62,4 @@ data:
         target_match_re:
           severity: 'P[23]'
         equal: ['alertname', 'namespace']
+{{- end }}
