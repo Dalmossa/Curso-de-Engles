@@ -34,7 +34,11 @@
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "#domain/*": ["src/domain/*"],
+      "#infrastructure/*": ["src/infrastructure/*"],
+      "#modules/*": ["src/modules/*"],
+      "#common/*": ["src/common/*"]
     }
   },
   "include": ["src/**/*", "express.d.ts"],
