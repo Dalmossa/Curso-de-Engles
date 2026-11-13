@@ -12,7 +12,7 @@ import { RequestMethod, ValidationPipe, VersioningType } from '@nestjs/common';
 import type { INestApplication } from '@nestjs/common';
 
 import { ProblemExceptionFilter } from './common/filters/problem-exception.filter.js';
-import { correlationIdMiddleware } from './common/http/correlation.js';
+import { correlationIdMiddleware } from './observability/correlation-id.middleware.js';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard.js';
 import { TOKEN_VERIFIER } from './modules/auth/auth.module.js';
 
@@ -39,6 +39,9 @@ export function configureApp(app: INestApplication): INestApplication {
   // Before the pipes and the filter: it fills `req.correlationId`, which the error filter reads
   // for `Problem.request_id`, and it sets the response header for every response (§4.6) — including
   // the ones this filter never sees.
+  // Also extracts/propagates W3C traceparent/tracestate for distributed tracing correlation.
+  // Using functional middleware to avoid OpenTelemetry Express instrumentation issues
+  // with class-based middlewares (see: CorrelationIdMiddleware class constructor error).
   app.use(correlationIdMiddleware);
 
   // §4.5 — "deny by default: `JwtAuthGuard` registered as a **global** guard; public routes opt
