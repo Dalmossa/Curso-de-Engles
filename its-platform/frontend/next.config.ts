@@ -51,6 +51,10 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Silence the Turbopack warning about multiple lockfiles
+  turbopack: {
+    root: __dirname,
+  },
 
   async headers() {
     return [

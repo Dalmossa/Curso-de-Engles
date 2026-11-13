@@ -9,6 +9,8 @@
   },
   "scripts": {
     "dev": "next dev -p 3100",
+    "dev:fresh": "npm run token:refresh && next dev -p 3100",
+    "token:refresh": "node scripts/refresh-token.mjs",
     "build": "next build",
     "start": "next start -p 3100",
     "lint": "eslint .",
