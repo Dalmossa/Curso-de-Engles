@@ -1,7 +1,8 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { getServerContext } from '@/infrastructure/composition/server-container';
 import { LessonView } from '@/presentation/components/lesson-view';
 import { isLessonId, type LessonContent } from '@/core';
+import { isDomainError, isAuthenticationFailure } from '@/core/errors/domain-error';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,9 +15,20 @@ interface PageProps {
  * the error propagates to the error boundary (error.tsx) which shows a proper
  * unavailability message. If the lesson doesn't exist, returns 404 via notFound().
  */
-async function loadLesson(lessonId: string): Promise<LessonContent> {
+async function loadLesson(lessonId: string): Promise<LessonContent | null> {
   const { useCases } = await getServerContext();
-  return await useCases.getLesson.execute(lessonId);
+  try {
+    return await useCases.getLesson.execute(lessonId);
+  } catch (error) {
+    if (isDomainError(error) && error.isMissingResource) {
+      return null;
+    }
+    if (isAuthenticationFailure(error)) {
+      redirect('/login');
+    }
+    // Let network/server errors propagate to error.tsx boundary
+    throw error;
+  }
 }
 
 export default async function LessonPage({ params }: PageProps) {
@@ -24,14 +36,7 @@ export default async function LessonPage({ params }: PageProps) {
 
   if (!isLessonId(lesson_id)) notFound();
 
-  let lesson: LessonContent;
-  try {
-    lesson = await loadLesson(lesson_id);
-  } catch (error) {
-    // Let network/server errors propagate to error.tsx boundary
-    throw error;
-  }
-
+  const lesson = await loadLesson(lesson_id);
   if (!lesson) notFound();
 
   return <LessonView lesson={lesson} />;
