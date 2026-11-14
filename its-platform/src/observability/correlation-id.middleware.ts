@@ -35,7 +35,7 @@ export function extractTraceContext(traceparent: string | undefined): TraceConte
   const traceId = parts[1];
   const parentId = parts[2];
   const flags = parts[3];
-  
+
   if (version !== '00') return null; // Only support version 00
 
   // Validate trace-id (32 hex chars) and parent-id (16 hex chars)
@@ -88,7 +88,7 @@ function isValidUuid(value: string): boolean {
  * 3. Generates or adopts correlation ID (UUID v4)
  * 4. Injects correlation ID and trace context into response headers
  * 5. Makes correlation ID available on request object
- * 
+ *
  * This is a functional middleware (not a class) to avoid issues with
  * OpenTelemetry Express instrumentation wrapping class constructors.
  */
@@ -104,7 +104,7 @@ export function correlationIdMiddleware(req: Request, res: Response, next: NextF
   const correlationId = resolveCorrelationId(inboundCorrelationId);
 
   // 3. Store correlation ID on request for use in handlers/filters
-  (req as any).correlationId = correlationId;
+  req.correlationId = correlationId;
 
   // 4. Set response headers (for all responses, not just errors)
   res.setHeader(CORRELATION_ID_HEADER, correlationId);
@@ -126,7 +126,7 @@ export function correlationIdMiddleware(req: Request, res: Response, next: NextF
   // 5. Add trace context to request for manual span creation
   if (traceContext) {
     // Store extracted trace context for manual span creation
-    (req as any).traceContext = traceContext;
+    req.traceContext = traceContext;
   }
 
   next();
@@ -137,7 +137,7 @@ export function correlationIdMiddleware(req: Request, res: Response, next: NextF
  * Falls back to generating one if middleware hasn't run.
  */
 export function getCorrelationId(req: Request): string {
-  const existing = (req as any).correlationId;
+  const existing = req.correlationId;
   if (existing && typeof existing === 'string') {
     return existing;
   }
@@ -149,7 +149,7 @@ export function getCorrelationId(req: Request): string {
  * Returns null if no trace context was extracted.
  */
 export function getTraceContext(req: Request): TraceContext | null {
-  return (req as any).traceContext ?? null;
+  return req.traceContext ?? null;
 }
 
 /**
@@ -159,8 +159,15 @@ export function getTraceContext(req: Request): TraceContext | null {
 export function createChildSpan(
   name: string,
   req: Request,
-  attributes?: Record<string, string | number | boolean>
-): { span: ReturnType<typeof trace.getTracer> extends { startSpan: (name: string, options?: any, context?: any) => infer S } ? S : any; end: (error?: Error) => void } {
+  attributes?: Record<string, string | number | boolean>,
+): {
+  span: ReturnType<typeof trace.getTracer> extends {
+    startSpan: (name: string, options?: any, context?: any) => infer S;
+  }
+    ? S
+    : any;
+  end: (error?: Error) => void;
+} {
   const tracer = trace.getTracer('its-platform');
   const traceContext = getTraceContext(req);
 

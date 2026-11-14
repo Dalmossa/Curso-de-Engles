@@ -30,16 +30,6 @@ export * from './custom-spans.js';
 export * from './metrics.js';
 
 // Re-export key OpenTelemetry API types for convenience
-export type {
-  Span,
-  SpanStatusCode,
-  SpanKind,
-  TraceFlags,
-} from '@opentelemetry/api';
+export type { Span, SpanStatusCode, SpanKind, TraceFlags } from '@opentelemetry/api';
 
-export {
-  trace,
-  metrics,
-  context,
-  propagation,
-} from '@opentelemetry/api';
+export { trace, metrics, context, propagation } from '@opentelemetry/api';

@@ -1,4 +1,10 @@
-import { metrics, type Counter, type Histogram, type UpDownCounter, type Meter } from '@opentelemetry/api';
+import {
+  metrics,
+  type Counter,
+  type Histogram,
+  type UpDownCounter,
+  type Meter,
+} from '@opentelemetry/api';
 
 /**
  * Custom metrics for the ITS Platform.
@@ -376,7 +382,7 @@ export function recordHttpRequest(
   method: string,
   route: string,
   statusCode: number,
-  durationSeconds: number
+  durationSeconds: number,
 ): void {
   const labels = { method, route, status_code: statusCode.toString() };
   httpRequestsTotal.add(1, labels);
@@ -384,7 +390,11 @@ export function recordHttpRequest(
   httpRequestsByStatus.add(1, { status_code: statusCode.toString() });
 }
 
-export function recordAuthAttempt(operation: string, success: boolean, durationSeconds: number): void {
+export function recordAuthAttempt(
+  operation: string,
+  success: boolean,
+  durationSeconds: number,
+): void {
   const labels = { operation, result: success ? 'success' : 'failure' };
   authAttemptsTotal.add(1, labels);
   authResultsTotal.add(1, labels);
@@ -395,7 +405,7 @@ export function recordContentLoad(
   operation: 'lesson' | 'pack' | 'dialogue' | 'dialogue_audio',
   found: boolean,
   durationSeconds: number,
-  cefrLevel?: string
+  cefrLevel?: string,
 ): void {
   const labels = { operation, found: found.toString(), cefr_level: cefrLevel ?? 'unknown' };
   contentLoadTotal.add(1, labels);
@@ -408,7 +418,7 @@ export function recordContentLoad(
 export function recordMasteryGateEvaluation(
   domain: string,
   passed: boolean,
-  durationSeconds: number
+  durationSeconds: number,
 ): void {
   const labels = { domain, passed: passed.toString() };
   masteryGateEvaluationsTotal.add(1, labels);
@@ -432,9 +442,13 @@ export function recordPlacementRun(
   formVersion: string,
   provisional: boolean,
   calibrationStatus: string,
-  durationSeconds: number
+  durationSeconds: number,
 ): void {
-  const labels = { form_version: formVersion, provisional: provisional.toString(), calibration_status: calibrationStatus };
+  const labels = {
+    form_version: formVersion,
+    provisional: provisional.toString(),
+    calibration_status: calibrationStatus,
+  };
   placementRunsTotal.add(1, labels);
   placementLatency.record(durationSeconds, labels);
 }
@@ -445,7 +459,7 @@ export function recordPracticeSession(
   correctCount: number,
   totalCount: number,
   durationSeconds: number,
-  skillsUpdated: number
+  skillsUpdated: number,
 ): void {
   const labels = { mode, pack_id: packId };
   practiceSessionsTotal.add(1, labels);
@@ -459,7 +473,7 @@ export function recordDbOperation(
   table: string,
   durationSeconds: number,
   success: boolean,
-  rowCount?: number
+  rowCount?: number,
 ): void {
   const labels = { operation, table, success: success.toString() };
   dbOperationsTotal.add(1, labels);
@@ -470,7 +484,7 @@ export function recordQueueJob(
   queueName: string,
   jobName: string,
   success: boolean,
-  durationSeconds: number
+  durationSeconds: number,
 ): void {
   const labels = { queue: queueName, job: jobName, success: success.toString() };
   if (success) {

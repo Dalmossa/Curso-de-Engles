@@ -21,9 +21,11 @@ export function registerAutoInstrumentations(): void {
       // HTTP instrumentation - traces incoming requests and outgoing HTTP calls
       new HttpInstrumentation({
         // Ignore health check endpoints to reduce noise
-        ignoreIncomingRequestHook: (request) => {
+        ignoreIncomingRequestHook: request => {
           const url = request.url || '';
-          return url === '/health' || url === '/ready' || url === '/metrics' || url === '/favicon.ico';
+          return (
+            url === '/health' || url === '/ready' || url === '/metrics' || url === '/favicon.ico'
+          );
         },
         // Add custom attributes to HTTP spans
         requestHook: (span, request) => {
@@ -34,7 +36,7 @@ export function registerAutoInstrumentations(): void {
             span.setAttribute('http.request.header.x-correlation-id', correlationId);
           }
           // Add traceparent header for W3C correlation
-          const traceparent = req.headers?.['traceparent'] as string | undefined;
+          const traceparent = req.headers?.traceparent as string | undefined;
           if (traceparent) {
             span.setAttribute('http.request.header.traceparent', traceparent);
           }
@@ -98,9 +100,11 @@ export function registerConfiguredInstrumentations(config: InstrumentationConfig
   if (config.http !== false) {
     instrumentations.push(
       new HttpInstrumentation({
-        ignoreIncomingRequestHook: (request) => {
+        ignoreIncomingRequestHook: request => {
           const url = request.url || '';
-          return url === '/health' || url === '/ready' || url === '/metrics' || url === '/favicon.ico';
+          return (
+            url === '/health' || url === '/ready' || url === '/metrics' || url === '/favicon.ico'
+          );
         },
         requestHook: (span, request) => {
           const req = request as any;
@@ -108,7 +112,7 @@ export function registerConfiguredInstrumentations(config: InstrumentationConfig
           if (correlationId) {
             span.setAttribute('http.request.header.x-correlation-id', correlationId);
           }
-          const traceparent = req.headers?.['traceparent'] as string | undefined;
+          const traceparent = req.headers?.traceparent as string | undefined;
           if (traceparent) {
             span.setAttribute('http.request.header.traceparent', traceparent);
           }
@@ -120,7 +124,7 @@ export function registerConfiguredInstrumentations(config: InstrumentationConfig
             span.setAttribute('http.response.header.x-correlation-id', correlationId);
           }
         },
-      })
+      }),
     );
   }
 
@@ -128,7 +132,7 @@ export function registerConfiguredInstrumentations(config: InstrumentationConfig
     instrumentations.push(
       new PgInstrumentation({
         enhancedDatabaseReporting: true,
-      })
+      }),
     );
   }
 

@@ -1,4 +1,11 @@
-import { trace, type Span, SpanStatusCode, context, propagation, ROOT_CONTEXT } from '@opentelemetry/api';
+import {
+  trace,
+  type Span,
+  SpanStatusCode,
+  context,
+  propagation,
+  ROOT_CONTEXT,
+} from '@opentelemetry/api';
 import type { Request } from 'express';
 
 /**
@@ -29,7 +36,7 @@ export function createMasteryGateSpan(
     distinctDays: number;
     spacedObs: number;
     observationsCount: number;
-  }
+  },
 ): { span: Span; end: (result: { passed: boolean; clauses: Record<string, boolean> }) => void } {
   const tracer = getTracer();
   const span = tracer.startSpan('domain.mastery_gate.evaluate', {
@@ -69,7 +76,7 @@ export function createBktUpdateSpan(
     pLearn: number;
     pSlip: number;
     pGuess: number;
-  }
+  },
 ): { span: Span; end: (result: { pKnowAfter: number; pKnowDelta: number }) => void } {
   const tracer = getTracer();
   const span = tracer.startSpan('domain.bkt.update', {
@@ -107,8 +114,17 @@ export function createFsrsReviewSpan(
     rating: number;
     elapsedDays: number;
     masteryProbability?: number;
-  }
-): { span: Span; end: (result: { stabilityAfter: number; difficultyAfter: number; stateAfter: string; intervalDays: number; retrievability: number }) => void } {
+  },
+): {
+  span: Span;
+  end: (result: {
+    stabilityAfter: number;
+    difficultyAfter: number;
+    stateAfter: string;
+    intervalDays: number;
+    retrievability: number;
+  }) => void;
+} {
   const tracer = getTracer();
   const span = tracer.startSpan('domain.fsrs.review', {
     attributes: {
@@ -124,7 +140,13 @@ export function createFsrsReviewSpan(
 
   return {
     span,
-    end: (result: { stabilityAfter: number; difficultyAfter: number; stateAfter: string; intervalDays: number; retrievability: number }) => {
+    end: (result: {
+      stabilityAfter: number;
+      difficultyAfter: number;
+      stateAfter: string;
+      intervalDays: number;
+      retrievability: number;
+    }) => {
       span.setAttribute('fsrs.stability_after', result.stabilityAfter);
       span.setAttribute('fsrs.difficulty_after', result.difficultyAfter);
       span.setAttribute('fsrs.state_after', result.stateAfter);
@@ -148,7 +170,7 @@ export function createAuthSpan(
     sessionId?: string;
     email?: string;
     provider?: string;
-  }
+  },
 ): { span: Span; end: (success: boolean, error?: Error) => void } {
   const tracer = getTracer();
   const span = tracer.startSpan(`auth.${operation}`, {
@@ -187,7 +209,7 @@ export function createContentLoadSpan(
   attributes: {
     cefrLevel?: string;
     schemaVersion?: string;
-  }
+  },
 ): { span: Span; end: (found: boolean, itemCount?: number, error?: Error) => void } {
   const tracer = getTracer();
   const span = tracer.startSpan(`content.load.${operation}`, {
@@ -225,8 +247,16 @@ export function createPlacementSpan(
   attributes: {
     formVersion: string;
     itemsCount: number;
-  }
-): { span: Span; end: (result: { theta: number; cefrBand: string; provisional: boolean; calibrationStatus: string }) => void } {
+  },
+): {
+  span: Span;
+  end: (result: {
+    theta: number;
+    cefrBand: string;
+    provisional: boolean;
+    calibrationStatus: string;
+  }) => void;
+} {
   const tracer = getTracer();
   const span = tracer.startSpan('placement.diagnostic.run', {
     attributes: {
@@ -238,7 +268,12 @@ export function createPlacementSpan(
 
   return {
     span,
-    end: (result: { theta: number; cefrBand: string; provisional: boolean; calibrationStatus: string }) => {
+    end: (result: {
+      theta: number;
+      cefrBand: string;
+      provisional: boolean;
+      calibrationStatus: string;
+    }) => {
       span.setAttribute('diagnostic.theta', result.theta);
       span.setAttribute('diagnostic.cefr_band', result.cefrBand);
       span.setAttribute('diagnostic.provisional', result.provisional);
@@ -259,8 +294,11 @@ export function createPracticeSpan(
   attributes: {
     mode: 'adaptive' | 'fixed';
     itemsCount: number;
-  }
-): { span: Span; end: (result: { correctCount: number; totalCount: number; skillsUpdated: number }) => void } {
+  },
+): {
+  span: Span;
+  end: (result: { correctCount: number; totalCount: number; skillsUpdated: number }) => void;
+} {
   const tracer = getTracer();
   const span = tracer.startSpan('practice.session.submit', {
     attributes: {
@@ -276,7 +314,10 @@ export function createPracticeSpan(
     end: (result: { correctCount: number; totalCount: number; skillsUpdated: number }) => {
       span.setAttribute('practice.correct_count', result.correctCount);
       span.setAttribute('practice.total_count', result.totalCount);
-      span.setAttribute('practice.accuracy', result.totalCount > 0 ? result.correctCount / result.totalCount : 0);
+      span.setAttribute(
+        'practice.accuracy',
+        result.totalCount > 0 ? result.correctCount / result.totalCount : 0,
+      );
       span.setAttribute('practice.skills_updated', result.skillsUpdated);
       span.setStatus({ code: SpanStatusCode.OK });
       span.end();
@@ -294,7 +335,7 @@ export function createDbSpan(
   attributes?: {
     queryType?: string;
     entityId?: string;
-  }
+  },
 ): { span: Span; end: (result: { rowCount?: number; error?: Error }) => void } {
   const tracer = getTracer();
   const span = tracer.startSpan(`db.${operation}`, {
@@ -333,7 +374,7 @@ export function createQueueSpan(
   attributes: {
     jobName: string;
     attempts: number;
-  }
+  },
 ): { span: Span; end: (result: { success: boolean; durationMs: number; error?: Error }) => void } {
   const tracer = getTracer();
   const span = tracer.startSpan('queue.job.process', {
@@ -368,10 +409,10 @@ export function createQueueSpan(
 export async function withSpan<T>(
   spanName: string,
   fn: (span: Span) => Promise<T>,
-  attributes?: Record<string, string | number | boolean>
+  attributes?: Record<string, string | number | boolean>,
 ): Promise<T> {
   const tracer = getTracer();
-  return tracer.startActiveSpan(spanName, { attributes: attributes ?? {} }, async (span) => {
+  return tracer.startActiveSpan(spanName, { attributes: attributes ?? {} }, async span => {
     try {
       const result = await fn(span);
       span.setStatus({ code: SpanStatusCode.OK });

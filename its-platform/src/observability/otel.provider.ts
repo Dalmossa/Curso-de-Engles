@@ -10,7 +10,7 @@ import {
   SEMRESATTRS_DEPLOYMENT_ENVIRONMENT,
   SEMRESATTRS_SERVICE_INSTANCE_ID,
 } from '@opentelemetry/semantic-conventions';
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'node:crypto';
 
 /**
@@ -28,7 +28,8 @@ export function createOtelSDK(config: ConfigService): NodeSDK {
   const serviceName = config.get<string>('OTEL_SERVICE_NAME') || 'its-platform-api';
   const serviceVersion = config.get<string>('APP_VERSION') || '0.1.0';
   const environment = config.get<string>('NODE_ENV') || 'development';
-  const otelCollectorEndpoint = config.get<string>('OTEL_EXPORTER_OTLP_ENDPOINT') || 'http://otel-collector:4317';
+  const otelCollectorEndpoint =
+    config.get<string>('OTEL_EXPORTER_OTLP_ENDPOINT') || 'http://otel-collector:4317';
   const serviceInstanceId = config.get<string>('HOSTNAME') || randomUUID();
 
   const sdk = new NodeSDK({
@@ -63,11 +64,17 @@ export function createOtelSDK(config: ConfigService): NodeSDK {
           // Add request/response headers to spans for debugging
           requestHook: (span, request) => {
             const req = request as any;
-            span.setAttribute('http.request.header.x-correlation-id', req.headers?.['x-correlation-id'] || '');
+            span.setAttribute(
+              'http.request.header.x-correlation-id',
+              req.headers?.['x-correlation-id'] || '',
+            );
           },
           responseHook: (span, response) => {
             const res = response as any;
-            span.setAttribute('http.response.header.x-correlation-id', res.getHeader?.('x-correlation-id') || '');
+            span.setAttribute(
+              'http.response.header.x-correlation-id',
+              res.getHeader?.('x-correlation-id') || '',
+            );
           },
         },
         '@opentelemetry/instrumentation-pg': {
@@ -111,8 +118,12 @@ export function initializeOtel(config: ConfigService): NodeSDK {
     process.exit(0);
   };
 
-  process.on('SIGTERM', () => shutdown('SIGTERM'));
-  process.on('SIGINT', () => shutdown('SIGINT'));
+  process.on('SIGTERM', () => {
+    void shutdown('SIGTERM');
+  });
+  process.on('SIGINT', () => {
+    void shutdown('SIGINT');
+  });
 
   return sdk;
 }
