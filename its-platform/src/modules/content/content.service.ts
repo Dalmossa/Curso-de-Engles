@@ -7,6 +7,8 @@ import {
 } from '../../infrastructure/repositories/content.repository.js';
 import { AUDIO_URL_SIGNER } from '../../infrastructure/audio/audio-url-signer.js';
 import type { AudioUrlSigner } from '../../infrastructure/audio/audio-url-signer.js';
+import { SPEECH_SYNTHESIZER } from '../../infrastructure/speech/speech-synthesizer.js';
+import type { SpeechSynthesizer } from '../../infrastructure/speech/speech-synthesizer.js';
 
 /**
  * P1.12 — the three `/content/*` payloads, read from the persisted catalog and nothing else
@@ -176,14 +178,43 @@ export interface DialogueAudioContent {
   clips: DialogueAudioClipContent[];
 }
 
+/** One synthesized audio payload, in the shape `components.schemas.SpeechSynthesisAudio` publishes. */
+export interface SpeechSynthesisAudioContent {
+  mime_type: string;
+  base64: string;
+  duration_ms: number | null;
+}
+
+/**
+ * História 1's response — and the reason it is not an audio-only body.
+ *
+ * When no TTS engine is configured the endpoint still answers `200` with `engine: 'none'` and
+ * `audio: null`, because the browser fallback (`window.speechSynthesis`) is the product's designed
+ * path, not an error state. `fallback_reason` distinguishes "not configured" from "the configured
+ * engine failed", so the difference is visible in the response and in the logs instead of being
+ * flattened into a `500` that would take the lesson screen down with it.
+ */
+export interface SpeechSynthesisContent {
+  text: string;
+  voice: string;
+  rate: number;
+  engine: 'remote' | 'none';
+  audio: SpeechSynthesisAudioContent | null;
+  fallback_reason: 'not_configured' | 'upstream_error' | null;
+}
+
 /** The Q-L2 floor (ADR-027 §3); the DDL's own CHECK is the full 45–120 s range. */
 const MIN_DIALOGUE_SECONDS = 45;
+
+/** The locale the course teaches. A voice outside it would synthesize a different language. */
+const DEFAULT_SPEECH_VOICE = 'en-US';
 
 @Injectable()
 export class ContentService {
   constructor(
     private readonly contentRepository: ContentRepository,
     @Inject(AUDIO_URL_SIGNER) private readonly audioUrlSigner: AudioUrlSigner,
+    @Inject(SPEECH_SYNTHESIZER) private readonly speechSynthesizer: SpeechSynthesizer,
   ) {}
 
   /**
@@ -240,7 +271,7 @@ export class ContentService {
           options: stored.map(option => ({
             letter: LETTERS.charAt(option.position - 1),
             text: option.option_text,
-            ...(glossed ? { br_pt_form: option.br_pt_form as string } : {}),
+            ...(glossed ? { br_pt_form: option.br_pt_form! } : {}),
           })),
           listening_items: [],
         };
@@ -338,6 +369,38 @@ export class ContentService {
       cefr_level: rows.cefr_level,
       ttl_seconds: this.audioUrlSigner.defaultTtlSeconds,
       clips,
+    };
+  }
+
+  /**
+   * História 1 — synthesize a lesson phrase, or say honestly that this environment cannot.
+   *
+   * The service owns no caching and no provider: both live behind the injected port (see
+   * `infrastructure/speech/`), so this method is the contract's shape and nothing else. `text`,
+   * `voice` and `rate` are echoed back because the client renders the phrase it actually asked
+   * for — a lesson screen whose audio and highlight ran on different texts would be impossible to
+   * debug from the outside.
+   */
+  async synthesizeSpeech(
+    text: string,
+    voice: string = DEFAULT_SPEECH_VOICE,
+    rate: number = 1,
+  ): Promise<SpeechSynthesisContent> {
+    const outcome = await this.speechSynthesizer.synthesize({ text, voice, rate });
+    return {
+      text,
+      voice,
+      rate,
+      engine: outcome.engine,
+      audio:
+        outcome.audio === null
+          ? null
+          : {
+              mime_type: outcome.audio.mimeType,
+              base64: outcome.audio.base64,
+              duration_ms: outcome.audio.durationMs,
+            },
+      fallback_reason: outcome.fallbackReason,
     };
   }
 }

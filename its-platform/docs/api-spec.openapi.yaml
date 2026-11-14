@@ -458,6 +458,93 @@ components:
                 type: number
                 description: FSRS-derived interval
 
+    PronunciationEvaluationRequest:
+      type: object
+      description: >-
+        Body of `POST /practice/pronunciation-evaluate`. A member not declared here is **rejected**
+        (`400`), not ignored — `CONSTITUTION.md` §4.5 and `PronunciationEvaluationDto`. At least one
+        of `transcript` / `audio_base64` is required; the combination is enforced by the controller
+        (`400`), because it is a constraint across members.
+      additionalProperties: false
+      required: [expected_text]
+      properties:
+        expected_text:
+          type: string
+          minLength: 1
+          maxLength: 300
+          description: The target phrase the learner was asked to read.
+        transcript:
+          type: string
+          maxLength: 2000
+          description: >-
+            What the browser's speech recognition heard (Web Speech API). The cheap path: it needs
+            no ASR engine on the server. An empty string is a valid observation — it means "nothing
+            was recognised".
+        audio_base64:
+          type: string
+          contentEncoding: base64
+          maxLength: 500000
+          description: >-
+            The recording, when the client cannot transcribe locally. Sized for 15 s at 24 kbps
+            (≈ 60 KB in base64). Not persisted anywhere: the service sends it to the ASR engine and
+            drops it.
+        mime_type:
+          type: string
+          pattern: '^audio/[a-z0-9.+-]+$'
+          default: audio/webm
+          description: The recording's media type, for the ASR engine.
+        locale:
+          type: string
+          pattern: '^[a-z]{2}-[A-Z]{2}$'
+          default: en-US
+          description: BCP-47 of what is expected to be heard.
+
+    PronunciationWordScore:
+      type: object
+      additionalProperties: false
+      required: [word, status, confidence]
+      properties:
+        word:
+          type: string
+          description: The target word, as the learner read it.
+        status:
+          type: string
+          enum: [correct, needs_work, missed]
+          description: >-
+            `missed` is absence (the word was not recognised at all); `needs_work` is a recognised
+            but deviating articulation. The two ask different things of the learner, which is why
+            they are not collapsed into a boolean.
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Similarity observed, rounded to two decimals. `1` only for an exact match.
+
+    PronunciationEvaluation:
+      type: object
+      additionalProperties: false
+      required: [overall_score, word_scores, feedback_pt, transcript]
+      properties:
+        overall_score:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: >-
+            Mean of the target words. Not an accuracy percentage: `needs_work` scores its similarity
+            partially, and `missed` scores 0.
+        word_scores:
+          type: array
+          items:
+            $ref: '#/components/schemas/PronunciationWordScore'
+        feedback_pt:
+          type: string
+          description: One sentence in Brazilian Portuguese naming the next step.
+        transcript:
+          type: string
+          description: >-
+            The transcription that was actually scored — what the ASR heard, so the learner can see
+            the gap between intent and recognition.
+
     # ============================================================
     # Content Delivery
     # ============================================================
@@ -755,6 +842,84 @@ components:
           description: >-
             RFC 3339, `Z`-suffixed. An explicit `pattern` because the contract test's validator
             does not read `format` (ADR-028 §7).
+
+    # ------------------------------------------------------------
+    # História 1 — TTS (POST /content/tts)
+    # ------------------------------------------------------------
+    SpeechSynthesisRequest:
+      type: object
+      description: >-
+        Body of `POST /content/tts`. A member not declared here is **rejected** (`400`), not
+        ignored — `CONSTITUTION.md` §4.5 and `SpeechSynthesisDto`.
+      additionalProperties: false
+      required: [text]
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 500
+          description: The lesson phrase to synthesize. Echoed back in the response.
+        voice:
+          type: string
+          pattern: '^[a-z]{2}-[A-Z]{2}$'
+          default: en-US
+          description: >-
+            BCP-47 locale. The course teaches English; the default is the locale every lesson is
+            written in, and `voice` exists so a future voice id can be threaded through without a
+            contract change.
+        rate:
+          type: number
+          enum: [1, 0.75]
+          default: 1
+          description: The same accommodation pair the listening routes render (ADR-028 §2).
+
+    SpeechSynthesisAudio:
+      type: object
+      additionalProperties: false
+      required: [mime_type, base64, duration_ms]
+      properties:
+        mime_type:
+          type: string
+          description: Whatever the engine produced (`audio/mpeg`, `audio/wav`, …), unreinterpreted.
+        base64:
+          type: string
+          contentEncoding: base64
+          description: The audio bytes, base64-encoded. Never empty when this object is present.
+        duration_ms:
+          type: [integer, 'null']
+          minimum: 0
+          description: >-
+            Duration reported by the engine, or `null` when it reports none (raw audio bytes carry
+            no duration). The client reads the real duration from the `<audio>` element.
+
+    SpeechSynthesis:
+      type: object
+      additionalProperties: false
+      required: [text, voice, rate, engine, audio, fallback_reason]
+      properties:
+        text: { type: string }
+        voice: { type: string }
+        rate: { type: number }
+        engine:
+          type: string
+          enum: [remote, none]
+          description: >-
+            `remote` when an engine produced `audio`; `none` when this environment has no engine.
+            The client's `window.speechSynthesis` fallback is the designed path for `none`.
+        audio:
+          oneOf:
+            - $ref: '#/components/schemas/SpeechSynthesisAudio'
+            - type: 'null'
+          description: Present exactly when `engine` is `remote`.
+        fallback_reason:
+          oneOf:
+            - type: string
+              enum: [not_configured, upstream_error]
+            - type: 'null'
+          description: >-
+            Why no audio was produced. `not_configured` is the normal bare-metal state;
+            `upstream_error` is a configured engine that failed. Both fall back client-side, but the
+            difference must stay observable.
 
     LearnerProfile:
       type: object
@@ -1489,6 +1654,64 @@ paths:
               schema:
                 $ref: '#/components/schemas/Problem'
 
+  /practice/pronunciation-evaluate:
+    post:
+      tags: [practice]
+      summary: Score the pronunciation of a recording against a target phrase
+      description: |
+        História 2. Accepts either the browser's own transcription (`transcript`, from the Web
+        Speech API) or the recorded audio (`audio_base64`) when an ASR service is configured, and
+        returns a word-by-word comparison with the target phrase.
+
+        There is no fabricated score: when neither a transcript nor an ASR service is available the
+        answer is `422`, not a `0`. A `0` for "nothing was heard" would be indistinguishable from a
+        `0` for "everything was said wrong", and the learner would act on the wrong one.
+      operationId: evaluatePronunciation
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PronunciationEvaluationRequest'
+      responses:
+        '200':
+          description: Overall score, per-word status and a short pt-BR hint
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PronunciationEvaluation'
+        '400':
+          description: >-
+            Invalid body, or neither `transcript` nor `audio_base64` supplied. An undeclared
+            member is rejected (`additionalProperties: false`), not ignored.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized — a valid bearer token is required (ADR-038 D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: >-
+            No transcript was supplied and this environment has no ASR service, or the ASR service
+            failed to transcribe the recording. The platform declines to score rather than invent
+            a result.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
   /content/lessons/{lesson_id}:
     get:
       tags: [content]
@@ -1664,6 +1887,54 @@ paths:
             Dialogue not found, not `shipped`, without a render `take` complete for the whole
             dialogue, or (when any item is L2) without its renders ear-checked — one 404 body for
             every case, so admission cannot be probed for (ADR-028 §3).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /content/tts:
+    post:
+      tags: [content]
+      summary: Synthesize a lesson phrase (TTS)
+      description: |
+        História 1. Returns a synthesized render of `text`, or — when this environment has no TTS
+        engine — a `200` carrying `engine: "none"` and `audio: null` so the client falls back to
+        `window.speechSynthesis` (en-US). The fallback is the designed path in bare-metal
+        deployments, not an error: answering `5xx` would take the lesson screen down for a
+        capability the browser provides itself.
+
+        `POST` rather than `GET` because the phrase is content, up to 500 characters. In a query
+        string it would land in access logs, browser history and `Referer` headers.
+      operationId: synthesizeSpeech
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpeechSynthesisRequest'
+      responses:
+        '200':
+          description: The synthesized render, or an explicit statement that no engine is configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpeechSynthesis'
+        '400':
+          description: Invalid body — `text` outside 1–500 characters, `voice` outside `xx-YY`, or `rate` outside `1 | 0.75`
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized — a valid bearer token is required (ADR-038 D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4)
           content:
             application/problem+json:
               schema:

@@ -1,4 +1,14 @@
-import { Controller, Get, Param, Query, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Body,
+  HttpCode,
+  Post,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { SCOPES, Scopes } from '../../common/auth/scopes.decorator.js';
 // Value import, not `import type`: `emitDecoratorMetadata` needs the class at runtime for
 // Nest's constructor injection (the same reason `placement.controller.ts` imports its service).
@@ -8,7 +18,9 @@ import type {
   DialogueContent,
   LessonContent,
   PackContent,
+  SpeechSynthesisContent,
 } from './content.service.js';
+import { SpeechSynthesisDto } from './dto/speech-synthesis.dto.js';
 
 /**
  * `dlg_…`, the same id shape `/content/listening/{dialogue_id}` publishes. A malformed value is
@@ -103,5 +115,24 @@ export class ContentController {
       throw new NotFoundException('Dialogue audio not found');
     }
     return audio;
+  }
+
+  /**
+   * História 1 — `POST /content/tts`. A phrase in, a synthesized render (or an explicit "no engine
+   * here") out.
+   *
+   * `POST` rather than `GET` because the request carries a phrase of up to 500 characters: a query
+   * string would put lesson text into access logs, browser history and `Referer` headers, and the
+   * phrase is content, not an identifier.
+   *
+   * `200` for the same reason as the `/practice` routes: the contract publishes one success status,
+   * and a synthesis creates no addressable resource. The `200` also carries the fallback case — an
+   * absent engine is a designed outcome, not a server error, and answering `5xx` would take the
+   * lesson screen down for a capability the browser can provide itself.
+   */
+  @Post('tts')
+  @HttpCode(200)
+  async synthesizeSpeech(@Body() body: SpeechSynthesisDto): Promise<SpeechSynthesisContent> {
+    return this.contentService.synthesizeSpeech(body.text, body.voice, body.rate);
   }
 }
