@@ -3,7 +3,6 @@ export const routes = {
   login: '/login',
   diagnostic: '/diagnostic',
   mastery: '/mastery',
-  practice: '/practice',
   lesson: (lessonId: string) => `/lessons/${encodeURIComponent(lessonId)}`,
   lessonPractice: (lessonId: string, packId?: string) =>
     packId

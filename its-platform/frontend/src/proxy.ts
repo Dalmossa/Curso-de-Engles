@@ -33,7 +33,7 @@ import {
  * `/login` and `/register` are never redirected away from, even with a session: a token the API no
  * longer accepts must not leave the learner unable to reach the form that replaces it.
  */
-const PROTECTED = ['/', '/mastery', '/practice', '/lessons'];
+const PROTECTED = ['/', '/mastery', '/lessons'];
 const PUBLIC = ['/login', '/register', '/api/auth', '/api/health', '/health'];
 
 function matches(pathname: string, prefixes: readonly string[]): boolean {
@@ -116,5 +116,5 @@ export async function proxy(req: NextRequest): Promise<NextResponse> {
 }
 
 export const config = {
-  matcher: ['/', '/mastery/:path*', '/practice/:path*', '/lessons/:path*'],
+  matcher: ['/', '/mastery/:path*', '/lessons/:path*'],
 };

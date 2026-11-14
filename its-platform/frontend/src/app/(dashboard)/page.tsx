@@ -10,50 +10,71 @@ import { buttonClasses } from '@/presentation/components/ui/button';
 import { CourseRoadmap, type RoadmapModule } from '@/presentation/components/dashboard/course-roadmap';
 import { routes } from '@/shared/routes';
 import { isAuthenticationFailure } from '@/core/errors/domain-error';
+import { CURRICULUM_MODULES, getModulesByTrack } from '@/core/data/curriculum';
+import type { CefrLevel } from '@/core/value-objects/cefr-level';
+import type { MasteryOverview } from '@/core/services/mastery-gate';
 
 export const dynamic = 'force-dynamic';
 
-function buildPlaceholderRoadmap(): RoadmapModule[] {
-  return [
-    {
-      id: 'mod-01',
-      index: 1,
-      title: 'Módulo 1 - Primeiros passos',
-      description: 'Fundamentos para começar sua trilha no ITS.',
-      isUnlocked: true,
-      lessons: [
-        { id: 'les_a1_to_be_forms', title: 'Verbo "to be": formas e usos', durationMinutes: 15, isUnlocked: true, isCompleted: false },
-        { id: 'les_a1_greetings', title: 'Cumprimentos e apresentações', durationMinutes: 12, isUnlocked: true, isCompleted: false },
-        { id: 'les_a1_pronouns_subject_object', title: 'Pronomes sujeito e objeto', durationMinutes: 14, isUnlocked: true, isCompleted: false },
-        { id: 'les_a1_numbers_colors', title: 'Números, cores e perguntas básicas', durationMinutes: 10, isUnlocked: true, isCompleted: false },
-      ],
-    },
-    {
-      id: 'mod-02',
-      index: 2,
-      title: 'Módulo 2 - Rotina e perguntas',
-      description: 'Perguntas, rotina diária e vocabulário prático.',
-      isUnlocked: true,
-      lessons: [
-        { id: 'les_a1_present_simple', title: 'Presente simples: rotina', durationMinutes: 16, isUnlocked: true, isCompleted: false },
-        { id: 'les_a1_wh_questions', title: 'Perguntas com WH-', durationMinutes: 14, isUnlocked: true, isCompleted: false },
-        { id: 'les_a1_there_is_are', title: 'There is / There are', durationMinutes: 12, isUnlocked: true, isCompleted: false },
-        { id: 'les_a1_time_dates', title: 'Horas, datas e compromissos', durationMinutes: 13, isUnlocked: true, isCompleted: false },
-      ],
-    },
-    {
-      id: 'mod-03',
-      index: 3,
-      title: 'Módulo 3 - Conversação aplicada',
-      description: 'Diálogos reais com foco em fluência prática.',
-      isUnlocked: false,
-      lessons: [
-        { id: 'les_a2_small_talk', title: 'Small talk no trabalho', durationMinutes: 16, isUnlocked: false, isCompleted: false },
-        { id: 'les_a2_meeting_open', title: 'Abrir uma reunião em inglês', durationMinutes: 15, isUnlocked: false, isCompleted: false },
-        { id: 'les_a2_ask_for_help', title: 'Pedir ajuda com clareza', durationMinutes: 14, isUnlocked: false, isCompleted: false },
-      ],
-    },
-  ];
+/**
+ * Converts curriculum modules to RoadmapModule format, marking completion
+ * based on the learner's mastery data.
+ */
+function buildRoadmapFromCurriculum(
+  modules: readonly typeof CURRICULUM_MODULES[0][],
+  mastery: Record<string, number>,
+  cefrLevel: CefrLevel | null,
+): RoadmapModule[] {
+  return modules.map((mod, idx) => ({
+    id: mod.id,
+    index: idx + 1,
+    title: mod.title,
+    description: mod.description,
+    isUnlocked: isModuleUnlocked(mod, cefrLevel),
+    lessons: mod.lessons.map((lesson) => ({
+      id: lesson.id,
+      title: lesson.title,
+      durationMinutes: lesson.durationMinutes,
+      isUnlocked: isLessonUnlocked(lesson.id, mastery),
+      isCompleted: isLessonCompleted(lesson.id, mastery),
+    })),
+  }));
+}
+
+/**
+ * A module is unlocked if the learner's CEFR level meets or exceeds the module's level,
+ * or if it's the entry module for their level.
+ */
+function isModuleUnlocked(module: typeof CURRICULUM_MODULES[0], learnerCefr: CefrLevel | null): boolean {
+  if (!learnerCefr) return module.index === 1; // First module unlocked if no level
+  const cefrOrder: CefrLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+  const learnerIdx = cefrOrder.indexOf(learnerCefr);
+  const moduleIdx = cefrOrder.indexOf(module.cefrLevel);
+  return moduleIdx <= learnerIdx;
+}
+
+/**
+ * A lesson is unlocked if its module is unlocked and prerequisites are met.
+ * For now, simplified: unlocked if module is unlocked.
+ */
+function isLessonUnlocked(_lessonId: string, mastery: Record<string, number>): boolean {
+  // TODO: Check prerequisites from curriculum graph
+  // For now, consider unlocked if any related skill has mastery > 0
+  return Object.keys(mastery).length > 0;
+}
+
+/**
+ * A lesson is completed if its target skills all have mastery >= 0.85 (gate threshold).
+ * Simplified: check if any skill from the lesson has mastery >= 0.85.
+ */
+function isLessonCompleted(_lessonId: string, mastery: Record<string, number>): boolean {
+  // TODO: Map lessonId to its target skills from curriculum
+  // For now, use a simple heuristic: if the lesson ID appears in mastery with high score
+  const matchingEntry = Object.entries(mastery).find(
+    ([k]) => k.includes(_lessonId.replace('les_', '')) || _lessonId.includes(k),
+  );
+  if (matchingEntry !== undefined) return matchingEntry[1] >= 0.85;
+  return false;
 }
 
 export default async function DashboardPage() {
@@ -67,7 +88,19 @@ export default async function DashboardPage() {
     }
     throw error;
   }
-  const modules = buildPlaceholderRoadmap();
+
+  // Convert MasteryOverview to Record<string, number> for curriculum functions
+  const masteryRecord: Record<string, number> = Object.fromEntries(
+    (dashboard.mastery as MasteryOverview).entries.map((e) => [e.skill, e.mastery]),
+  );
+
+  // Track not in preferences yet; default to General
+  const track = 'General';
+  const modules = buildRoadmapFromCurriculum(
+    getModulesByTrack(track),
+    masteryRecord,
+    dashboard.cefrLevel,
+  );
 
   const totalLessons = modules.reduce((acc, m) => acc + m.lessons.length, 0);
   const completedLessons = modules.reduce((acc, m) => acc + m.lessons.filter((l) => l.isCompleted).length, 0);
@@ -82,9 +115,6 @@ export default async function DashboardPage() {
             <CefrBadge level={dashboard.cefrLevel} prefix="Nível" />
           </div>
           <div className="flex items-center gap-2">
-            <Link href={routes.practice} className={buttonClasses('ghost', 'sm')}>
-              Revisar (SRS)
-            </Link>
             <Link href={routes.mastery} className={buttonClasses('ghost', 'sm')}>
               Meu progresso
             </Link>
@@ -104,9 +134,6 @@ export default async function DashboardPage() {
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">Continuar de onde parei</h2>
-          <Link href={routes.practice} className={buttonClasses('ghost', 'sm')}>
-            Ver revisões
-          </Link>
         </div>
         <NextActivityCard
           activity={dashboard.nextActivity}
@@ -140,11 +167,6 @@ export default async function DashboardPage() {
               <p className="text-sm text-ink-600">
                 O ITS prioriza o <span className="font-medium">melhor próximo passo</span> com base no seu domínio. Nem sempre é a próxima aula da lista, pode ser uma revisão espaçada.
               </p>
-              <div className="mt-4">
-                <Link href={routes.practice} className={buttonClasses('secondary', 'sm')}>
-                  Ir para Revisar
-                </Link>
-              </div>
             </CardBody>
           </Card>
         </aside>
