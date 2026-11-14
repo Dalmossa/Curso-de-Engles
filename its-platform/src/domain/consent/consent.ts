@@ -53,7 +53,12 @@ export class Consent {
     this._userAgent = props.userAgent ?? null;
 
     // Invariantes
-    if (this._granted && this._withdrawnAt && this._grantedAt && this._withdrawnAt < this._grantedAt) {
+    if (
+      this._granted &&
+      this._withdrawnAt &&
+      this._grantedAt &&
+      this._withdrawnAt < this._grantedAt
+    ) {
       throw new Error('WithdrawnAt cannot be before GrantedAt');
     }
     if (!this._granted && this._grantedAt) {

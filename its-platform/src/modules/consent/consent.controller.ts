@@ -36,7 +36,12 @@ export class ConsentController {
     @Param('learner_id') learnerId: string,
     @Body() dto: { purpose: ConsentPurpose; ipHash?: string | null; userAgent?: string | null },
   ) {
-    return this.consent.grantConsent(learnerId, dto.purpose, dto.ipHash ?? null, dto.userAgent ?? null);
+    return this.consent.grantConsent(
+      learnerId,
+      dto.purpose,
+      dto.ipHash ?? null,
+      dto.userAgent ?? null,
+    );
   }
 
   @Delete(':purpose')

@@ -52,7 +52,10 @@ export class TypeORMConsentRepository implements ConsentRepositoryPort {
     return entity ? this.toDomain(entity) : null;
   }
 
-  async findActiveByLearnerAndPurpose(learnerId: string, purpose: ConsentPurpose): Promise<Consent | null> {
+  async findActiveByLearnerAndPurpose(
+    learnerId: string,
+    purpose: ConsentPurpose,
+  ): Promise<Consent | null> {
     const entity = await this.repo
       .createQueryBuilder('consent')
       .where('consent.learnerId = :learnerId', { learnerId })
@@ -68,7 +71,7 @@ export class TypeORMConsentRepository implements ConsentRepositoryPort {
       where: { learnerId },
       order: { createdAt: 'DESC' },
     });
-    return entities.map((e) => this.toDomain(e));
+    return entities.map(e => this.toDomain(e));
   }
 
   async findActiveByLearner(learnerId: string): Promise<Consent[]> {
@@ -79,7 +82,7 @@ export class TypeORMConsentRepository implements ConsentRepositoryPort {
       .andWhere('consent.withdrawnAt IS NULL')
       .orderBy('consent.createdAt', 'DESC')
       .getMany();
-    return entities.map((e) => this.toDomain(e));
+    return entities.map(e => this.toDomain(e));
   }
 
   async hasActiveConsent(learnerId: string, purpose: ConsentPurpose): Promise<boolean> {
@@ -110,7 +113,7 @@ export class TypeORMConsentRepository implements ConsentRepositoryPort {
       .andWhere('consent.withdrawnAt BETWEEN :from AND :to', { from, to })
       .orderBy('consent.withdrawnAt', 'DESC')
       .getMany();
-    return entities.map((e) => this.toDomain(e));
+    return entities.map(e => this.toDomain(e));
   }
 
   async findByVersion(version: string): Promise<Consent[]> {
@@ -118,6 +121,6 @@ export class TypeORMConsentRepository implements ConsentRepositoryPort {
       where: { version },
       order: { createdAt: 'DESC' },
     });
-    return entities.map((e) => this.toDomain(e));
+    return entities.map(e => this.toDomain(e));
   }
 }

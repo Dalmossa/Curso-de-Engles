@@ -1,5 +1,5 @@
-import { Consent } from './consent.js';
-import { ConsentPurpose } from './consent-purpose.js';
+import type { Consent } from './consent.js';
+import type { ConsentPurpose } from './consent-purpose.js';
 
 /**
  * Port do repositório de consentimentos (Domain → Infrastructure).
@@ -13,7 +13,10 @@ export interface ConsentRepositoryPort {
   findById(consentId: string): Promise<Consent | null>;
 
   /** Busca consentimento ativo do learner para uma finalidade */
-  findActiveByLearnerAndPurpose(learnerId: string, purpose: ConsentPurpose): Promise<Consent | null>;
+  findActiveByLearnerAndPurpose(
+    learnerId: string,
+    purpose: ConsentPurpose,
+  ): Promise<Consent | null>;
 
   /** Busca todos os consentimentos do learner (inclui revogados para histórico) */
   findAllByLearner(learnerId: string): Promise<Consent[]>;

@@ -10,7 +10,7 @@ export class ConsentDomainService {
   private readonly repository: ConsentRepositoryPort;
   private readonly currentPolicyVersion: string;
 
-  constructor(repository: ConsentRepositoryPort, currentPolicyVersion: string = '1.0') {
+  constructor(repository: ConsentRepositoryPort, currentPolicyVersion = '1.0') {
     this.repository = repository;
     this.currentPolicyVersion = currentPolicyVersion;
   }
@@ -44,10 +44,7 @@ export class ConsentDomainService {
   }
 
   /** Revoga consentimento (LGPD Art. 8 - revogação fácil, não retroativa) */
-  async withdrawConsent(props: {
-    learnerId: string;
-    purpose: ConsentPurpose;
-  }): Promise<Consent> {
+  async withdrawConsent(props: { learnerId: string; purpose: ConsentPurpose }): Promise<Consent> {
     const { learnerId, purpose } = props;
 
     const existing = await this.repository.findActiveByLearnerAndPurpose(learnerId, purpose);
@@ -85,17 +82,20 @@ export class ConsentDomainService {
     const regranted = existing.regrant(
       this.currentPolicyVersion,
       ipHash ?? null,
-      userAgent ?? null
+      userAgent ?? null,
     );
 
     return this.repository.save(regranted);
   }
 
   /** Busca ID do consentimento mais recente para learner + purpose */
-  private async findLatestConsentId(learnerId: string, purpose: ConsentPurpose): Promise<string | null> {
+  private async findLatestConsentId(
+    learnerId: string,
+    purpose: ConsentPurpose,
+  ): Promise<string | null> {
     const all = await this.repository.findAllByLearner(learnerId);
     const matching = all
-      .filter((c) => c.purpose === purpose)
+      .filter(c => c.purpose === purpose)
       .sort((a, b) => {
         const dateA = a.withdrawnAt ?? a.grantedAt ?? new Date(0);
         const dateB = b.withdrawnAt ?? b.grantedAt ?? new Date(0);
@@ -125,7 +125,10 @@ export class ConsentDomainService {
   }
 
   /** Verifica se todas as finalidades obrigatórias estão concedidas */
-  async hasAllRequiredConsents(learnerId: string, requiredPurposes: ConsentPurpose[]): Promise<boolean> {
+  async hasAllRequiredConsents(
+    learnerId: string,
+    requiredPurposes: ConsentPurpose[],
+  ): Promise<boolean> {
     for (const purpose of requiredPurposes) {
       const has = await this.hasActiveConsent(learnerId, purpose);
       if (!has) return false;
@@ -171,7 +174,7 @@ declare global {
 
 const crypto = globalThis.crypto ?? {
   randomUUID: () => {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
       const r = (Math.random() * 16) | 0;
       const v = c === 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);

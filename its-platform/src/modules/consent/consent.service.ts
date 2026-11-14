@@ -17,12 +17,12 @@ export class ConsentService {
   ) {
     // Adapter para usar o repositório TypeORM como porta do domínio
     const repositoryPort: ConsentRepositoryPort = {
-      save: async (consent) => {
+      save: async consent => {
         const entity = this.toEntity(consent);
         const saved = await this.repo.save(entity);
         return this.toDomain(saved);
       },
-      findById: async (id) => {
+      findById: async id => {
         const entity = await this.repo.findOne({ where: { id } });
         return entity ? this.toDomain(entity) : null;
       },
@@ -36,14 +36,14 @@ export class ConsentService {
           .getOne();
         return entity ? this.toDomain(entity) : null;
       },
-      findAllByLearner: async (learnerId) => {
+      findAllByLearner: async learnerId => {
         const entities = await this.repo.find({
           where: { learnerId },
           order: { createdAt: 'DESC' },
         });
-        return entities.map((e) => this.toDomain(e));
+        return entities.map(e => this.toDomain(e));
       },
-      findActiveByLearner: async (learnerId) => {
+      findActiveByLearner: async learnerId => {
         const entities = await this.repo
           .createQueryBuilder('consent')
           .where('consent.learnerId = :learnerId', { learnerId })
@@ -51,7 +51,7 @@ export class ConsentService {
           .andWhere('consent.withdrawnAt IS NULL')
           .orderBy('consent.createdAt', 'DESC')
           .getMany();
-        return entities.map((e) => this.toDomain(e));
+        return entities.map(e => this.toDomain(e));
       },
       hasActiveConsent: async (learnerId, purpose) => {
         const count = await this.repo
@@ -63,7 +63,7 @@ export class ConsentService {
           .getCount();
         return count > 0;
       },
-      countActiveByPurpose: async (purpose) => {
+      countActiveByPurpose: async purpose => {
         return this.repo
           .createQueryBuilder('consent')
           .where('consent.purpose = :purpose', { purpose })
@@ -79,14 +79,14 @@ export class ConsentService {
           .andWhere('consent.withdrawnAt BETWEEN :from AND :to', { from, to })
           .orderBy('consent.withdrawnAt', 'DESC')
           .getMany();
-        return entities.map((e) => this.toDomain(e));
+        return entities.map(e => this.toDomain(e));
       },
-      findByVersion: async (version) => {
+      findByVersion: async version => {
         const entities = await this.repo.find({
           where: { version },
           order: { createdAt: 'DESC' },
         });
-        return entities.map((e) => this.toDomain(e));
+        return entities.map(e => this.toDomain(e));
       },
     };
 
