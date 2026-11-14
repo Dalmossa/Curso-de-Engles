@@ -4,13 +4,13 @@ import { Injectable } from '@nestjs/common';
  * Retry Configuration
  */
 export interface RetryConfig {
-  maxAttempts: number;           // Maximum number of attempts (including first)
-  baseDelay: number;             // Base delay in ms
-  maxDelay: number;              // Maximum delay in ms
-  jitter: boolean;               // Whether to add jitter
-  jitterFactor: number;          // Jitter factor (0-1)
+  maxAttempts: number; // Maximum number of attempts (including first)
+  baseDelay: number; // Base delay in ms
+  maxDelay: number; // Maximum delay in ms
+  jitter: boolean; // Whether to add jitter
+  jitterFactor: number; // Jitter factor (0-1)
   retryableStatusCodes: number[]; // HTTP status codes that are retryable
-  retryableErrors: string[];     // Error codes/names that are retryable
+  retryableErrors: string[]; // Error codes/names that are retryable
 }
 
 /**
@@ -89,21 +89,18 @@ export const DEFAULT_RETRY_CONFIGS: Record<string, RetryConfig> = {
 /**
  * Calculate delay with exponential backoff and optional jitter
  */
-export function calculateDelay(
-  attempt: number,
-  config: RetryConfig
-): number {
+export function calculateDelay(attempt: number, config: RetryConfig): number {
   const exponentialDelay = config.baseDelay * Math.pow(2, attempt - 1);
   const cappedDelay = Math.min(exponentialDelay, config.maxDelay);
-  
+
   if (!config.jitter) {
     return cappedDelay;
   }
-  
+
   // Add jitter: random value between (1 - jitterFactor) and (1 + jitterFactor)
   const jitterRange = cappedDelay * config.jitterFactor;
   const jitter = (Math.random() - 0.5) * 2 * jitterRange;
-  
+
   return Math.max(0, Math.floor(cappedDelay + jitter));
 }
 
@@ -112,17 +109,17 @@ export function calculateDelay(
  */
 export function isRetryableError(error: unknown, config: RetryConfig): boolean {
   if (!error) return false;
-  
+
   const errorMessage = error instanceof Error ? error.message : String(error);
   const errorName = error instanceof Error ? error.name : '';
   const errorCode = (error as any).code || '';
   const statusCode = (error as any).status || (error as any).response?.status || 0;
-  
+
   // Check status codes
   if (statusCode && config.retryableStatusCodes.includes(statusCode)) {
     return true;
   }
-  
+
   // Check error codes/names
   for (const retryableError of config.retryableErrors) {
     if (
@@ -133,7 +130,7 @@ export function isRetryableError(error: unknown, config: RetryConfig): boolean {
       return true;
     }
   }
-  
+
   return false;
 }
 
@@ -143,38 +140,38 @@ export function isRetryableError(error: unknown, config: RetryConfig): boolean {
 export async function executeWithRetry<T>(
   operation: () => Promise<T>,
   config: RetryConfig,
-  onRetry?: (attempt: number, error: unknown, delay: number) => void
+  onRetry?: (attempt: number, error: unknown, delay: number) => void,
 ): Promise<T> {
   let lastError: unknown;
-  
+
   for (let attempt = 1; attempt <= config.maxAttempts; attempt++) {
     try {
       return await operation();
     } catch (error) {
       lastError = error;
-      
+
       // Don't retry on last attempt
       if (attempt === config.maxAttempts) {
         break;
       }
-      
+
       // Check if error is retryable
       if (!isRetryableError(error, config)) {
         throw error;
       }
-      
+
       // Calculate delay
       const delay = calculateDelay(attempt, config);
-      
+
       // Notify about retry
       if (onRetry) {
         onRetry(attempt, error, delay);
       }
-      
+
       // Wait before retry
       await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
-  
+
   throw lastError;
 }

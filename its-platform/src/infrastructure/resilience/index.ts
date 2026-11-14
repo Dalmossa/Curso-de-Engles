@@ -1,6 +1,6 @@
 /**
  * Resilience Module - Public API
- * 
+ *
  * Provides resilience patterns for outbound HTTP calls:
  * - Circuit Breaker (closed → open → half-open)
  * - Retry with exponential backoff + jitter (idempotent calls only)
@@ -10,7 +10,12 @@
  */
 
 // Circuit Breaker
-export { CircuitBreaker, CircuitState, type CircuitBreakerConfig, DEFAULT_CIRCUIT_CONFIGS } from './circuit-breaker.js';
+export {
+  CircuitBreaker,
+  CircuitState,
+  type CircuitBreakerConfig,
+  DEFAULT_CIRCUIT_CONFIGS,
+} from './circuit-breaker.js';
 
 // Retry
 export {
@@ -23,7 +28,13 @@ export {
 } from './retry.js';
 
 // Timeout
-export { withTimeout, type TimeoutConfig, TimeoutError, DEFAULT_TIMEOUTS, getDefaultTimeout } from './timeout.js';
+export {
+  withTimeout,
+  type TimeoutConfig,
+  TimeoutError,
+  DEFAULT_TIMEOUTS,
+  getDefaultTimeout,
+} from './timeout.js';
 
 // Fallback
 export {

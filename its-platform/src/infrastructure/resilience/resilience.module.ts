@@ -4,7 +4,11 @@ import { CircuitBreaker } from './circuit-breaker.js';
 import { DEFAULT_CIRCUIT_CONFIGS } from './circuit-breaker.js';
 import { DEFAULT_RETRY_CONFIGS } from './retry.js';
 import { DEFAULT_TIMEOUTS } from './timeout.js';
-import { FallbackStrategy, createFallbackConfigs, FALLBACK_CONFIGS_TOKEN } from './fallback.strategy.js';
+import {
+  FallbackStrategy,
+  createFallbackConfigs,
+  FALLBACK_CONFIGS_TOKEN,
+} from './fallback.strategy.js';
 import { ResilienceInterceptor } from './resilience.interceptor.js';
 
 /**
@@ -14,7 +18,7 @@ import { ResilienceInterceptor } from './resilience.interceptor.js';
  * - Explicit timeouts on every outbound call
  * - Documented fallback strategies per service
  * - OTel metrics integration for all patterns
- * 
+ *
  * This module is Global so it can be injected anywhere in the application.
  */
 @Global()
@@ -27,13 +31,13 @@ import { ResilienceInterceptor } from './resilience.interceptor.js';
       useValue: DEFAULT_CIRCUIT_CONFIGS,
     },
     CircuitBreaker,
-    
+
     // Retry configs
     {
       provide: 'RETRY_CONFIGS',
       useValue: DEFAULT_RETRY_CONFIGS,
     },
-    
+
     // Timeout configs
     {
       provide: 'TIMEOUT_CONFIGS',

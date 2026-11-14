@@ -1,6 +1,6 @@
 /**
  * Resilient JWKS Token Verifier
- * 
+ *
  * Wraps the standard JWKS verifier with resilience patterns:
  * - Circuit breaker (prevents cascade failures when JWKS endpoint is down)
  * - Retry with exponential backoff (for network errors)
@@ -11,7 +11,14 @@
 
 import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { createRemoteJWKSet, jwtVerify, type JWK, type KeyLike, type JWSHeaderParameters, type FlattenedJWSInput } from 'jose';
+import {
+  createRemoteJWKSet,
+  jwtVerify,
+  type JWK,
+  type KeyLike,
+  type JWSHeaderParameters,
+  type FlattenedJWSInput,
+} from 'jose';
 
 import {
   TokenVerificationError,
@@ -20,7 +27,12 @@ import {
 } from '../../common/auth/token-principal.js';
 import { refusalFor, scopesOf } from './token-claims.js';
 import { CircuitBreaker, CircuitState } from '../resilience/circuit-breaker.js';
-import { FallbackStrategy, FALLBACK_CONFIGS_TOKEN, type FallbackConfig, DegradedAuthError } from '../resilience/fallback.strategy.js';
+import {
+  FallbackStrategy,
+  FALLBACK_CONFIGS_TOKEN,
+  type FallbackConfig,
+  DegradedAuthError,
+} from '../resilience/fallback.strategy.js';
 import { executeWithRetry, type RetryConfig, DEFAULT_RETRY_CONFIGS } from '../resilience/retry.js';
 import { withTimeout, TimeoutError, DEFAULT_TIMEOUTS } from '../resilience/timeout.js';
 import { getMeter } from '../../observability/metrics.js';
@@ -42,7 +54,7 @@ interface CachedJwks {
 // Type for the remote JWKS resolver function
 type RemoteJwksResolver = (
   protectedHeader?: JWSHeaderParameters,
-  token?: FlattenedJWSInput
+  token?: FlattenedJWSInput,
 ) => Promise<KeyLike>;
 
 /**
@@ -56,7 +68,7 @@ export class ResilientJwksVerifier implements TokenVerifier {
   private readonly fallbackStrategy: FallbackStrategy;
   private cachedJwks: CachedJwks | null = null;
   private remoteJwksResolver: RemoteJwksResolver | null = null;
-  
+
   // OTel Metrics
   private readonly jwksFetchTotal: Counter;
   private readonly jwksFetchDuration: Histogram;
@@ -71,7 +83,8 @@ export class ResilientJwksVerifier implements TokenVerifier {
     fallbackStrategy: FallbackStrategy,
   ) {
     this.options = {
-      jwksUri: configService.get<string>('JWKS_URI') ?? 'http://kong:8000/api/v1/.well-known/jwks.json',
+      jwksUri:
+        configService.get<string>('JWKS_URI') ?? 'http://kong:8000/api/v1/.well-known/jwks.json',
       issuer: configService.get<string>('JWT_ISSUER') ?? 'its-platform',
       audience: configService.get<string>('JWT_AUDIENCE') ?? 'its-platform-api',
       cacheTtlMs: configService.get<number>('JWKS_CACHE_TTL_MS') ?? 300000, // 5 minutes
@@ -105,10 +118,13 @@ export class ResilientJwksVerifier implements TokenVerifier {
       description: 'Total number of JWKS cache misses',
       unit: '1',
     });
-    this.circuitBreakerState = meter.createUpDownCounter('its_platform_jwks_circuit_breaker_state', {
-      description: 'JWKS circuit breaker state (0=closed, 1=half-open, 2=open)',
-      unit: '1',
-    });
+    this.circuitBreakerState = meter.createUpDownCounter(
+      'its_platform_jwks_circuit_breaker_state',
+      {
+        description: 'JWKS circuit breaker state (0=closed, 1=half-open, 2=open)',
+        unit: '1',
+      },
+    );
     this.fallbackActivations = meter.createCounter('its_platform_jwks_fallback_activations_total', {
       description: 'Total number of JWKS fallback activations',
       unit: '1',
@@ -120,11 +136,11 @@ export class ResilientJwksVerifier implements TokenVerifier {
    */
   async verify(token: string): Promise<TokenPrincipal> {
     const startTime = Date.now();
-    
+
     try {
       // Get JWKS resolver (with resilience patterns)
       const resolver = await this.getJwksResolverWithResilience();
-      
+
       // Verify token with JWKS resolver
       const { payload } = await jwtVerify(token, resolver, {
         algorithms: ['RS256'],
@@ -132,7 +148,7 @@ export class ResilientJwksVerifier implements TokenVerifier {
         audience: this.options.audience,
       });
 
-      const subject = payload['sub'];
+      const subject = payload.sub;
       if (typeof subject !== 'string' || subject.trim().length === 0) {
         throw new TokenVerificationError('the token carries no `sub`', 'missing_subject');
       }
@@ -140,16 +156,16 @@ export class ResilientJwksVerifier implements TokenVerifier {
       // Record success metrics
       this.jwksFetchTotal.add(1, { result: 'success' });
       this.jwksFetchDuration.record((Date.now() - startTime) / 1000);
-      
+
       // Update circuit breaker state metric
       this.updateCircuitBreakerMetric();
 
       return { subject, scopes: scopesOf(payload), claims: { ...payload } };
     } catch (error) {
       // Record error metrics
-      this.jwksFetchTotal.add(1, { 
-        result: 'error', 
-        error_type: error instanceof Error ? error.name : 'UnknownError' 
+      this.jwksFetchTotal.add(1, {
+        result: 'error',
+        error_type: error instanceof Error ? error.name : 'UnknownError',
       });
       this.jwksFetchDuration.record((Date.now() - startTime) / 1000);
       this.updateCircuitBreakerMetric();
@@ -164,7 +180,7 @@ export class ResilientJwksVerifier implements TokenVerifier {
    */
   private async getJwksResolverWithResilience(): Promise<RemoteJwksResolver> {
     const circuitState = this.circuitBreaker.getState();
-    
+
     // If circuit is open, try fallback immediately
     if (circuitState === CircuitState.OPEN) {
       return this.getFallbackResolver();
@@ -179,7 +195,13 @@ export class ResilientJwksVerifier implements TokenVerifier {
       jitter: true,
       jitterFactor: 0.3,
       retryableStatusCodes: baseRetryConfig?.retryableStatusCodes ?? [408, 429, 500, 502, 503, 504],
-      retryableErrors: baseRetryConfig?.retryableErrors ?? ['ECONNRESET', 'ETIMEDOUT', 'ENOTFOUND', 'ECONNREFUSED', 'EPIPE'],
+      retryableErrors: baseRetryConfig?.retryableErrors ?? [
+        'ECONNRESET',
+        'ETIMEDOUT',
+        'ENOTFOUND',
+        'ECONNREFUSED',
+        'EPIPE',
+      ],
     };
 
     const timeout = this.configService.get<number>('JWKS_FETCH_TIMEOUT_MS') ?? 5000;
@@ -190,17 +212,17 @@ export class ResilientJwksVerifier implements TokenVerifier {
         async () => {
           return await executeWithRetry(
             async () => {
-              return await withTimeout(
-                () => this.fetchJwks(),
-                { timeout, message: `JWKS fetch timed out after ${timeout}ms` }
-              );
+              return await withTimeout(() => this.fetchJwks(), {
+                timeout,
+                message: `JWKS fetch timed out after ${timeout}ms`,
+              });
             },
             retryConfig,
             (attempt, error, delay) => {
               console.warn(`JWKS fetch retry attempt ${attempt} after ${delay}ms`, {
                 error: error instanceof Error ? error.message : String(error),
               });
-            }
+            },
           );
         },
         // Fallback - we just re-throw to be caught below
@@ -212,13 +234,13 @@ export class ResilientJwksVerifier implements TokenVerifier {
       // Cache successful response
       this.cacheJwks(jwks);
       this.jwksCacheMisses.add(1); // Count as miss since we fetched fresh
-      
+
       // Create remote JWKS resolver from cached keys
       this.remoteJwksResolver = createRemoteJWKSet(new URL(this.options.jwksUri), {
         // @ts-expect-error - jose types don't expose keys option but it works at runtime
         keys: this.cachedJwks!.keys,
       }) as unknown as RemoteJwksResolver;
-      
+
       return this.remoteJwksResolver;
     } catch (error) {
       // If we get here, both primary and fallback failed
@@ -238,7 +260,7 @@ export class ResilientJwksVerifier implements TokenVerifier {
     const response = await fetch(this.options.jwksUri, {
       method: 'GET',
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'User-Agent': 'its-platform-jwks-verifier/1.0',
       },
       // Don't follow redirects for security
@@ -249,8 +271,8 @@ export class ResilientJwksVerifier implements TokenVerifier {
       throw new Error(`JWKS fetch failed: ${response.status} ${response.statusText}`);
     }
 
-    const jwks = await response.json() as { keys: JWK[] };
-    
+    const jwks = (await response.json()) as { keys: JWK[] };
+
     if (!jwks.keys || !Array.isArray(jwks.keys) || jwks.keys.length === 0) {
       throw new Error('JWKS response contains no keys');
     }
@@ -266,7 +288,7 @@ export class ResilientJwksVerifier implements TokenVerifier {
     if (this.cachedJwks && this.cachedJwks.expiresAt > Date.now()) {
       this.jwksCacheHits.add(1);
       console.info('[JWKS] Using cached JWKS (fallback mode)');
-      
+
       return createRemoteJWKSet(new URL(this.options.jwksUri), {
         // @ts-expect-error - jose types don't expose keys option but it works at runtime
         keys: this.cachedJwks.keys,
@@ -276,10 +298,10 @@ export class ResilientJwksVerifier implements TokenVerifier {
     // No valid cache - degraded mode
     this.fallbackActivations.add(1, { strategy: 'degraded' });
     console.warn('[JWKS] No valid JWKS cache available, auth degraded');
-    
+
     throw new DegradedAuthError(
       'JWKS unavailable and no valid cache - authentication degraded',
-      new Error('JWKS fetch failed and cache expired')
+      new Error('JWKS fetch failed and cache expired'),
     );
   }
 

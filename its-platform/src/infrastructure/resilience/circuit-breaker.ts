@@ -5,19 +5,19 @@ import { ConfigService } from '@nestjs/config';
  * Circuit Breaker States
  */
 export enum CircuitState {
-  CLOSED = 'closed',     // Normal operation, requests pass through
-  OPEN = 'open',         // Failing, requests blocked
-  HALF_OPEN = 'half-open' // Testing if service recovered
+  CLOSED = 'closed', // Normal operation, requests pass through
+  OPEN = 'open', // Failing, requests blocked
+  HALF_OPEN = 'half-open', // Testing if service recovered
 }
 
 /**
  * Circuit Breaker Configuration
  */
 export interface CircuitBreakerConfig {
-  failureThreshold: number;    // Number of failures before opening
-  successThreshold: number;    // Successes in half-open before closing
-  timeout: number;             // Time in ms before attempting half-open
-  monitoringWindow: number;    // Time window for failure counting (ms)
+  failureThreshold: number; // Number of failures before opening
+  successThreshold: number; // Successes in half-open before closing
+  timeout: number; // Time in ms before attempting half-open
+  monitoringWindow: number; // Time window for failure counting (ms)
 }
 
 /**
@@ -33,7 +33,7 @@ export class CircuitBreaker {
   private readonly config: CircuitBreakerConfig;
 
   constructor(
-    @Inject('CIRCUIT_BREAKER_CONFIG') private readonly circuitConfig: CircuitBreakerConfig
+    @Inject('CIRCUIT_BREAKER_CONFIG') private readonly circuitConfig: CircuitBreakerConfig,
   ) {
     this.config = circuitConfig;
   }
@@ -72,7 +72,7 @@ export class CircuitBreaker {
    */
   private onSuccess(): void {
     this.failureCount = 0;
-    
+
     if (this.state === CircuitState.HALF_OPEN) {
       this.successCount++;
       if (this.successCount >= this.config.successThreshold) {
@@ -87,11 +87,14 @@ export class CircuitBreaker {
   private onFailure(): void {
     this.failureCount++;
     this.lastFailureTime = Date.now();
-    
+
     if (this.state === CircuitState.HALF_OPEN) {
       // Any failure in half-open immediately opens the circuit
       this.transitionToOpen();
-    } else if (this.state === CircuitState.CLOSED && this.failureCount >= this.config.failureThreshold) {
+    } else if (
+      this.state === CircuitState.CLOSED &&
+      this.failureCount >= this.config.failureThreshold
+    ) {
       this.transitionToOpen();
     }
   }

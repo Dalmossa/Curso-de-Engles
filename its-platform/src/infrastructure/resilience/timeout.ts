@@ -2,8 +2,8 @@
  * Timeout Configuration
  */
 export interface TimeoutConfig {
-  timeout: number;           // Timeout in milliseconds
-  message?: string;          // Custom timeout error message
+  timeout: number; // Timeout in milliseconds
+  message?: string; // Custom timeout error message
 }
 
 /**
@@ -24,7 +24,10 @@ export const DEFAULT_TIMEOUTS = {
  * Timeout Error Class
  */
 export class TimeoutError extends Error {
-  constructor(message: string, public readonly timeout: number) {
+  constructor(
+    message: string,
+    public readonly timeout: number,
+  ) {
     super(message);
     this.name = 'TimeoutError';
   }
@@ -35,19 +38,21 @@ export class TimeoutError extends Error {
  */
 export async function withTimeout<T>(
   operation: () => Promise<T>,
-  config: TimeoutConfig
+  config: TimeoutConfig,
 ): Promise<T> {
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
-  
+
   const timeoutPromise = new Promise<never>((_, reject) => {
     timeoutId = setTimeout(() => {
-      reject(new TimeoutError(
-        config.message || `Operation timed out after ${config.timeout}ms`,
-        config.timeout
-      ));
+      reject(
+        new TimeoutError(
+          config.message || `Operation timed out after ${config.timeout}ms`,
+          config.timeout,
+        ),
+      );
     }, config.timeout);
   });
-  
+
   try {
     const result = await Promise.race([operation(), timeoutPromise]);
     if (timeoutId !== undefined) clearTimeout(timeoutId);

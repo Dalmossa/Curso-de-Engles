@@ -45,7 +45,9 @@ export class KeyManagementServiceImpl implements KeyManagementService {
     const keyPair = this.generateKeyPair('its-platform-1');
     this.currentKeyPair = keyPair;
     this.logger.log('Initialized in-memory RSA key pair for JWT signing (dev/test only)');
-    this.logger.warn('KeyManagementServiceImpl: Using in-memory keys. Replace with KMS/HSM for production!');
+    this.logger.warn(
+      'KeyManagementServiceImpl: Using in-memory keys. Replace with KMS/HSM for production!',
+    );
   }
 
   private generateKeyPair(kid: string): KeyPair {
