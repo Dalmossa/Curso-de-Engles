@@ -1,9 +1,18 @@
 import type { CefrLevel } from '@/core/value-objects/cefr-level';
 
 /**
- * Curriculum modules sourced from `specs/curriculum-graph-spec.md` §3.
- * This is the authoritative module catalog used by the backend's CurriculumService.
- * Kept in sync with the spec — when the spec changes, update this file.
+ * Curriculum modules, from `specs/curriculum-graph-spec.md`: the module catalog in §3 and the
+ * **canonical lesson registry** in §4.3. §4.3 is the authority for lesson IDs — §3 publishes only
+ * per-module counts — so each module's lesson list is the §4.3 rows under that module's
+ * `**`mod_…`**` header, in registry order.
+ *
+ * Every ID here is a lesson the content loader persists, declares in its authoring file and the
+ * API serves. That equality is the point: a card on the dashboard links straight to
+ * `/lessons/{id}`, so an ID that exists only in a spec becomes a 404 the learner can reach.
+ * `les_b1_it_presentations` is the one registry row deliberately absent — §4.3 marks it
+ * `blocked_no_adequate_source`, no lesson file exists, and a card for it could only fail.
+ *
+ * When §3/§4.3 change, regenerate this list from the registry; never hand-add an ID.
  */
 
 export interface CurriculumLesson {
@@ -172,12 +181,12 @@ export const CURRICULUM_MODULES: readonly CurriculumModule[] = [
     track: 'General',
     sourceMarkdowns: ['leia-e-escreva-melhor-em-ingles.md'],
     lessons: [
-      { id: 'les_a2_reading_comprehension', title: 'Reading Comprehension Strategies', durationMinutes: 15 },
-      { id: 'les_a2_writing_basics', title: 'Writing Basics: Sentences & Paragraphs', durationMinutes: 15 },
-      { id: 'les_a2_punctuation', title: 'Punctuation & Capitalization', durationMinutes: 15 },
-      { id: 'les_a2_paragraph_structure', title: 'Paragraph Structure & Coherence', durationMinutes: 15 },
-      { id: 'les_a2_summarizing', title: 'Summarizing & Paraphrasing', durationMinutes: 15 },
-      { id: 'les_a2_vocabulary_expansion', title: 'Vocabulary Expansion Through Reading', durationMinutes: 15 },
+      { id: 'les_a2_reading_strategy', title: 'Reader\'s Toolkit: Skim, Scan, Context, Cognates', durationMinutes: 15 },
+      { id: 'les_a2_writing_svo', title: 'Writer\'s Toolkit: SVO Order, Explicit Subject, Tense Consistency', durationMinutes: 15 },
+      { id: 'les_a2_writing_bio', title: 'Writing: Bio & Profile', durationMinutes: 15 },
+      { id: 'les_a2_writing_messages', title: 'Writing: Everyday Messages', durationMinutes: 15 },
+      { id: 'les_a2_writing_past', title: 'Writing: Narrating the Past', durationMinutes: 15 },
+      { id: 'les_a2_writing_selfcheck', title: 'Writer\'s Revision Checklist', durationMinutes: 15 },
     ],
   },
 
@@ -198,16 +207,16 @@ export const CURRICULUM_MODULES: readonly CurriculumModule[] = [
       'docs/algoritmos.md',
     ],
     lessons: [
-      { id: 'les_a2_it_terms_basics', title: 'IT Terms Basics: Hardware, Software, Network', durationMinutes: 15 },
-      { id: 'les_a2_it_acronyms', title: 'Common IT Acronyms & Abbreviations', durationMinutes: 15 },
-      { id: 'les_a2_it_documentation', title: 'Technical Documentation: README, API Docs, Comments', durationMinutes: 15 },
-      { id: 'les_a2_it_standups', title: 'Daily Stand-ups: Vocabulary & Patterns', durationMinutes: 15 },
-      { id: 'les_a2_it_clean_code', title: 'Clean Code Principles in English', durationMinutes: 15 },
-      { id: 'les_a2_it_testing', title: 'Testing Vocabulary: Unit, Integration, E2E', durationMinutes: 15 },
-      { id: 'les_a2_it_typescript', title: 'TypeScript: Types, Interfaces, Generics', durationMinutes: 15 },
-      { id: 'les_a2_it_algorithms', title: 'Algorithms & Data Structures Vocabulary', durationMinutes: 15 },
-      { id: 'les_a2_it_version_control', title: 'Git & Version Control Vocabulary', durationMinutes: 15 },
-      { id: 'les_a2_it_debugging', title: 'Debugging & Troubleshooting Language', durationMinutes: 15 },
+      { id: 'les_a2_it_terms_basics', title: 'IT English: Core Terms, Docs, Stand-ups', durationMinutes: 15 },
+      { id: 'les_a2_it_roles_hierarchy', title: 'Roles & Hierarchy in Tech', durationMinutes: 15 },
+      { id: 'les_a2_it_reading_strategy', title: 'Reading Technical Texts', durationMinutes: 15 },
+      { id: 'les_a2_it_computer_parts', title: 'Parts of Computers', durationMinutes: 15 },
+      { id: 'les_a2_it_system_unit', title: 'System Unit & Hardware Vocabulary', durationMinutes: 15 },
+      { id: 'les_a2_it_internet_history', title: 'Internet History & Relative Clauses', durationMinutes: 15 },
+      { id: 'les_a2_it_clean_code_basics', title: 'Clean Code Practices: Refactoring, Code Smells, SOLID', durationMinutes: 15 },
+      { id: 'les_a2_it_testing_fundamentals', title: 'Testing Fundamentals: Unit Tests, Mocks, TDD Cycle', durationMinutes: 15 },
+      { id: 'les_a2_it_typescript_basics', title: 'TypeScript Basics: Types, Interfaces, Generics, Async', durationMinutes: 15 },
+      { id: 'les_a2_it_algorithms_basics', title: 'Algorithms & Data Structures Basics: Big O, Arrays, Hash Maps', durationMinutes: 15 },
     ],
   },
   {
@@ -219,12 +228,12 @@ export const CURRICULUM_MODULES: readonly CurriculumModule[] = [
     track: 'IT Track',
     sourceMarkdowns: ['Ingles-Tecnico-Para-Informatica.md', 'frases-ingles-trabalho.md (tech)'],
     lessons: [
-      { id: 'les_a2_it_pr_reviews', title: 'Code Review Comments in English', durationMinutes: 15 },
-      { id: 'les_a2_it_ticket_writing', title: 'Writing Effective Tickets & Bug Reports', durationMinutes: 15 },
-      { id: 'les_a2_it_incident_reports', title: 'Incident Reports & Postmortems', durationMinutes: 15 },
-      { id: 'les_a2_it_meetings', title: 'Technical Meetings: Planning, Retro, Sync', durationMinutes: 15 },
-      { id: 'les_a2_it_documentation_writing', title: 'Technical Writing for Developers', durationMinutes: 15 },
-      { id: 'les_a2_it_async_comm', title: 'Async Communication: Slack, Email, Comments', durationMinutes: 15 },
+      { id: 'les_a2_it_email_technical', title: 'Technical Emails & Documentation', durationMinutes: 15 },
+      { id: 'les_a2_it_meeting_standup', title: 'Stand-ups & Technical Meetings', durationMinutes: 15 },
+      { id: 'les_a2_it_incidents', title: 'Incident Reports & Problem Statements', durationMinutes: 15 },
+      { id: 'les_a2_it_nontech_tech', title: 'Tech for Non-Technical Colleagues', durationMinutes: 15 },
+      { id: 'les_a2_it_word_formation', title: 'Prefix, Suffix & Deceptive Cognates', durationMinutes: 15 },
+      { id: 'les_a2_it_pr_tickets', title: 'PRs, Tickets & Code Comments', durationMinutes: 15 },
     ],
   },
 
@@ -238,12 +247,12 @@ export const CURRICULUM_MODULES: readonly CurriculumModule[] = [
     track: 'General',
     sourceMarkdowns: ['apostila-ingles-para-iniciantes-impresso.md (review)', 'Ingles-basico.md (adv)'],
     lessons: [
-      { id: 'les_b1_tenses_review', title: 'Tense Review: Present, Past, Future', durationMinutes: 15 },
-      { id: 'les_b1_modals', title: 'Modals: Could, Should, Would, Might', durationMinutes: 15 },
-      { id: 'les_b1_conditionals', title: 'Conditionals: Zero, First, Second, Third', durationMinutes: 15 },
-      { id: 'les_b1_passive_voice', title: 'Passive Voice in Professional Contexts', durationMinutes: 15 },
-      { id: 'les_b1_reported_speech', title: 'Reported Speech & Indirect Questions', durationMinutes: 15 },
-      { id: 'les_b1_relative_clauses', title: 'Relative Clauses: Defining & Non-defining', durationMinutes: 15 },
+      { id: 'les_b1_tenses_review', title: 'Tenses Consolidation: Present/Past/Future', durationMinutes: 15 },
+      { id: 'les_b1_modals', title: 'Modal Verbs Deep Dive', durationMinutes: 15 },
+      { id: 'les_b1_conditionals', title: 'Conditionals 1 & 2', durationMinutes: 15 },
+      { id: 'les_b1_passive', title: 'Passive Voice', durationMinutes: 15 },
+      { id: 'les_b1_reported_speech', title: 'Reported Speech', durationMinutes: 15 },
+      { id: 'les_b1_question_forms', title: 'Advanced Question Forms', durationMinutes: 15 },
     ],
   },
   {
@@ -255,12 +264,12 @@ export const CURRICULUM_MODULES: readonly CurriculumModule[] = [
     track: 'General',
     sourceMarkdowns: ['frases-ingles-trabalho.md (advanced)', 'leia-e-escreva-melhor-em-ingles.md'],
     lessons: [
-      { id: 'les_b1_negotiation', title: 'Business Negotiation Language', durationMinutes: 15 },
-      { id: 'les_b1_presentations', title: 'Effective Presentations in English', durationMinutes: 15 },
-      { id: 'les_b1_leadership', title: 'Leadership & Management Vocabulary', durationMinutes: 15 },
-      { id: 'les_b1_meetings_adv', title: 'Advanced Meeting Participation', durationMinutes: 15 },
-      { id: 'les_b1_email_adv', title: 'Advanced Professional Emails', durationMinutes: 15 },
-      { id: 'les_b1_feedback_coaching', title: 'Giving Feedback & Coaching', durationMinutes: 15 },
+      { id: 'les_b1_negotiation', title: 'Negotiation Language', durationMinutes: 15 },
+      { id: 'les_b1_presentation_skills', title: 'Presentation & Pitching', durationMinutes: 15 },
+      { id: 'les_b1_leadership_feedback', title: 'Leadership & Feedback Loops', durationMinutes: 15 },
+      { id: 'les_b1_finance_business', title: 'Finance & Business Vocabulary', durationMinutes: 15 },
+      { id: 'les_b1_hr_career', title: 'HR & Career Vocabulary', durationMinutes: 15 },
+      { id: 'les_b1_sales_marketing', title: 'Sales & Marketing Vocabulary', durationMinutes: 15 },
     ],
   },
 
@@ -279,16 +288,15 @@ export const CURRICULUM_MODULES: readonly CurriculumModule[] = [
       'docs/ux-design.md',
     ],
     lessons: [
-      { id: 'les_b1_it_architecture', title: 'Software Architecture Discussions', durationMinutes: 15 },
-      { id: 'les_b1_it_debugging_adv', title: 'Advanced Debugging & Root Cause Analysis', durationMinutes: 15 },
-      { id: 'les_b1_it_code_review', title: 'Advanced Code Review Practices', durationMinutes: 15 },
-      { id: 'les_b1_it_ddd', title: 'Domain-Driven Design Vocabulary', durationMinutes: 15 },
-      { id: 'les_b1_it_bdd', title: 'Behavior-Driven Development Language', durationMinutes: 15 },
-      { id: 'les_b1_it_ux', title: 'UX & Product Design Discussions', durationMinutes: 15 },
-      { id: 'les_b1_it_devops', title: 'DevOps & CI/CD Vocabulary', durationMinutes: 15 },
-      { id: 'les_b1_it_security', title: 'Application Security Basics', durationMinutes: 15 },
-      { id: 'les_b1_it_performance', title: 'Performance & Optimization Talk', durationMinutes: 15 },
-      { id: 'les_b1_it_scalability', title: 'Scalability & System Design', durationMinutes: 15 },
+      { id: 'les_b1_it_architecture_vocab', title: 'Architecture Discussions', durationMinutes: 15 },
+      { id: 'les_b1_it_debugging', title: 'Debugging & Error Reporting', durationMinutes: 15 },
+      { id: 'les_b1_it_code_review', title: 'Code Review Comments', durationMinutes: 15 },
+      { id: 'les_b1_it_acronyms_deep', title: 'Advanced Acronyms & Jargon', durationMinutes: 15 },
+      { id: 'les_b1_it_write_docs', title: 'Writing Documentation & RFCs', durationMinutes: 15 },
+      { id: 'les_b1_it_ddd_modeling', title: 'Domain-Driven Design: Aggregates, Entities, Value Objects, Repositories', durationMinutes: 15 },
+      { id: 'les_b1_it_bdd_specs', title: 'BDD Specifications: Given-When-Then, Acceptance Criteria, Scenario Writing', durationMinutes: 15 },
+      { id: 'les_b1_it_ux_collab', title: 'UX Collaboration: Wireframes, Prototypes, Personas, Accessibility', durationMinutes: 15 },
+      { id: 'les_b1_it_devops_basics', title: 'DevOps Basics: CI/CD, Pipelines, Containers, Observability', durationMinutes: 15 },
     ],
   },
 
@@ -302,12 +310,17 @@ export const CURRICULUM_MODULES: readonly CurriculumModule[] = [
     track: 'Both',
     sourceMarkdowns: ['All sources (integrated)'],
     lessons: [
-      { id: 'les_b1_case_study_1', title: 'Case Study: E-commerce Platform', durationMinutes: 15 },
-      { id: 'les_b1_case_study_2', title: 'Case Study: SaaS Product Launch', durationMinutes: 15 },
-      { id: 'les_b1_simulation_1', title: 'Simulation: Sprint Planning Meeting', durationMinutes: 15 },
-      { id: 'les_b1_simulation_2', title: 'Simulation: Production Incident Response', durationMinutes: 15 },
-      { id: 'les_b1_project_1', title: 'Project: Technical Proposal Writing', durationMinutes: 15 },
-      { id: 'les_b1_project_2', title: 'Project: Architecture Decision Record', durationMinutes: 15 },
+      { id: 'les_b1_project_case_study', title: 'Case Study Presentation', durationMinutes: 15 },
+      { id: 'les_b1_project_retrospective', title: 'Retrospective & Post-mortem Talk', durationMinutes: 15 },
+      { id: 'les_b1_project_client_sim', title: 'Client Simulation Scenario', durationMinutes: 15 },
+      { id: 'les_b1_project_negotiation_roleplay', title: 'Negotiation Role-play', durationMinutes: 15 },
+      { id: 'les_b1_project_integrated_review', title: 'Integrated Skills Review', durationMinutes: 15 },
+      { id: 'les_b1_project_presentation_final', title: 'Final Project Presentation', durationMinutes: 15 },
+      { id: 'les_rem_pronunciation_th_vw', title: 'TH, V/W minimal pairs', durationMinutes: 15 },
+      { id: 'les_rem_listening_slow_clear', title: 'Listening at reduced speed', durationMinutes: 15 },
+      { id: 'les_rem_grammar_be_pronouns', title: 'To Be + Pronouns', durationMinutes: 15 },
+      { id: 'les_rem_confidence_builder', title: 'Affective filter / false beginner', durationMinutes: 15 },
+      { id: 'les_rem_writing_svo', title: 'SVO order + explicit subject', durationMinutes: 15 },
     ],
   },
 
@@ -321,12 +334,12 @@ export const CURRICULUM_MODULES: readonly CurriculumModule[] = [
     track: 'General',
     sourceMarkdowns: ['leia-e-escreva-melhor-em-ingles.md', 'frases-ingles-trabalho.md (B2)'],
     lessons: [
-      { id: 'les_b2_nuance_register', title: 'Nuance & Register in Professional English', durationMinutes: 15 },
-      { id: 'les_b2_cultural_awareness', title: 'Cultural Awareness in Global Teams', durationMinutes: 15 },
-      { id: 'les_b2_advanced_writing', title: 'Advanced Writing: Reports, Proposals, White Papers', durationMinutes: 15 },
-      { id: 'les_b2_speaking_fluency', title: 'Speaking Fluency: Debates, Panels, Interviews', durationMinutes: 15 },
-      { id: 'les_b2_listening_adv', title: 'Advanced Listening: Accents, Speed, Implicit Meaning', durationMinutes: 15 },
-      { id: 'les_b2_vocabulary_precision', title: 'Vocabulary Precision: Collocations, Idioms, Phrasal Verbs', durationMinutes: 15 },
+      { id: 'les_b2_register_nuance', title: 'Register & Nuance', durationMinutes: 15 },
+      { id: 'les_b2_professional_email_advanced', title: 'Advanced Professional Correspondence', durationMinutes: 15 },
+      { id: 'les_b2_professional_review', title: 'Writing: Review & Evaluation', durationMinutes: 15 },
+      { id: 'les_b2_professional_argument', title: 'Writing: Argumentative Essay', durationMinutes: 15 },
+      { id: 'les_b2_professional_summary', title: 'Writing: Summarizing', durationMinutes: 15 },
+      { id: 'les_b2_culture_brazil_vs_usa', title: 'BR vs. US Business Culture', durationMinutes: 15 },
     ],
   },
 
@@ -347,14 +360,14 @@ export const CURRICULUM_MODULES: readonly CurriculumModule[] = [
       'docs/agile.md',
     ],
     lessons: [
-      { id: 'les_b2_it_mentoring', title: 'Mentoring & Coaching Developers', durationMinutes: 15 },
-      { id: 'les_b2_it_arch_decisions', title: 'Architecture Decision Records (ADRs)', durationMinutes: 15 },
-      { id: 'les_b2_it_strategy', title: 'Technical Strategy & Roadmap Communication', durationMinutes: 15 },
-      { id: 'les_b2_it_patterns', title: 'Advanced Patterns: Event Sourcing, CQRS, Microservices', durationMinutes: 15 },
-      { id: 'les_b2_it_tech_lead', title: 'Technical Leadership & Team Building', durationMinutes: 15 },
-      { id: 'les_b2_it_rfc_writing', title: 'RFC & Design Doc Writing', durationMinutes: 15 },
-      { id: 'les_b2_it_technical_leadership', title: 'Technical Leadership in Practice', durationMinutes: 15 },
-      { id: 'les_b2_it_organizational', title: 'Organizational Design & Team Topologies', durationMinutes: 15 },
+      { id: 'les_b2_it_mentoring', title: 'Mentoring & Knowledge Transfer', durationMinutes: 15 },
+      { id: 'les_b2_it_architecture_decisions', title: 'Architecture Decision Records', durationMinutes: 15 },
+      { id: 'les_b2_it_strategy', title: 'Technical Strategy Communication', durationMinutes: 15 },
+      { id: 'les_b2_it_incident_postmortem', title: 'Incident Postmortems', durationMinutes: 15 },
+      { id: 'les_b2_it_jargon_mastery', title: 'Full Jargon Fluency', durationMinutes: 15 },
+      { id: 'les_b2_it_rfc_writing', title: 'Writing RFCs & Design Docs', durationMinutes: 15 },
+      { id: 'les_b2_it_advanced_patterns', title: 'Advanced Patterns & Anti-Patterns: Legacy Code, Refactoring Strategies', durationMinutes: 15 },
+      { id: 'les_b2_it_technical_leadership', title: 'Technical Leadership: Architecture Reviews, Trade-off Communication, Mentoring at Scale', durationMinutes: 15 },
     ],
   },
 
@@ -368,12 +381,12 @@ export const CURRICULUM_MODULES: readonly CurriculumModule[] = [
     track: 'Both',
     sourceMarkdowns: ['All (exam-focused)'],
     lessons: [
-      { id: 'les_b2_toeic_listening', title: 'TOEIC Listening Strategies', durationMinutes: 15 },
-      { id: 'les_b2_toeic_reading', title: 'TOEIC Reading Strategies', durationMinutes: 15 },
-      { id: 'les_b2_ielts_writing', title: 'IELTS Writing Task 1 & 2', durationMinutes: 15 },
-      { id: 'les_b2_ielts_speaking', title: 'IELTS Speaking Parts 1-3', durationMinutes: 15 },
-      { id: 'les_b2_celpebras', title: 'CELPE-Bras Preparation', durationMinutes: 15 },
-      { id: 'les_b2_mock_exam', title: 'Full Mock Exam & Review', durationMinutes: 15 },
+      { id: 'les_b2_toeic_reading', title: 'TOEIC: Reading & Listening', durationMinutes: 15 },
+      { id: 'les_b2_toeic_writing', title: 'TOEIC: Writing', durationMinutes: 15 },
+      { id: 'les_b2_ielts_writing', title: 'IELTS: Academic Writing', durationMinutes: 15 },
+      { id: 'les_b2_celpe_br', title: 'CELPE-Bras: Speaking', durationMinutes: 15 },
+      { id: 'les_b2_exam_vocab', title: 'Exam High-Frequency Vocabulary', durationMinutes: 15 },
+      { id: 'les_b2_exam_simulations', title: 'Full Exam Simulations', durationMinutes: 15 },
     ],
   },
 ];

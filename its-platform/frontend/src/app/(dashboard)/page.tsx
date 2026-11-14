@@ -25,20 +25,27 @@ function buildRoadmapFromCurriculum(
   mastery: Record<string, number>,
   cefrLevel: CefrLevel | null,
 ): RoadmapModule[] {
-  return modules.map((mod, idx) => ({
-    id: mod.id,
-    index: idx + 1,
-    title: mod.title,
-    description: mod.description,
-    isUnlocked: isModuleUnlocked(mod, cefrLevel),
-    lessons: mod.lessons.map((lesson) => ({
-      id: lesson.id,
-      title: lesson.title,
-      durationMinutes: lesson.durationMinutes,
-      isUnlocked: isLessonUnlocked(lesson.id, mastery),
-      isCompleted: isLessonCompleted(lesson.id, mastery),
-    })),
-  }));
+  return modules.map((mod, idx) => {
+    const moduleUnlocked = isModuleUnlocked(mod, cefrLevel);
+    return {
+      id: mod.id,
+      index: idx + 1,
+      title: mod.title,
+      description: mod.description,
+      isUnlocked: moduleUnlocked,
+      lessons: mod.lessons.map((lesson) => ({
+        id: lesson.id,
+        title: lesson.title,
+        durationMinutes: lesson.durationMinutes,
+        // The curriculum graph's per-lesson prerequisites are not in the payload, so lessons
+        // inherit the module's gate. The previous heuristic (`some mastery exists`) marked the
+        // whole entry module "Bloqueado" for a brand-new learner — including the lesson they can
+        // start. A locked lesson renders no link, so no card can point at a missing lesson.
+        isUnlocked: moduleUnlocked,
+        isCompleted: isLessonCompleted(lesson.id, mastery),
+      })),
+    };
+  });
 }
 
 /**
@@ -51,16 +58,6 @@ function isModuleUnlocked(module: typeof CURRICULUM_MODULES[0], learnerCefr: Cef
   const learnerIdx = cefrOrder.indexOf(learnerCefr);
   const moduleIdx = cefrOrder.indexOf(module.cefrLevel);
   return moduleIdx <= learnerIdx;
-}
-
-/**
- * A lesson is unlocked if its module is unlocked and prerequisites are met.
- * For now, simplified: unlocked if module is unlocked.
- */
-function isLessonUnlocked(_lessonId: string, mastery: Record<string, number>): boolean {
-  // TODO: Check prerequisites from curriculum graph
-  // For now, consider unlocked if any related skill has mastery > 0
-  return Object.keys(mastery).length > 0;
 }
 
 /**
