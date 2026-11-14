@@ -13,10 +13,13 @@ import {
   type PackContent,
   type PlacementResult,
   type PracticeResult,
+  type PronunciationEvaluation,
+  type PronunciationWordScore,
   type ReuseBasis,
   type ScoredItem,
   type Skill,
   type SkillMastery,
+  type SpeechSynthesisResult,
 } from '@/core';
 import type { components } from './generated/api-types';
 
@@ -30,6 +33,9 @@ export type PracticeResultDto = Schemas['PracticeResult'];
 export type PlacementResultDto = Schemas['PlacementResult'];
 export type DialogueContentDto = Schemas['DialogueContent'];
 export type DialogueAudioDto = Schemas['DialogueAudio'];
+export type SpeechSynthesisDto = Schemas['SpeechSynthesis'];
+export type PronunciationEvaluationRequestDto = Schemas['PronunciationEvaluationRequest'];
+export type PronunciationEvaluationDto = Schemas['PronunciationEvaluation'];
 export type MasteryDto = Record<string, { mastery: number; gate_passed: boolean; last_practice: string }>;
 
 /**
@@ -232,5 +238,41 @@ export function toDialogueAudio(dto: DialogueAudioDto): DialogueAudio {
       url: clip.url,
       expiresAt: clip.expires_at,
     })),
+  };
+}
+
+/**
+ * Maps the TTS synthesis response from snake_case DTO to domain entity.
+ */
+export function toSpeechSynthesisResult(dto: SpeechSynthesisDto): SpeechSynthesisResult {
+  return {
+    text: dto.text,
+    voice: dto.voice,
+    rate: dto.rate as 1 | 0.75,
+    engine: dto.engine,
+    audio: dto.audio
+      ? {
+          mimeType: dto.audio.mime_type,
+          base64: dto.audio.base64,
+          durationMs: dto.audio.duration_ms,
+        }
+      : null,
+    fallbackReason: dto.fallback_reason,
+  };
+}
+
+/**
+ * Maps the pronunciation evaluation response from snake_case DTO to domain entity.
+ */
+export function toPronunciationEvaluation(dto: PronunciationEvaluationDto): PronunciationEvaluation {
+  return {
+    overallScore: dto.overall_score,
+    wordScores: dto.word_scores.map((ws): PronunciationWordScore => ({
+      word: ws.word,
+      status: ws.status,
+      confidence: ws.confidence,
+    })),
+    feedbackPt: dto.feedback_pt,
+    transcript: dto.transcript,
   };
 }

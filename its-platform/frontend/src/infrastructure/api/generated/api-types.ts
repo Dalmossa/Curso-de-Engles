@@ -4,6 +4,160 @@
  */
 
 export interface paths {
+    "/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Login with email and password */
+        post: operations["login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Register new user */
+        post: operations["register"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Refresh access token using refresh token */
+        post: operations["refreshAccessToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Logout and revoke session */
+        post: operations["logout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/revocation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Revoke a token (RFC 7009) */
+        post: operations["revokeToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get current user profile */
+        get: operations["getCurrentUser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/.well-known/jwks.json": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get JWKS for token verification */
+        get: operations["getJwks"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/learners/{learner_id}/consents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List all consents for a learner */
+        get: operations["listConsents"];
+        put?: never;
+        /** Grant consent for a specific purpose */
+        post: operations["grantConsent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/learners/{learner_id}/consents/{purpose}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Withdraw consent for a specific purpose (LGPD Art. 8) */
+        delete: operations["withdrawConsent"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/learners/{learner_id}/placement": {
         parameters: {
             query?: never;
@@ -49,6 +203,32 @@ export interface paths {
         put?: never;
         /** Submit practice pack responses */
         post: operations["submitPractice"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/practice/pronunciation-evaluate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Score the pronunciation of a recording against a target phrase
+         * @description História 2. Accepts either the browser's own transcription (`transcript`, from the Web
+         *     Speech API) or the recorded audio (`audio_base64`) when an ASR service is configured, and
+         *     returns a word-by-word comparison with the target phrase.
+         *
+         *     There is no fabricated score: when neither a transcript nor an ASR service is available the
+         *     answer is `422`, not a `0`. A `0` for "nothing was heard" would be indistinguishable from a
+         *     `0` for "everything was said wrong", and the learner would act on the wrong one.
+         */
+        post: operations["evaluatePronunciation"];
         delete?: never;
         options?: never;
         head?: never;
@@ -128,6 +308,78 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/content/tts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Synthesize a lesson phrase (TTS)
+         * @description História 1. Returns a synthesized render of `text`, or — when this environment has no TTS
+         *     engine — a `200` carrying `engine: "none"` and `audio: null` so the client falls back to
+         *     `window.speechSynthesis` (en-US). The fallback is the designed path in bare-metal
+         *     deployments, not an error: answering `5xx` would take the lesson screen down for a
+         *     capability the browser provides itself.
+         *
+         *     `POST` rather than `GET` because the phrase is content, up to 500 characters. In a query
+         *     string it would land in access logs, browser history and `Referer` headers.
+         */
+        post: operations["synthesizeSpeech"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/learners/{learner_id}/data-export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export all personal data (LGPD Art. 18)
+         * @description Returns all personal data the platform holds for the learner in a structured,
+         *     machine-readable JSON format. Implements LGPD Art. 18 II/V (access & portability).
+         *     Requires `learner:export` scope.
+         */
+        get: operations["exportLearnerData"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/learners/{learner_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Erase all personal data (LGPD Art. 18)
+         * @description Deletes all personal data the platform holds for the learner. Implements
+         *     LGPD Art. 18 IV/VI (right to erasure / right to be forgotten).
+         *     Requires `learner:erase` scope.
+         *     The deletion is atomic with the visibility check (ADR-026 §1).
+         */
+        delete: operations["eraseLearnerData"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/learners/{learner_id}/profile": {
         parameters: {
             query?: never;
@@ -162,40 +414,67 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/auth/refresh": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Refresh access token
-         * @description **OUT OF MVP SCOPE — blocked on ADR-013. Do not implement.**
-         *
-         *     An endpoint returning `access_token` is Authorization Server behaviour. The MVP
-         *     operates as a Resource Server only: it validates JWTs issued by an external IdP and
-         *     does not mint tokens (CONSTITUTION.md §4.5, ADR-013).
-         *
-         *     This path is retained rather than deleted because removing a published path is a
-         *     breaking change under §4.4, and ADR-013 does not authorise one. It is annotated so
-         *     that an implementer reading this contract does not quietly build an IdP.
-         *
-         *     Implementing this endpoint requires ADR-013 to be resolved first.
-         */
-        post: operations["refreshToken"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        SessionPayload: {
+            /** Format: uuid */
+            sessionId: string;
+            /** @description Rotating refresh token */
+            token: string;
+            /** @description RS256 access token the BFF presents as `Authorization Bearer` (~15 min) */
+            accessToken: string;
+            /** Format: date-time */
+            expiresAt: string;
+            user: {
+                /** Format: uuid */
+                id: string;
+                /** Format: email */
+                email: string;
+                displayName?: string | null;
+                /** Format: uuid */
+                learnerId?: string | null;
+                emailVerified: boolean;
+                provider: string;
+            };
+        };
+        /**
+         * @description Finalidade do consentimento LGPD (Art. 7, 8 - granular, específico, informado)
+         * @enum {string}
+         */
+        ConsentPurpose: "analytics" | "marketing" | "personalization" | "third_party_sharing" | "sensitive_processing";
+        Consent: {
+            /** Format: uuid */
+            consentId: string;
+            /** Format: uuid */
+            learnerId: string;
+            purpose: components["schemas"]["ConsentPurpose"];
+            /** @description Se o consentimento está ativo (true) ou revogado (false) */
+            granted: boolean;
+            /**
+             * Format: date-time
+             * @description Timestamp quando o consentimento foi concedido
+             */
+            grantedAt?: string | null;
+            /**
+             * Format: date-time
+             * @description Timestamp quando o consentimento foi revogado (LGPD Art. 8)
+             */
+            withdrawnAt?: string | null;
+            /** @description Versão da política de privacidade no momento do consentimento */
+            version: string;
+            /** @description Hash do IP para auditoria (LGPD Art. 7, §1) */
+            ipHash?: string | null;
+            /** @description User agent para auditoria */
+            userAgent?: string | null;
+        };
+        GrantConsentRequest: {
+            purpose: components["schemas"]["ConsentPurpose"];
+        };
+        ConsentListResponse: {
+            consents: components["schemas"]["Consent"][];
+        };
         /** @description Body of `POST /learners/{learner_id}/placement`. A member not declared here is **rejected** (`400`), not ignored: `CONSTITUTION.md` §4.5 mandates a `ValidationPipe` with `whitelist` and `forbidNonWhitelisted`, and `DiagnosticRequestDto` enforces this schema. The contract gate refuses a request schema that omits `additionalProperties: false` (A5a). */
         DiagnosticRequest: {
             /**
@@ -306,6 +585,45 @@ export interface components {
                 /** @description FSRS-derived interval */
                 interval_days: number;
             }[];
+        };
+        /** @description Body of `POST /practice/pronunciation-evaluate`. A member not declared here is **rejected** (`400`), not ignored — `CONSTITUTION.md` §4.5 and `PronunciationEvaluationDto`. At least one of `transcript` / `audio_base64` is required; the combination is enforced by the controller (`400`), because it is a constraint across members. */
+        PronunciationEvaluationRequest: {
+            /** @description The target phrase the learner was asked to read. */
+            expected_text: string;
+            /** @description What the browser's speech recognition heard (Web Speech API). The cheap path: it needs no ASR engine on the server. An empty string is a valid observation — it means "nothing was recognised". */
+            transcript?: string;
+            /** @description The recording, when the client cannot transcribe locally. Sized for 15 s at 24 kbps (≈ 60 KB in base64). Not persisted anywhere: the service sends it to the ASR engine and drops it. */
+            audio_base64?: string;
+            /**
+             * @description The recording's media type, for the ASR engine.
+             * @default audio/webm
+             */
+            mime_type: string;
+            /**
+             * @description BCP-47 of what is expected to be heard.
+             * @default en-US
+             */
+            locale: string;
+        };
+        PronunciationWordScore: {
+            /** @description The target word, as the learner read it. */
+            word: string;
+            /**
+             * @description `missed` is absence (the word was not recognised at all); `needs_work` is a recognised but deviating articulation. The two ask different things of the learner, which is why they are not collapsed into a boolean.
+             * @enum {string}
+             */
+            status: "correct" | "needs_work" | "missed";
+            /** @description Similarity observed, rounded to two decimals. `1` only for an exact match. */
+            confidence: number;
+        };
+        PronunciationEvaluation: {
+            /** @description Mean of the target words. Not an accuracy percentage: `needs_work` scores its similarity partially, and `missed` scores 0. */
+            overall_score: number;
+            word_scores: components["schemas"]["PronunciationWordScore"][];
+            /** @description One sentence in Brazilian Portuguese naming the next step. */
+            feedback_pt: string;
+            /** @description The transcription that was actually scored — what the ASR heard, so the learner can see the gap between intent and recognition. */
+            transcript: string;
         };
         LessonContent: {
             lesson_id: string;
@@ -437,6 +755,44 @@ export interface components {
             /** @description RFC 3339, `Z`-suffixed. An explicit `pattern` because the contract test's validator does not read `format` (ADR-028 §7). */
             expires_at: string;
         };
+        /** @description Body of `POST /content/tts`. A member not declared here is **rejected** (`400`), not ignored — `CONSTITUTION.md` §4.5 and `SpeechSynthesisDto`. */
+        SpeechSynthesisRequest: {
+            /** @description The lesson phrase to synthesize. Echoed back in the response. */
+            text: string;
+            /**
+             * @description BCP-47 locale. The course teaches English; the default is the locale every lesson is written in, and `voice` exists so a future voice id can be threaded through without a contract change.
+             * @default en-US
+             */
+            voice: string;
+            /**
+             * @description The same accommodation pair the listening routes render (ADR-028 §2).
+             * @default 1
+             * @enum {number}
+             */
+            rate: 1 | 0.75;
+        };
+        SpeechSynthesisAudio: {
+            /** @description Whatever the engine produced (`audio/mpeg`, `audio/wav`, …), unreinterpreted. */
+            mime_type: string;
+            /** @description The audio bytes, base64-encoded. Never empty when this object is present. */
+            base64: string;
+            /** @description Duration reported by the engine, or `null` when it reports none (raw audio bytes carry no duration). The client reads the real duration from the `<audio>` element. */
+            duration_ms: number | null;
+        };
+        SpeechSynthesis: {
+            text: string;
+            voice: string;
+            rate: number;
+            /**
+             * @description `remote` when an engine produced `audio`; `none` when this environment has no engine. The client's `window.speechSynthesis` fallback is the designed path for `none`.
+             * @enum {string}
+             */
+            engine: "remote" | "none";
+            /** @description Present exactly when `engine` is `remote`. */
+            audio: components["schemas"]["SpeechSynthesisAudio"] | null;
+            /** @description Why no audio was produced. `not_configured` is the normal bare-metal state; `upstream_error` is a configured engine that failed. Both fall back client-side, but the difference must stay observable. */
+            fallback_reason: ("not_configured" | "upstream_error") | null;
+        };
         LearnerProfile: {
             /** Format: uuid */
             learner_id: string;
@@ -529,6 +885,464 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    login: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: email */
+                    email: string;
+                    /** Format: password */
+                    password: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Login successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionPayload"];
+                };
+            };
+            /** @description Invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    register: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: email */
+                    email: string;
+                    /** Format: password */
+                    password: string;
+                    displayName?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Registration successful */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionPayload"];
+                };
+            };
+            /** @description Email already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    refreshAccessToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Refresh token from previous login */
+                    refresh_token: string;
+                };
+            };
+        };
+        responses: {
+            /** @description New access token and rotated refresh token */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description New JWT access token (RS256, ~15 min) */
+                        access_token: string;
+                        /**
+                         * @description Access token lifetime in seconds
+                         * @example 900
+                         */
+                        expires_in: number;
+                        /** @description Rotated refresh token (reuse detection enabled) */
+                        refresh_token: string;
+                    };
+                };
+            };
+            /** @description Invalid or missing refresh token */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Refresh token expired, revoked, or reuse detected */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Rate limited */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    logout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Logout successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        ok: boolean;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    revokeToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/x-www-form-urlencoded": {
+                    /** @description The token to revoke */
+                    token: string;
+                    /**
+                     * @description Hint about the type of token (optional)
+                     * @enum {string}
+                     */
+                    token_type_hint?: "access_token" | "refresh_token";
+                };
+            };
+        };
+        responses: {
+            /** @description Token revoked successfully (or was already invalid). Empty body per RFC 7009. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+        };
+    };
+    getCurrentUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current user profile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        id?: string;
+                        /** Format: email */
+                        email?: string;
+                        displayName?: string | null;
+                        /** Format: uuid */
+                        learnerId?: string | null;
+                        emailVerified?: boolean;
+                        provider?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    getJwks: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description JWKS keys */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        keys: {
+                            /** @example RSA */
+                            kty?: string;
+                            /** @example sig */
+                            use?: string;
+                            /** @example its-platform-1 */
+                            kid?: string;
+                            /** @example RS256 */
+                            alg?: string;
+                            n?: string;
+                            e?: string;
+                        }[];
+                    };
+                };
+            };
+            /** @description JWKS temporarily unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    listConsents: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                learner_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of consents */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConsentListResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Forbidden — the credential does not carry the authority this operation requires */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Learner not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    grantConsent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                learner_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GrantConsentRequest"];
+            };
+        };
+        responses: {
+            /** @description Consent granted */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Consent"];
+                };
+            };
+            /** @description Invalid request or consent already granted */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Forbidden — the credential does not carry the authority this operation requires */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Learner not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Consent already granted for this purpose */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    withdrawConsent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                learner_id: string;
+                purpose: components["schemas"]["ConsentPurpose"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Consent withdrawn */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Consent"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Forbidden — the credential does not carry the authority this operation requires */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Learner not found or consent not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
     runDiagnostic: {
         parameters: {
             query?: never;
@@ -696,6 +1510,66 @@ export interface operations {
             };
             /** @description Pack or learner not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    evaluatePronunciation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PronunciationEvaluationRequest"];
+            };
+        };
+        responses: {
+            /** @description Overall score, per-word status and a short pt-BR hint */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PronunciationEvaluation"];
+                };
+            };
+            /** @description Invalid body, or neither `transcript` nor `audio_base64` supplied. An undeclared member is rejected (`additionalProperties: false`), not ignored. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Unauthorized — a valid bearer token is required (ADR-038 D4) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4) */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description No transcript was supplied and this environment has no ASR service, or the ASR service failed to transcribe the recording. The platform declines to score rather than invent a result. */
+            422: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -912,6 +1786,209 @@ export interface operations {
             };
         };
     };
+    synthesizeSpeech: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SpeechSynthesisRequest"];
+            };
+        };
+        responses: {
+            /** @description The synthesized render, or an explicit statement that no engine is configured */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpeechSynthesis"];
+                };
+            };
+            /** @description Invalid body — `text` outside 1–500 characters, `voice` outside `xx-YY`, or `rate` outside `1 | 0.75` */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Unauthorized — a valid bearer token is required (ADR-038 D4) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4) */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    exportLearnerData: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                learner_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Complete personal data export */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        learner: {
+                            /** Format: uuid */
+                            learner_id: string;
+                            /** Format: date-time */
+                            created_at: string;
+                            /** Format: date-time */
+                            last_active_at?: string | null;
+                        };
+                        profile: {
+                            cefr_level: string | null;
+                            mastery: {
+                                [key: string]: number;
+                            };
+                            theta_estimates: Record<string, never>;
+                            fsrs_states: Record<string, never>;
+                            preferences: {
+                                recast_enabled: boolean;
+                                meta_button_enabled: boolean;
+                                audio_autoplay: boolean;
+                                daily_goal_minutes: number;
+                            };
+                        };
+                        diagnostics: {
+                            /** Format: uuid */
+                            id: string;
+                            cefr: string;
+                            theta_estimate: number;
+                            skill_theta: Record<string, never>;
+                            form_version: string;
+                            /** Format: date-time */
+                            completed_at: string;
+                        }[];
+                        practice: {
+                            /** Format: uuid */
+                            id: string;
+                            pack_id: string;
+                            score: number;
+                            correct_count: number;
+                            total_count: number;
+                            /** Format: date-time */
+                            started_at: string;
+                            /** Format: date-time */
+                            completed_at?: string | null;
+                        }[];
+                        consents: {
+                            purpose: string;
+                            version: string;
+                            /** Format: date-time */
+                            granted_at?: string | null;
+                            /** Format: date-time */
+                            withdrawn_at?: string | null;
+                            legal_basis: string;
+                        }[];
+                        /** Format: date-time */
+                        exported_at: string;
+                    };
+                };
+            };
+            /** @description Unauthorized — a valid bearer token is required (ADR-038 D4) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Forbidden — the credential does not carry the `learner:export` authority (ADR-038 D2/D4) */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Learner not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    eraseLearnerData: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                learner_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description All personal data erased */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized — a valid bearer token is required (ADR-038 D4) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Forbidden — the credential does not carry the `learner:erase` authority (ADR-038 D2/D4) */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Learner not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
     getLearnerProfile: {
         parameters: {
             query?: never;
@@ -1008,50 +2085,6 @@ export interface operations {
             };
             /** @description Learner not found */
             404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["Problem"];
-                };
-            };
-        };
-    };
-    refreshToken: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description New access token */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        access_token: string;
-                        expires_in: number;
-                    };
-                };
-            };
-            /** @description Unauthorized — a valid bearer token is required (ADR-038 D4) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["Problem"];
-                };
-            };
-            /**
-             * @description Not implemented. The MVP is a Resource Server and does not issue tokens.
-             *     See ADR-013.
-             */
-            501: {
                 headers: {
                     [name: string]: unknown;
                 };

@@ -241,3 +241,64 @@ export const EMPTY_STATE_COPY: Readonly<Record<EmptyStateKey, EmptyStateCopy>> =
     actionLabel: 'Voltar para a lição',
   },
 };
+
+/**
+ * Pronunciation practice copy — História 1 (TTS) e História 2 (Avaliação).
+ */
+export const pronunciation = {
+  practiceTitle: 'Prática de pronúncia',
+  practiceDescription:
+    'Ouça a frase, depois grave sua voz para receber feedback palavra por palavra.',
+  listen: 'Ouvir',
+  practice: 'Praticar',
+  play: 'Reproduzir',
+  pause: 'Pausar',
+  stop: 'Parar',
+  speed: 'Velocidade',
+  targetPhrase: 'Frase-alvo',
+  currentTarget: 'Alvo atual',
+  phase: 'Fase',
+  yourTranscript: 'O que você disse',
+  noTranscript: '(nada reconhecido)',
+  overallScore: 'Pontuação geral',
+  wordScores: 'Pontuação por palavra',
+  progress: 'Progresso',
+  targetNavigation: 'Navegação entre alvos',
+  startRecording: 'Iniciar gravação',
+  stopRecording: 'Parar gravação',
+  rerecord: 'Gravar novamente',
+  generating: 'Gerando áudio…',
+  regenerateAudio: 'Regerar áudio',
+  processing: 'Avaliando sua pronúncia…',
+  noRecording: 'Nenhuma gravação ou transcrição disponível.',
+  noAudio: 'Áudio não disponível para esta frase.',
+  fallbackNotice: 'Usando síntese de voz do navegador (sem servidor de TTS configurado).',
+  usingBrowserTTS: 'Síntese do navegador',
+  micPermissionDenied: 'Permissão de microfone negada. Permita o acesso ao microfone nas configurações do navegador.',
+  micError: 'Não foi possível acessar o microfone.',
+  asrUnavailable: 'Serviço de reconhecimento de fala não configurado. Use o reconhecimento do navegador ou configure ASR_SERVICE_URL.',
+  evaluationFailed: 'Falha ao avaliar a pronúncia. Tente novamente.',
+  tryAgain: 'Tentar novamente',
+  phaseLabel: 'Fase',
+  liveTranscript: 'Transcrição ao vivo',
+} as const;
+
+/**
+ * Aggregated copy object for components that prefer a single import.
+ * Includes all domain-specific copy namespaces.
+ */
+export const copy = {
+  pronunciation,
+  // Re-export existing functions for backward compatibility
+  skillLabel,
+  masteryBandLabel,
+  selectionRuleLabel,
+  selectionRuleExplanation,
+  activityTypeLabel,
+  unavailableReasonMessage,
+  cefrLabel,
+  domainErrorCopy,
+  requestIdHint,
+  LOADING_LABELS,
+  EMPTY_STATE_COPY,
+} as const;

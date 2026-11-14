@@ -4,11 +4,14 @@ import type {
   LearnerRepository,
   PlacementRepository,
   PracticeRepository,
+  SpeechRepository,
 } from '@/core';
 import { GetLearnerDashboard } from './use-cases/get-learner-dashboard';
 import { GetLesson, GetMasteryScreenData } from './use-cases/get-lesson';
 import { GetPracticePack, SubmitPractice } from './use-cases/submit-practice';
 import { RunDiagnostic } from './use-cases/run-diagnostic';
+import { SynthesizeSpeech } from './use-cases/synthesize-speech';
+import { EvaluatePronunciation } from './use-cases/evaluate-pronunciation';
 
 /**
  * What the application layer needs from the outside world. An interface, not the
@@ -21,6 +24,7 @@ export interface Repositories {
   readonly content: ContentRepository;
   readonly practice: PracticeRepository;
   readonly placement: PlacementRepository;
+  readonly speech: SpeechRepository;
 }
 
 export interface UseCases {
@@ -30,6 +34,8 @@ export interface UseCases {
   readonly getPracticePack: GetPracticePack;
   readonly submitPractice: SubmitPractice;
   readonly runDiagnostic: RunDiagnostic;
+  readonly synthesizeSpeech: SynthesizeSpeech;
+  readonly evaluatePronunciation: EvaluatePronunciation;
 }
 
 /**
@@ -45,5 +51,7 @@ export function createUseCases(repositories: Repositories): UseCases {
     getPracticePack: new GetPracticePack(repositories.content),
     submitPractice: new SubmitPractice(repositories.practice),
     runDiagnostic: new RunDiagnostic(repositories.placement),
+    synthesizeSpeech: new SynthesizeSpeech(repositories.speech),
+    evaluatePronunciation: new EvaluatePronunciation(repositories.speech),
   };
 }

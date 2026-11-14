@@ -24,7 +24,9 @@ export type OperationName =
   | 'content.lesson'
   | 'content.pack'
   | 'content.dialogue'
-  | 'content.dialogueAudio';
+  | 'content.dialogueAudio'
+  | 'content.tts'
+  | 'practice.pronunciation';
 
 export interface ParamSpec {
   /** The name the contract uses — this is also the BFF's query-string key. */
@@ -84,6 +86,9 @@ const rateParam: ParamSpec = {
   expectation: 'one of 1, 0.75',
   isValid: (value) => value === '1' || value === '0.75',
 };
+
+/** No path params for content.tts — the text goes in the body. */
+const emptyPathParams: readonly ParamSpec[] = [];
 
 export interface OperationSpec {
   /** The contract's `operationId`, verbatim. */
@@ -178,6 +183,24 @@ export const OPERATIONS: Readonly<Record<OperationName, OperationSpec>> = {
     path: '/content/listening/{dialogue_id}/audio',
     pathParams: [dialogueIdParam],
     queryParams: [rateParam],
+    serverResolvedParams: [],
+    bodyCarriesLearnerId: false,
+  },
+  'content.tts': {
+    operationId: 'synthesizeSpeech',
+    method: 'POST',
+    path: '/content/tts',
+    pathParams: emptyPathParams,
+    queryParams: [],
+    serverResolvedParams: [],
+    bodyCarriesLearnerId: false,
+  },
+  'practice.pronunciation': {
+    operationId: 'evaluatePronunciation',
+    method: 'POST',
+    path: '/practice/pronunciation-evaluate',
+    pathParams: emptyPathParams,
+    queryParams: [],
     serverResolvedParams: [],
     bodyCarriesLearnerId: false,
   },

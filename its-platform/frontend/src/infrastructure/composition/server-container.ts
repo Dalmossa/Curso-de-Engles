@@ -9,6 +9,7 @@ import { HttpCurriculumRepository } from '../api/repositories/http-curriculum-re
 import { HttpLearnerRepository } from '../api/repositories/http-learner-repository';
 import { HttpPlacementRepository } from '../api/repositories/http-placement-repository';
 import { HttpPracticeRepository } from '../api/repositories/http-practice-repository';
+import { HttpSpeechRepository } from '../api/repositories/http-speech-repository';
 import { getServerEnv } from '../env/server-env';
 import { createEnvAccessTokenProvider, createEnvLearnerIdentity } from '../identity/env-identity.server';
 
@@ -47,6 +48,7 @@ export function createServerUseCases(transport: ApiTransport = createServerApiTr
     content: new HttpContentRepository(transport),
     practice: new HttpPracticeRepository(transport),
     placement: new HttpPlacementRepository(transport),
+    speech: new HttpSpeechRepository(transport),
   });
 }
 

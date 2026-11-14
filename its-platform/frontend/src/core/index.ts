@@ -12,6 +12,7 @@ export * from './entities/lesson';
 export * from './entities/listening';
 export * from './entities/placement';
 export * from './entities/practice';
+export * from './entities/speech';
 
 export * from './errors/domain-error';
 export * from './errors/problem-details';
@@ -22,11 +23,13 @@ export type { CurriculumRepository } from './ports/curriculum-repository';
 export type { LearnerRepository } from './ports/learner-repository';
 export type { PlacementRepository } from './ports/placement-repository';
 export type { PracticeRepository } from './ports/practice-repository';
+export type { SpeechRepository } from './ports/speech-repository';
 
 export * from './services/activity-destination';
 export * from './services/lesson-phases';
 export * from './services/mastery-gate';
 export * from './services/practice-session';
+export * from './services/pronunciation-targets';
 
 export * from './value-objects/cefr-level';
 export * from './value-objects/identifiers';
