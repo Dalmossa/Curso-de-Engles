@@ -37,6 +37,20 @@ export class UserEntity {
   @Column({ name: 'learner_id', type: 'varchar', nullable: true })
   learnerId!: string | null;
 
+  /**
+   * SHA-256 do token de redefinição de senha (64 caracteres hex), nunca o token em si.
+   *
+   * O token é de uso único e expira em 30 minutos; guardá-lo em claro transformaria uma
+   * leitura indevida desta tabela numa sessão de conta. O índice parcial
+   * `idx_users_reset_token_hash` existe porque a busca pelo hash é a única consulta do fluxo.
+   */
+  @Column({ name: 'reset_token_hash', type: 'varchar', nullable: true })
+  resetTokenHash!: string | null;
+
+  /** Fim da validade do token de redefinição; `null` quando não há token pendente. */
+  @Column({ name: 'reset_token_expires_at', type: 'timestamptz', nullable: true })
+  resetTokenExpiresAt!: Date | null;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
 

@@ -137,6 +137,59 @@ components:
             provider:
               type: string
 
+    ForgotPasswordRequest:
+      type: object
+      required: [email]
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 320
+          description: E-mail cadastrado da conta a recuperar
+
+    ForgotPasswordResponse:
+      type: object
+      required: [message]
+      additionalProperties: false
+      properties:
+        message:
+          type: string
+          description: Mensagem genérica; não revela se o e-mail existe
+        devResetToken:
+          type: string
+          description: Token de redefinição — SOMENTE fora de produção (laboratório sem SMTP)
+        devResetUrl:
+          type: string
+          format: uri
+          description: Link de redefinição — SOMENTE fora de produção (laboratório sem SMTP)
+
+    ResetPasswordRequest:
+      type: object
+      required: [token, newPassword]
+      additionalProperties: false
+      properties:
+        token:
+          type: string
+          minLength: 1
+          maxLength: 128
+          description: Token de uso único recebido por e-mail
+        newPassword:
+          type: string
+          format: password
+          minLength: 8
+          maxLength: 72
+          description: Nova senha; 72 é o limite que o bcrypt não trunca
+
+    ResetPasswordResponse:
+      type: object
+      required: [message]
+      additionalProperties: false
+      properties:
+        message:
+          type: string
+          description: Confirmação da redefinição
+
     # ============================================================
     # Consent (LGPD)
     # ============================================================
@@ -1153,6 +1206,64 @@ paths:
                 $ref: '#/components/schemas/SessionPayload'
         '409':
           description: Email already exists
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /auth/forgot-password:
+    post:
+      tags: [auth]
+      summary: Request a password reset token
+      operationId: forgotPassword
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+      responses:
+        '200':
+          description: Request accepted; the response never reveals whether the e-mail exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForgotPasswordResponse'
+        '400':
+          description: Malformed request body
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /auth/reset-password:
+    post:
+      tags: [auth]
+      summary: Reset the password with a one-time token
+      operationId: resetPassword
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+      responses:
+        '200':
+          description: Password reset; active sessions revoked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetPasswordResponse'
+        '400':
+          description: Token expired, already used, or new password rejected
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Unknown reset token
           content:
             application/problem+json:
               schema:

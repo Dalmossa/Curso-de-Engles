@@ -12,8 +12,15 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
-import type { SessionPayload, RefreshResult } from './auth.service.js';
+import type {
+  SessionPayload,
+  RefreshResult,
+  ForgotPasswordResult,
+  ResetPasswordResult,
+} from './auth.service.js';
 import { AuthService } from './auth.service.js';
+import { ForgotPasswordDto } from './dto/forgot-password.dto.js';
+import { ResetPasswordDto } from './dto/reset-password.dto.js';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard.js';
 import { Public } from '../../common/auth/public.decorator.js';
 import type { TokenPrincipal } from '../../common/auth/token-principal.js';
@@ -111,6 +118,27 @@ export class AuthController {
     });
 
     return result;
+  }
+
+  @Public()
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Request a password reset token' })
+  @ApiResponse({ status: 200, description: 'Reset token requested (or silently ignored)' })
+  @ApiResponse({ status: 400, description: 'Invalid e-mail address' })
+  async forgotPassword(@Body() dto: ForgotPasswordDto): Promise<ForgotPasswordResult> {
+    return this.auth.forgotPassword(dto.email);
+  }
+
+  @Public()
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Reset the password with a one-time token' })
+  @ApiResponse({ status: 200, description: 'Password reset; active sessions revoked' })
+  @ApiResponse({ status: 400, description: 'Token expired or new password rejected' })
+  @ApiResponse({ status: 404, description: 'Unknown reset token' })
+  async resetPassword(@Body() dto: ResetPasswordDto): Promise<ResetPasswordResult> {
+    return this.auth.resetPassword(dto.token, dto.newPassword);
   }
 
   @Public()
