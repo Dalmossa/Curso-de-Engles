@@ -6,6 +6,7 @@ import { extractPronunciationTargets, getFirstTargets } from '@/core/services/pr
 import { isLessonId, type LessonContent } from '@/core';
 import { isDomainError, isAuthenticationFailure } from '@/core/errors/domain-error';
 import type { SpeechSynthesisResult } from '@/core';
+import { synthesizeSpeechAction, evaluatePronunciationAction } from './speech/actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -57,44 +58,13 @@ async function PronunciationPracticePanel({ lesson }: PronunciationPracticeProps
     }
   }
 
-  // Server Actions for client-side interactions
-  const synthesizeAction = async (input: { text: string; voice?: string; rate?: 1 | 0.75 }) => {
-    try {
-      const result = await useCases.synthesizeSpeech.execute(input);
-      return { ok: true as const, data: result };
-    } catch {
-      return {
-        ok: false as const,
-        error: { code: 'server', message: 'Falha ao gerar áudio' },
-      };
-    }
-  };
-
-  const evaluateAction = async (input: {
-    expectedText: string;
-    transcript?: string;
-    audioBase64?: string;
-    mimeType?: string;
-    locale?: string;
-  }) => {
-    try {
-      const result = await useCases.evaluatePronunciation.execute(input);
-      return { ok: true as const, data: result };
-    } catch {
-      return {
-        ok: false as const,
-        error: { code: 'server', message: 'Falha ao avaliar pronúncia' },
-      };
-    }
-  };
-
   return (
     <PronunciationPractice
       synthesis={initialSynthesis}
       target={firstTarget!}
       allTargets={targets}
-      synthesizeAction={synthesizeAction}
-      evaluateAction={evaluateAction}
+      synthesizeAction={synthesizeSpeechAction}
+      evaluateAction={evaluatePronunciationAction}
       currentIndex={0}
       onTargetChange={() => {}} // Navigation handled by client state
     />

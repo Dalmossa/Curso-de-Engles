@@ -3,6 +3,7 @@ import type {
   CefrLevel,
   DomainError,
   MasteryBand,
+  PasswordProblem,
   SelectionRule,
   UnavailableReason,
 } from '@/core';
@@ -284,11 +285,70 @@ export const pronunciation = {
 } as const;
 
 /**
+ * Password recovery copy — the "forgot password" and "reset password" screens.
+ *
+ * The confirmation text is the same one the platform sends, and it never says whether
+ * the account exists: the wording a learner reads must not reveal more than the answer
+ * the API gave.
+ */
+export const passwordReset = {
+  forgotTitle: 'Recuperar senha',
+  forgotDescription:
+    'Informe o e-mail cadastrado. Se houver uma conta, enviaremos as instruções para definir uma nova senha.',
+  emailLabel: 'E-mail',
+  emailPlaceholder: 'voce@exemplo.com',
+  forgotSubmit: 'Enviar instruções',
+  forgotSubmitting: 'Enviando…',
+  forgotSuccessTitle: 'Solicitação recebida',
+  forgotSuccessMessage:
+    'Se o e-mail estiver cadastrado, você receberá as instruções de redefinição de senha.',
+  devTitle: 'Ambiente de laboratório',
+  devDescription:
+    'Não há servidor de e-mail configurado neste ambiente. Use o link abaixo para redefinir a senha agora.',
+  devAction: 'Redefinir senha agora',
+  resetTitle: 'Definir nova senha',
+  resetDescription: 'Escolha uma nova senha para acessar sua conta.',
+  tokenLabel: 'Token de redefinição',
+  tokenHint:
+    'O token vem no link enviado por e-mail. Você também pode digitá-lo aqui.',
+  newPasswordLabel: 'Nova senha',
+  confirmPasswordLabel: 'Confirmar nova senha',
+  resetSubmit: 'Salvar nova senha',
+  resetSubmitting: 'Salvando…',
+  backToLogin: 'Voltar para o login',
+  forgotLink: 'Esqueci minha senha',
+  loginResetSuccess: 'Senha redefinida com sucesso. Faça login com a nova senha.',
+  passwordTooShort: 'A senha precisa ter pelo menos 8 caracteres.',
+  passwordTooLong: 'A senha pode ter no máximo 72 caracteres.',
+  passwordMismatch: 'As senhas não conferem.',
+  tokenMissing: 'O link de redefinição não traz um token. Solicite um novo link.',
+} as const;
+
+/**
+ * The message for a rejected password.
+ *
+ * The domain decides *which* problem happened; this decides how it is said. A switch
+ * without a default is deliberate: adding a reason to the domain without a sentence
+ * here would be a compile error, not a silent blank.
+ */
+export function passwordProblemMessage(problem: PasswordProblem): string {
+  switch (problem) {
+    case 'too_short':
+      return passwordReset.passwordTooShort;
+    case 'too_long':
+      return passwordReset.passwordTooLong;
+    case 'mismatch':
+      return passwordReset.passwordMismatch;
+  }
+}
+
+/**
  * Aggregated copy object for components that prefer a single import.
  * Includes all domain-specific copy namespaces.
  */
 export const copy = {
   pronunciation,
+  passwordReset,
   // Re-export existing functions for backward compatibility
   skillLabel,
   masteryBandLabel,

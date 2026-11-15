@@ -2,19 +2,27 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import type { PronunciationEvaluation } from '@/core';
+import type { ActionResult } from '@/shared/action-result';
 import { copy } from '@/presentation/lib/copy';
 
 interface PronunciationRecorderProps {
   /** The target phrase the learner should pronounce. */
   targetText: string;
-  /** Server Action to evaluate pronunciation. */
+  /**
+   * Server Action to evaluate pronunciation.
+   *
+   * The shape is the project's `ActionResult`: a success carries the evaluation, a
+   * failure carries the serialised `DomainError` — which carries the HTTP status the
+   * platform answered with, and that is what tells "there is no ASR service" apart from
+   * "the platform failed".
+   */
   evaluateAction: (input: {
     expectedText: string;
     transcript?: string;
     audioBase64?: string;
     mimeType?: string;
     locale?: string;
-  }) => Promise<{ ok: boolean; data?: PronunciationEvaluation; error?: { code: string; message: string } }>;
+  }) => Promise<ActionResult<PronunciationEvaluation>>;
   /** Called when evaluation completes successfully. */
   onEvaluate?: (evaluation: PronunciationEvaluation) => void;
   /** Maximum recording duration in seconds. */
@@ -83,16 +91,16 @@ export function PronunciationRecorder({
         locale: 'en-US',
       });
 
-      if (result.ok && result.data) {
+      if (result.ok) {
         setEvaluation(result.data);
         setState('result');
         onEvaluate?.(result.data);
       } else {
-        const errorCode = result.error?.code;
-        if (errorCode === 'unprocessable_entity' || errorCode === '422') {
+        const failure = result.error;
+        if (failure?.status === 422) {
           setError(copy.pronunciation.asrUnavailable);
         } else {
-          setError(result.error?.message || copy.pronunciation.evaluationFailed);
+          setError(failure?.detail || failure?.title || copy.pronunciation.evaluationFailed);
         }
         setState('error');
       }

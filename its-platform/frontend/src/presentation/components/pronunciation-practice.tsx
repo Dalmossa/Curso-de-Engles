@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import type { SpeechSynthesisResult, PronunciationEvaluation, PronunciationTarget } from '@/core';
+import type { ActionResult } from '@/shared/action-result';
 import { PronunciationPlayer } from './pronunciation-player';
 import { PronunciationRecorder } from './pronunciation-recorder';
 import { copy } from '@/presentation/lib/copy';
@@ -13,10 +14,17 @@ interface PronunciationPracticeProps {
   target: PronunciationTarget;
   /** All available targets in the lesson. */
   allTargets: readonly PronunciationTarget[];
-  /** Server Action to synthesize speech. */
-  synthesizeAction: (input: { text: string; voice?: string; rate?: 1 | 0.75 }) => Promise<{ ok: boolean; data?: SpeechSynthesisResult; error?: { code: string; message: string } }>;
+  /**
+   * Server Action to synthesize speech.
+   *
+   * The shape is the project's `ActionResult`: a success carries the data, a failure
+   * carries the serialised `DomainError`. The actions are the real Server Actions
+   * (`speech/actions.ts`) — an inline wrapper declared in the Server Component is **not**
+   * one, and Next.js refuses to pass a plain function to a Client Component.
+   */
+  synthesizeAction: (input: { text: string; voice?: string; rate?: 1 | 0.75 }) => Promise<ActionResult<SpeechSynthesisResult>>;
   /** Server Action to evaluate pronunciation. */
-  evaluateAction: (input: { expectedText: string; transcript?: string; audioBase64?: string; mimeType?: string; locale?: string }) => Promise<{ ok: boolean; data?: PronunciationEvaluation; error?: { code: string; message: string } }>;
+  evaluateAction: (input: { expectedText: string; transcript?: string; audioBase64?: string; mimeType?: string; locale?: string }) => Promise<ActionResult<PronunciationEvaluation>>;
   /** Called when evaluation completes. */
   onEvaluate?: (evaluation: PronunciationEvaluation) => void;
   /** Index of the current target in allTargets. */

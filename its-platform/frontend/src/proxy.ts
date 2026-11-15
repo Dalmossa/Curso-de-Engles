@@ -31,10 +31,20 @@ import {
  * that duplicated verification would be a second answer to a security question.
  *
  * `/login` and `/register` are never redirected away from, even with a session: a token the API no
- * longer accepts must not leave the learner unable to reach the form that replaces it.
+ * longer accepts must not leave the learner unable to reach the form that replaces it. The password
+ * recovery screens (`/forgot-password`, `/reset-password`) are public for the same reason — the
+ * person who forgot the password is, by definition, not signed in.
  */
 const PROTECTED = ['/', '/mastery', '/lessons'];
-const PUBLIC = ['/login', '/register', '/api/auth', '/api/health', '/health'];
+const PUBLIC = [
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/reset-password',
+  '/api/auth',
+  '/api/health',
+  '/health',
+];
 
 function matches(pathname: string, prefixes: readonly string[]): boolean {
   return prefixes.some((path) => pathname === path || pathname.startsWith(`${path}/`));

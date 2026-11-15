@@ -1,12 +1,13 @@
 import 'server-only';
 
-import { createUseCases, type UseCases } from '@/application/container';
+import { createPasswordResetUseCases, createUseCases, type PasswordResetUseCases, type UseCases } from '@/application/container';
 import { HttpClient } from '../api/http-client';
 import { DirectApiGateway } from '../api/direct-gateway.server';
 import type { ApiTransport } from '../api/api-transport';
 import { HttpContentRepository } from '../api/repositories/http-content-repository';
 import { HttpCurriculumRepository } from '../api/repositories/http-curriculum-repository';
 import { HttpLearnerRepository } from '../api/repositories/http-learner-repository';
+import { HttpPasswordResetRepository } from '../api/repositories/http-password-reset-repository';
 import { HttpPlacementRepository } from '../api/repositories/http-placement-repository';
 import { HttpPracticeRepository } from '../api/repositories/http-practice-repository';
 import { HttpSpeechRepository } from '../api/repositories/http-speech-repository';
@@ -41,6 +42,24 @@ export function createServerApiTransport(): ApiTransport {
   });
 }
 
+/**
+ * The transport for the **public** operations — the password recovery ones.
+ *
+ * No bearer token is attached, and that is the point: the person who forgot the password
+ * is not signed in, and the credential of somebody else would make the platform answer
+ * about that other person. The operations are still the ones the closed table declares,
+ * so this transport is not a second way to name an arbitrary path.
+ */
+export function createPublicServerApiTransport(): ApiTransport {
+  const env = getServerEnv();
+
+  return new DirectApiGateway({
+    baseUrl: env.ITS_API_BASE_URL,
+    getAccessToken: async () => null,
+    httpClient: new HttpClient({ timeoutMs: env.ITS_API_TIMEOUT_MS }),
+  });
+}
+
 export function createServerUseCases(transport: ApiTransport = createServerApiTransport()): UseCases {
   return createUseCases({
     learners: new HttpLearnerRepository(transport),
@@ -50,6 +69,21 @@ export function createServerUseCases(transport: ApiTransport = createServerApiTr
     placement: new HttpPlacementRepository(transport),
     speech: new HttpSpeechRepository(transport),
   });
+}
+
+/**
+ * The password recovery use cases — the one group that needs no learner identity.
+ *
+ * `getServerContext()` raises `unauthorized` when there is neither a session cookie nor a
+ * configured learner, and that is the right answer for every page that shows somebody
+ * else's progress. It is the wrong answer for "I forgot my password": the person asking
+ * is precisely not signed in. This is therefore a separate entry point, built from the
+ * public transport.
+ */
+export function getPasswordResetUseCases(): PasswordResetUseCases {
+  return createPasswordResetUseCases(
+    new HttpPasswordResetRepository(createPublicServerApiTransport()),
+  );
 }
 
 export async function getServerContext(): Promise<ServerContext> {

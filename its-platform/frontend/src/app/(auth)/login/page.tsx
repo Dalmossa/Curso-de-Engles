@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Card, CardBody, CardHeader, CardTitle } from '@/presentation/components/ui/card';
 import { buttonClasses } from '@/presentation/components/ui/button';
+import { passwordReset } from '@/presentation/lib/copy';
 import { routes } from '@/shared/routes';
 
 const DEV_EMAIL = 'dev@its.local';
@@ -9,7 +10,7 @@ const DEV_PASSWORD = 'dev12345';
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ error?: string; next?: string; dev?: string }>;
+  searchParams?: Promise<{ error?: string; next?: string; dev?: string; reset?: string }>;
 }) {
   const params = (await searchParams) || {};
   const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -26,6 +27,11 @@ export default async function LoginPage({
           </p>
         </CardHeader>
         <CardBody className="flex flex-col gap-4">
+          {params.reset === 'success' && (
+            <p role="status" className="text-sm text-green-700">
+              {passwordReset.loginResetSuccess}
+            </p>
+          )}
           {params.error === 'invalid' && (
             <p className="text-sm text-red-600">E-mail ou senha inválidos.</p>
           )}
@@ -76,6 +82,11 @@ export default async function LoginPage({
                 className="rounded-lg border border-subtle px-3 py-2"
               />
             </label>
+            <div className="flex justify-end">
+              <Link href={routes.forgotPassword} className="text-sm text-ink-600 underline">
+                {passwordReset.forgotLink}
+              </Link>
+            </div>
             <button type="submit" className={buttonClasses('primary', 'lg')}>
               Entrar
             </button>

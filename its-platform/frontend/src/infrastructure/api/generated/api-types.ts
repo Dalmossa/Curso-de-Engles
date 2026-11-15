@@ -38,6 +38,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/forgot-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Request a password reset token */
+        post: operations["forgotPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/reset-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reset the password with a one-time token */
+        post: operations["resetPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/refresh": {
         parameters: {
             query?: never;
@@ -438,6 +472,37 @@ export interface components {
                 emailVerified: boolean;
                 provider: string;
             };
+        };
+        ForgotPasswordRequest: {
+            /**
+             * Format: email
+             * @description E-mail cadastrado da conta a recuperar
+             */
+            email: string;
+        };
+        ForgotPasswordResponse: {
+            /** @description Mensagem genérica; não revela se o e-mail existe */
+            message: string;
+            /** @description Token de redefinição — SOMENTE fora de produção (laboratório sem SMTP) */
+            devResetToken?: string;
+            /**
+             * Format: uri
+             * @description Link de redefinição — SOMENTE fora de produção (laboratório sem SMTP)
+             */
+            devResetUrl?: string;
+        };
+        ResetPasswordRequest: {
+            /** @description Token de uso único recebido por e-mail */
+            token: string;
+            /**
+             * Format: password
+             * @description Nova senha; 72 é o limite que o bcrypt não trunca
+             */
+            newPassword: string;
+        };
+        ResetPasswordResponse: {
+            /** @description Confirmação da redefinição */
+            message: string;
         };
         /**
          * @description Finalidade do consentimento LGPD (Art. 7, 8 - granular, específico, informado)
@@ -953,6 +1018,81 @@ export interface operations {
             };
             /** @description Email already exists */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    forgotPassword: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ForgotPasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description Request accepted; the response never reveals whether the e-mail exists */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForgotPasswordResponse"];
+                };
+            };
+            /** @description Malformed request body */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    resetPassword: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResetPasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description Password reset; active sessions revoked */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResetPasswordResponse"];
+                };
+            };
+            /** @description Token expired, already used, or new password rejected */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Unknown reset token */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

@@ -4,6 +4,7 @@ import {
   type AssessmentItem,
   type DialogueAudio,
   type DialogueContent,
+  type ForgotPasswordResult,
   type ItemType,
   type LearnerPreferences,
   type LearnerProfile,
@@ -15,6 +16,7 @@ import {
   type PracticeResult,
   type PronunciationEvaluation,
   type PronunciationWordScore,
+  type ResetPasswordResult,
   type ReuseBasis,
   type ScoredItem,
   type Skill,
@@ -36,6 +38,10 @@ export type DialogueAudioDto = Schemas['DialogueAudio'];
 export type SpeechSynthesisDto = Schemas['SpeechSynthesis'];
 export type PronunciationEvaluationRequestDto = Schemas['PronunciationEvaluationRequest'];
 export type PronunciationEvaluationDto = Schemas['PronunciationEvaluation'];
+export type ForgotPasswordRequestDto = Schemas['ForgotPasswordRequest'];
+export type ForgotPasswordResponseDto = Schemas['ForgotPasswordResponse'];
+export type ResetPasswordRequestDto = Schemas['ResetPasswordRequest'];
+export type ResetPasswordResponseDto = Schemas['ResetPasswordResponse'];
 export type MasteryDto = Record<string, { mastery: number; gate_passed: boolean; last_practice: string }>;
 
 /**
@@ -275,4 +281,24 @@ export function toPronunciationEvaluation(dto: PronunciationEvaluationDto): Pron
     feedbackPt: dto.feedback_pt,
     transcript: dto.transcript,
   };
+}
+
+/**
+ * Maps the password recovery response to the domain entity.
+ *
+ * `devResetToken` and `devResetUrl` are optional in the contract — the API sends them
+ * only outside production — so they stay `undefined` here when they are absent, and the
+ * interface simply does not show a link it never received.
+ */
+export function toForgotPasswordResult(dto: ForgotPasswordResponseDto): ForgotPasswordResult {
+  return {
+    message: dto.message,
+    devResetToken: dto.devResetToken ?? null,
+    devResetUrl: dto.devResetUrl ?? null,
+  };
+}
+
+/** Maps the password reset response to the domain entity. */
+export function toResetPasswordResult(dto: ResetPasswordResponseDto): ResetPasswordResult {
+  return { message: dto.message };
 }

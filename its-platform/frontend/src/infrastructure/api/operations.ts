@@ -1,7 +1,7 @@
 import { isDialogueId, isLessonId, isPackId, isUuid } from '@/core';
 
 /**
- * The nine operations in `docs/api-spec.openapi.yaml`, as data.
+ * The operations in `docs/api-spec.openapi.yaml`, as data.
  *
  * This table is the reason the BFF is not an open proxy. It is a closed whitelist of
  * *logical operations* — never raw paths — so a client cannot name a URL that was not
@@ -26,7 +26,9 @@ export type OperationName =
   | 'content.dialogue'
   | 'content.dialogueAudio'
   | 'content.tts'
-  | 'practice.pronunciation';
+  | 'practice.pronunciation'
+  | 'auth.forgotPassword'
+  | 'auth.resetPassword';
 
 export interface ParamSpec {
   /** The name the contract uses — this is also the BFF's query-string key. */
@@ -199,6 +201,24 @@ export const OPERATIONS: Readonly<Record<OperationName, OperationSpec>> = {
     operationId: 'evaluatePronunciation',
     method: 'POST',
     path: '/practice/pronunciation-evaluate',
+    pathParams: emptyPathParams,
+    queryParams: [],
+    serverResolvedParams: [],
+    bodyCarriesLearnerId: false,
+  },
+  'auth.forgotPassword': {
+    operationId: 'forgotPassword',
+    method: 'POST',
+    path: '/auth/forgot-password',
+    pathParams: emptyPathParams,
+    queryParams: [],
+    serverResolvedParams: [],
+    bodyCarriesLearnerId: false,
+  },
+  'auth.resetPassword': {
+    operationId: 'resetPassword',
+    method: 'POST',
+    path: '/auth/reset-password',
     pathParams: emptyPathParams,
     queryParams: [],
     serverResolvedParams: [],
