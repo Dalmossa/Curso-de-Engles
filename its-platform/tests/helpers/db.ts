@@ -119,6 +119,12 @@ export async function createTestDb(): Promise<TestDbContext> {
     }
   }
 
+  // The two authentication tables are the second half of the canonical schema (33 tables), and
+  // they come from a migration that uses TypeORM's Table API rather than raw SQL — so the array
+  // above does not contain them. Without them, a test that touches a learner's identity meets a
+  // database without a `users` table.
+  await applyAuthMigrations(dataSource, 'shim');
+
   const runner: QueryRunner = dataSource.createQueryRunner();
   if (runner) {
     await runner.release();
@@ -140,6 +146,76 @@ export async function createTestDb(): Promise<TestDbContext> {
       }
     },
   };
+}
+
+/**
+ * The migrations that are **not** part of `SCHEMA_STATEMENTS`, applied through TypeORM's own
+ * runner.
+ *
+ * The canonical schema is 33 tables: 31 come from the create-schema migration's raw DDL, and the
+ * two authentication tables (`users` and `user_sessions`) come from a second migration that uses
+ * TypeORM's Table API instead of raw SQL — so the array the harness applies does not contain them.
+ * Until now the harness built only the first 31, and a test that touched a learner's identity met
+ * a database without a `users` table. The password-reset columns are a third migration on the
+ * same table, and they are applied here for the same reason: the harness builds the schema the
+ * application runs against, not a subset of it.
+ *
+ * **`uuid_generate_v4()`** is the one thing PGlite cannot provide: the `uuid-ossp` extension is
+ * not available there, and the canonical schema's own DDL uses `gen_random_uuid()` precisely
+ * because of it. The `shim` mode gives the migration the function it asks for; the `extension`
+ * mode asks real PostgreSQL for the extension, which is what the deployed database has.
+ */
+async function applyAuthMigrations(
+  dataSource: DataSource,
+  uuidGenerator: 'shim' | 'extension',
+): Promise<void> {
+  if (uuidGenerator === 'extension') {
+    try {
+      await dataSource.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
+    } catch {
+      // No permission to create the extension: the shim below covers the migration anyway.
+    }
+  } else {
+    await dataSource.query(
+      'CREATE OR REPLACE FUNCTION uuid_generate_v4() RETURNS uuid AS $$ SELECT gen_random_uuid() $$ LANGUAGE SQL;',
+    );
+  }
+
+  const { CreateAuthTables1794508563775 } = await import(
+    '../../src/migrations/1794508563775-1800000000001-create-auth-tables'
+  );
+  const { AddPasswordResetColumns1802000000000 } = await import(
+    '../../src/migrations/1802000000000-add-password-reset-columns'
+  );
+
+  const runner = dataSource.createQueryRunner();
+  await runner.connect();
+  try {
+    await new CreateAuthTables1794508563775().up(runner);
+    await new AddPasswordResetColumns1802000000000().up(runner);
+  } finally {
+    await runner.release();
+  }
+
+  // `GRANT … ON ALL TABLES` is a snapshot of the tables that exist **at that moment**, and the
+  // grants in `SCHEMA_STATEMENTS` ran before these two existed — so they cannot have reached
+  // them. The deployed database has the grants on `users`; the harness has to grant them again.
+  //
+  // The grant names the two tables **explicitly**: a blanket `ON ALL TABLES` would also re-grant
+  // what the create-schema migration deliberately took back afterwards — `DELETE` on
+  // `append_only_events`, `UPDATE (id)` on `items` — and the two guards that prove those
+  // revokes would stop holding.
+  for (const grant of [
+    'GRANT SELECT, INSERT, UPDATE, DELETE ON users, user_sessions TO its_platform_app',
+    'GRANT SELECT, INSERT, UPDATE, DELETE ON users, user_sessions TO its_platform_worker',
+    'GRANT ALL ON users, user_sessions TO its_platform_admin',
+  ]) {
+    try {
+      await dataSource.query(grant);
+    } catch {
+      // A role that does not exist in this deployment: the grant is not what this file measures.
+    }
+  }
 }
 
 /**
@@ -200,6 +276,12 @@ async function createRealTestDb(
       // raises here and is expected. Same tolerance as the PGlite path.
     }
   }
+
+  // The two authentication tables are the second half of the canonical schema (33 tables), and
+  // they come from a migration that uses TypeORM's Table API rather than raw SQL — so the array
+  // above does not contain them. Without them, a test that touches a learner's identity meets a
+  // database without a `users` table.
+  await applyAuthMigrations(dataSource, 'extension');
 
   return {
     dataSource,

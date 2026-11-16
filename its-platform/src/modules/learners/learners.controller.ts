@@ -1,5 +1,16 @@
-import { Controller, Get, Param, ParseUUIDPipe, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  Patch,
+  Body,
+} from '@nestjs/common';
 import { LearnersService } from './learners.service.js';
+import { UpdateProfileDto } from './dto/update-profile.dto.js';
 import { SCOPES, Scopes } from '../../common/auth/scopes.decorator.js';
 import { CurrentPrincipal } from '../../common/auth/current-principal.decorator.js';
 import type { TokenPrincipal } from '../../common/auth/token-principal.js';
@@ -32,6 +43,26 @@ export class LearnersController {
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.learnersService.getMastery(principal.subject, id);
+  }
+
+  /**
+   * O learner corrige o próprio nome de exibição e o próprio avatar.
+   *
+   * A classe já exige `learner:self` (ADR-038 D2), e este é o mesmo escopo do `GET` ao lado: a
+   * rota é sobre **o próprio** recurso do chamador, não sobre um recurso nomeado. A autorização
+   * do *objeto* — "este `learner_id` é visível para quem chama?" — é decidida na transação, pela
+   * política, e devolve o mesmo 404 para "não existe" e para "é de outro".
+   *
+   * O corpo é validado pelo `ValidationPipe` global (`whitelist` + `forbidNonWhitelisted`), e um
+   * membro não declarado é **rejeitado** — não ignorado (CONSTITUTION §4.5).
+   */
+  @Patch(':id/profile')
+  async updateProfile(
+    @CurrentPrincipal() principal: TokenPrincipal,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateProfileDto,
+  ) {
+    return this.learnersService.updateProfile(principal.subject, id, dto);
   }
 
   /**

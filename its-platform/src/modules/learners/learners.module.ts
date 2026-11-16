@@ -15,6 +15,7 @@ import { LearnersController } from './learners.controller.js';
 import { LearnersService } from './learners.service.js';
 import { LearnerScopeService } from './learner-scope.service.js';
 import { LearnerProfileRepository } from '../../infrastructure/repositories/learner-profile.repository.js';
+import { UserIdentityRepository } from '../../infrastructure/repositories/user-identity.repository.js';
 import { LearnerRepository } from '../../infrastructure/repositories/learner.repository.js';
 import { PgSessionContext } from '../../infrastructure/persistence/pg-session-context.js';
 
@@ -27,6 +28,8 @@ import { PgSessionContext } from '../../infrastructure/persistence/pg-session-co
     // A7b: the profile's four sources. Provided here, not exported — no other module reads a
     // learner's aggregate, and an export is a permission until somebody uses it.
     LearnerProfileRepository,
+    // The identity — the `users` row behind the display name, the e-mail and the avatar.
+    UserIdentityRepository,
     PgSessionContext,
   ],
   exports: [LearnerScopeService],

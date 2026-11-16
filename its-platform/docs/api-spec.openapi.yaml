@@ -976,7 +976,9 @@ components:
 
     LearnerProfile:
       type: object
-      required: [learner_id, created_at, cefr_level, mastery, preferences]
+      additionalProperties: false
+      required:
+        [learner_id, created_at, cefr_level, display_name, email, avatar_url, mastery, preferences]
       properties:
         learner_id:
           type: string
@@ -993,6 +995,29 @@ components:
             been completed — "not yet assessed", which is neither a band nor an error, and is why the
             member stays `required` (it is always present) while its type admits the absence
             (ADR-045 D3). The `pattern` constrains the string branch only.
+        display_name:
+          type: [string, 'null']
+          maxLength: 80
+          description: >-
+            The name the learner chose to be shown. It lives in `users.display_name`, not in
+            `learners`, and it is `null` when the learner has never chosen one — a state, not a
+            failure. 80 characters is the platform's own ceiling (`learner-identity.ts`), shorter
+            than the column (`varchar(255)`).
+        email:
+          type: [string, 'null']
+          format: email
+          description: >-
+            The account's e-mail address — the one the learner signs in with. It is published
+            because the account screen has to show the address the learner recognises; no hash,
+            no token and no session identifier crosses this boundary.
+        avatar_url:
+          type: [string, 'null']
+          maxLength: 102400
+          description: >-
+            The avatar: an `https://` URL, or a `data:` URL of a PNG, JPEG, WEBP or GIF image
+            encoded in base64 and at most 100 KiB of text. `null` when no avatar was chosen. SVG
+            is not accepted — an SVG is an active document, and a `data:` URL is same-origin with
+            the page that renders it.
         mastery:
           type: object
           description: Per-skill mastery probabilities (BKT), keyed by the learner's own skill ids
@@ -1054,6 +1079,67 @@ components:
         # as a fact, which is indistinguishable from a streak that has just broken. Re-adding either
         # member is a §4.4-breaking change that owes a source first. `CHANGELOG.md` records the
         # migration path.
+
+    LearnerIdentity:
+      type: object
+      description: >-
+        The identity of a learner — the name they chose, the account they sign in with, the
+        avatar they picked and the band they are currently at. It is what
+        `PATCH /learners/{learner_id}/profile` answers, and the three members it shares with
+        `LearnerProfile` are the same members, read from the same row of the same table.
+      additionalProperties: false
+      required: [learner_id, display_name, email, avatar_url, cefr_level]
+      properties:
+        learner_id:
+          type: string
+          format: uuid
+        display_name:
+          type: [string, 'null']
+          maxLength: 80
+          description: The name the learner chose to be shown; `null` when there is none.
+        email:
+          type: [string, 'null']
+          format: email
+          description: The account's e-mail address — the one the learner signs in with.
+        avatar_url:
+          type: [string, 'null']
+          maxLength: 102400
+          description: >-
+            An `https://` URL, or a `data:` URL of a PNG, JPEG, WEBP or GIF image encoded in base64
+            and at most 100 KiB of text; `null` when no avatar was chosen.
+        cefr_level:
+          type: [string, 'null']
+          pattern: '^(A1|A2|B1|B2|C1|C2)$'
+          description: >-
+            The learner's current band — the `cefr` of the latest completed `diagnostic_results`
+            run. It is published here so that a client can replace everything it knows about the
+            learner with one answer, without a second round trip to find out whether the band
+            moved.
+
+    UpdateLearnerProfileRequest:
+      type: object
+      description: >-
+        Body of `PATCH /learners/{learner_id}/profile`. A member not declared here is
+        **rejected** (`400`), not ignored — `CONSTITUTION.md` §4.5 mandates a `ValidationPipe`
+        with `whitelist` and `forbidNonWhitelisted`, and `UpdateProfileDto` enforces this schema.
+        The contract gate refuses a request schema that omits `additionalProperties: false`.
+      additionalProperties: false
+      properties:
+        display_name:
+          type: [string, 'null']
+          minLength: 1
+          maxLength: 80
+          description: >-
+            The new display name, trimmed, 1 to 80 characters. `null` clears it — a name that has
+            been removed is not an empty string. Omitting the member leaves it as it is.
+        avatar_url:
+          type: [string, 'null']
+          maxLength: 102400
+          description: >-
+            The new avatar: an `https://` URL, or a `data:` URL of a PNG, JPEG, WEBP or GIF image
+            encoded in base64 and at most 100 KiB of text. `null` clears it; omitting the member
+            leaves it as it is. SVG, `http://` and every other scheme are refused — the rule lives
+            in `src/domain/entities/learner-identity.ts` and has one owner.
 
     # ============================================================
     # Errors
@@ -2236,6 +2322,68 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LearnerProfile'
+        '401':
+          description: Unauthorized — a valid bearer token is required (ADR-038 D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Learner not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    patch:
+      tags: [learners]
+      summary: Update the learner's own display name and avatar
+      description: >-
+        The learner corrects the name they are shown and the picture beside it. Both members are
+        optional, and each of them has three states: omitted (leave it as it is), `null` (clear
+        it) or a value (set it). A body that declares a member the contract does not is rejected
+        with `400` (`CONSTITUTION.md` §4.5), and so is a body whose member is not acceptable —
+        an avatar that is not an `https://` URL or a raster `data:` URL is refused, because the
+        rule is a safety rule and not a formatting preference.
+
+        The route is about the caller's **own** resource (`learner:self`), and the addressed
+        learner is resolved inside the caller's own transaction before anything is written, so a
+        write to somebody else's row never happens; a foreign learner answers the same `404` a
+        nonexistent one does (ADR-038 D3).
+      operationId: updateLearnerProfile
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: learner_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLearnerProfileRequest'
+      responses:
+        '200':
+          description: The identity as it now stands
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LearnerIdentity'
+        '400':
+          description: The body declares a member the contract does not, or a member that is not acceptable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
         '401':
           description: Unauthorized — a valid bearer token is required (ADR-038 D4)
           content:

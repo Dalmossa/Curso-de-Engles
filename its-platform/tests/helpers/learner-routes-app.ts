@@ -32,6 +32,7 @@ import { DataSource } from 'typeorm';
 import { configureApp } from '../../src/app.setup.js';
 import { PgSessionContext } from '../../src/infrastructure/persistence/pg-session-context.js';
 import { LearnerProfileRepository } from '../../src/infrastructure/repositories/learner-profile.repository.js';
+import { UserIdentityRepository } from '../../src/infrastructure/repositories/user-identity.repository.js';
 import { LearnerRepository } from '../../src/infrastructure/repositories/learner.repository.js';
 import { TOKEN_VERIFIER } from '../../src/modules/auth/tokens.js';
 import { tokenVerifierFromEnv } from '../../src/infrastructure/auth/token-verifier-from-env.js';
@@ -75,6 +76,8 @@ export function learnerRoutesModule(dataSource: DataSource): new () => unknown {
       LearnerRepository,
       // A7b: `LearnersService` reads the profile's four sources through this one.
       LearnerProfileRepository,
+      // The identity — the `users` row behind the display name, the e-mail and the avatar.
+      UserIdentityRepository,
       PgSessionContext,
       // The token is the class: `LearnerRepository` and `PgSessionContext` both ask for `DataSource`.
       { provide: DataSource, useValue: dataSource },

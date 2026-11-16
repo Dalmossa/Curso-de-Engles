@@ -29,6 +29,7 @@ import { NotFoundException } from '@nestjs/common';
 import type { QueryRunner } from 'typeorm';
 
 import { LearnerProfileRepository } from '../../../src/infrastructure/repositories/learner-profile.repository.js';
+import type { UserIdentityRepository } from '../../../src/infrastructure/repositories/user-identity.repository.js';
 import type { VisibleLearner } from '../../../src/infrastructure/repositories/learner.repository.js';
 import { CurriculumService } from '../../../src/modules/curriculum/curriculum.service.js';
 import { LearnerScopeService } from '../../../src/modules/learners/learner-scope.service.js';
@@ -60,6 +61,18 @@ const PROFILE_REPOSITORY = {
   read: () => Promise.resolve({ cefr: null, mastery: {}, fsrsStates: {} }),
 } as unknown as LearnerProfileRepository;
 
+/**
+ * The identity — the `users` row behind the display name, the e-mail and the avatar.
+ *
+ * Stubbed for the same reason as the profile repository: the aggregate is not what this file
+ * measures. It answers "a learner with no account", which is the honest answer for a learner
+ * whose `users` row was never filled in.
+ */
+const IDENTITY_REPOSITORY = {
+  read: () => Promise.resolve(null),
+  update: () => Promise.resolve(null),
+} as unknown as UserIdentityRepository;
+
 interface Route {
   readonly name: string;
   /** The handler, with the scope service it was built with. */
@@ -72,19 +85,21 @@ const ROUTES: readonly Route[] = [
   {
     name: 'GET /learners/{learner_id}/profile',
     call: (scope) =>
-      new LearnersService(scope as LearnerScopeService, PROFILE_REPOSITORY).getProfile(
-        SUBJECT,
-        ADDRESSED,
-      ),
+      new LearnersService(
+        scope as LearnerScopeService,
+        PROFILE_REPOSITORY,
+        IDENTITY_REPOSITORY,
+      ).getProfile(SUBJECT, ADDRESSED),
     member: 'learner_id',
   },
   {
     name: 'GET /learners/{learner_id}/mastery',
     call: (scope) =>
-      new LearnersService(scope as LearnerScopeService, PROFILE_REPOSITORY).getMastery(
-        SUBJECT,
-        ADDRESSED,
-      ),
+      new LearnersService(
+        scope as LearnerScopeService,
+        PROFILE_REPOSITORY,
+        IDENTITY_REPOSITORY,
+      ).getMastery(SUBJECT, ADDRESSED),
     member: 'grammar',
   },
   {

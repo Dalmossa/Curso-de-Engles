@@ -33,12 +33,21 @@
  * `learner:erase`) per ADR-038 D2, and both run under `withVisible` so the RLS policy decides
  * visibility. `eraseData` runs in the same transaction that verified visibility, ensuring the
  * deletion is atomic with the visibility check (ADR-026 §1).
+ *
+ * **A identidade do aluno.** `display_name`, `email` e `avatar_url` moram na linha de `users` —
+ * outro artefacto, outra tabela, outra chave (`learner_id`). O perfil os publica porque a
+ * interface precisa reconhecê-lo (o cabeçalho global mostra nome, e-mail e avatar), e
+ * `updateProfile` os escreve porque o mesmo learner precisa poder corrigir o próprio nome e a
+ * própria foto. A tabela `users` não tem RLS — só `learners` tem — e por isso o predicado
+ * `learner_id = $1` do repositório **é** a fronteira de isolamento, e não uma redundância.
  */
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { LearnerProfileRepository } from '../../infrastructure/repositories/learner-profile.repository.js';
+import { UserIdentityRepository } from '../../infrastructure/repositories/user-identity.repository.js';
 import { LearnerScopeService } from './learner-scope.service.js';
+import type { UpdateProfileDto } from './dto/update-profile.dto.js';
 
 /**
  * The four preference defaults, and their only source is the contract: `LearnerProfile.preferences`
@@ -61,6 +70,7 @@ export class LearnersService {
   constructor(
     private readonly learnerScope: LearnerScopeService,
     private readonly profile: LearnerProfileRepository,
+    private readonly identity: UserIdentityRepository,
   ) {}
 
   /**
@@ -69,10 +79,16 @@ export class LearnersService {
    * Everything is read inside `withVisible`, so nothing here is fetched with a connection that
    * carries no learner context: the aggregate is covered by the same policy, and a learner the
    * caller cannot see is refused before the first of these reads.
+   *
+   * The three identity members (`display_name`, `email`, `avatar_url`) come from the `users` row,
+   * which is a different artefact and a different table — read through `UserIdentityRepository`,
+   * with its own explicit `learner_id = $1` predicate, because `users` carries no RLS policy of
+   * its own.
    */
   async getProfile(subject: string, learnerId: string) {
     return this.learnerScope.withVisible(subject, learnerId, async (learner, tx) => {
       const sources = await this.profile.read(learner.id, tx);
+      const identity = await this.identity.read(learner.id, tx);
 
       return {
         learner_id: learner.id,
@@ -80,11 +96,58 @@ export class LearnersService {
         // `string | null`: no completed run means "not yet assessed", which the contract now admits
         // (`type: [string, 'null']`) rather than answering a band the learner does not have (D3).
         cefr_level: sources.cefr,
+        // The identity, as the `users` row holds it — `null` for a learner whose row was never
+        // filled in, which is a state and not a failure.
+        display_name: identity?.displayName ?? null,
+        email: identity?.email ?? null,
+        avatar_url: identity?.avatarUrl ?? null,
         mastery: sources.mastery,
         // Held, not forgotten — see the header and ADR-043 R1.
         theta_estimates: {},
         fsrs_states: sources.fsrsStates,
         preferences: DOMAIN_PREFERENCES,
+      };
+    });
+  }
+
+  /**
+   * `PATCH /learners/{learner_id}/profile` — the learner updates their own name and avatar.
+   *
+   * The **same** `withVisible` gate as the read: the addressed learner is loaded inside the
+   * caller's context first, and the write happens inside that very transaction — so a write to
+   * somebody else's row is not "refused afterwards", it never happens. The `users` table carries
+   * no RLS, which is why the repository repeats `learner_id = $1`: the gate above and the
+   * predicate below are two halves of one rule, and neither is redundant.
+   *
+   * The response is the identity as it now stands, plus the band — so the caller can replace
+   * everything it knows about the learner with one answer, without a second round trip to work
+   * out whether the band moved.
+   */
+  async updateProfile(subject: string, learnerId: string, input: UpdateProfileDto) {
+    return this.learnerScope.withVisible(subject, learnerId, async (learner, tx) => {
+      const updated = await this.identity.update(
+        learner.id,
+        {
+          ...(input.display_name === undefined ? {} : { displayName: input.display_name }),
+          ...(input.avatar_url === undefined ? {} : { avatarUrl: input.avatar_url }),
+        },
+        tx,
+      );
+
+      if (updated === null) {
+        // The learner exists (the gate above proved it) but has no account row to write to.
+        // Creating one here would invent credentials; refusing is the honest answer.
+        throw new NotFoundException('Learner account not found');
+      }
+
+      const sources = await this.profile.read(learner.id, tx);
+
+      return {
+        learner_id: learner.id,
+        display_name: updated.displayName,
+        email: updated.email,
+        avatar_url: updated.avatarUrl,
+        cefr_level: sources.cefr,
       };
     });
   }

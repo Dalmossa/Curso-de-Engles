@@ -41,6 +41,7 @@ import { LearnersController } from '../../src/modules/learners/learners.controll
 import { LearnersService } from '../../src/modules/learners/learners.service.js';
 import { LearnerScopeService } from '../../src/modules/learners/learner-scope.service.js';
 import { LearnerProfileRepository } from '../../src/infrastructure/repositories/learner-profile.repository.js';
+import { UserIdentityRepository } from '../../src/infrastructure/repositories/user-identity.repository.js';
 import { LearnerContextError } from '../../src/infrastructure/persistence/pg-session-context.js';
 import {
   authorization,
@@ -116,6 +117,21 @@ const learnerProfileStub = {
   },
 };
 
+/**
+ * The identity — the `users` row behind the display name, the e-mail and the avatar.
+ *
+ * Stubbed for the same reason as the profile repository: every request this file sends is
+ * refused by the scope before the identity is read, so the repository is never asked anything.
+ */
+const learnerIdentityStub = {
+  read: () => {
+    throw new Error('the identity repository is unreachable in this suite: the scope refuses first');
+  },
+  update: () => {
+    throw new Error('the identity repository is unreachable in this suite: the scope refuses first');
+  },
+};
+
 @Module({
   controllers: [ContentController, LearnersController, ProbeController],
   providers: [
@@ -123,6 +139,7 @@ const learnerProfileStub = {
     LearnersService,
     { provide: LearnerScopeService, useValue: learnerScopeStub },
     { provide: LearnerProfileRepository, useValue: learnerProfileStub },
+    { provide: UserIdentityRepository, useValue: learnerIdentityStub },
     {
       provide: TOKEN_VERIFIER,
       useFactory: () => tokenVerifierFromEnv(),
