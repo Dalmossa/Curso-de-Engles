@@ -3,115 +3,125 @@
 **Lesson ID:** `les_a1_greetings`
 **Module:** `mod_a1_foundation`
 **CEFR:** A1
-**Reuse basis:** `cite_only`
-**Source:** `docs/apostila-ingles-para-iniciantes-impresso.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US).
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Compreensível (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: primeiro dia em um time de tecnologia
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **hello** | olá | *saudação universal* |
-| **good morning** | bom dia | *saudação até 12h* |
-| **good afternoon** | boa tarde | *saudação 12h-18h* |
-| **good evening** | boa noite | *saudação após 18h* |
-| **how are you?** | como você está? | *pergunta de cortesia* |
-| **I'm fine, thank you** | estou bem, obrigado | *resposta padrão* |
-| **please** | por favor | *pedido educado* |
-| **thank you** | obrigado | *agradecimento* |
-| **you're welcome** | de nada | *resposta a obrigado* |
-| **sorry** | desculpa | *pedido de desculpas* |
-| **excuse me** | com licença | *chamar atenção / pedir passagem* |
-| **goodbye** | adeus / tchau | *despedida* |
-| **see you later** | até mais tarde | *despedida informal* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**Hello**! **Good morning**! **How are you?** — **I'm fine, thank you.**"
+> **Bruno (new frontend developer):** "Good morning, everyone. I'm Bruno, the new frontend developer."
 >
-> "**Please** sit down. **Thank you**! — **You're welcome**."
+> **Ana (tech lead):** "Good morning, Bruno. Welcome to the team! How are you today?"
 >
-> "**Sorry** I'm late. — **Excuse me**, where is the bathroom?"
+> **Bruno:** "I'm fine, thank you. Nice to meet you."
 >
-> "**Goodbye**! **See you later**!"
+> **Ana:** "Nice to meet you, too. This is Rafael, our backend engineer."
+>
+> **Rafael:** "Hi, Bruno. Good to meet you. Please, take a seat."
+>
+> **Bruno:** "Thank you. Excuse me, where is the meeting room?"
+>
+> **Ana:** "It's next to the coffee area. See you later at the daily meeting!"
+>
+> **Bruno:** "Great. Goodbye for now."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso |
+|---|---|---|
+| **Good morning** | Bom dia | Usado pela manhã (até por volta do meio-dia). |
+| **Good afternoon** | Boa tarde | Usado após o meio-dia até o fim da tarde. |
+| **Good evening** | Boa noite (ao chegar) | Saudação ao chegar à noite; não confunda com despedida. |
+| **How are you?** | Como você está? | Pergunta de cortesia; resposta curta é natural: *I'm fine, thank you.* |
+| **Nice to meet you** | Prazer em conhecer você | Usado no primeiro contato; resposta comum: *Nice to meet you, too.* |
+| **Please** | Por favor | Torna pedidos educados: *Please, take a seat.* |
+| **Thank you / Thanks** | Obrigado(a) | *You're welcome* é uma resposta comum. |
+| **Excuse me** | Com licença | Para chamar atenção, pedir passagem ou fazer uma pergunta. |
+| **See you later / Goodbye** | Até mais / Tchau | Despedidas; *Good night* é despedida à noite, diferente de *Good evening*. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "Good night" ao chegar à noite | "Good evening" | *Good evening* é saudação; *Good night* é despedida ou desejo de boa noite. |
+| "I have 25 years." (apresentação) | "I am 25 years old." | Em inglês, idade usa o verbo *to be* (*am/is/are*), não *have*. |
+| "How are you?" → "Yes, I am." | "I'm fine, thank you." / "I'm good, thanks." | *How are you?* pede estado/condição, não resposta sim/não. |
+| "Tank you" / "tãquiú" (som de /θ/) | "Thank you" /θæŋk juː/ | O *th* de *thank* não é /t/ nem /f/; a língua toca levemente os dentes. |
+| "/h/ello" com som de "r" forte ou /h/ omitido | "Hello" /həˈloʊ/ | O *h* inicial é aspirado em inglês; evite trocar por som de "r" ou apagá-lo. |
+| "Please, I want water." (pedido direto demais) | "Could I have some water, please?" / "Water, please." | *Please* ajuda, mas em inglês pedidos costumam ser mais indiretos em contextos formais. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Good morning** is used:
-| Slot | Value |
-|------|-------|
-| A | At night |
-| B | **In the morning (until 12pm)** |
-| C | In the afternoon |
-| D | At any time |
-**Key:** B
-**br_pt_form:** "bom dia / de manhã até 12h"
+### Exercício 1 — Reconhecimento (saudação e contexto)
 
-### Item 2 — Vocabulary (Matching)
-Match the phrase to its use:
-| Phrase | Use |
-|--------|-----|
-| **Please** | a. Polite request |
-| **Thank you** | b. Gratitude |
-| **You're welcome** | c. Response to thanks |
-| **Sorry** | d. Apology |
-**Key:** Please→a, Thank you→b, You're welcome→c, Sorry→d
-**br_pt_form:** "por favor", "obrigado", "de nada", "desculpa"
+Associe a expressão à situação mais adequada:
 
-### Item 3 — Grammar: Subject + verb (fill-in-blank)
-Complete with **am / is / are**:
-"I ______ fine. She ______ my friend. They ______ students."
-**Key:** am / is / are
-**br_pt_form:** "estou / é / são"
+| Situação | Expressão correta |
+|---|---|
+| Você encontra um colega às 9h no escritório. | **Good morning** |
+| Você conhece uma nova engenheira de software pela primeira vez. | **Nice to meet you** |
+| Você precisa passar por alguém no corredor. | **Excuse me** |
+| Você vai embora após a reunião diária. | **See you later** / **Goodbye** |
 
----
+**Chave:** manhã → *Good morning*; primeiro contato → *Nice to meet you*; pedir passagem → *Excuse me*; despedida → *See you later*/*Goodbye*.
 
-## FASE 3 — Output Task [4 min]
+### Exercício 2 — Transformação L1 → L2
 
-### Speaking: Greeting Dialogue (pares)
-**Create a short dialogue** using at least 8 phrases from the vocabulary list.
+Reescreva para um inglês natural:
 
-**Scenario:** Two colleagues meet in the morning, ask about each other, make a polite request, and say goodbye.
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Bom dia, eu sou a nova desenvolvedora backend." | "Good morning, I'm the new backend developer." |
+| "Prazer em conhecer você." (resposta) | "Nice to meet you, too." |
+| "Com licença, onde é a sala de reunião?" | "Excuse me, where is the meeting room?" |
 
-**Example:**
-> A: **Good morning**! **How are you?**
-> B: **I'm fine, thank you**. And you?
-> A: I'm good. **Please** open the window.
-> B: **You're welcome**... wait, I didn't do it yet!
-> A: **Sorry**! **Goodbye**! **See you later**!
+### Exercício 3 — Completar com *am / is / are*
+
+Complete com a forma correta do verbo *to be*:
+
+1. "Good morning. I ____ Ana, the tech lead." → **am**
+2. "This ____ Rafael, our backend engineer." → **is**
+3. "We ____ ready for the daily meeting." → **are**
+
+**Regra rápida:** *I am*, *he/she/it is*, *we/you/they are*.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Excuse me** is used to:
-| Slot | Value |
-|------|-------|
-| A | Say goodbye |
-| B | **Get attention or ask to pass** |
-| C | Thank someone |
-| D | Apologize |
-**Key:** B
-**br_pt_form:** "com licença / chamar atenção"
+### 5 sentenças-alvo (leia em voz corrida)
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **subject + verb**:
-| Slot | Value |
-|------|-------|
-| A | I **is** fine. |
-| B | I **am** fine. |
-| C | I **are** fine. |
-| D | I **be** fine. |
-**Key:** B
-**br_pt_form:** "Eu estou bem."
+Good morning, I am the new software developer on this team. Nice to meet you, and thank you for the warm welcome. I am fine today, and I am ready for the daily meeting. Excuse me, where is the meeting room, please? See you later, and have a good afternoon.
+
+### Foco articulatório para falantes de pt-BR
+
+- **/θ/ em *thank*, *thanks***: coloque a ponta da língua levemente entre os dentes e solte o ar sem vibrar as cordas vocais (evite /t/ "tãnk" ou /f/ "fãnk").
+- **/h/ em *hello*, *have***: produza uma leve aspiração no início; não pronuncie como "r" e não omita o som.
+- **/w/ em *welcome*, *where***: arredonde os lábios em /w/ sem inserir vogal antes ("uélcome" → /ˈwelkəm/).
+- **Vogal epentética**: evite acrescentar "i" em finais consonantais (*good(i)*, *meet(i)*); finalize a consoante de forma limpa.
+- **Contrações naturais**: *I'm* /aɪm/ e *where's* /werz/ soam mais naturais em fala cotidiana do que formas sempre completas.
+
+### Prompt de produção (oral ou escrita)
+
+Prepare um mini diálogo de **40–60 segundos** para um primeiro contato no trabalho (onboarding, daily meeting ou café com o time). Inclua: uma saudação adequada ao horário, sua apresentação com *I am...*, *Nice to meet you*, um pedido educado com *please* ou *excuse me*, e uma despedida.
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Vocabulário (L1):** Qual resposta é natural para "Nice to meet you"?  
+   A) "I'm fine, thank you."  B) **"Nice to meet you, too."**  C) "Good night."  D) "You're welcome."  
+   **Chave:** B
+
+2. **Gramática (L1):** Complete: "Good morning. I ____ the new QA engineer."  
+   A) is  B) are  C) **am**  D) be  
+   **Chave:** C
 
 ---
 
@@ -120,52 +130,43 @@ Choose the correct **subject + verb**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a1_greetings",
   "cefr_level": "A1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (greeting dialogue), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/apostila-ingles-para-iniciantes-impresso.md (no licence grant) - scoping of greetings and basic phrases"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - greeting phrases are unprotectable linguistic knowledge; definitions authored"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material; no external source text reproduced or adapted.",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.subject_verb_agreement"
+      "grammar.be_present_introductions",
+      "grammar.subject_verb_agreement_basic"
     ],
     "vocabulary": [
-      "vocab.greetings.hello",
       "vocab.greetings.good_morning",
-      "vocab.greetings.good_afternoon",
-      "vocab.greetings.good_evening",
+      "vocab.greetings.good_afternoon_evening",
       "vocab.greetings.how_are_you",
-      "vocab.greetings.im_fine_thank_you",
-      "vocab.greetings.please",
-      "vocab.greetings.thank_you",
-      "vocab.greetings.youre_welcome",
-      "vocab.greetings.sorry",
+      "vocab.greetings.nice_to_meet_you",
+      "vocab.greetings.please_thank_you",
       "vocab.greetings.excuse_me",
-      "vocab.greetings.goodbye",
-      "vocab.greetings.see_you_later"
+      "vocab.greetings.farewells"
     ],
     "listening": [
       "listening.greetings_context"
     ],
     "pronunciation": [
-      "pronunciation.greeting_phrases"
+      "pronunciation.th_thank",
+      "pronunciation.h_initial",
+      "pronunciation.w_welcome_where",
+      "pronunciation.no_epenthetic_vowel"
     ],
     "speaking": [
-      "speaking.greeting_dialogue"
+      "speaking.introduction_dialogue"
     ]
   },
   "prereq_lessons": [

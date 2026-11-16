@@ -95,14 +95,13 @@ sources is permissively licensed.** Applying it to the 123-lesson registry:
 
 | Class | Lessons | Share | Verdict |
 |-------|--------:|------:|---------|
-| cites an **explicitly restricted** source (BaixeLivros) | **58** | 47% | ❌ blocked by an explicit term |
+| cites an **explicitly restricted** source (BaixeLivros) | **57** | 46% | ❌ blocked by an explicit term |
 | cites a **©-only** source (CETAM, Tiago Rodrigues) — no licence grant | 16 | 13% | ❌ all rights reserved by default |
-| cites a source with **no copyright statement at all** | 22 | 18% | ❌ reserved by default |
-| cites a **permissive external** source (this file, §2) | **12** | 10% | ✅ reusable (7 of 13 IT-sourced remain; 5 reautored as `authored_material` in Lote 1; `les_b1_it_presentations` now original) |
-| cites **no specific source** (5 exam lessons + 5 remediation + 1 original authored) | 15 | 12% | ⚠️ needs a source, not a licence decision |
+| cites a source with **no copyright statement at all** | 19 | 15% | ❌ reserved by default |
+| cites a **permissive external** source (this file, §2) | **11** | 9% | ✅ reusable with attribution (7 `sourced_external` lições IT ainda pendentes de reautoria integral) |
+| cites **no specific source** (inclui 5 exam, 5 remediação e lições reautoradas/originais clean-room) | 20 | 16% | ⚠️ sem fonte externa declarada no registro — inclui 10 lições `authored_material` (5 Lote 1 + 5 Lote 2 Onda 2) |
 
-> **13 of 123 lessons — 11% — have a source that is actually reusable. 58 lessons (47%) are blocked
-> by an explicit written term, and the remaining 38 are blocked by the default.**
+> **Placar pós-Lote 2 Onda 2 (2026-11-16): 17 de 123 lições** estão em base reutilizável/autoralmente limpa para a meta — **10 `authored_material`** (Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2: `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`) + **7 `sourced_external`** permissivas ainda pendentes de reautoria integral. **104 lições permanecem `cite_only`** (108 menos as 4 A1 reautoradas) e as demais bases de reuso/adaptação seguem conforme o inventário e a política de `cite_only`/reautoria. 57 lições seguem bloqueadas por termo explícito e 35 por ausência de licença/padrão restritivo no corpus local (©/sem declaração). |
 
 ### 0.5.1 What this does and does not change
 
@@ -756,32 +755,36 @@ a pack citing S09 must not transitively cite the dead anchor.
 
 ---
 
-## 5. THE 13 DEFERRED LESSONS, REPOINTED
+## 5. THE 13 DEFERRED LESSONS, REPOINTED (e lições reautoradas correlatas)
 
-Every lesson below moves from `deferred_no_source` to `sourced_external`. The **Coverage** column is
-the honest assessment of whether the cited sources actually carry the lesson's discourse — the exact
-question §4.4.1's 13 bad `IT A<n>` citations failed.
+Historicamente, cada lição abaixo moveu de `deferred_no_source` para um sourcing externo. A coluna **Coverage** preserva a avaliação honesta original; a coluna **Estado atual (2026-11-16)** reflete o `curriculum-graph-spec.md` §4.3/§4.4.5 após os Lotes 1 e 2.
 
-| # | Lesson | Primary source(s) | Coverage | Authoring consequence |
-|---|--------|-------------------|----------|-----------------------|
-| 1 | `les_a2_it_terms_basics` | S18, S16 | **adequate** | glossary + word-list supply the terms. ⚠️ **Do not teach from `content-map.md` §11.1** — it is a restricted-source scaffold, rewritten 2026-09-30; use it only to check frequency and coverage, and take the BR-PT glosses from §11.2 |
-| 2 | `les_a2_it_meeting_standup` | S19, S12, S16 | **thin — needs authored spoken register** | S19 gives the *purpose* of a daily stand-up in normative prose; S12 gives priority/ownership language. **No source supplies "yesterday / today / blocked".** Author the turn-taking; cite S19 for the frame |
-| 3 | `les_a2_it_incidents` | S02, S15 | **adequate** | S02 for the postmortem frame; S15 for the 4xx/5xx vocabulary a non-specialist actually needs |
-| 4 | `les_b1_it_architecture_vocab` | S16, S05, S01 | **adequate** | control plane / worker / fault tolerance (S16); decision-vs-requirement (S05); register discipline (S01) |
-| 5 | `les_b1_it_debugging` | S09, S13, S14, S11 | **strong** | the best-sourced lesson here: expected-vs-actual (S09), call stack + breakpoints (S13), `name`/`message` (S14), status lifecycle (S11) |
-| 6 | `les_b1_it_code_review` | S07, S06, S08, S10, S18 | **strong** | code-health standard + "Nit:" (S07), small CLs (S06), PR-as-conversation (S08), imperative first line (S10), disagreement formula (S18) |
-| 7 | `les_b1_it_presentations` | S18 only | ❌ **NO ADEQUATE SOURCE** | §3.1 gap 2. S18 is a promotion guide, not a craft guide. **Decision required** — see §6 |
-| 8 | `les_b1_it_write_docs` | S01, S10, S16 | **adequate** | active voice + conditions-before-instructions (S01); what-to-include (S10); doc vocabulary (S16) |
-| 9 | `les_b2_it_mentoring` | S18, S07 | **thin** | S18 is maintainer-to-stranger, not manager-to-new-hire; S07's mentoring section is 4 sentences. **Must be authored for the Brazilian manager context** |
-| 10 | `les_b2_it_architecture_decisions` | S03, S04, S05 | **strong** | template structure (S03), the AD definition + decision log (S04), when/why prose (S05). MADR is CC0 → **no attribution obligation** |
-| 11 | `les_b2_it_incident_postmortem` | S02 | **adequate, and the licence win** | S02 replaces the SRE Book entirely. Same blameless framing, CC-BY-4.0, and framework prose suits a non-native reader better than narrative |
-| 12 | `les_b2_it_rfc_writing` | S17, S01, ⚠️RFC 2119 | **partial** | S17 (KEP: goals / non-goals / risks / alternatives) is Apache-2.0 and clean. The **normative-keyword** half (MUST/SHOULD/MAY) has only the IETF TLP source, which is quote-only. **Legal opinion required before that sub-lesson ships** |
-| 13 | `les_b1_project_case_study` | S01, S05, S10 | **adequate** | this is a *presentation* lesson and inherits lesson 7's gap for its delivery half, but its written half is fine: structure (S01), options-and-reasons (S05), public record (S10) |
+| # | Lesson | Primary source(s) | Coverage (original) | Estado atual (2026-11-16) | Authoring consequence / nota |
+|---|--------|-------------------|---------------------|---------------------------|-----------------------------|
+| 1 | `les_a2_it_terms_basics` | S18, S16 | **adequate** | `sourced_external` | glossary + word-list supply the terms. ⚠️ **Do not teach from `content-map.md` §11.1** — use §11.2 para glosses BR-PT. |
+| 2 | `les_a2_it_meeting_standup` | S19, S12, S16 | **thin — needs authored spoken register** | `reauthored_authored_material` (Lote 2 Onda 2) | Reautorado em clean-room como 100% original; fontes externas ficam apenas como contexto histórico/bibliográfico. |
+| 3 | `les_a2_it_incidents` | S02, S15 | **adequate** | `sourced_external` | S02 para o enquadramento; S15 para vocabulário 4xx/5xx. |
+| 4 | `les_b1_it_architecture_vocab` | S16, S05, S01 | **adequate** | `reauthored_authored_material` (Lote 1) | Reautorado em clean-room como 100% original. |
+| 5 | `les_b1_it_debugging` | S09, S13, S14, S11 | **strong** | `sourced_external` | expected-vs-actual, call stack, `name`/`message`, ciclo de status. |
+| 6 | `les_b1_it_code_review` | S07, S06, S08, S10, S18 | **strong** | `reauthored_authored_material` (Lote 1) | Reautorado em clean-room como 100% original. |
+| 7 | `les_b1_it_presentations` | S18 only | ❌ **NO ADEQUATE SOURCE** | `reauthored_authored_material` (Lote 1) | Lacuna original resolvida por autoria clean-room (lição criada/desbloqueada). |
+| 8 | `les_b1_it_write_docs` | S01, S10, S16 | **adequate** | `sourced_external` | voz ativa, instruções, registro documental. |
+| 9 | `les_b2_it_mentoring` | S18, S07 | **thin** | `reauthored_authored_material` (Lote 1) | Reautorado em clean-room como 100% original. |
+| 10 | `les_b2_it_architecture_decisions` | S03, S04, S05 | **strong** | `sourced_external` | template ADR, definição, quando/por quê. |
+| 11 | `les_b2_it_incident_postmortem` | S02 | **adequate, and the licence win** | `sourced_external` | enquadramento blameless em fonte permissiva. |
+| 12 | `les_b2_it_rfc_writing` | S17, S01, ⚠️RFC 2119 | **partial** | `reauthored_authored_material` (Lote 1) | Reautorado em clean-room; sublição normativa IETF permanece ponto de atenção legal se voltar a depender da fonte. |
+| 13 | `les_b1_project_case_study` | S01, S05, S10 | **adequate** | `sourced_external` | metade escrita adequadamente suportada. |
 
-**Count: 13/13 repointed. Of those, 3 are strong, 6 adequate, 3 thin/partial, 1 has no adequate
-source.** That maps onto the registry statuses in `curriculum-graph-spec.md` §4.4.5 as
-**9 `sourced_external`** (strong + adequate), **3 `sourced_external_thin`** (thin + partial), and
-**1 `blocked_no_adequate_source`**.
+**Lições reautoradas adicionadas no Lote 2 Onda 2 (fora do conjunto original dos 13):**
+
+| # | Lesson | Primary source(s) | Coverage | Estado atual (2026-11-16) | Nota |
+|---|--------|-------------------|----------|---------------------------|------|
+| 14 | `les_a1_greetings` | — (clean-room) | n/a | `reauthored_authored_material` (Lote 2 Onda 2) | Antes `cite_only` (bibliografia local restrita); reautoria integral. |
+| 15 | `les_a1_intro_dialogue` | — (clean-room) | n/a | `reauthored_authored_material` (Lote 2 Onda 2) | Antes `cite_only`; reautoria integral. |
+| 16 | `les_a1_daily_basics` | — (clean-room) | n/a | `reauthored_authored_material` (Lote 2 Onda 2) | Antes `cite_only`; reautoria integral. |
+| 17 | `les_a1_pronunciation_intro` | — (clean-room) | n/a | `reauthored_authored_material` (Lote 2 Onda 2) | Antes `cite_only`; reautoria integral. |
+
+**Resumo (estado atual):** 7 lições permanecem `sourced_external`, 10 estão `reauthored_authored_material` (5 Lote 1 + 5 Lote 2), 0 `sourced_external_thin`, 0 `blocked_no_adequate_source`. O conjunto documentado aqui corresponde exatamente aos nós marcados como externamente relacionados/reautorados no `curriculum-graph-spec.md` §4.3.
 
 ### 5.1 The vocabulary debt this repays
 
@@ -890,7 +893,7 @@ it at launch.
 
 | Source | Licence | If used to author lessons, then |
 |--------|---------|---------------------------------|
-| S19 Scrum Guide | CC-BY-SA-4.0 | the **derived lesson material** for `les_a2_it_meeting_standup` must be published under CC-BY-SA-4.0 |
+| S19 Scrum Guide | CC-BY-SA-4.0 | historicamente relevante para `les_a2_it_meeting_standup`; a lição foi reautorada como `authored_material` (Lote 2 Onda 2), removendo dependência de adaptação share-alike desse material |
 | S13, S14, S15 MDN | CC-BY-SA-2.5 | the **derived lesson material** for `les_a2_it_incidents` and the MDN-sourced half of `les_b1_it_debugging` must be published under CC-BY-SA-2.5 |
 
 **Why this matters and is not being waved through.** A share-alike licence on a *source* is
@@ -904,11 +907,7 @@ licence. **Two ways out, both legitimate:**
   register.)
 - **Accept the obligation** and publish those lessons under CC-BY-SA.
 
-**Recommendation:** for `les_a2_it_meeting_standup` and `les_a2_it_incidents`, **author and cite
-rather than adapt**, because both lessons need spoken register that no source supplies anyway — so
-the share-alike buys us nothing and costs a licence. For `les_b1_it_debugging`, S09/S11 are CC-BY
-(non-SA) and carry most of the material, so **adapt and attribute**; the MDN share-alike halves
-should then be cited-not-quoted.
+**Recommendation (estado atual):** `les_a2_it_meeting_standup` já foi reautorado como `authored_material` (Lote 2 Onda 2), eliminando a exposição share-alike dessa lição. Para `les_a2_it_incidents`, **author and cite rather than adapt** quando possível, pois o registro falado não é suprido pelas fontes; para `les_b1_it_debugging`, S09/S11 (CC-BY, não-SA) sustentam a maior parte do material, então **adapt and attribute** onde apropriado e trate as metades MDN (share-alike) como citação/contexto, não reprodução literal.
 
 ### 7.3 Still requiring a legal opinion
 

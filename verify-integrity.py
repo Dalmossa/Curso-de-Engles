@@ -359,7 +359,7 @@ def check_lesson_count() -> None:
         fail("sourcing status", f"{n_deferred} lesson row(s) still marked deferred_no_source — §4.4.5 retired it")
     else:
         ok("deferred retired", "0 lesson rows remain deferred_no_source")
-    for status, expect in (("sourced_external", 7), ("sourced_external_thin", 1), ("blocked_no_adequate_source", 0)):
+    for status, expect in (("sourced_external", 7), ("sourced_external_thin", 0), ("blocked_no_adequate_source", 0)):
         got = sum(f"`{status}`" in ln for ln in rows)
         (ok if got == expect else fail)("sourcing status", f"{status} — {got} rows, §4.4.5 declares {expect}")
 

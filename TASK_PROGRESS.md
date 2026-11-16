@@ -25,3 +25,14 @@
 ## Observações
 - Placar jurídico pós-Lote 1: **5/123** lições `authored_material` (Lote 1), 0 bloqueadas; packs legados restantes: **111** (catraca).
 - Commit desta entrega limitado aos arquivos da tarefa (lições/packs do Lote 1 e atualizações estritamente necessárias de specs/registros/gates/progresso/plano).
+
+## Lote 1 Onda 2 (Fundação A1/A2) — 2026-11-16
+- [x] `lessons/a1/les_a1_greetings.md`, `lessons/a1/les_a1_intro_dialogue.md`, `lessons/a1/les_a1_daily_basics.md`, `lessons/a1/les_a1_pronunciation_intro.md` e `lessons/a2/les_a2_it_meeting_standup.md` reautoradas para `authored_material` (clean-room, 4 fases, proveniência autoral).
+- [x] Packs canônicos `authored_material` criados: `packs/a1/pack-les-a1-greetings.md`, `packs/a1/pack-les-a1-intro-dialogue.md`, `packs/a1/pack-les-a1-daily-basics.md`, `packs/a1/pack-les-a1-pronunciation-intro.md`, `packs/a2/pack-les-a2-it-meeting-standup.md` (itens originais, `br_pt_form`/distratores coerentes, IDs únicos).
+- [x] Packs legados v1 removidos: `packs/a1/pack_les_a1_greetings_v1.md`, `packs/a1/pack_les_a1_intro_dialogue_v1.md`, `packs/a1/pack_les_a1_daily_basics_v1.md`, `packs/a1/pack_les_a1_pronunciation_intro_v1.md`, `packs/a2/pack_les_a2_it_meeting_standup_v1.md`; `_legacy_packs_baseline.json` atualizado para **106**.
+- [x] `specs/curriculum-graph-spec.md` atualizado (linhas §4.3 das 5 lições, ajustes §4.4.5/§4.4.6/§13 e sumários coerentes com disco: `sourced_external_thin` 0, `reauthored_authored_material` 10, `sourced_external` 7, `blocked_no_adequate_source` 0, packs 17/106).
+- [x] `specs/assessment-item-spec.md` §2.2.1 (censo `br_pt_form` recomputado) e `external-sources.md` (§0.5/§5, placar 17/123 reutilizáveis/autoralmente limpos, `cite_only` 104, `sourced_external_thin` 0) alinhados; `verify-integrity.py` ajustado apenas na expectativa de `sourced_external_thin` (0) mantendo 14 checks.
+- [x] `docs/copyright-reauthoring-plan.md` atualizado com placar/inventários/contagens e registro da Lote 1 Onda 2 (2026-11-16).
+- [x] `python3 verify-integrity.py` → **PASS 14/14** (0 falhas, 0 warnings).
+
+**Placar Lote 1 Onda 2 (Fundação A1/A2):** 10/123 lições `authored_material`; 17 packs canônicos / 106 packs legados (catraca). Commit limitado aos 17 paths especificados.

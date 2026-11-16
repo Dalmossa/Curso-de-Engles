@@ -123,10 +123,10 @@ This is the authoritative list of lesson IDs. Any spec (`content-map.md`, `diagn
 | Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
 |-----------|-------|--------|------------|---------------------|--------|
 | `les_a1_alphabet_sounds` | Alphabet, Sounds, Letter Names | apostila 2.1 | alphabet_letter_names |  | ✅ **authored** |
-| `les_a1_greetings` | Greetings & Basic Phrases | apostila 2.2.1 + basico 1L1 | greetings_time,present_simple_be |  | ✅ **authored** |
-| `les_a1_intro_dialogue` | Introducing Yourself: 3-Step Dialogue | apostila 2.2.2 | present_simple_be,wh_questions_how,greetings_time |  | ✅ **authored** |
-| `les_a1_daily_basics` | Everyday Survival Phrases | apostila 5.6 + basico 2L1 | daily_expressions | present_simple_be,greetings_time | ✅ **authored** |
-| `les_a1_pronunciation_intro` | TH / H / R / S+C Minimal Pairs | frases Ch1 + IT | th_voiced,th_unvoiced,h_aspirated |  | ✅ **authored** |
+| `les_a1_greetings` | Greetings & Basic Phrases | Original (clean-room, Lote 2 Onda 2) | greetings_time,present_simple_be |  | ✅ **authored** · reauthored_authored_material |
+| `les_a1_intro_dialogue` | Introducing Yourself: 3-Step Dialogue | Original (clean-room, Lote 2 Onda 2) | present_simple_be,wh_questions_how,greetings_time |  | ✅ **authored** · reauthored_authored_material |
+| `les_a1_daily_basics` | Everyday Survival Phrases | Original (clean-room, Lote 2 Onda 2) | daily_expressions | present_simple_be,greetings_time | ✅ **authored** · reauthored_authored_material |
+| `les_a1_pronunciation_intro` | TH / H / R / S+C Minimal Pairs | Original (clean-room, Lote 2 Onda 2) | th_voiced,th_unvoiced,h_aspirated |  | ✅ **authored** · reauthored_authored_material |
 | `les_a1_en_us_en_gb` | American vs. British English | apostila 2.3 | greetings_formal_informal |  | ✅ **authored** (enrichment) |
 
 **`mod_a1_grammar_start`** (A1, General)
@@ -229,7 +229,7 @@ This is the authoritative list of lesson IDs. Any spec (`content-map.md`, `diagn
 | Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
 |-----------|-------|--------|------------|---------------------|--------|
 | `les_a2_it_email_technical` | Technical Emails & Documentation | IT A8 + dicionário Ch10 | email_vocab,it_computer_terms | email_vocab,email_register | ✅ **authored** |
-| `les_a2_it_meeting_standup` | Stand-ups & Technical Meetings | S19, S12, S16 | meeting_vocab | meeting_vocab | ✅ **authored** · sourcing: `sourced_external_thin` |
+| `les_a2_it_meeting_standup` | Stand-ups & Technical Meetings | Original (clean-room, Lote 2 Onda 2) | meeting_vocab | meeting_vocab | ✅ **authored** · reauthored_authored_material |
 | `les_a2_it_incidents` | Incident Reports & Problem Statements | S02, S15 | it_internet_terms | meeting_vocab | ✅ **authored** · sourcing: `sourced_external` |
 | `les_a2_it_nontech_tech` | Tech for Non-Technical Colleagues | dicionário Ch8 | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** |
 | `les_a2_it_word_formation` | Prefix, Suffix & Deceptive Cognates | IT A7 | prefixes_suffixes | reading_skimming,reading_scanning | ✅ **authored** |
@@ -426,15 +426,12 @@ was hiding the distinction that caused the original error:
 | Status | Count | Meaning |
 |--------|------:|---------|
 | `sourced_external` | **7** | licence permits adaptation **and** the source's discourse matches the lesson title (still pending full reautoria) |
-| `sourced_external_thin` | **1** | licence permits, but coverage is partial — authored material is still required (`les_a2_it_meeting_standup`) |
-| `reauthored_authored_material` | **5** | fully reauthored in clean-room as 100% original `authored_material` (Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`) |
+| `sourced_external_thin` | **0** | licence permits, but coverage is partial — none remain |
+| `reauthored_authored_material` | **10** | fully reauthored in clean-room as 100% original `authored_material` (Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2 Onda 2: `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`) |
 | `blocked_no_adequate_source` | **0** | none |
 | `deferred_no_source` | **0** | retired |
 
-The remaining `sourced_external_thin` lesson: `les_a2_it_meeting_standup` (no source supplies *spoken*
-stand-up register — only normative prose). `les_b2_it_mentoring` and `les_b2_it_rfc_writing` were
-reautored as 100% `authored_material` in Lote 1 (clean-room). `les_b1_it_presentations`, previously
-`blocked_no_adequate_source`, was also reautored and unlocked as `authored_material` in Lote 1.
+There are no remaining `sourced_external_thin` lessons: `les_a2_it_meeting_standup` (previously thin — no source supplied *spoken* stand-up register, only normative prose) was reautored as 100% `authored_material` in Lote 2 Onda 2 (clean-room). `les_b2_it_mentoring` and `les_b2_it_rfc_writing` were reautored as 100% `authored_material` in Lote 1 (clean-room). `les_b1_it_presentations`, previously `blocked_no_adequate_source`, was also reautored and unlocked as `authored_material` in Lote 1.
 
 **Two structural gaps the external search could not close**, and which are stated rather than
 papered over:
@@ -450,7 +447,8 @@ Coverage went from 95/108 to 108/108 while one lesson became *unauthorable* as s
 became partially-authored. The honest count was **104 fully source-supported, 3 thin, 1 blocked** —
 which is a worse-looking and more accurate number than 108/108. (The registry has since grown to
 **118** module lessons — see the §4.4.2 snapshot note; the 13 externally-sourced lessons are unchanged,
-so today's honest breakdown is **114 fully supported, 3 thin, 1 blocked**.)
+and the former thin/blocked subset has since been fully reauthored as `authored_material`, so today's
+honest breakdown is **118 fully supported, 0 thin, 0 blocked**.)
 
 ### 4.4.6 Entry points: restore the original
 
@@ -460,9 +458,9 @@ reauthored and unlocked in Lote 1):
 
 | Placement | Repointed in §4.4.3 | Now | Why |
 |-----------|---------------------|-----|-----|
-| A2 / IT | `les_a2_it_computer_parts` | `les_a2_it_terms_basics` | sourced (S18, S16) |
-| B1 / IT | `les_b1_it_acronyms_deep` | `les_b1_it_architecture_vocab` | sourced (S16, S05, S01) |
-| B2 / IT | `les_b2_it_jargon_mastery` | `les_b2_it_mentoring` | sourced but **thin** — kept, flagged in the lesson file |
+| A2 / IT | `les_a2_it_computer_parts` | `les_a2_it_terms_basics` | sourced (S16, S01) |
+| B1 / IT | `les_b1_it_acronyms_deep` | `les_b1_it_architecture_vocab` | reauthored as 100% `authored_material` (Lote 1) — previously sourced (S16, S05, S01) |
+| B2 / IT | `les_b2_it_jargon_mastery` | `les_b2_it_mentoring` | reauthored as 100% `authored_material` (Lote 1) — previously sourced but thin, now fully original |
 | B1 / General | `les_b1_tenses_review` | unchanged | was never an IT-track dependency |
 
 ## 5. DIAGNOSTIC → START NODE MAPPING
@@ -496,13 +494,13 @@ def map_diagnostic_to_start_node(diagnostic_output):
         ("A1", "IT"): "les_a1_alphabet_sounds",  # Same foundation
         ("A2", "General"): "les_a2_greetings_intro",
         # restored 2026-09-30 (§4.4.6): the three IT entry points were repointed in §4.4.3(3)
-        # only because those lessons had no source. All three are now sourced externally, so the
-        # original routing is correct again. B2/IT keeps the thin-coverage flag from §4.4.5.
-        ("A2", "IT"): "les_a2_it_terms_basics",        # S16, S01 — sourced_external, AUTHORED
+        # only because those lessons had no source. All three are now sourced or reauthored, so the
+        # original routing is correct again.
+        ("A2", "IT"): "les_a2_it_terms_basics",        # S16, S01 — sourced_external
         ("B1", "General"): "les_b1_tenses_review",      # was a les_b1_grammar_* id, absent from the registry
-        ("B1", "IT"): "les_b1_it_architecture_vocab",   # S16, S05, S01 — sourced_external
+        ("B1", "IT"): "les_b1_it_architecture_vocab",   # reauthored as authored_material (Lote 1); previously S16, S05, S01
         ("B2", "General"): "les_b2_register_nuance",
-        ("B2", "IT"): "les_b2_it_mentoring",           # S18, S07 — sourced_external_THIN, see §4.4.5
+        ("B2", "IT"): "les_b2_it_mentoring",           # reauthored as authored_material (Lote 1); previously thin (S18, S07)
     }
     
     start_node = start_nodes[(cefr_band, track)]
@@ -672,7 +670,7 @@ If P(mastery_skill) declining 3+ consecutive sessions:
 | Lessons per module | 6, except `mod_a2_it_fundamentals` and `mod_b1_it_technical` (10 each) and `mod_b2_it_senior` (8) |
 | Lessons authored | **123** — every registry ID has a file declaring it |
 | Lessons blocked | **0** |
-| Practice packs authored | **123** — 12 in the `pack-les-*.md` schema, 111 in `pack_les_*_v1.md`; see `post-lesson-practice-spec.md` §12 |
+| Practice packs authored | **123** — 17 in the `pack-les-*.md` schema, 106 in `pack_les_*_v1.md`; see `post-lesson-practice-spec.md` §12 |
 | Source files mapped | 7 / 7 (100%) |
 | Source sections mapped | 87 / 87 (100%, 6 marked meta) |
 | Orphan lesson IDs across all specs | **0** |
