@@ -51,6 +51,35 @@ export interface PronunciationEvaluation {
   readonly wordScores: readonly PronunciationWordScore[];
   readonly feedbackPt: string;
   readonly transcript: string;
+  readonly contrastiveTips?: readonly string[];
+}
+
+export interface PronunciationHistoryAttempt {
+  readonly id: string;
+  readonly lessonId: string | null;
+  readonly expectedText: string;
+  readonly transcript: string;
+  readonly overallScore: number;
+  readonly feedbackPt: string;
+  readonly createdAt: string;
+}
+
+export interface PronunciationHistorySummary {
+  readonly totalAttempts: number;
+  readonly averageScore: number;
+  readonly bestScore: number;
+  readonly weakWords: readonly string[];
+}
+
+export interface PronunciationHistory {
+  readonly attempts: readonly PronunciationHistoryAttempt[];
+  readonly summary: PronunciationHistorySummary;
+}
+
+export interface GrammarTip {
+  readonly topic: string;
+  readonly tips: readonly string[];
+  readonly source: 'local-rag';
 }
 
 /** Input for pronunciation evaluation. */

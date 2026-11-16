@@ -3,7 +3,7 @@
 import { getServerContext } from '@/infrastructure/composition/server-container';
 import { serializeDomainError, type ActionResult } from '@/shared/action-result';
 import type { SpeechSynthesisInput, SpeechSynthesisResult } from '@/core';
-import type { PronunciationEvaluationInput, PronunciationEvaluation } from '@/core';
+import type { PronunciationEvaluationInput, PronunciationEvaluation, PronunciationHistory, GrammarTip } from '@/core';
 
 /**
  * Server Action: Synthesize speech via TTS.
@@ -37,6 +37,27 @@ export async function evaluatePronunciationAction(
   try {
     const { useCases } = await getServerContext();
     const result = await useCases.evaluatePronunciation.execute(input);
+    return { ok: true, data: result };
+  } catch (error) {
+    return { ok: false, error: serializeDomainError(error as unknown as Parameters<typeof serializeDomainError>[0]) };
+  }
+}
+
+
+export async function getPronunciationHistoryAction(): Promise<ActionResult<PronunciationHistory>> {
+  try {
+    const { useCases } = await getServerContext();
+    const result = await useCases.getPronunciationHistory.execute();
+    return { ok: true, data: result };
+  } catch (error) {
+    return { ok: false, error: serializeDomainError(error as unknown as Parameters<typeof serializeDomainError>[0]) };
+  }
+}
+
+export async function getGrammarTipAction(topic: string): Promise<ActionResult<GrammarTip>> {
+  try {
+    const { useCases } = await getServerContext();
+    const result = await useCases.getGrammarTip.execute(topic);
     return { ok: true, data: result };
   } catch (error) {
     return { ok: false, error: serializeDomainError(error as unknown as Parameters<typeof serializeDomainError>[0]) };

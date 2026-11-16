@@ -17,6 +17,8 @@ import {
   type PracticeResult,
   type PronunciationEvaluation,
   type PronunciationWordScore,
+  type PronunciationHistory,
+  type GrammarTip,
   type ResetPasswordResult,
   type ReuseBasis,
   type ScoredItem,
@@ -54,7 +56,25 @@ export type DialogueContentDto = Schemas['DialogueContent'];
 export type DialogueAudioDto = Schemas['DialogueAudio'];
 export type SpeechSynthesisDto = Schemas['SpeechSynthesis'];
 export type PronunciationEvaluationRequestDto = Schemas['PronunciationEvaluationRequest'];
-export type PronunciationEvaluationDto = Schemas['PronunciationEvaluation'];
+export type PronunciationEvaluationDto = Schemas['PronunciationEvaluation'] & { contrastive_tips?: string[] };
+export type PronunciationHistoryResponseDto = {
+  attempts: Array<{
+    id: string;
+    lesson_id: string | null;
+    expected_text: string;
+    transcript: string;
+    overall_score: number;
+    feedback_pt: string;
+    created_at: string;
+  }>;
+  summary: {
+    totalAttempts: number;
+    averageScore: number;
+    bestScore: number;
+    weakWords: string[];
+  };
+};
+export type GrammarTipResponseDto = { topic: string; tips: string[]; source: 'local-rag' };
 export type ForgotPasswordRequestDto = Schemas['ForgotPasswordRequest'];
 export type ForgotPasswordResponseDto = Schemas['ForgotPasswordResponse'];
 export type ResetPasswordRequestDto = Schemas['ResetPasswordRequest'];
@@ -318,6 +338,35 @@ export function toPronunciationEvaluation(dto: PronunciationEvaluationDto): Pron
     })),
     feedbackPt: dto.feedback_pt,
     transcript: dto.transcript,
+    contrastiveTips: dto.contrastive_tips ?? [],
+  };
+}
+
+export function toPronunciationHistory(dto: PronunciationHistoryResponseDto): PronunciationHistory {
+  return {
+    attempts: dto.attempts.map((a) => ({
+      id: a.id,
+      lessonId: a.lesson_id ?? null,
+      expectedText: a.expected_text,
+      transcript: a.transcript,
+      overallScore: a.overall_score,
+      feedbackPt: a.feedback_pt,
+      createdAt: a.created_at,
+    })),
+    summary: {
+      totalAttempts: dto.summary.totalAttempts,
+      averageScore: dto.summary.averageScore,
+      bestScore: dto.summary.bestScore,
+      weakWords: [...dto.summary.weakWords],
+    },
+  };
+}
+
+export function toGrammarTip(dto: GrammarTipResponseDto): GrammarTip {
+  return {
+    topic: dto.topic,
+    tips: [...dto.tips],
+    source: dto.source,
   };
 }
 

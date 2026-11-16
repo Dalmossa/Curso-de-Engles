@@ -6,7 +6,7 @@ import { extractPronunciationTargets, getFirstTargets } from '@/core/services/pr
 import { isLessonId, type LessonContent } from '@/core';
 import { isDomainError, isAuthenticationFailure } from '@/core/errors/domain-error';
 import type { SpeechSynthesisResult } from '@/core';
-import { synthesizeSpeechAction, evaluatePronunciationAction } from './speech/actions';
+import { synthesizeSpeechAction, evaluatePronunciationAction, getGrammarTipAction } from './speech/actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -65,6 +65,7 @@ async function PronunciationPracticePanel({ lesson }: PronunciationPracticeProps
       allTargets={targets}
       synthesizeAction={synthesizeSpeechAction}
       evaluateAction={evaluatePronunciationAction}
+      getGrammarTipAction={getGrammarTipAction}
       currentIndex={0}
       onTargetChange={() => {}} // Navigation handled by client state
     />

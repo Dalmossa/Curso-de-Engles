@@ -263,6 +263,12 @@ export const pronunciation = {
   noTranscript: '(nada reconhecido)',
   overallScore: 'Pontuação geral',
   wordScores: 'Pontuação por palavra',
+  contrastiveTips: 'Dicas (pt-BR → en-US)',
+  grammarTipButton: 'Dica de Gramática',
+  grammarTipLoading: 'Buscando dica…',
+  grammarTipTitle: 'Apoio gramatical',
+  grammarTipEmpty: 'Nenhuma dica gramatical encontrada para este tema no momento.',
+  grammarTipError: 'Não foi possível carregar a dica gramatical agora.',
   progress: 'Progresso',
   targetNavigation: 'Navegação entre alvos',
   startRecording: 'Iniciar gravação',
@@ -282,6 +288,19 @@ export const pronunciation = {
   tryAgain: 'Tentar novamente',
   phaseLabel: 'Fase',
   liveTranscript: 'Transcrição ao vivo',
+} as const;
+
+export const pronunciationMastery = {
+  title: 'Prática Oral e Pronúncia',
+  description: 'Evolução das suas tentativas de pronúncia e palavras para reforçar.',
+  totalAttempts: 'Total de tentativas',
+  averageScore: 'Média',
+  bestScore: 'Melhor nota',
+  weakWords: 'Palavras para Reforçar',
+  noAttempts: 'Nenhuma tentativa de pronúncia registrada ainda. Pratique em uma lição para ver sua evolução aqui.',
+  playWord: 'Ouvir palavra',
+  loading: 'Carregando histórico de pronúncia…',
+  unavailable: 'Não foi possível carregar o histórico de pronúncia agora.',
 } as const;
 
 /**
@@ -431,6 +450,7 @@ export function passwordProblemMessage(problem: PasswordProblem): string {
  */
 export const copy = {
   pronunciation,
+  pronunciationMastery,
   passwordReset,
   account,
   // Re-export existing functions for backward compatibility

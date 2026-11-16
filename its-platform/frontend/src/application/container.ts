@@ -17,6 +17,8 @@ import { ResetPassword } from './use-cases/reset-password';
 import { RunDiagnostic } from './use-cases/run-diagnostic';
 import { SynthesizeSpeech } from './use-cases/synthesize-speech';
 import { EvaluatePronunciation } from './use-cases/evaluate-pronunciation';
+import { GetPronunciationHistory } from './use-cases/get-pronunciation-history';
+import { GetGrammarTip } from './use-cases/get-grammar-tip';
 import { UpdateAccountProfile } from './use-cases/update-account-profile';
 
 /**
@@ -44,6 +46,8 @@ export interface UseCases {
   readonly runDiagnostic: RunDiagnostic;
   readonly synthesizeSpeech: SynthesizeSpeech;
   readonly evaluatePronunciation: EvaluatePronunciation;
+  readonly getPronunciationHistory: GetPronunciationHistory;
+  readonly getGrammarTip: GetGrammarTip;
   readonly getAccountIdentity: GetAccountIdentity;
   readonly updateAccountProfile: UpdateAccountProfile;
 }
@@ -75,6 +79,8 @@ export function createUseCases(repositories: Repositories): UseCases {
     runDiagnostic: new RunDiagnostic(repositories.placement),
     synthesizeSpeech: new SynthesizeSpeech(repositories.speech),
     evaluatePronunciation: new EvaluatePronunciation(repositories.speech),
+    getPronunciationHistory: new GetPronunciationHistory(repositories.speech),
+    getGrammarTip: new GetGrammarTip(repositories.speech),
     getAccountIdentity: new GetAccountIdentity(repositories.accounts),
     updateAccountProfile: new UpdateAccountProfile(repositories.accounts),
   };

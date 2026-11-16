@@ -1,9 +1,12 @@
 import { redirect } from 'next/navigation';
 import { getServerContext } from '@/infrastructure/composition/server-container';
 import { MasteryPanel } from '@/presentation/components/mastery-panel';
+import { PronunciationMasteryCard } from '@/presentation/components/pronunciation-mastery-card';
 import { CefrBadge } from '@/presentation/components/cefr-badge';
 import { Card, CardBody, CardHeader, CardTitle } from '@/presentation/components/ui/card';
 import { isAuthenticationFailure } from '@/core/errors/domain-error';
+import type { PronunciationHistory } from '@/core';
+import { synthesizeWeakWordAction } from './actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,7 +17,11 @@ export const dynamic = 'force-dynamic';
 async function loadMasteryScreen() {
   try {
     const { useCases, learnerId } = await getServerContext();
-    return await useCases.getMasteryScreenData.execute(learnerId);
+    const [data, pronunciationHistory] = await Promise.all([
+      useCases.getMasteryScreenData.execute(learnerId),
+      useCases.getPronunciationHistory.execute().catch((): PronunciationHistory | null => null),
+    ]);
+    return { data, pronunciationHistory };
   } catch (error) {
     if (isAuthenticationFailure(error)) {
       redirect('/login');
@@ -24,7 +31,7 @@ async function loadMasteryScreen() {
 }
 
 export default async function MasteryPage() {
-  const data = await loadMasteryScreen();
+  const { data, pronunciationHistory } = await loadMasteryScreen();
 
   return (
     <div className="flex flex-col gap-8">
@@ -37,6 +44,8 @@ export default async function MasteryPage() {
           Detalhamento com base em <span className="font-mono">GET /learners/{'{id}'}/mastery</span>.
         </p>
       </header>
+
+      <PronunciationMasteryCard history={pronunciationHistory} synthesizeAction={synthesizeWeakWordAction} />
 
       <Card>
         <CardHeader>

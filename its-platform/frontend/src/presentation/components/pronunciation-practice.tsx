@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import type { SpeechSynthesisResult, PronunciationEvaluation, PronunciationTarget } from '@/core';
+import type { SpeechSynthesisResult, PronunciationEvaluation, PronunciationTarget, GrammarTip } from '@/core';
 import type { ActionResult } from '@/shared/action-result';
 import { PronunciationPlayer } from './pronunciation-player';
 import { PronunciationRecorder } from './pronunciation-recorder';
@@ -25,6 +25,8 @@ interface PronunciationPracticeProps {
   synthesizeAction: (input: { text: string; voice?: string; rate?: 1 | 0.75 }) => Promise<ActionResult<SpeechSynthesisResult>>;
   /** Server Action to evaluate pronunciation. */
   evaluateAction: (input: { expectedText: string; transcript?: string; audioBase64?: string; mimeType?: string; locale?: string }) => Promise<ActionResult<PronunciationEvaluation>>;
+  /** Optional server action to fetch a grammar tip from the local RAG. */
+  getGrammarTipAction?: (topic: string) => Promise<ActionResult<GrammarTip>>;
   /** Called when evaluation completes. */
   onEvaluate?: (evaluation: PronunciationEvaluation) => void;
   /** Index of the current target in allTargets. */
@@ -47,16 +49,27 @@ export function PronunciationPractice({
   allTargets,
   synthesizeAction,
   evaluateAction,
+  getGrammarTipAction,
   onEvaluate,
   currentIndex,
   onTargetChange,
 }: PronunciationPracticeProps) {
   const [localSynthesis, setLocalSynthesis] = useState<SpeechSynthesisResult | null>(synthesis);
   const [isSynthesizing, setIsSynthesizing] = useState(false);
+  const [grammarTip, setGrammarTip] = useState<GrammarTip | null>(null);
+  const [grammarTipLoading, setGrammarTipLoading] = useState(false);
+  const [grammarTipError, setGrammarTipError] = useState<string | null>(null);
+  const [grammarTipTarget, setGrammarTipTarget] = useState<string | null>(null);
 
   // Update local synthesis when prop changes (e.g., after target change)
   if (synthesis !== localSynthesis) {
     setLocalSynthesis(synthesis);
+  }
+
+  if (grammarTipTarget !== target.text) {
+    setGrammarTipTarget(target.text);
+    setGrammarTip(null);
+    setGrammarTipError(null);
   }
 
   const handleSynthesize = useCallback(async () => {
@@ -78,6 +91,22 @@ export function PronunciationPractice({
     },
     [onEvaluate],
   );
+
+  const handleGrammarTip = useCallback(async () => {
+    if (!getGrammarTipAction || grammarTipLoading) return;
+    setGrammarTipLoading(true);
+    setGrammarTipError(null);
+    try {
+      const result = await getGrammarTipAction(target.text);
+      if (result.ok) {
+        setGrammarTip(result.data);
+      } else {
+        setGrammarTipError(copy.pronunciation.grammarTipError);
+      }
+    } finally {
+      setGrammarTipLoading(false);
+    }
+  }, [getGrammarTipAction, grammarTipLoading, target.text]);
 
   return (
     <section className="space-y-6" aria-labelledby="pronunciation-practice-heading">
@@ -141,7 +170,35 @@ export function PronunciationPractice({
 
       {/* Practice tab */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium">{copy.pronunciation.practice}</h3>
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-lg font-medium">{copy.pronunciation.practice}</h3>
+          {getGrammarTipAction && (
+            <button
+              type="button"
+              onClick={handleGrammarTip}
+              disabled={grammarTipLoading}
+              className="btn btn-ghost btn-sm text-muted-foreground hover:text-foreground"
+            >
+              {grammarTipLoading ? copy.pronunciation.grammarTipLoading : copy.pronunciation.grammarTipButton}
+            </button>
+          )}
+        </div>
+        {getGrammarTipAction && (grammarTip || grammarTipError) && (
+          <div className="rounded-lg border bg-muted/30 p-3">
+            <p className="text-sm font-medium">{copy.pronunciation.grammarTipTitle}</p>
+            {grammarTipError ? (
+              <p className="mt-1 text-sm text-muted-foreground">{grammarTipError}</p>
+            ) : grammarTip && grammarTip.tips.length > 0 ? (
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+                {grammarTip.tips.map((tip, index) => (
+                  <li key={`${index}-${tip.slice(0, 24)}`}>{tip}</li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-1 text-sm text-muted-foreground">{copy.pronunciation.grammarTipEmpty}</p>
+            )}
+          </div>
+        )}
         <div className="p-4 border rounded-lg bg-card">
           <PronunciationRecorder
             targetText={target.text}

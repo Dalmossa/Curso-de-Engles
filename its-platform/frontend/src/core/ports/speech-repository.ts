@@ -1,5 +1,5 @@
 import type { SpeechSynthesisInput, SpeechSynthesisResult } from '../entities/speech';
-import type { PronunciationEvaluationInput, PronunciationEvaluation } from '../entities/speech';
+import type { PronunciationEvaluationInput, PronunciationEvaluation, PronunciationHistory, GrammarTip } from '../entities/speech';
 
 /**
  * Port for speech-related operations (TTS synthesis and pronunciation evaluation).
@@ -26,4 +26,10 @@ export interface SpeechRepository {
    * Returns 422 if no transcript is supplied and no ASR service is configured.
    */
   evaluatePronunciation(input: PronunciationEvaluationInput): Promise<PronunciationEvaluation>;
+
+  /** Pronunciation attempt history and aggregated progress for the authenticated learner. */
+  getPronunciationHistory(): Promise<PronunciationHistory>;
+
+  /** On-demand grammar tip from the local offline RAG corpus. */
+  getGrammarTip(topic: string): Promise<GrammarTip>;
 }

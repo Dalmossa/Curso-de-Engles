@@ -4,14 +4,19 @@ import type {
   SpeechSynthesisResult,
   PronunciationEvaluationInput,
   PronunciationEvaluation,
+  PronunciationHistory,
+  GrammarTip,
 } from '@/core';
 import type { ApiTransport } from '../api-transport';
 import {
   toSpeechSynthesisResult,
   toPronunciationEvaluation,
+  toPronunciationHistory,
+  toGrammarTip,
   type SpeechSynthesisDto,
-  type PronunciationEvaluationRequestDto,
   type PronunciationEvaluationDto,
+  type PronunciationHistoryResponseDto,
+  type GrammarTipResponseDto,
 } from '../mappers';
 
 export class HttpSpeechRepository implements SpeechRepository {
@@ -30,18 +35,37 @@ export class HttpSpeechRepository implements SpeechRepository {
   }
 
   async evaluatePronunciation(input: PronunciationEvaluationInput): Promise<PronunciationEvaluation> {
-    const requestDto: PronunciationEvaluationRequestDto = {
+    const body: Record<string, string> = {
       expected_text: input.expectedText,
-      transcript: input.transcript ?? '',
-      audio_base64: input.audioBase64 ?? '',
-      mime_type: input.mimeType ?? 'audio/webm',
       locale: input.locale ?? 'en-US',
+      mime_type: input.mimeType ?? 'audio/webm',
     };
+    if (input.transcript !== undefined && input.transcript !== '') body.transcript = input.transcript;
+    if (input.audioBase64 !== undefined && input.audioBase64 !== '') body.audio_base64 = input.audioBase64;
+    // Keep contract-compatible behavior: at least one of transcript/audio_base64 must be present.
+    if (body.transcript === undefined && body.audio_base64 === undefined && input.transcript !== undefined) {
+      body.transcript = input.transcript;
+    }
 
     const dto = await this._transport.request<PronunciationEvaluationDto>({
       operation: 'practice.pronunciation',
-      body: requestDto,
+      body,
     });
     return toPronunciationEvaluation(dto);
+  }
+
+  async getPronunciationHistory(): Promise<PronunciationHistory> {
+    const dto = await this._transport.request<PronunciationHistoryResponseDto>({
+      operation: 'practice.pronunciationHistory',
+    });
+    return toPronunciationHistory(dto);
+  }
+
+  async getGrammarTip(topic: string): Promise<GrammarTip> {
+    const dto = await this._transport.request<GrammarTipResponseDto>({
+      operation: 'content.grammarTip',
+      query: { topic },
+    });
+    return toGrammarTip(dto);
   }
 }

@@ -255,28 +255,41 @@ export function PronunciationRecorder({
   // Render word scores with color coding
   const renderWordScores = () => {
     if (!evaluation) return null;
+    const tips = evaluation.contrastiveTips ?? [];
 
     return (
-      <div className="space-y-2">
-        <h4 className="text-sm font-medium">{copy.pronunciation.wordScores}</h4>
-        <div className="flex flex-wrap gap-1.5">
-          {evaluation.wordScores.map((ws, index) => (
-            <span
-              key={index}
-              className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
-                ws.status === 'correct'
-                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                  : ws.status === 'needs_work'
-                  ? 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200'
-                  : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-              }`}
-              title={`${ws.word}: ${ws.status} (${Math.round(ws.confidence * 100)}%)`}
-            >
-              {ws.word}
-            </span>
-          ))}
+      <div className="space-y-3">
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium">{copy.pronunciation.wordScores}</h4>
+          <div className="flex flex-wrap gap-1.5">
+            {evaluation.wordScores.map((ws, index) => (
+              <span
+                key={index}
+                className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+                  ws.status === 'correct'
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                    : ws.status === 'needs_work'
+                    ? 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200'
+                    : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                }`}
+                title={`${ws.word}: ${ws.status} (${Math.round(ws.confidence * 100)}%)`}
+              >
+                {ws.word}
+              </span>
+            ))}
+          </div>
+          <p className="text-sm text-muted-foreground">{evaluation.feedbackPt}</p>
         </div>
-        <p className="text-sm text-muted-foreground">{evaluation.feedbackPt}</p>
+        {tips.length > 0 && (
+          <div className="rounded-md border border-amber-200 bg-amber-50 p-3 dark:border-amber-900/50 dark:bg-amber-950/30">
+            <h4 className="text-sm font-medium text-amber-900 dark:text-amber-100">{copy.pronunciation.contrastiveTips}</h4>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-amber-900/90 dark:text-amber-100/90">
+              {tips.map((tip, index) => (
+                <li key={`${index}-${tip.slice(0, 24)}`}>{tip}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     );
   };

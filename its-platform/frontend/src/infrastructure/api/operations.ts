@@ -27,7 +27,9 @@ export type OperationName =
   | 'content.dialogue'
   | 'content.dialogueAudio'
   | 'content.tts'
+  | 'content.grammarTip'
   | 'practice.pronunciation'
+  | 'practice.pronunciationHistory'
   | 'auth.forgotPassword'
   | 'auth.resetPassword';
 
@@ -88,6 +90,12 @@ const rateParam: ParamSpec = {
   name: 'rate',
   expectation: 'one of 1, 0.75',
   isValid: (value) => value === '1' || value === '0.75',
+};
+
+const grammarTopicParam: ParamSpec = {
+  name: 'topic',
+  expectation: 'a non-empty topic (1-120 characters)',
+  isValid: (value) => value.trim().length > 0 && value.trim().length <= 120,
 };
 
 /** No path params for content.tts — the text goes in the body. */
@@ -210,10 +218,28 @@ export const OPERATIONS: Readonly<Record<OperationName, OperationSpec>> = {
     serverResolvedParams: [],
     bodyCarriesLearnerId: false,
   },
+  'content.grammarTip': {
+    operationId: 'getGrammarTip',
+    method: 'GET',
+    path: '/content/grammar-tip',
+    pathParams: emptyPathParams,
+    queryParams: [grammarTopicParam],
+    serverResolvedParams: [],
+    bodyCarriesLearnerId: false,
+  },
   'practice.pronunciation': {
     operationId: 'evaluatePronunciation',
     method: 'POST',
     path: '/practice/pronunciation-evaluate',
+    pathParams: emptyPathParams,
+    queryParams: [],
+    serverResolvedParams: [],
+    bodyCarriesLearnerId: false,
+  },
+  'practice.pronunciationHistory': {
+    operationId: 'getPronunciationHistory',
+    method: 'GET',
+    path: '/practice/pronunciation-history',
     pathParams: emptyPathParams,
     queryParams: [],
     serverResolvedParams: [],
