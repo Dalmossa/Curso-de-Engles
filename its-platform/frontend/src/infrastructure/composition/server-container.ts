@@ -4,6 +4,7 @@ import { createPasswordResetUseCases, createUseCases, type PasswordResetUseCases
 import { HttpClient } from '../api/http-client';
 import { DirectApiGateway } from '../api/direct-gateway.server';
 import type { ApiTransport } from '../api/api-transport';
+import { HttpAccountRepository } from '../api/repositories/http-account-repository';
 import { HttpContentRepository } from '../api/repositories/http-content-repository';
 import { HttpCurriculumRepository } from '../api/repositories/http-curriculum-repository';
 import { HttpLearnerRepository } from '../api/repositories/http-learner-repository';
@@ -68,6 +69,9 @@ export function createServerUseCases(transport: ApiTransport = createServerApiTr
     practice: new HttpPracticeRepository(transport),
     placement: new HttpPlacementRepository(transport),
     speech: new HttpSpeechRepository(transport),
+    // The account — the name, the picture and the e-mail. The same transport: the account
+    // is about the caller, and the caller is the one holding the credential.
+    accounts: new HttpAccountRepository(transport),
   });
 }
 

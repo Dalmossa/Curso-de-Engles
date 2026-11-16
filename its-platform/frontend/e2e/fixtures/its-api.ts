@@ -130,6 +130,12 @@ export const LEARNER_PROFILE: LearnerProfileDto = {
   learner_id: '00000000-0000-0000-0000-000000000001',
   created_at: '2026-09-01T09:00:00.000Z',
   cefr_level: 'A2',
+  // The identity — the three members the account header draws. The fixture is a
+  // contract-shaped answer, so it carries them: a fixture that omitted them would
+  // not be a response the API can send.
+  display_name: 'Ana Souza',
+  email: 'ana@example.com',
+  avatar_url: null,
   mastery: { grammar: 0.62, vocab: 0.71, reading: 0.91, pronunciation: 0.54, listening: 0.83 },
   preferences: {
     recast_enabled: true,

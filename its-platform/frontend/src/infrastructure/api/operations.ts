@@ -17,6 +17,7 @@ import { isDialogueId, isLessonId, isPackId, isUuid } from '@/core';
  */
 export type OperationName =
   | 'learner.profile'
+  | 'learner.updateProfile'
   | 'learner.mastery'
   | 'learner.next'
   | 'learner.practice'
@@ -95,7 +96,7 @@ const emptyPathParams: readonly ParamSpec[] = [];
 export interface OperationSpec {
   /** The contract's `operationId`, verbatim. */
   readonly operationId: string;
-  readonly method: 'GET' | 'POST';
+  readonly method: 'GET' | 'POST' | 'PATCH';
   /** The contract's path template, verbatim. */
   readonly path: string;
   readonly pathParams: readonly ParamSpec[];
@@ -114,6 +115,18 @@ export const OPERATIONS: Readonly<Record<OperationName, OperationSpec>> = {
     pathParams: [uuidParam('learner_id')],
     queryParams: [],
     serverResolvedParams: ['learner_id'],
+    bodyCarriesLearnerId: false,
+  },
+  'learner.updateProfile': {
+    operationId: 'updateLearnerProfile',
+    method: 'PATCH',
+    path: '/learners/{learner_id}/profile',
+    pathParams: [uuidParam('learner_id')],
+    queryParams: [],
+    serverResolvedParams: ['learner_id'],
+    // The body carries the name and the picture — and **only** those two. The contract
+    // declares `additionalProperties: false`, so a member the API does not know is
+    // rejected; the BFF forwards the body it received without adding a key.
     bodyCarriesLearnerId: false,
   },
   'learner.mastery': {

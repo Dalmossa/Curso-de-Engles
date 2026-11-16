@@ -1,6 +1,7 @@
 import {
   invalidResponseToDomainError,
   parseCefrLevel,
+  type AccountIdentity,
   type AssessmentItem,
   type DialogueAudio,
   type DialogueContent,
@@ -28,6 +29,22 @@ import type { components } from './generated/api-types';
 type Schemas = components['schemas'];
 
 export type LearnerProfileDto = Schemas['LearnerProfile'];
+export type LearnerIdentityDto = Schemas['LearnerIdentity'];
+export type UpdateLearnerProfileRequestDto = Schemas['UpdateLearnerProfileRequest'];
+
+/**
+ * The members that make an identity, taken from the profile.
+ *
+ * **Two responses, one shape.** `GET /learners/{id}/profile` answers the whole portfolio,
+ * and `PATCH /learners/{id}/profile` answers the identity; the members they share are the
+ * same five, with the same types. Naming that overlap as a type is what lets one mapper
+ * read both — and what makes "the header and the account screen show the same name" a
+ * property of the code rather than a coincidence.
+ */
+export type AccountIdentitySource = Pick<
+  LearnerProfileDto,
+  'learner_id' | 'display_name' | 'email' | 'avatar_url' | 'cefr_level'
+>;
 export type NextActivityDto = Schemas['NextActivity'];
 export type LessonContentDto = Schemas['LessonContent'];
 export type PackContentDto = Schemas['PackContent'];
@@ -74,6 +91,27 @@ export function toLearnerProfile(dto: LearnerProfileDto): LearnerProfile {
     cefrLevel: parseCefrLevel(dto.cefr_level),
     mastery: { ...dto.mastery },
     preferences: toPreferences(dto.preferences),
+  };
+}
+
+/**
+ * The account's identity — the name, the picture, the e-mail and the band.
+ *
+ * The source is the profile (`GET /learners/{id}/profile`), and the same three members
+ * also come back from the `PATCH`. Both are mapped by this one function, so the header
+ * and the account screen cannot drift apart: there is one reading of what the wire says
+ * the learner's identity is.
+ *
+ * `null` is carried through as `null`, never as an empty string — "no name chosen" and
+ * "a name of zero characters" are different states, and only the first exists.
+ */
+export function toAccountIdentity(dto: AccountIdentitySource): AccountIdentity {
+  return {
+    learnerId: dto.learner_id,
+    displayName: dto.display_name ?? null,
+    email: dto.email ?? null,
+    avatarUrl: dto.avatar_url ?? null,
+    cefrLevel: parseCefrLevel(dto.cefr_level),
   };
 }
 

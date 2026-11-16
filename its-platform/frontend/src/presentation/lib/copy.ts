@@ -325,6 +325,89 @@ export const passwordReset = {
 } as const;
 
 /**
+ * Account and privacy copy — the global header's profile menu and the `/account` screen.
+ *
+ * **The wording assumes the learner is in control.** "Gerenciar sua Conta e Privacidade" is
+ * the label the platform's own account screen carries, and it is chosen over "Privacidade"
+ * alone because a menu item that says "Privacidade" sounds like a read-only policy page;
+ * the learner is about to *choose* things, and the label should say so.
+ *
+ * **The destructive action says what it does.** "Excluir minha conta" is not "Excluir
+ * dados" and not "Encerrar sessão" — the three are different things, and the learner has to
+ * be able to tell them apart at a glance.
+ */
+export const account = {
+  /** The profile trigger's accessible name, when the learner has no chosen name. */
+  triggerLabel: 'Abrir o menu da conta',
+  triggerLabelNamed: (name: string) => `Abrir o menu da conta de ${name}`,
+  /** The close button at the top of the popover. */
+  close: 'Fechar',
+  /** The identity card. */
+  unnamed: 'Aprendiz',
+  emailMissing: 'Sem e-mail cadastrado',
+  levelLabel: 'Nível',
+  levelMissing: 'Nível não avaliado',
+  /** The editor that opens from the pencil on the avatar. */
+  editProfile: 'Editar perfil',
+  editProfileTitle: 'Editar nome e foto',
+  editProfileDescription:
+    'Escolha como a plataforma vai chamar você. A foto é opcional e pode ser removida a qualquer momento.',
+  displayNameLabel: 'Nome de exibição',
+  displayNamePlaceholder: 'Como a plataforma deve chamar você?',
+  displayNameHint: 'De 1 a 80 caracteres.',
+  avatarLabel: 'Foto',
+  avatarChoose: 'Escolher foto',
+  avatarChange: 'Trocar foto',
+  avatarRemove: 'Remover foto',
+  avatarHint: 'PNG, JPEG, WEBP ou GIF, até 100 KiB.',
+  avatarInvalid: 'Escolha uma imagem PNG, JPEG, WEBP ou GIF de até 100 KiB.',
+  nameInvalid: 'O nome deve ter entre 1 e 80 caracteres.',
+  save: 'Salvar',
+  saving: 'Salvando…',
+  cancel: 'Cancelar',
+  saved: 'Perfil atualizado.',
+  /** The accounts accordion. */
+  accounts: 'Contas',
+  currentAccount: 'Esta conta',
+  /** The session block. */
+  addAnotherAccount: 'Adicionar outra conta',
+  signOut: 'Sair',
+  /** The footer pill. */
+  manageAccount: 'Gerenciar sua Conta e Privacidade',
+  /** The `/account` screen. */
+  pageTitle: 'Conta e Privacidade',
+  pageDescription:
+    'Os dados que a plataforma guarda sobre você, e o que você pode fazer com eles.',
+  personalDataTitle: 'Dados Pessoais',
+  personalDataDescription:
+    'Seu nome de exibição e a sua foto. O e-mail é o endereço com que você entra — a plataforma não o altera por aqui.',
+  emailLabel: 'E-mail',
+  securityTitle: 'Segurança e Senha',
+  securityDescription:
+    'A senha da sua conta. Você pode definir uma nova a qualquer momento, e a redefinição envia as instruções para o seu e-mail.',
+  changePassword: 'Redefinir minha senha',
+  privacyTitle: 'Privacidade e LGPD',
+  privacyDescription:
+    'A Lei Geral de Proteção de Dados (LGPD) garante que você pode pedir uma cópia de tudo o que a plataforma guarda sobre você, e pode encerrar a sua conta.',
+  exportData: 'Exportar meus dados (LGPD)',
+  exporting: 'Preparando a exportação…',
+  exportDescription:
+    'O download é um arquivo JSON com tudo o que a plataforma guarda sobre você.',
+  dangerTitle: 'Zona de perigo',
+  dangerDescription:
+    'Excluir sua conta apaga os seus dados de aprendizagem e encerra o acesso. A ação é definitiva e não pode ser desfeita.',
+  deleteAccount: 'Excluir minha conta',
+  deleteConfirmPrompt: 'Para confirmar, digite EXCLUIR abaixo.',
+  deleteConfirmWord: 'EXCLUIR',
+  deleteConfirmMismatch: 'Digite EXCLUIR para confirmar.',
+  deleting: 'Excluindo…',
+  deleteAcknowledged: 'Entendo que esta ação é definitiva.',
+  /** The login screen, in "add another account" mode. */
+  switchAccountNotice:
+    'Você está adicionando outra conta. Entre com a conta que quer usar agora — a sessão atual será substituída.',
+} as const;
+
+/**
  * The message for a rejected password.
  *
  * The domain decides *which* problem happened; this decides how it is said. A switch
@@ -349,6 +432,7 @@ export function passwordProblemMessage(problem: PasswordProblem): string {
 export const copy = {
   pronunciation,
   passwordReset,
+  account,
   // Re-export existing functions for backward compatibility
   skillLabel,
   masteryBandLabel,

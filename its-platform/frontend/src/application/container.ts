@@ -1,4 +1,5 @@
 import type {
+  AccountRepository,
   ContentRepository,
   CurriculumRepository,
   LearnerRepository,
@@ -7,6 +8,7 @@ import type {
   PracticeRepository,
   SpeechRepository,
 } from '@/core';
+import { GetAccountIdentity } from './use-cases/get-account-identity';
 import { GetLearnerDashboard } from './use-cases/get-learner-dashboard';
 import { GetLesson, GetMasteryScreenData } from './use-cases/get-lesson';
 import { GetPracticePack, SubmitPractice } from './use-cases/submit-practice';
@@ -15,6 +17,7 @@ import { ResetPassword } from './use-cases/reset-password';
 import { RunDiagnostic } from './use-cases/run-diagnostic';
 import { SynthesizeSpeech } from './use-cases/synthesize-speech';
 import { EvaluatePronunciation } from './use-cases/evaluate-pronunciation';
+import { UpdateAccountProfile } from './use-cases/update-account-profile';
 
 /**
  * What the application layer needs from the outside world. An interface, not the
@@ -28,6 +31,8 @@ export interface Repositories {
   readonly practice: PracticeRepository;
   readonly placement: PlacementRepository;
   readonly speech: SpeechRepository;
+  /** The account — the name, the picture and the e-mail. A different artefact. */
+  readonly accounts: AccountRepository;
 }
 
 export interface UseCases {
@@ -39,6 +44,8 @@ export interface UseCases {
   readonly runDiagnostic: RunDiagnostic;
   readonly synthesizeSpeech: SynthesizeSpeech;
   readonly evaluatePronunciation: EvaluatePronunciation;
+  readonly getAccountIdentity: GetAccountIdentity;
+  readonly updateAccountProfile: UpdateAccountProfile;
 }
 
 /**
@@ -68,6 +75,8 @@ export function createUseCases(repositories: Repositories): UseCases {
     runDiagnostic: new RunDiagnostic(repositories.placement),
     synthesizeSpeech: new SynthesizeSpeech(repositories.speech),
     evaluatePronunciation: new EvaluatePronunciation(repositories.speech),
+    getAccountIdentity: new GetAccountIdentity(repositories.accounts),
+    updateAccountProfile: new UpdateAccountProfile(repositories.accounts),
   };
 }
 

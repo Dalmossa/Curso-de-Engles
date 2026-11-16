@@ -6,6 +6,7 @@
  * deliberate act, and it is obvious in review when something framework-shaped tries to
  * sneak into the layer that is supposed to be pure.
  */
+export * from './entities/account';
 export * from './entities/activity';
 export * from './entities/learner';
 export * from './entities/lesson';
@@ -19,6 +20,7 @@ export * from './errors/domain-error';
 export * from './errors/problem-details';
 
 export type { AccessTokenProvider, LearnerIdentity } from './ports/identity';
+export type { AccountRepository } from './ports/account-repository';
 export type { ContentRepository } from './ports/content-repository';
 export type { CurriculumRepository } from './ports/curriculum-repository';
 export type { LearnerRepository } from './ports/learner-repository';

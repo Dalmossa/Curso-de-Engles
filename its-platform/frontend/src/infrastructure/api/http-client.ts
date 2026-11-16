@@ -8,7 +8,7 @@ import {
 
 /** A request with its URL already built. `HttpClient` knows nothing about operations. */
 export interface ResolvedRequest {
-  readonly method: 'GET' | 'POST';
+  readonly method: 'GET' | 'POST' | 'PATCH';
   readonly url: string;
   readonly headers?: Readonly<Record<string, string>>;
   readonly body?: unknown;

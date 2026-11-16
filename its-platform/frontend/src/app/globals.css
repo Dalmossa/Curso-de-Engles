@@ -152,6 +152,71 @@ body {
   margin: 1rem 0;
 }
 
+/*
+ * The account popover's entrance.
+ *
+ * **A critically damped spring, with no overshoot.** `cubic-bezier(0.2, 0, 0, 1)` reaches
+ * the resting place and stops — it does not travel past it and come back, which is what
+ * an elastic curve does. The content here is *text*, and text that moves past its place
+ * is text nobody reads; the motion is there to say "this came from the button", and
+ * nothing more.
+ *
+ * **The origin is the trigger.** `top right` is where the popover is born from, and the
+ * scale and the lift are read against that corner.
+ */
+@keyframes account-popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.account-popover {
+  transform-origin: top right;
+  animation: account-popover-in 180ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/*
+ * The motion is a courtesy, and a courtesy can be declined.
+ *
+ * `prefers-reduced-motion` is not a suggestion: for some people motion is a vestibular
+ * trigger, and the popover appears in the same place either way.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .account-popover {
+    animation: none;
+  }
+}
+
+/*
+ * More contrast, more separation. The popover's border is what separates it from the
+ * page underneath it, and under `prefers-contrast: more` that border has to be the
+ * stronger one.
+ */
+@media (prefers-contrast: more) {
+  .account-popover {
+    border-color: var(--color-border-strong);
+  }
+}
+
+/*
+ * The header's blur is a transparency effect, and the system can refuse it.
+ *
+ * With the transparency reduced, the frosted glass becomes an opaque bar — the header
+ * still reads as a separate layer, and the content underneath no longer shows through.
+ */
+@media (prefers-reduced-transparency: reduce) {
+  .site-header {
+    backdrop-filter: none;
+    background-color: var(--color-surface-raised);
+  }
+}
+
 .lesson-prose ul,
 .lesson-prose ol {
   margin: 1rem 0;

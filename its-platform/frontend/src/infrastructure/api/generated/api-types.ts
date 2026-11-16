@@ -269,6 +269,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/practice/pronunciation-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the authenticated learner's pronunciation practice history
+         * @description Returns the most recent pronunciation attempts for the authenticated learner together
+         *     with aggregate metrics to guide remediation.
+         */
+        get: operations["getPronunciationHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/content/lessons/{lesson_id}": {
         parameters: {
             query?: never;
@@ -334,6 +355,28 @@ export interface paths {
          *     carries no learner identifier and this path reads no learner context (ADR-028 §4).
          */
         get: operations["getDialogueAudio"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/content/grammar-tip": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a quick grammar tip from the local RAG corpus
+         * @description Returns short grammar explanations retrieved from the local offline RAG utility. If the
+         *     local environment cannot execute the utility, the endpoint responds gracefully with an
+         *     empty tips array instead of a server error.
+         */
+        get: operations["getGrammarTip"];
         put?: never;
         post?: never;
         delete?: never;
@@ -428,7 +471,12 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Update the learner's own display name and avatar
+         * @description The learner corrects the name they are shown and the picture beside it. Both members are optional, and each of them has three states: omitted (leave it as it is), `null` (clear it) or a value (set it). A body that declares a member the contract does not is rejected with `400` (`CONSTITUTION.md` §4.5), and so is a body whose member is not acceptable — an avatar that is not an `https://` URL or a raster `data:` URL is refused, because the rule is a safety rule and not a formatting preference.
+         *     The route is about the caller's **own** resource (`learner:self`), and the addressed learner is resolved inside the caller's own transaction before anything is written, so a write to somebody else's row never happens; a foreign learner answers the same `404` a nonexistent one does (ADR-038 D3).
+         */
+        patch: operations["updateLearnerProfile"];
         trace?: never;
     };
     "/learners/{learner_id}/mastery": {
@@ -689,6 +737,34 @@ export interface components {
             feedback_pt: string;
             /** @description The transcription that was actually scored — what the ASR heard, so the learner can see the gap between intent and recognition. */
             transcript: string;
+            /** @description Optional contrastive hints (pt-BR → en-US) focused on words marked as `needs_work` or `missed`, especially in software-engineering vocabulary. */
+            contrastive_tips?: string[];
+        };
+        PronunciationHistoryAttempt: {
+            /** Format: uuid */
+            id: string;
+            lesson_id: string | null;
+            expected_text: string;
+            transcript: string;
+            overall_score: number;
+            feedback_pt: string;
+            /** Format: date-time */
+            created_at: string;
+        };
+        PronunciationHistoryResponse: {
+            attempts: components["schemas"]["PronunciationHistoryAttempt"][];
+            summary: {
+                totalAttempts: number;
+                averageScore: number;
+                bestScore: number;
+                weakWords: string[];
+            };
+        };
+        GrammarTipResponse: {
+            topic: string;
+            tips: string[];
+            /** @enum {string} */
+            source: "local-rag";
         };
         LessonContent: {
             lesson_id: string;
@@ -865,6 +941,15 @@ export interface components {
             created_at: string;
             /** @description The learner's current band: the `cefr` of the **latest completed** `diagnostic_results` run (`docs/data-model.erd.md` §2 correction 9, ADR-017 §3). `null` while no diagnostic has been completed — "not yet assessed", which is neither a band nor an error, and is why the member stays `required` (it is always present) while its type admits the absence (ADR-045 D3). The `pattern` constrains the string branch only. */
             cefr_level: string | null;
+            /** @description The name the learner chose to be shown. It lives in `users.display_name`, not in `learners`, and it is `null` when the learner has never chosen one — a state, not a failure. 80 characters is the platform's own ceiling (`learner-identity.ts`), shorter than the column (`varchar(255)`). */
+            display_name: string | null;
+            /**
+             * Format: email
+             * @description The account's e-mail address — the one the learner signs in with. It is published because the account screen has to show the address the learner recognises; no hash, no token and no session identifier crosses this boundary.
+             */
+            email: string | null;
+            /** @description The avatar: an `https://` URL, or a `data:` URL of a PNG, JPEG, WEBP or GIF image encoded in base64 and at most 100 KiB of text. `null` when no avatar was chosen. SVG is not accepted — an SVG is an active document, and a `data:` URL is same-origin with the page that renders it. */
+            avatar_url: string | null;
             /** @description Per-skill mastery probabilities (BKT), keyed by the learner's own skill ids */
             mastery: {
                 [key: string]: number;
@@ -897,6 +982,29 @@ export interface components {
                 /** @default 15 */
                 daily_goal_minutes: number;
             };
+        };
+        /** @description The identity of a learner — the name they chose, the account they sign in with, the avatar they picked and the band they are currently at. It is what `PATCH /learners/{learner_id}/profile` answers, and the three members it shares with `LearnerProfile` are the same members, read from the same row of the same table. */
+        LearnerIdentity: {
+            /** Format: uuid */
+            learner_id: string;
+            /** @description The name the learner chose to be shown; `null` when there is none. */
+            display_name: string | null;
+            /**
+             * Format: email
+             * @description The account's e-mail address — the one the learner signs in with.
+             */
+            email: string | null;
+            /** @description An `https://` URL, or a `data:` URL of a PNG, JPEG, WEBP or GIF image encoded in base64 and at most 100 KiB of text; `null` when no avatar was chosen. */
+            avatar_url: string | null;
+            /** @description The learner's current band — the `cefr` of the latest completed `diagnostic_results` run. It is published here so that a client can replace everything it knows about the learner with one answer, without a second round trip to find out whether the band moved. */
+            cefr_level: string | null;
+        };
+        /** @description Body of `PATCH /learners/{learner_id}/profile`. A member not declared here is **rejected** (`400`), not ignored — `CONSTITUTION.md` §4.5 mandates a `ValidationPipe` with `whitelist` and `forbidNonWhitelisted`, and `UpdateProfileDto` enforces this schema. The contract gate refuses a request schema that omits `additionalProperties: false`. */
+        UpdateLearnerProfileRequest: {
+            /** @description The new display name, trimmed, 1 to 80 characters. `null` clears it — a name that has been removed is not an empty string. Omitting the member leaves it as it is. */
+            display_name?: string | null;
+            /** @description The new avatar: an `https://` URL, or a `data:` URL of a PNG, JPEG, WEBP or GIF image encoded in base64 and at most 100 KiB of text. `null` clears it; omitting the member leaves it as it is. SVG, `http://` and every other scheme are refused — the rule lives in `src/domain/entities/learner-identity.ts` and has one owner. */
+            avatar_url?: string | null;
         };
         /** @description RFC 9457 Problem Details. */
         Problem: {
@@ -1719,6 +1827,53 @@ export interface operations {
             };
         };
     };
+    getPronunciationHistory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Pronunciation attempts and summary */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PronunciationHistoryResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Unauthorized — a valid bearer token is required (ADR-038 D4) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4) */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
     getLesson: {
         parameters: {
             query?: never;
@@ -1917,6 +2072,55 @@ export interface operations {
             };
             /** @description Dialogue not found, not `shipped`, without a render `take` complete for the whole dialogue, or (when any item is L2) without its renders ear-checked — one 404 body for every case, so admission cannot be probed for (ADR-028 §3). */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    getGrammarTip: {
+        parameters: {
+            query: {
+                topic: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Grammar tips for the requested topic */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GrammarTipResponse"];
+                };
+            };
+            /** @description Missing or invalid `topic` query parameter */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Unauthorized — a valid bearer token is required (ADR-038 D4) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4) */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2147,6 +2351,68 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LearnerProfile"];
+                };
+            };
+            /** @description Unauthorized — a valid bearer token is required (ADR-038 D4) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4) */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Learner not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    updateLearnerProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                learner_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateLearnerProfileRequest"];
+            };
+        };
+        responses: {
+            /** @description The identity as it now stands */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearnerIdentity"];
+                };
+            };
+            /** @description The body declares a member the contract does not, or a member that is not acceptable */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
                 };
             };
             /** @description Unauthorized — a valid bearer token is required (ADR-038 D4) */

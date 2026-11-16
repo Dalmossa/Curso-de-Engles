@@ -34,8 +34,12 @@ import {
  * longer accepts must not leave the learner unable to reach the form that replaces it. The password
  * recovery screens (`/forgot-password`, `/reset-password`) are public for the same reason — the
  * person who forgot the password is, by definition, not signed in.
+ *
+ * `/account` **is** protected: it is the learner's own data, their e-mail and their LGPD
+ * rights. A screen that shows somebody's e-mail without a session is a leak, and the gate
+ * is the only thing that stands between the URL and the account.
  */
-const PROTECTED = ['/', '/mastery', '/lessons'];
+const PROTECTED = ['/', '/mastery', '/lessons', '/diagnostic', '/account'];
 const PUBLIC = [
   '/login',
   '/register',
@@ -126,5 +130,5 @@ export async function proxy(req: NextRequest): Promise<NextResponse> {
 }
 
 export const config = {
-  matcher: ['/', '/mastery/:path*', '/lessons/:path*'],
+  matcher: ['/', '/mastery/:path*', '/lessons/:path*', '/diagnostic/:path*', '/account/:path*'],
 };
