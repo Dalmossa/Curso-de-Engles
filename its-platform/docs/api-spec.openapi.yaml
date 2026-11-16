@@ -39,14 +39,14 @@ info:
   # before the pin is moved.
   x-contract-provenance:
     source-of-truth: Curso-de-Ingles/specs/*.md (+ external-sources.md)
-    derived-at: 2026-10-14
+    derived-at: 2026-11-16
     spec-blobs:
-      specs/assessment-item-spec.md: ccad934d366d82e3051f14274e994f207b35b47f
-      specs/curriculum-graph-spec.md: f1f19744ff49bccd8c402026e1a3f86cc07b3e86
+      specs/assessment-item-spec.md: 19dcb36646f2fe0b302677f41d1ab9f2cd3ed07a
+      specs/curriculum-graph-spec.md: 0b112241e881148adc1e3fd99103e1c7e82ae1d2
       specs/listening-corpus-spec.md: 295e1b8546d0bd1fc6852b363d35e93947535f2f
       specs/post-lesson-practice-spec.md: 9566fe6088035f5a8bd88ac754503c26c7dd9c59
       specs/stats-progress-evaluation-spec.md: a8ae6bb6812a2da4ef3380879e105a7184d86cc8
-      external-sources.md: 3aba1a1c7b991cc54344c233eaa874fb3b6e8cb0
+      external-sources.md: b1d845c65a40d87073022b00b4f5135dc74467b4
 
 servers:
   # CONSTITUTION.md §4.4 — URL path versioning is mandatory: /api/v1.
@@ -692,7 +692,16 @@ components:
           pattern: '^(A1|A2|B1|B2|C1|C2)$'
         reuse_basis:
           type: string
-          enum: [cite_only, adapt_with_attribution, adapt_requires_permission]
+          enum: [cite_only, adapt_with_attribution, adapt_requires_permission, authored_material]
+          description: >-
+            Basis for reusing the lesson's source material. `cite_only` = author original
+            material and cite as bibliography, reproduce nothing. `adapt_with_attribution` =
+            adapt a permissively-licensed source with attribution. `adapt_requires_permission` =
+            adapt a restricted source only with written, perpetual redistribution permission.
+            `authored_material` = material 100% original do autor, sem reprodução ou adaptação
+            de fonte restrita. O vocabulário do DDL foi ampliado pela migration
+            `AllowAuthoredMaterialReuseBasis1804000000000` (CHECK `lessons_reuse_basis_check` /
+            `packs_reuse_basis_check`).
         authoring_state:
           type: string
           enum: [authored, specified, unauthored, blocked, withdrawn]
@@ -771,7 +780,16 @@ components:
           enum: [canonical, legacy_v1]
         reuse_basis:
           type: string
-          enum: [cite_only, adapt_with_attribution, adapt_requires_permission]
+          enum: [cite_only, adapt_with_attribution, adapt_requires_permission, authored_material]
+          description: >-
+            Basis for reusing the pack's source material. `cite_only` = author original
+            material and cite as bibliography, reproduce nothing. `adapt_with_attribution` =
+            adapt a permissively-licensed source with attribution. `adapt_requires_permission` =
+            adapt a restricted source only with written, perpetual redistribution permission.
+            `authored_material` = material 100% original do autor, sem reprodução ou adaptação
+            de fonte restrita. O vocabulário do DDL foi ampliado pela migration
+            `AllowAuthoredMaterialReuseBasis1804000000000` (CHECK `lessons_reuse_basis_check` /
+            `packs_reuse_basis_check`).
         items:
           type: array
           minItems: 1

@@ -20,7 +20,6 @@ import {
   type PronunciationHistory,
   type GrammarTip,
   type ResetPasswordResult,
-  type ReuseBasis,
   type ScoredItem,
   type Skill,
   type SkillMastery,
@@ -165,7 +164,7 @@ export function toLessonContent(dto: LessonContentDto): LessonContent {
     lessonId: dto.lesson_id,
     title: dto.title,
     cefrLevel: requireCefrLevel(dto.cefr_level, `Lesson ${dto.lesson_id}`),
-    reuseBasis: dto.reuse_basis as ReuseBasis,
+    reuseBasis: dto.reuse_basis,
     authoringState: dto.authoring_state,
     publicationState: dto.publication_state,
     // Ordering and the exactly-four invariant are enforced by `GetLesson`; the mapper

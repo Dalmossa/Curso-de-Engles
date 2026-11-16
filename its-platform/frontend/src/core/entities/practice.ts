@@ -61,7 +61,7 @@ export interface PackContent {
   readonly packId: string;
   readonly lessonId: string;
   readonly schemaVersion: 'canonical' | 'legacy_v1';
-  readonly reuseBasis: 'cite_only' | 'adapt_with_attribution' | 'adapt_requires_permission' | null;
+  readonly reuseBasis: 'cite_only' | 'adapt_with_attribution' | 'adapt_requires_permission' | 'authored_material' | null;
   readonly items: readonly AssessmentItem[];
 }
 

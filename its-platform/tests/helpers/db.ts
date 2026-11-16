@@ -119,10 +119,12 @@ export async function createTestDb(): Promise<TestDbContext> {
     }
   }
 
-  // The two authentication tables are the second half of the canonical schema (33 tables), and
-  // they come from a migration that uses TypeORM's Table API rather than raw SQL — so the array
-  // above does not contain them. Without them, a test that touches a learner's identity meets a
-  // database without a `users` table.
+  // The authentication tables are the second half of the canonical schema (33 tables), and they
+  // come from migrations that use TypeORM's Table API rather than raw SQL — so the array above
+  // does not contain them. Without them, a test that touches a learner's identity meets a
+  // database without a `users` table. The widened `reuse_basis` CHECK (authored_material) is also
+  // applied here, because SCHEMA_STATEMENTS predates that provenance value and a bank created
+  // from scratch would reject the reauthorized lessons/packs.
   await applyAuthMigrations(dataSource, 'shim');
 
   const runner: QueryRunner = dataSource.createQueryRunner();
@@ -153,12 +155,20 @@ export async function createTestDb(): Promise<TestDbContext> {
  * runner.
  *
  * The canonical schema is 33 tables: 31 come from the create-schema migration's raw DDL, and the
- * two authentication tables (`users` and `user_sessions`) come from a second migration that uses
+ * two authentication tables (`users` and `user_sessions`) come from a migration that uses
  * TypeORM's Table API instead of raw SQL — so the array the harness applies does not contain them.
  * Until now the harness built only the first 31, and a test that touched a learner's identity met
- * a database without a `users` table. The password-reset columns are a third migration on the
- * same table, and they are applied here for the same reason: the harness builds the schema the
- * application runs against, not a subset of it.
+ * a database without a `users` table.
+ *
+ * Three migrations are applied here outside `SCHEMA_STATEMENTS` (the comment below used to say
+ * "the two authentication tables"/"two migrations" — now it is three):
+ *   1. `CreateAuthTables1794508563775` — `users` + `user_sessions` (Table API).
+ *   2. `AddPasswordResetColumns1802000000000` — `reset_token_hash` / `reset_token_expires_at` on `users`.
+ *   3. `AllowAuthoredMaterialReuseBasis1804000000000` — widens the `reuse_basis` CHECK on `lessons`
+ *      and `packs` to accept `authored_material`. SCHEMA_STATEMENTS predates that provenance value,
+ *      so a bank created from scratch (PGlite/CI) would reject the reauthorized lessons/packs.
+ *
+ * These run **before** the `GRANT …` statements below, so the grants cover everything that exists.
  *
  * **`uuid_generate_v4()`** is the one thing PGlite cannot provide: the `uuid-ossp` extension is
  * not available there, and the canonical schema's own DDL uses `gen_random_uuid()` precisely
@@ -187,12 +197,16 @@ async function applyAuthMigrations(
   const { AddPasswordResetColumns1802000000000 } = await import(
     '../../src/migrations/1802000000000-add-password-reset-columns'
   );
+  const { AllowAuthoredMaterialReuseBasis1804000000000 } = await import(
+    '../../src/migrations/1804000000000-allow-authored-material-reuse-basis'
+  );
 
   const runner = dataSource.createQueryRunner();
   await runner.connect();
   try {
     await new CreateAuthTables1794508563775().up(runner);
     await new AddPasswordResetColumns1802000000000().up(runner);
+    await new AllowAuthoredMaterialReuseBasis1804000000000().up(runner);
   } finally {
     await runner.release();
   }

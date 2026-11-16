@@ -770,8 +770,11 @@ export interface components {
             lesson_id: string;
             title: string;
             cefr_level: string;
-            /** @enum {string} */
-            reuse_basis: "cite_only" | "adapt_with_attribution" | "adapt_requires_permission";
+            /**
+             * @description Basis for reusing the lesson's source material. `cite_only` = author original material and cite as bibliography, reproduce nothing. `adapt_with_attribution` = adapt a permissively-licensed source with attribution. `adapt_requires_permission` = adapt a restricted source only with written, perpetual redistribution permission. `authored_material` = material 100% original do autor, sem reprodução ou adaptação de fonte restrita. O vocabulário do DDL foi ampliado pela migration `AllowAuthoredMaterialReuseBasis1804000000000` (CHECK `lessons_reuse_basis_check` / `packs_reuse_basis_check`).
+             * @enum {string}
+             */
+            reuse_basis: "cite_only" | "adapt_with_attribution" | "adapt_requires_permission" | "authored_material";
             /**
              * @description The lessons row's `authoring_state` (DDL CHECK vocabulary).
              * @enum {string}
@@ -806,8 +809,11 @@ export interface components {
             lesson_id: string;
             /** @enum {string} */
             schema_version: "canonical" | "legacy_v1";
-            /** @enum {string} */
-            reuse_basis?: "cite_only" | "adapt_with_attribution" | "adapt_requires_permission";
+            /**
+             * @description Basis for reusing the pack's source material. `cite_only` = author original material and cite as bibliography, reproduce nothing. `adapt_with_attribution` = adapt a permissively-licensed source with attribution. `adapt_requires_permission` = adapt a restricted source only with written, perpetual redistribution permission. `authored_material` = material 100% original do autor, sem reprodução ou adaptação de fonte restrita. O vocabulário do DDL foi ampliado pela migration `AllowAuthoredMaterialReuseBasis1804000000000` (CHECK `lessons_reuse_basis_check` / `packs_reuse_basis_check`).
+             * @enum {string}
+             */
+            reuse_basis?: "cite_only" | "adapt_with_attribution" | "adapt_requires_permission" | "authored_material";
             items: {
                 /** @description `items.id`. The catalog carries two generations — `vocab.meeting.standup_timebox` (771 ids, the legacy packs) and `voc_www_vs_internet_001` / `lst_gist_011` (117 ids, the canonical packs and the listening corpus). ADR-016 §2 resolves both through the alias table. No pattern is published here: the two files this ADR amends each carried one, they were exactly complementary, and each rejected the other's half of the catalogue. */
                 item_id: string;

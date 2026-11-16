@@ -400,7 +400,17 @@ function parseCanonicalPack(markdown: string, filename: string): PackRecord {
   const meta = parseYamlBlock(markdown);
   const pack_id = yamlString(meta['pack_id']) ?? filename.replace(/\.md$/, '');
   const lesson_id = yamlString(meta['lesson_id']) ?? '';
-  const reuseProse = markdown.match(/\*\*Reuse basis:\*\*\s*`([^`]+)`/i);
+  // **Reuse basis:** pode vir com ou sem crases.
+  // Estratégia de cascata para preservar a retrocompatibilidade exata (ADR-022):
+  //   1) forma com crases, em qualquer posição do arquivo (comportamento ANTIGO, intocado)
+  //      ⇒ packs que declaram entre crases continuam lendo exatamente aquele valor;
+  //   2) forma sem crases, ancora no início da linha (evita capturar "Reuse basis:"
+  //      citado em prosa e só chega aqui quando NÃO há forma com crases).
+  // A regex do schema legacy_v1 (parseLegacyPack) é intencionalmente idêntica: ambos
+  // os esquemas declaram o mesmo campo **Reuse basis:** e não podem divergir.
+  const reuseProse =
+    markdown.match(/\*\*Reuse basis:\*\*\s*`([^`]+)`/i) ??
+    markdown.match(/^\s*\*\*Reuse basis:\*\*\s*`?([A-Za-z_]+)`?/im);
   const reuse_basis = reuseProse && reuseProse[1] ? reuseProse[1].trim() : 'cite_only';
   const conformance =
     meta['spec_conformance'] && typeof meta['spec_conformance'] === 'object'
@@ -426,7 +436,17 @@ function parseLegacyPack(markdown: string, filename: string): PackRecord {
   const pack_id = packLine && packLine[1] ? packLine[1] : filename.replace(/\.md$/, '');
   const lessonLine = markdown.match(/\*\*Lesson:\*\*\s*`?([^`\s]+?)\.md`?/i);
   const lesson_id = lessonLine && lessonLine[1] ? lessonLine[1] : '';
-  const reuseLine = markdown.match(/\*\*Reuse basis:\*\*\s*`([^`]+)`/i);
+  // **Reuse basis:** pode vir com ou sem crases.
+  // Estratégia de cascata para preservar a retrocompatibilidade exata (ADR-022):
+  //   1) forma com crases, em qualquer posição do arquivo (comportamento ANTIGO, intocado)
+  //      ⇒ packs que declaram entre crases continuam lendo exatamente aquele valor;
+  //   2) forma sem crases, ancora no início da linha (evita capturar "Reuse basis:"
+  //      citado em prosa e só chega aqui quando NÃO há forma com crases).
+  // A regex do schema legacy_v1 (parseLegacyPack) é intencionalmente idêntica: ambos
+  // os esquemas declaram o mesmo campo **Reuse basis:** e não podem divergir.
+  const reuseLine =
+    markdown.match(/\*\*Reuse basis:\*\*\s*`([^`]+)`/i) ??
+    markdown.match(/^\s*\*\*Reuse basis:\*\*\s*`?([A-Za-z_]+)`?/im);
   const reuse_basis = reuseLine && reuseLine[1] ? reuseLine[1].trim() : 'cite_only';
   const timeLine = markdown.match(/\*\*Time cap:\*\*\s*(\d+)/i);
   const time_cap = timeLine && timeLine[1] ? parseInt(timeLine[1], 10) : 0;

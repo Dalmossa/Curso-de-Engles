@@ -1,7 +1,7 @@
 import type { CefrLevel } from '../value-objects/cefr-level';
 
-/** `LessonContent.reuse_basis` — the licence classification each lesson declares. */
-export type ReuseBasis = 'cite_only' | 'adapt_with_attribution' | 'adapt_requires_permission';
+/** `LessonContent.reuse_basis` — the licence classification each lesson declares. `cite_only` = author original material and cite as bibliography, reproduce nothing. `adapt_with_attribution` = adapt a permissively-licensed source with attribution. `adapt_requires_permission` = adapt a restricted source only with written, perpetual redistribution permission. `authored_material` = material 100% original do autor, sem reprodução ou adaptação de fonte restrita. */
+export type ReuseBasis = 'cite_only' | 'adapt_with_attribution' | 'adapt_requires_permission' | 'authored_material';
 
 export type AuthoringState = 'authored' | 'specified' | 'unauthored' | 'blocked' | 'withdrawn';
 
