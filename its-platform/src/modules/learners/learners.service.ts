@@ -180,8 +180,17 @@ export class LearnersService {
       const sources = await this.profile.read(learner.id, tx);
 
       // Diagnostic results
+      //
+      // **The aliases are not decoration — they are the difference between a 500 and a file.**
+      // The table (`diagnostic_results`, migration 1791331200000) stores θ in `theta` and has **no**
+      // `completed_at`: a run's completion *is* its `created_at`. The names the contract publishes
+      // (`theta_estimate`, `completed_at`) are the *semantic* names, and the query translates the
+      // schema into them — so the OpenAPI document stays exactly as it was published, and the
+      // export finally returns the numbers it promises instead of failing on a column that was
+      // never created.
       const diagnosticResults = (await tx.query(
-        `SELECT id, cefr, theta_estimate, skill_theta, form_version, completed_at, created_at
+        `SELECT id, cefr, theta AS theta_estimate, skill_theta, form_version,
+                created_at AS completed_at, created_at
          FROM diagnostic_results WHERE learner_id = $1 ORDER BY created_at DESC`,
         [learner.id],
       )) as Array<{
@@ -195,8 +204,19 @@ export class LearnersService {
       }>;
 
       // Practice attempts
+      //
+      // `practice_attempts` stores `total_items` and `correct_count`; it has **no** `score` column,
+      // because the score is a ratio and the table stores the two numbers it is made of. The export
+      // publishes the ratio, and the ratio is computed here — with the zero case answered, because
+      // an attempt with no items has no score to divide, and `0/0` is not a number a learner can read.
       const practiceAttempts = (await tx.query(
-        `SELECT id, pack_id, score, correct_count, total_count, started_at, completed_at
+        `SELECT id, pack_id,
+                CASE WHEN COALESCE(total_items, 0) > 0
+                     THEN correct_count::float8 / total_items
+                     ELSE 0 END AS score,
+                correct_count,
+                COALESCE(total_items, 0) AS total_count,
+                started_at, completed_at
          FROM practice_attempts WHERE learner_id = $1 ORDER BY started_at DESC`,
         [learner.id],
       )) as Array<{
@@ -278,30 +298,51 @@ export class LearnersService {
    * guarantees the caller can only erase their own data. The deletion is atomic
    * with the visibility check (ADR-026 §1).
    *
-   * Order of deletion respects FK constraints:
-   * 1. Child tables (practice_attempts, diagnostic_results, etc.)
-   * 2. Learner-scoped tables (mastery, fsrs_states, etc.)
-   * 3. Consent records
-   * 4. Learner row (last)
+   * **Two statements, and the schema does the rest.** This used to enumerate every table
+   * by hand, and each entry in that list was a way for the erasure to fail:
+   *
+   * 1. **`DELETE FROM append_only_events`** — the trigger `trg_append_only_guard` raises on
+   *    any DELETE, and the application role is not even granted DELETE on the table. The
+   *    refusal is correct: ADR-042 R3 rejects "erase = delete the log lines" **by name**.
+   *    The log survives; the FK's `ON DELETE SET NULL` anonymises the link between the
+   *    events and the person, and §4.6 keeps its proof.
+   * 2. **`DELETE FROM consent_records` / `pronunciation_attempts`** — the application role
+   *    holds no DELETE privilege on them (the consent trail is append-only by design), so
+   *    the hand-written `DELETE` raised `permission denied` and rolled the whole erasure
+   *    back. Their FKs to `learners(id)` are `ON DELETE CASCADE`, so the row's disappearance
+   *    takes them with it — by the path the database sanctions, not by a path it forbids.
+   * 3. **`DELETE FROM user_sessions WHERE learner_id = $1`** — there is no `learner_id` on
+   *    that table; it hangs off `users`. A column error inside the transaction rolls back
+   *    everything.
+   * 4. **The account itself has to go.** The learner row holds the learning state; the
+   *    e-mail and the password live in `users`. Erasing only the learner leaves a person
+   *    who logs in again and is handed a fresh learner row by `ensureLearner` — which is
+   *    not erasure, it is a reset with a delay. "Delete my account" has to delete the
+   *    account.
+   *
+   * **Why the list is not written out.** Every learner-scoped table is declared in the
+   * migration with `ON DELETE CASCADE` from `learners(id)` — that *is* the schema's answer
+   * to "what depends on the learner", and it stays right when a table is added. A
+   * hand-written list is a second answer that drifts from the first.
    */
   async eraseData(subject: string, learnerId: string): Promise<void> {
     await this.learnerScope.withVisible(subject, learnerId, async (learner, tx) => {
-      // Delete in FK-safe order (children first)
-      await tx.query(`DELETE FROM practice_attempts WHERE learner_id = $1`, [learner.id]);
-      await tx.query(`DELETE FROM diagnostic_results WHERE learner_id = $1`, [learner.id]);
-      await tx.query(`DELETE FROM diagnostic_responses WHERE learner_id = $1`, [learner.id]);
-      await tx.query(`DELETE FROM listening_attempts WHERE learner_id = $1`, [learner.id]);
-      await tx.query(`DELETE FROM slot_responses WHERE learner_id = $1`, [learner.id]);
-      await tx.query(`DELETE FROM item_responses WHERE learner_id = $1`, [learner.id]);
-      await tx.query(`DELETE FROM learner_mastery WHERE learner_id = $1`, [learner.id]);
-      await tx.query(`DELETE FROM theta_estimates WHERE learner_id = $1`, [learner.id]);
-      await tx.query(`DELETE FROM fsrs_states WHERE learner_id = $1`, [learner.id]);
-      await tx.query(`DELETE FROM error_log WHERE learner_id = $1`, [learner.id]);
-      await tx.query(`DELETE FROM affective_signals WHERE learner_id = $1`, [learner.id]);
-      await tx.query(`DELETE FROM append_only_events WHERE learner_id = $1`, [learner.id]);
-      await tx.query(`DELETE FROM consent_records WHERE learner_id = $1`, [learner.id]);
-      await tx.query(`DELETE FROM user_sessions WHERE learner_id = $1`, [learner.id]);
-      // Finally delete the learner row
+      // The account first. `users.learner_id` is a plain column — not a foreign key — so
+      // nothing cascades *from* the learner into it; it has to be deleted by name. `id = $1`
+      // is the legacy case, where the learner row *is* the user row (`ensureLearner` keys
+      // the learner by the user id while the column is still NULL). Either way it is the
+      // caller's own row, and the FK takes the sessions with it.
+      //
+      // **The casts are not decoration.** `users.learner_id` is `varchar` in the migration and
+      // `uuid` in the deployed database; one parameter compared against both columns cannot
+      // have two types, so the comparison is made in the one type both accept — text — and
+      // the primary key keeps its own.
+      await tx.query(`DELETE FROM users WHERE id = $1::uuid OR learner_id::text = $1::text`, [
+        learner.id,
+      ]);
+      // Then the learner row. Everything else hangs off it by a foreign key with
+      // `ON DELETE CASCADE` — except the append-only log, whose `ON DELETE SET NULL`
+      // anonymises the linkage (ADR-042 R3, and the trigger that refuses a DELETE).
       await tx.query(`DELETE FROM learners WHERE id = $1`, [learner.id]);
     });
   }
