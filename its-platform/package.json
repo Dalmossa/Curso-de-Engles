@@ -36,7 +36,8 @@
     "rls:check": "node scripts/rls-context-check.mjs",
     "contract:gate": "node scripts/contract-gate.mjs",
     "kong:check": "node scripts/kong-config-check.mjs",
-    "test:gate": "node scripts/test-gate.mjs"
+    "test:gate": "node scripts/test-gate.mjs",
+    "content:sync": "node scripts/sync-authored-content.mjs"
   },
   "keywords": [
     "its",
