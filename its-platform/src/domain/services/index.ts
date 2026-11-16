@@ -49,3 +49,6 @@ export {
   hashAuditRow,
 } from './audit-chain-verifier.js';
 export type { AuditChainRow, AuditChainResult, AuditChainReader } from './audit-chain-verifier.js';
+
+export { scorePronunciation, tokenizeForScoring, wordSimilarity } from './pronunciation-scorer.js';
+export type { PronunciationWordScore, PronunciationEvaluation } from './pronunciation-scorer.js';

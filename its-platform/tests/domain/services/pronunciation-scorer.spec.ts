@@ -125,7 +125,9 @@ describe('scorePronunciation', () => {
     const result = scorePronunciation('deploy the service', '');
     expect(result.overall_score).toBe(0);
     expect(result.word_scores.every(word => word.status === 'missed')).toBe(true);
-    expect(result.feedback_pt).toContain('microfone');
+    expect(result.feedback_pt.length).toBeGreaterThan(0);
+    expect(result.feedback_pt).toContain('Ouça');
+    expect(result.feedback_pt).toMatch(/não apareceu com clareza/);
   });
 
   it('scores 0 with no word_scores when there is no target text', () => {
@@ -156,5 +158,47 @@ describe('scorePronunciation', () => {
   it('keeps the word order of the target, not of the transcript', () => {
     const result = scorePronunciation('alpha beta gamma', 'alpha gamma beta');
     expect(result.word_scores.map(word => word.word)).toEqual(['alpha', 'beta', 'gamma']);
+  });
+});
+
+describe('contrastive tips (pt-BR → en-US, TI)', () => {
+  it('adds an epenthetic-vowel tip for technical words ending in plosives/fricatives', () => {
+    const result = scorePronunciation('debug the build', '');
+    expect(result.contrastive_tips).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(/debug/),
+        expect.stringMatching(/build/),
+        expect.stringMatching(/vogal no final/i),
+      ]),
+    );
+  });
+
+  it('adds a dental TH tip for TH words', () => {
+    const result = scorePronunciation('through the thread', '');
+    expect(result.contrastive_tips).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(/through/),
+        expect.stringMatching(/thread/),
+        expect.stringMatching(/dental/i),
+      ]),
+    );
+  });
+
+  it('adds critical vowel/consonant contrast tips for IT terms', () => {
+    const result = scorePronunciation('ship sheep live leave pull pool host ghost release query queue asynchronous', '');
+    const tips = (result.contrastive_tips ?? []).join(' ');
+    expect(tips).toMatch(/ship\/sheep/);
+    expect(tips).toMatch(/live/);
+    expect(tips).toMatch(/pull/);
+    expect(tips).toMatch(/host/);
+    expect(tips).toMatch(/release/);
+    expect(tips).toMatch(/query/);
+    expect(tips).toMatch(/queue/);
+    expect(tips).toMatch(/asynchronous/);
+  });
+
+  it('does not add contrastive tips when the problematic word has no matching rule', () => {
+    const result = scorePronunciation('open window', '');
+    expect(result.contrastive_tips ?? []).toEqual([]);
   });
 });

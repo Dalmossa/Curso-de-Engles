@@ -16,6 +16,7 @@ import { ContentService } from './content.service.js';
 import type {
   DialogueAudioContent,
   DialogueContent,
+  GrammarTipContent,
   LessonContent,
   PackContent,
   SpeechSynthesisContent,
@@ -130,6 +131,23 @@ export class ContentController {
    * absent engine is a designed outcome, not a server error, and answering `5xx` would take the
    * lesson screen down for a capability the browser can provide itself.
    */
+
+  /**
+   * Frente 3 — apoio gramatical sob demanda via RAG local.
+   *
+   * O conteúdo vem do utilitário local (ChromaDB/fastembed) e nunca de fontes externas em tempo
+   * de execução. Se o ambiente não tiver o `.venv`/índice disponível, a resposta é graciosa
+   * (`tips: []`) em vez de erro 5xx, preservando a disponibilidade do endpoint.
+   */
+  @Get('grammar-tip')
+  async getGrammarTip(@Query('topic') topic?: string): Promise<GrammarTipContent> {
+    const cleanTopic = typeof topic === 'string' ? topic.trim() : '';
+    if (cleanTopic.length === 0 || cleanTopic.length > 120) {
+      throw new BadRequestException('Query parameter "topic" is required (1-120 characters).');
+    }
+    return this.contentService.getGrammarTip(cleanTopic);
+  }
+
   @Post('tts')
   @HttpCode(200)
   async synthesizeSpeech(@Body() body: SpeechSynthesisDto): Promise<SpeechSynthesisContent> {

@@ -12,72 +12,199 @@
  */
 
 import { Inject, Injectable, Logger, UnprocessableEntityException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { scorePronunciation } from '../../domain/services/pronunciation-scorer.js';
 import type { PronunciationWordScore } from '../../domain/services/pronunciation-scorer.js';
 import type { AsrTranscriber } from '../../infrastructure/speech/asr-transcriber.js';
 import { ASR_TRANSCRIBER } from '../../infrastructure/speech/asr-transcriber.js';
+import { PronunciationAttemptEntity } from '../../infrastructure/entities/pronunciation-attempt.entity.js';
 import type { PronunciationEvaluationDto } from './dto/pronunciation-evaluation.dto.js';
 
-/** O que o contrato publica em `PronunciationEvaluation`. */
+/** O que o endpoint devolve: a avaliação do domínio, exatamente como o contrato a descreve. */
 export interface PronunciationEvaluationContent {
-  overall_score: number;
-  word_scores: readonly PronunciationWordScore[];
-  feedback_pt: string;
-  /** A transcrição efetivamente avaliada — para o cliente exibir o que o ASR entendeu. */
-  transcript: string;
+  readonly overall_score: number;
+  readonly word_scores: readonly PronunciationWordScore[];
+  readonly feedback_pt: string;
+  readonly transcript: string;
+  readonly contrastive_tips?: readonly string[];
 }
 
-type TranscriptResolution =
-  | { readonly kind: 'ok'; readonly transcript: string }
-  | { readonly kind: 'not_configured' }
-  | { readonly kind: 'upstream_error' };
+export interface PronunciationAttemptSummary {
+  readonly id: string;
+  readonly lesson_id: string | null;
+  readonly expected_text: string;
+  readonly transcript: string;
+  readonly overall_score: number;
+  readonly feedback_pt: string;
+  readonly created_at: string;
+}
 
-const DEFAULT_LOCALE = 'en-US';
-const DEFAULT_MIME_TYPE = 'audio/webm';
+export interface PronunciationHistoryContent {
+  readonly attempts: readonly PronunciationAttemptSummary[];
+  readonly summary: {
+    readonly totalAttempts: number;
+    readonly averageScore: number;
+    readonly bestScore: number;
+    readonly weakWords: readonly string[];
+  };
+}
 
 @Injectable()
 export class PronunciationService {
   private readonly logger = new Logger(PronunciationService.name);
 
-  constructor(@Inject(ASR_TRANSCRIBER) private readonly transcriber: AsrTranscriber) {}
+  constructor(
+    @Inject(ASR_TRANSCRIBER) private readonly asr: AsrTranscriber,
+    @InjectRepository(PronunciationAttemptEntity)
+    private readonly attempts: Repository<PronunciationAttemptEntity>,
+  ) {}
 
-  async evaluate(body: PronunciationEvaluationDto): Promise<PronunciationEvaluationContent> {
-    const resolved = await this.resolveTranscript(body);
-    if (resolved.kind !== 'ok') {
-      // `422` e não `503`: o pedido está bem formado e o servidor entendeu; o que falta é uma
-      // capacidade que este ambiente não tem. A mensagem diz qual é, sem expor configuração.
-      throw new UnprocessableEntityException(
-        resolved.kind === 'not_configured'
-          ? 'No transcript was supplied and no ASR service is configured for this environment.'
-          : 'The ASR service could not transcribe the recording. Try again.',
+  async evaluate(
+    dto: PronunciationEvaluationDto,
+    learnerId: string,
+  ): Promise<PronunciationEvaluationContent> {
+    const transcript = await this.resolveTranscript(dto);
+    const evaluation = scorePronunciation(dto.expected_text, transcript);
+
+    try {
+      await this.attempts.save(
+        this.attempts.create({
+          learnerId,
+          lessonId: null,
+          expectedText: dto.expected_text,
+          transcript: evaluation.transcript,
+          overallScore: evaluation.overall_score,
+          wordScores: evaluation.word_scores as unknown as object,
+          feedbackPt: evaluation.feedback_pt,
+        }),
+      );
+    } catch (error) {
+      // A avaliação já foi produzida; falhar em persistir o histórico não deve anular o feedback.
+      this.logger.error(
+        `Failed to persist pronunciation attempt for learner ${learnerId}: ${(error as Error).message}`,
       );
     }
 
-    const evaluation = scorePronunciation(body.expected_text, resolved.transcript);
-    this.logger.log(
-      `Pronunciation evaluated: ${evaluation.word_scores.length} words, score ${evaluation.overall_score}`,
-    );
-
-    return { ...evaluation, transcript: resolved.transcript };
+    return evaluation;
   }
 
-  private async resolveTranscript(body: PronunciationEvaluationDto): Promise<TranscriptResolution> {
-    if (body.transcript !== undefined) {
-      return { kind: 'ok', transcript: body.transcript };
-    }
-
-    if (body.audio_base64 === undefined) {
-      // Inalcançável pelo controller (ele exige um dos dois), mas o serviço não depende de um
-      // chamador bem comportado para não gravar `undefined` numa avaliação.
-      return { kind: 'not_configured' };
-    }
-
-    const outcome = await this.transcriber.transcribe({
-      audioBase64: body.audio_base64,
-      mimeType: body.mime_type ?? DEFAULT_MIME_TYPE,
-      locale: body.locale ?? DEFAULT_LOCALE,
+  async getHistory(learnerId: string): Promise<PronunciationHistoryContent> {
+    const rows = await this.attempts.find({
+      where: { learnerId },
+      order: { createdAt: 'DESC' },
+      take: 50,
     });
 
-    return outcome.ok ? { kind: 'ok', transcript: outcome.transcript } : { kind: outcome.reason };
+    const attempts: PronunciationAttemptSummary[] = rows.map(row => ({
+      id: row.id,
+      lesson_id: row.lessonId,
+      expected_text: row.expectedText,
+      transcript: row.transcript,
+      overall_score: row.overallScore,
+      feedback_pt: row.feedbackPt,
+      created_at: row.createdAt.toISOString(),
+    }));
+
+    const totalAttempts = rows.length;
+    const scores = rows.map(row => row.overallScore);
+    const averageScore =
+      totalAttempts === 0
+        ? 0
+        : Math.round((scores.reduce((sum, value) => sum + value, 0) / totalAttempts) * 100) / 100;
+    const bestScore = totalAttempts === 0 ? 0 : Math.max(...scores);
+
+    const weakCounts = new Map<string, number>();
+    for (const row of rows) {
+      const wordScores = Array.isArray(row.wordScores)
+        ? (row.wordScores as Array<{ word?: string; status?: string }>)
+        : [];
+      for (const ws of wordScores) {
+        if (!ws || (ws.status !== 'needs_work' && ws.status !== 'missed')) continue;
+        const word = String(ws.word ?? '')
+          .trim()
+          .toLowerCase();
+        if (!word) continue;
+        weakCounts.set(word, (weakCounts.get(word) ?? 0) + 1);
+      }
+    }
+
+    const weakWords = [...weakCounts.entries()]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .slice(0, 10)
+      .map(([word]) => word);
+
+    return {
+      attempts,
+      summary: {
+        totalAttempts,
+        averageScore,
+        bestScore,
+        weakWords,
+      },
+    };
+  }
+
+  /**
+   * Ordem de preferência: o que o navegador já transcreveu (`transcript`) vem primeiro — é
+   * observação, não inferência do servidor. O áudio só entra quando não há transcrição e há um
+   * motor que possa produzi-la.
+   *
+   * `transcript` pode ser string vazia deliberada? O DTO a aceita, mas o controller já exigiu
+   * "pelo menos um dos dois" no sentido de campo presente; aqui, uma transcrição vazia vinda do
+   * cliente significa "não reconheci nada" e é uma entrada legítima para o scorer (que devolve 0
+   * com a dica do microfone) — melhor do que mascarar com um 422.
+   */
+  private async resolveTranscript(dto: PronunciationEvaluationDto): Promise<string> {
+    if (dto.transcript !== undefined) {
+      return dto.transcript;
+    }
+
+    if (dto.audio_base64 === undefined) {
+      // O controller já barra a ausência de ambos; chegar aqui seria um bug interno, não um erro
+      // do chamador. O 422 mantém a mesma semântica: não há o que pontuar.
+      throw new UnprocessableEntityException({
+        error: 'no_transcription',
+        message:
+          'Nenhuma transcrição foi fornecida e este ambiente não possui serviço de ASR configurado.',
+      });
+    }
+
+    try {
+      const outcome = await this.asr.transcribe({
+        audioBase64: dto.audio_base64,
+        mimeType: dto.mime_type ?? 'audio/webm',
+        locale: dto.locale ?? 'en-US',
+      });
+
+      if (!outcome.ok) {
+        if (outcome.reason === 'not_configured') {
+          throw new UnprocessableEntityException({
+            error: 'asr_unavailable',
+            message:
+              'Nenhuma transcrição foi fornecida e este ambiente não possui serviço de ASR configurado.',
+          });
+        }
+        throw new UnprocessableEntityException({
+          error: 'transcription_failed',
+          message:
+            'Não foi possível transcrever a gravação. Tente novamente em um ambiente mais silencioso ou envie a transcrição diretamente.',
+        });
+      }
+
+      // O motor respondeu, mas pode ter ouvido silêncio. Uma transcrição vazia aqui é dado, não
+      // falha: o scorer a transforma na nota e na dica corretas.
+      return outcome.transcript;
+    } catch (error) {
+      if (error instanceof UnprocessableEntityException) throw error;
+      // "Não consegui ouvir" e "ouvi e errou tudo" são coisas diferentes. Colapsar a falha do
+      // motor num 0 adulteraria o sinal que o aprendiz usa para decidir o próximo passo.
+      this.logger.warn(`ASR transcription failed: ${(error as Error).message}`);
+      throw new UnprocessableEntityException({
+        error: 'transcription_failed',
+        message:
+          'Não foi possível transcrever a gravação. Tente novamente em um ambiente mais silencioso ou envie a transcrição diretamente.',
+      });
+    }
   }
 }

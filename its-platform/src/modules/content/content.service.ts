@@ -1,4 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { execFile } from 'node:child_process';
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { promisify } from 'node:util';
 import type { LessonPhase } from '../../infrastructure/content/content-types.js';
 import {
   ContentRepository,
@@ -403,6 +407,68 @@ export class ContentService {
       fallback_reason: outcome.fallbackReason,
     };
   }
+
+  async getGrammarTip(topic: string): Promise<GrammarTipContent> {
+    const cleanTopic = topic.trim();
+    const candidates = [
+      resolve(process.cwd(), 'tools/grammar-rag'),
+      resolve(process.cwd(), '..', 'tools/grammar-rag'),
+    ];
+    const base = candidates.find(dir => existsSync(dir));
+    if (!base) {
+      return { topic: cleanTopic, tips: [], source: 'local-rag' };
+    }
+
+    const python = resolve(base, '.venv/bin/python');
+    const script = resolve(base, 'query_grammar.py');
+    if (!existsSync(python) || !existsSync(script)) {
+      return { topic: cleanTopic, tips: [], source: 'local-rag' };
+    }
+
+    try {
+      const { stdout } = await execFileAsync(
+        python,
+        [script, '--topic', cleanTopic, '--top-k', '2'],
+        {
+          cwd: base,
+          timeout: 15000,
+          maxBuffer: 1024 * 1024,
+          env: { ...process.env, PYTHONIOENCODING: 'utf-8' },
+        },
+      );
+      return { topic: cleanTopic, tips: parseGrammarTips(stdout), source: 'local-rag' };
+    } catch (error) {
+      const logger = new Logger(ContentService.name);
+      logger.warn(
+        `Grammar tip lookup failed for topic "${cleanTopic}": ${(error as Error).message}`,
+      );
+      return { topic: cleanTopic, tips: [], source: 'local-rag' };
+    }
+  }
+}
+
+export interface GrammarTipContent {
+  topic: string;
+  tips: string[];
+  source: 'local-rag';
+}
+
+const execFileAsync = promisify(execFile);
+
+function parseGrammarTips(stdout: string): string[] {
+  const tips: string[] = [];
+  const blocks = stdout.split(/\n-{3,}\n/);
+  for (const block of blocks) {
+    const snippetIndex = block.indexOf('Snippet:');
+    if (snippetIndex === -1) continue;
+    const snippet = block.slice(snippetIndex + 'Snippet:'.length).trim();
+    if (snippet) tips.push(snippet);
+  }
+  if (tips.length === 0) {
+    const trimmed = stdout.trim();
+    if (trimmed) tips.push(trimmed);
+  }
+  return tips;
 }
 
 interface PersistedLessonBody {

@@ -11,32 +11,44 @@
  * `GET`/`POST` com corpo JSON, então não há `201` a interpretar.
  */
 
-import { BadRequestException, Body, Controller, HttpCode, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
+import { CurrentPrincipal } from '../../common/auth/current-principal.decorator.js';
 import { SCOPES, Scopes } from '../../common/auth/scopes.decorator.js';
+import type { TokenPrincipal } from '../../common/auth/token-principal.js';
 import { PronunciationEvaluationDto } from './dto/pronunciation-evaluation.dto.js';
 import { PronunciationService } from './pronunciation.service.js';
-import type { PronunciationEvaluationContent } from './pronunciation.service.js';
+import type {
+  PronunciationEvaluationContent,
+  PronunciationHistoryContent,
+} from './pronunciation.service.js';
 
-@Scopes(SCOPES.learnerSelf)
 @Controller('practice')
+@Scopes(SCOPES.learnerSelf)
 export class PronunciationController {
-  constructor(private readonly pronunciationService: PronunciationService) {}
+  constructor(private readonly pronunciation: PronunciationService) {}
 
   @Post('pronunciation-evaluate')
   @HttpCode(200)
   async evaluate(
-    @Body() body: PronunciationEvaluationDto,
+    @Body() dto: PronunciationEvaluationDto,
+    @CurrentPrincipal() principal: TokenPrincipal,
   ): Promise<PronunciationEvaluationContent> {
-    const hasTranscript = body.transcript !== undefined;
-    const hasAudio = body.audio_base64 !== undefined;
-    if (!hasTranscript && !hasAudio) {
-      // Erro do chamador (faltou a entrada), não indisponibilidade do servidor: `400`, e a
-      // mensagem diz exatamente qual membro acrescentar.
+    // "Pelo menos um dos dois" não cabe em um decorador de campo: é uma relação entre membros.
+    // É `400` — o contrato declara a regra e o chamador a violou — e não `422`, que aqui significa
+    // "o servidor não tem como produzir a transcrição que faltou".
+    if (dto.transcript === undefined && dto.audio_base64 === undefined) {
       throw new BadRequestException(
-        'Supply either `transcript` (browser speech recognition) or `audio_base64` (server ASR).',
+        'Either `transcript` or `audio_base64` must be provided for pronunciation evaluation.',
       );
     }
 
-    return this.pronunciationService.evaluate(body);
+    return this.pronunciation.evaluate(dto, principal.subject);
+  }
+
+  @Get('pronunciation-history')
+  async history(
+    @CurrentPrincipal() principal: TokenPrincipal,
+  ): Promise<PronunciationHistoryContent> {
+    return this.pronunciation.getHistory(principal.subject);
   }
 }

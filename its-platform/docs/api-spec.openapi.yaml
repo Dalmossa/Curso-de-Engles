@@ -597,6 +597,83 @@ components:
           description: >-
             The transcription that was actually scored — what the ASR heard, so the learner can see
             the gap between intent and recognition.
+        contrastive_tips:
+          type: array
+          description: >-
+            Optional contrastive hints (pt-BR → en-US) focused on words marked as `needs_work` or
+            `missed`, especially in software-engineering vocabulary.
+          items:
+            type: string
+
+    PronunciationHistoryAttempt:
+      type: object
+      additionalProperties: false
+      required: [id, lesson_id, expected_text, transcript, overall_score, feedback_pt, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        lesson_id:
+          type: [string, 'null']
+        expected_text:
+          type: string
+        transcript:
+          type: string
+        overall_score:
+          type: integer
+          minimum: 0
+          maximum: 100
+        feedback_pt:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    PronunciationHistoryResponse:
+      type: object
+      additionalProperties: false
+      required: [attempts, summary]
+      properties:
+        attempts:
+          type: array
+          items:
+            $ref: '#/components/schemas/PronunciationHistoryAttempt'
+        summary:
+          type: object
+          additionalProperties: false
+          required: [totalAttempts, averageScore, bestScore, weakWords]
+          properties:
+            totalAttempts:
+              type: integer
+              minimum: 0
+            averageScore:
+              type: number
+              minimum: 0
+              maximum: 100
+            bestScore:
+              type: integer
+              minimum: 0
+              maximum: 100
+            weakWords:
+              type: array
+              items:
+                type: string
+
+    GrammarTipResponse:
+      type: object
+      additionalProperties: false
+      required: [topic, tips, source]
+      properties:
+        topic:
+          type: string
+        tips:
+          type: array
+          items:
+            type: string
+        source:
+          type: string
+          enum: [local-rag]
+
 
     # ============================================================
     # Content Delivery
@@ -1909,6 +1986,43 @@ paths:
               schema:
                 $ref: '#/components/schemas/Problem'
 
+  /practice/pronunciation-history:
+    get:
+      tags: [practice]
+      summary: Get the authenticated learner's pronunciation practice history
+      description: |
+        Returns the most recent pronunciation attempts for the authenticated learner together
+        with aggregate metrics to guide remediation.
+      operationId: getPronunciationHistory
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Pronunciation attempts and summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PronunciationHistoryResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized — a valid bearer token is required (ADR-038 D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+
   /content/lessons/{lesson_id}:
     get:
       tags: [content]
@@ -2088,6 +2202,52 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
+
+  /content/grammar-tip:
+    get:
+      tags: [content]
+      summary: Get a quick grammar tip from the local RAG corpus
+      description: |
+        Returns short grammar explanations retrieved from the local offline RAG utility. If the
+        local environment cannot execute the utility, the endpoint responds gracefully with an
+        empty tips array instead of a server error.
+      operationId: getGrammarTip
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: topic
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 120
+      responses:
+        '200':
+          description: Grammar tips for the requested topic
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrammarTipResponse'
+        '400':
+          description: Missing or invalid `topic` query parameter
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized — a valid bearer token is required (ADR-038 D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden — the credential does not carry the authority this operation requires (ADR-038 D2/D4)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
 
   /content/tts:
     post:
