@@ -3,107 +3,110 @@
 **Lesson ID:** `les_b2_it_mentoring`
 **Module:** `mod_b2_it_senior`
 **CEFR:** B2
-**Reuse basis:** `adapt_with_attribution`
-**Source:** S18 (opensource.guide, CC-BY-4.0), S07 (Google Code Review Guide, CC-BY-4.0) — `sourced_external_thin`
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US).
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: sessão de mentoria com uma pessoa desenvolvedora júnior
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **mentoring** | mentoria | *orientação de experiente para menos experiente* |
-| **knowledge transfer** | transferência de conhecimento | *passar know-how para outros* |
-| **onboarding** | onboarding / integração | *processo de entrada de novos membros* |
-| **shadowing** | shadowing / acompanhamento | *observar experiente trabalhando* |
-| **pair programming** | programação em par | *dois devs no mesmo código* |
-| **code review** | revisão de código | *feedback estruturado sobre código* |
-| **documentation** | documentação | *registro escrito de decisões e processos* |
-| **runbook** | runbook / manual de operação | *procedimentos operacionais* |
-| **bus factor** | fator ônibus | *quantas pessoas podem sair antes de quebrar* |
-| **single point of failure** | ponto único de falha | *pessoa/sistema crítico sem backup* |
-| **cross-training** | treinamento cruzado | *equipe aprende habilidades uns dos outros* |
-| **psychological safety** | segurança psicológica | *ambiente para errar e aprender* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> **Senior:** "**Mentoring** = accelerate growth. **Shadowing**: watch me debug, then you drive. **Pair programming**: 25 min each, switch driver."
+> **Camila (senior engineer):** "Welcome to the team. During your first weeks, you should focus on understanding the service boundaries before changing core logic."
 >
-> "**Knowledge transfer**: **code review** teaches patterns. **Documentation** captures decisions. **Runbook** for ops. **Onboarding** buddy for first 2 weeks."
+> **João (junior engineer):** "I noticed the deployment process is complex. How should I approach it?"
 >
-> "**Bus factor**: if I'm hit by a bus, who knows this system? **Cross-training** reduces **single point of failure**. **Psychological safety** = ask questions without fear."
+> **Camila:** "You could start by shadowing a release, and then we can pair on the next one. I would recommend documenting each step you find unclear, so we can improve our onboarding guide."
+>
+> **João:** "What if I get stuck while debugging on my own?"
+>
+> **Camila:** "You might try reproducing the issue locally first, but you should ask for help early if it blocks you. Sharing context clearly helps everyone transfer knowledge faster."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso em TI |
+|---|---|---|
+| **mentoring** | mentoria | Apoio contínuo ao desenvolvimento de outra pessoa. |
+| **knowledge transfer** | transferência de conhecimento | Compartilhar contexto, decisões e práticas do time. |
+| **onboarding** | integração de novos membros | Período/processo de entrada no time ou projeto. |
+| **shadowing** | acompanhamento observacional | Observar alguém executando uma tarefa para aprender. |
+| **pair programming** | programação em par | Duas pessoas trabalhando juntas no mesmo problema/código. |
+| **actionable feedback** | feedback acionável | Feedback específico que indica o que fazer a seguir. |
+| **to unblock** | destravar/desbloquear | Remover impedimento técnico ou de processo. |
+| **growth area** | ponto de desenvolvimento | Habilidade/comportamento a melhorar com prática. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "I **advise you to** read the docs." (tom impositivo) | "I **would recommend** reading the docs." / "You **could** start with the docs." | Modais e formas suaves tornam o conselho colaborativo, não autoritário. |
+| "You **should to** ask questions." | "You **should ask** questions." | Modal + verbo base, sem *to*. |
+| "Do a **mentoring** with me." (calco verbal) | "**Mentor** me." / "Can we have a **mentoring session**?" | *Mentoring* é processo/gerúndio; como ação use *mentor* ou *session*. |
+| "Explain me this service." | "Explain **this service to me**." / "Walk me through this service." | *Explain* não leva pessoa como objeto direto. |
+| Feedback vago: "You need to improve." | "You **could** improve test coverage by adding cases for failure paths." | Feedback eficaz é específico e acionável. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Bus factor** measures:
-| Slot | Value |
-|------|-------|
-| A | Team size |
-| B | **How many people can leave before knowledge is lost** |
-| C | Code complexity |
-| D | Deployment frequency |
-**Key:** B
-**br_pt_form:** "fator ônibus / quantas podem sair antes de perder conhecimento"
+### Exercício 1 — Escolha de modal (conselho e recomendação)
 
-### Item 2 — Vocabulary (Matching)
-Match the mentoring activity to its purpose:
-| Activity | Purpose |
-|----------|---------|
-| **Shadowing** | a. Observe expert working |
-| **Pair programming** | b. Collaborate in real-time |
-| **Code review** | c. Structured feedback |
-| **Cross-training** | d. Learn others' skills |
-**Key:** Shadowing→a, Pair programming→b, Code review→c, Cross-training→d
-**br_pt_form:** "shadowing", "programação em par", "code review", "treinamento cruzado"
+Escolha o modal mais adequado: **should**, **could**, **might**, **would recommend**
 
-### Item 3 — Grammar: Modal verbs for mentoring advice (fill-in-blank)
-Complete with **should / must / ought to**:
-"You ______ ask questions early. Juniors ______ pair with seniors. Knowledge ______ be documented."
-**Key:** should / should / must
-**br_pt_form:** "devem", "devem", "deve"
+1. Recomendação educada e explícita: "I ____ reviewing the incident timeline together." → **would recommend**
+2. Conselho claro: "You ____ write down the steps before running the migration." → **should**
+3. Sugestão opcional: "You ____ try debugging with smaller inputs first." → **could**
+4. Possibilidade/estratégia tentativa: "You ____ find useful hints in the service logs." → **might**
 
----
+### Exercício 2 — Transformação L1 → L2
 
-## FASE 3 — Output Task [4 min]
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Eu aconselho você ler o guia de onboarding." | "I would recommend reading the onboarding guide." |
+| "Você deveria pedir ajuda cedo." | "You should ask for help early." |
+| "Você poderia acompanhar o próximo deploy." | "You could shadow the next deployment." |
 
-### Speaking: Mentoring Session (pares)
-**Student A (Senior):** Mentor a junior on debugging approach. Use: *mentoring, knowledge transfer, onboarding, shadowing, pair programming, code review, documentation, runbook, bus factor, single point of failure, cross-training, psychological safety*.
-**Student B (Junior):** Ask questions. Take notes.
+### Exercício 3 — Tornando o feedback acionável
 
-**Script:**
-> "First, **shadow** me: I'll debug, you watch. Then **pair programming**: you drive, I navigate. **Code review** teaches patterns. **Document** your findings. **Bus factor** = 2 for this service. **Psychological safety**: no stupid questions."
+Reescreva com linguagem específica:
+
+- Vago: "Your PR descriptions need work."  
+  **Melhor:** "You could make your PR descriptions clearer by adding the problem, the approach, and the test plan."
+
+- Vago: "Learn the system."  
+  **Melhor:** "I would recommend starting with the architecture diagram and then tracing one request end to end."
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Psychological safety** in mentoring means:
-| Slot | Value |
-|------|-------|
-| A | No mistakes allowed |
-| B | **Environment to ask questions and admit errors without fear** |
-| C | Only positive feedback |
-| D | No feedback at all |
-**Key:** B
-**br_pt_form:** "segurança psicológica / ambiente para errar e aprender"
+### 5 sentenças-alvo (leia em voz corrida)
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **modal** for mentoring advice:
-| Slot | Value |
-|------|-------|
-| A | You **can** ask questions. |
-| B | You **should** ask questions. |
-| C | You **might** ask questions. |
-| D | You **could** ask questions. |
-**Key:** B
-**br_pt_form:** "Você deve fazer perguntas."
+You should start by understanding the system context before making large changes. You could shadow the next release to learn how the deployment process works. I would recommend documenting unclear steps so the whole team can benefit. You might reproduce the issue locally first, but you should ask for help if you get stuck. Clear and actionable feedback can help new engineers grow with confidence.
+
+### Foco articulatório para falantes de pt-BR
+
+- **/ʃ/ em *should, shadow*** e **/dʒ/ em *knowledge, engineers***: atenção aos sons fricativo/africado.
+- **Formas reduzidas**: *should/could/would* em fala natural (/ʃʊd/, /kʊd/, /wʊd/).
+- **Ligação e ritmo** em *ask for help, start by*: evite pausas excessivas entre palavras funcionais.
+- **/θ/ ou /t/ em *growth*?** (aproximação): mantenha o /θ/ final leve sem adicionar vogal.
+
+### Prompt de produção (oral ou escrita)
+
+Simule uma conversa de mentoria (2–3 minutos). Dê **3 recomendações** a uma pessoa júnior sobre como aprender um serviço novo: inclua uma ação inicial, uma estratégia de prática (shadowing/pairing) e uma orientação sobre pedir ajuda. Use **should, could, might** e **would recommend**.
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Gramática (L1):** Qual opção expressa recomendação educada?  
+   A) "You must reading this."  B) **"I would recommend reading this guide."**  C) "You should to read this."  D) "Read this now."  
+   **Chave:** B
+
+2. **Vocabulário/pragmática (L1):** Feedback mais acionável:  
+   A) "Improve your code."  B) "Be better next time."  C) **"You could add tests for the failure path to make this change safer."**  D) "This is not good."  
+   **Chave:** C
 
 ---
 
@@ -112,79 +115,45 @@ Choose the correct **modal** for mentoring advice:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_b2_it_mentoring",
   "cefr_level": "B2",
-  "provenance": {
-    "reuse_basis": "adapt_with_attribution",
-    "adapted_sources": [
-      {
-        "id": "S18",
-        "title": "opensource.guide - Mentoring",
-        "licence": "CC-BY-4.0",
-        "what_was_adapted": "mentoring practices, knowledge transfer, bus factor, cross-training concepts; adapted for B2 level",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      },
-      {
-        "id": "S07",
-        "title": "Google Code Review Guide",
-        "licence": "CC-BY-4.0",
-        "what_was_adapted": "code review as mentoring tool, feedback patterns; terminology only",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      }
-    ],
-    "authored_material": "all exercises, the mini-text (Senior/Junior dialogue), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/Ingles-Tecnico-Para-Informatica.md (CETAM, all rights reserved) - scoping of mentoring register"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - terminology adapted, not quoted; all sources CC-BY permissive"
-  },
-  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material; no external source text reproduced or adapted.",
+  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking", "writing"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.modals_mentoring"
+      "grammar.modals_advice_should_could_might",
+      "grammar.recommendation_would_recommend"
     ],
     "vocabulary": [
       "vocab.mentoring.mentoring",
       "vocab.mentoring.knowledge_transfer",
       "vocab.mentoring.onboarding",
       "vocab.mentoring.shadowing",
-      "vocab.mentoring.pair_programming",
-      "vocab.mentoring.code_review",
-      "vocab.mentoring.documentation",
-      "vocab.mentoring.runbook",
-      "vocab.mentoring.bus_factor",
-      "vocab.mentoring.single_point_of_failure",
-      "vocab.mentoring.cross_training",
-      "vocab.mentoring.psychological_safety"
+      "vocab.mentoring.actionable_feedback"
     ],
     "listening": [
       "listening.mentoring_context"
     ],
     "pronunciation": [
-      "pronunciation.technical_terms"
+      "pronunciation.modal_reduction",
+      "pronunciation.sh_dzh_contrast"
+    ],
+    "speaking": [
+      "speaking.mentoring_conversation"
     ]
   },
   "prereq_lessons": [
-    "les_a2_it_terms_basics",
-    "les_a2_it_communication",
-    "les_b1_it_technical",
-    "les_b1_fluency_project",
-    "les_b2_professional"
+    "les_b1_it_code_review",
+    "les_b2_professional_argument"
   ],
   "estimated_time_min": 15
 }
 ```
-
----
-
-## Fontes e Atribuição
-
-- **S18** opensource.guide, licensed under CC-BY-4.0. Adapted for mentoring practices and knowledge transfer concepts.
-- **S07** Google Code Review Guide, licensed under CC-BY-4.0. Referenced for code review as mentoring tool.

@@ -98,8 +98,8 @@ sources is permissively licensed.** Applying it to the 123-lesson registry:
 | cites an **explicitly restricted** source (BaixeLivros) | **58** | 47% | ❌ blocked by an explicit term |
 | cites a **©-only** source (CETAM, Tiago Rodrigues) — no licence grant | 16 | 13% | ❌ all rights reserved by default |
 | cites a source with **no copyright statement at all** | 22 | 18% | ❌ reserved by default |
-| cites a **permissive external** source (this file, §2) | **13** | 11% | ✅ reusable |
-| cites **no specific source** (5 exam lessons + 5 remediation) | 14 | 11% | ⚠️ needs a source, not a licence decision |
+| cites a **permissive external** source (this file, §2) | **12** | 10% | ✅ reusable (7 of 13 IT-sourced remain; 5 reautored as `authored_material` in Lote 1; `les_b1_it_presentations` now original) |
+| cites **no specific source** (5 exam lessons + 5 remediation + 1 original authored) | 15 | 12% | ⚠️ needs a source, not a licence decision |
 
 > **13 of 123 lessons — 11% — have a source that is actually reusable. 58 lessons (47%) are blocked
 > by an explicit written term, and the remaining 38 are blocked by the default.**

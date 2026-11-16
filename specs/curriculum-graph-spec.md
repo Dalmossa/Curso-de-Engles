@@ -115,7 +115,7 @@ The catalog is **both tracks**. No learner walks all 118 lessons. The IT track *
 
 This is the authoritative list of lesson IDs. Any spec (`content-map.md`, `diagnostic-spec.md`, lesson files) referencing an ID must find it here. Lesson files are the repo-root `les_*.md` files (one exception: `les_a2_greetings_intro` lives in `lesson-15min-workplace-greetings.md`, a filename that predates the `les_<id>.md` convention — check [2] matches a lesson to its file by the declared `**Lesson ID:**`, never by the filename).
 
-**The `Status` column is the lesson's authoring state, and it must agree with the filesystem.** The vocabulary is the one `PRD.md` §4 uses: `✅ **authored**` — a file exists that declares this ID (the case for **122** of 123); `` `blocked_no_adequate_source` `` — designed, but no source adequate to author from (`les_b1_it_presentations`, 1 row). Anything a row needs to say *besides* the authoring state is a named suffix, never a substitute: `· cite_only` / `· sourcing: sourced_external` / `· trigger: …`.
+**The `Status` column is the lesson's authoring state, and it must agree with the filesystem.** The vocabulary is the one `PRD.md` §4 uses: `✅ **authored**` — a file exists that declares this ID (the case for **123** of 123); none are currently blocked. Anything a row needs to say *besides* the authoring state is a named suffix, never a substitute: `· cite_only` / `· sourcing: sourced_external` / `· trigger: …`.
 
 **This column was reconciled on 2026-10-01, and the defect is worth recording.** 110 rows said `designed` — which §4.3's own note defines as *no file* — while the file existed and passed check [8]; 15 more carried a sourcing value or a remediation trigger where the state belonged. Nothing was deleted: each displaced value was preserved as the suffix above. The lesson is the one `AGENTS.md` states, restated: **a status column nobody recomputes is a count nobody checks** — the same failure this registry gave check [2] in the first place. Check [2] now recomputes this column and fails on drift.
 
@@ -238,10 +238,10 @@ This is the authoritative list of lesson IDs. Any spec (`content-map.md`, `diagn
 **`mod_b1_it_technical`** (B1, IT Track)
 | Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
 |-----------|-------|--------|------------|---------------------|--------|
-| `les_b1_it_architecture_vocab` | Architecture Discussions | S16, S05, S01 | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** · sourcing: `sourced_external` |
+| `les_b1_it_architecture_vocab` | Architecture Discussions | S16, S05, S01 | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** · reauthored_authored_material |
 | `les_b1_it_debugging` | Debugging & Error Reporting | S09, S13, S14, S11 | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** · sourcing: `sourced_external` |
-| `les_b1_it_code_review` | Code Review Comments | S07, S06, S08, S10, S18 | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** · sourcing: `sourced_external` |
-| `les_b1_it_presentations` | Technical Presentations | S18 (partial only) | blocked_no_adequate_source |  | `blocked_no_adequate_source` |
+| `les_b1_it_code_review` | Code Review Comments | S07, S06, S08, S10, S18 | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** · reauthored_authored_material |
+| `les_b1_it_presentations` | Technical Presentations | Original (clean-room, Lote 1) | meeting_vocab | meeting_vocab,it_computer_terms | ✅ **authored** · reauthored_authored_material |
 | `les_b1_it_acronyms_deep` | Advanced Acronyms & Jargon | dicionário Bônus1 | acronyms_corporate | reading_skimming,reading_scanning | ✅ **authored** |
 | `les_b1_it_write_docs` | Writing Documentation & RFCs | S01, S10, S16 | writing_formal_email,writing_summary | svo_order,explicit_subject,tense_consistency,reading_skimming,reading_scanning | ✅ **authored** · sourcing: `sourced_external` |
 | `les_b1_it_ddd_modeling` | Domain-Driven Design: Aggregates, Entities, Value Objects, Repositories | `docs/ddd-rapido.md` (`adapt_with_attribution`) | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** |
@@ -282,12 +282,12 @@ This is the authoritative list of lesson IDs. Any spec (`content-map.md`, `diagn
 **`mod_b2_it_senior`** (B2, IT Track)
 | Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
 |-----------|-------|--------|------------|---------------------|--------|
-| `les_b2_it_mentoring` | Mentoring & Knowledge Transfer | S18, S07 | meeting_vocab | reading_skimming,reading_scanning | ✅ **authored** · sourcing: `sourced_external_thin` |
+| `les_b2_it_mentoring` | Mentoring & Knowledge Transfer | S18, S07 | meeting_vocab | reading_skimming,reading_scanning | ✅ **authored** · reauthored_authored_material |
 | `les_b2_it_architecture_decisions` | Architecture Decision Records | S03, S04, S05 | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** · sourcing: `sourced_external` |
 | `les_b2_it_strategy` | Technical Strategy Communication | dicionário Ch4-5 | acronyms_corporate | reading_skimming,reading_scanning | ✅ **authored** |
 | `les_b2_it_incident_postmortem` | Incident Postmortems | S02 | it_internet_terms | it_internet_terms | ✅ **authored** · sourcing: `sourced_external` |
 | `les_b2_it_jargon_mastery` | Full Jargon Fluency | dicionário (all 250) | acronyms_corporate | reading_skimming,reading_scanning | ✅ **authored** |
-| `les_b2_it_rfc_writing` | Writing RFCs & Design Docs | S17, S01 + RFC 2119 (⚠️) | writing_formal_email,writing_summary | reading_skimming,reading_scanning | ✅ **authored** · sourcing: `sourced_external_thin` |
+| `les_b2_it_rfc_writing` | Writing RFCs & Design Docs | S17, S01 + RFC 2119 (⚠️) | writing_formal_email,writing_summary | reading_skimming,reading_scanning | ✅ **authored** · reauthored_authored_material |
 | `les_b2_it_advanced_patterns` | Advanced Patterns & Anti-Patterns: Legacy Code, Refactoring Strategies | `docs/codigolimpo.md` + `docs/arquitetura-limpa.md` (`adapt_with_attribution`) | it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** |
 | `les_b2_it_technical_leadership` | Technical Leadership: Architecture Reviews, Trade-off Communication, Mentoring at Scale | `docs/bdd-in-action.md` + `docs/agile.md` (`adapt_with_attribution`) | meeting_vocab,it_computer_terms | reading_skimming,reading_scanning | ✅ **authored** |
 
@@ -425,16 +425,16 @@ was hiding the distinction that caused the original error:
 
 | Status | Count | Meaning |
 |--------|------:|---------|
-| `sourced_external` | **9** | licence permits adaptation **and** the source's discourse matches the lesson title |
-| `sourced_external_thin` | **3** | licence permits, but coverage is partial — authored material is still required, and the lesson must say so |
-| `blocked_no_adequate_source` | **1** | no permitted source carries the discourse — `les_b1_it_presentations`, referred for decision |
+| `sourced_external` | **7** | licence permits adaptation **and** the source's discourse matches the lesson title (still pending full reautoria) |
+| `sourced_external_thin` | **1** | licence permits, but coverage is partial — authored material is still required (`les_a2_it_meeting_standup`) |
+| `reauthored_authored_material` | **5** | fully reauthored in clean-room as 100% original `authored_material` (Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`) |
+| `blocked_no_adequate_source` | **0** | none |
 | `deferred_no_source` | **0** | retired |
 
-The 3 `sourced_external_thin` lessons: `les_a2_it_meeting_standup` (no source supplies *spoken*
-stand-up register — only normative prose), `les_b2_it_mentoring` (sources are
-maintainer-to-stranger, not manager-to-new-hire), `les_b2_it_rfc_writing` (the normative-keyword
-half is IETF-TLP, quote-only, pending legal opinion). `les_b1_it_presentations` is the fourth and
-is graded separately, because its problem is not thinness but absence — see §6 of the registry.
+The remaining `sourced_external_thin` lesson: `les_a2_it_meeting_standup` (no source supplies *spoken*
+stand-up register — only normative prose). `les_b2_it_mentoring` and `les_b2_it_rfc_writing` were
+reautored as 100% `authored_material` in Lote 1 (clean-room). `les_b1_it_presentations`, previously
+`blocked_no_adequate_source`, was also reautored and unlocked as `authored_material` in Lote 1.
 
 **Two structural gaps the external search could not close**, and which are stated rather than
 papered over:
@@ -455,8 +455,8 @@ so today's honest breakdown is **114 fully supported, 3 thin, 1 blocked**.)
 ### 4.4.6 Entry points: restore the original
 
 §4.4.3(3) repointed three entry points away from the unsourced lessons. Now that those lessons are
-sourced, the original routing is restored — with one exception, `les_b1_it_presentations`, which
-stays blocked:
+sourced or reauthored, the original routing is restored (including `les_b1_it_presentations`, now
+reauthored and unlocked in Lote 1):
 
 | Placement | Repointed in §4.4.3 | Now | Why |
 |-----------|---------------------|-----|-----|
@@ -670,9 +670,9 @@ If P(mastery_skill) declining 3+ consecutive sessions:
 | Remediation nodes (§4.3) | 5 |
 | Total lesson IDs in system | **123** |
 | Lessons per module | 6, except `mod_a2_it_fundamentals` and `mod_b1_it_technical` (10 each) and `mod_b2_it_senior` (8) |
-| Lessons authored | **122** — every registry ID but one has a file declaring it |
-| Lessons blocked | 1 (`les_b1_it_presentations`, `blocked_no_adequate_source`) |
-| Practice packs authored | **122** (855 items) — 7 in the `pack-les-*.md` schema, 115 in `pack_les_*_v1.md`; see `post-lesson-practice-spec.md` §12 |
+| Lessons authored | **123** — every registry ID has a file declaring it |
+| Lessons blocked | **0** |
+| Practice packs authored | **123** — 12 in the `pack-les-*.md` schema, 111 in `pack_les_*_v1.md`; see `post-lesson-practice-spec.md` §12 |
 | Source files mapped | 7 / 7 (100%) |
 | Source sections mapped | 87 / 87 (100%, 6 marked meta) |
 | Orphan lesson IDs across all specs | **0** |

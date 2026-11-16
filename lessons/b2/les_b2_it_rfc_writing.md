@@ -3,117 +3,113 @@
 **Lesson ID:** `les_b2_it_rfc_writing`
 **Module:** `mod_b2_it_senior`
 **CEFR:** B2
-**Reuse basis:** `adapt_with_attribution`
-**Source:** S17 (Kubernetes Enhancement Proposals, Apache-2.0), S01 (Google Style Guide, CC-BY-4.0) + RFC 2119/8174 (IETF TLP, quote-only) — `sourced_external_thin`
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US).
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: propondo uma mudança via RFC
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **RFC** | RFC / Request for Comments | *proposta formal de mudança* |
-| **design doc** | documento de design | *especificação técnica detalhada* |
-| **KEP** | KEP / Kubernetes Enhancement Proposal | *proposta de melhoria para K8s* |
-| **problem statement** | declaração do problema | *o que se quer resolver* |
-| **goals** | objetivos | *o que se quer alcançar* |
-| **non-goals** | não-objetivos | *o que explicitamente não se quer* |
-| **proposal** | proposta | *solução proposta* |
-| **alternatives** | alternativas | *outras opções consideradas* |
-| **implementation plan** | plano de implementação | *como executar* |
-| **rollout plan** | plano de rollout | *como lançar* |
-| **success criteria** | critérios de sucesso | *como medir se funcionou* |
-| **open questions** | perguntas em aberto | *incertezas a resolver* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> **Author:** "**RFC**: *Add idempotency keys to Payment API*. **Problem statement**: duplicate charges on retry. **Goals**: prevent double charge, idempotent API. **Non-goals**: refund automation."
+> **Renato (staff engineer):** "Before we change the authentication flow, we need a short RFC so the team can review the proposal asynchronously."
 >
-> "**Proposal**: `Idempotency-Key` header, store key+result 24h. **Alternatives**: client dedup (rejected: unreliable), DB unique constraint (rejected: race condition)."
+> **Paula (backend engineer):** "What should the document include?"
 >
-> "**Implementation plan**: 1) Middleware. 2) Storage. 3) Tests. **Rollout**: canary 5% → 100%. **Success criteria**: 0 duplicate charges. **Open questions**: key expiration policy?"
+> **Renato:** "Start with the problem statement and the goals. Then define non-goals to keep the scope clear. After that, describe the proposed design, the alternatives considered, and the main risks."
+>
+> **Paula:** "How specific should the requirements be?"
+>
+> **Renato:** "Use clear requirement language: what the system must do, what it should do when possible, and what it may support as an option. Finally, include a rollout plan and open questions."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso em TI |
+|---|---|---|
+| **RFC (Request for Comments)** | proposta para discussão/revisão | Documento para alinhar decisão técnica antes da implementação. |
+| **design doc** | documento de design | Descreve solução, decisões e impactos técnicos. |
+| **problem statement** | definição do problema | Explica o que precisa ser resolvido e por quê. |
+| **goals / non-goals** | objetivos / fora de escopo | Delimitam o que a proposta cobre e o que não cobre. |
+| **proposal** | proposta | Solução recomendada e como funciona. |
+| **alternatives considered** | alternativas consideradas | Opções avaliadas e motivos de não escolha. |
+| **rollout plan** | plano de implantação/liberação | Etapas de entrega, migração e reversão. |
+| **open questions** | questões em aberto | Pontos que ainda precisam de decisão ou validação. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "The system **has to obligatorily** validate…" | "The system **must** validate…" | *Must* já expressa requisito obrigatório; evite redundância. |
+| "It **would be interesting** to have retries." (vago em requisito) | "The client **should** retry transient failures." / "The client **may** retry…" | Requisitos técnicos pedem linguagem precisa de obrigação/recomendação/opção. |
+| "The objective is **make** the API faster." | "The goal is **to make** the API faster." / "The goal is **making**…" (menos comum) | Padrões comuns: *goal is to + verb*. |
+| "We will **disponibilize** the endpoint." | "We will **make the endpoint available**." / "We will **expose** the endpoint." | *Disponibilizar* não vira *disponibilize*; escolha verbo adequado. |
+| Confundir escopo: listar desejos em *non-goals* sem clareza | Escrever *"Non-goal: migrating legacy clients in this phase."* | *Non-goals* devem excluir explicitamente itens para evitar expansão de escopo. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Non-goals** in an RFC:
-| Slot | Value |
-|------|-------|
-| A | Are hidden requirements |
-| B | **Explicitly state what is out of scope** |
-| C | Are optional |
-| D | Are the same as goals |
-**Key:** B
-**br_pt_form:** "não-objetivos / explicitamente fora de escopo"
+### Exercício 1 — Estrutura do RFC
 
-### Item 2 — Vocabulary (Matching)
-Match the RFC section to its purpose:
-| Section | Purpose |
-|---------|---------|
-| **Problem statement** | a. What to solve |
-| **Goals** | b. What to achieve |
-| **Non-goals** | c. What NOT to achieve |
-| **Success criteria** | d. How to measure success |
-**Key:** Problem statement→a, Goals→b, Non-goals→c, Success criteria→d
-**br_pt_form:** "declaração do problema", "objetivos", "não-objetivos", "critérios de sucesso"
+Associe cada seção ao seu propósito:
 
-### Item 3 — Grammar: Modal verbs for requirements (RFC 2119) (fill-in-blank)
-Complete with **MUST / SHOULD / MAY**:
-"The API ______ (must) validate the key. Clients ______ (should) retry with same key. The key ______ (may) expire after 24h."
-**Key:** must / should / may
-**br_pt_form:** "deve / devem / podem"
+| Seção | Propósito |
+|---|---|
+| **Problem statement** | a. Why the change is needed |
+| **Goals / Non-goals** | b. What is in scope and out of scope |
+| **Proposal** | c. Recommended solution |
+| **Alternatives considered** | d. Other options and why they were not chosen |
+| **Rollout plan** | e. How the change will be delivered safely |
 
----
+**Chave:** Problem→a, Goals/Non-goals→b, Proposal→c, Alternatives→d, Rollout→e
 
-## FASE 3 — Output Task [4 min]
+### Exercício 2 — Linguagem de requisitos (must / should / may)
 
-### Writing: RFC Section (individual)
-**Write the Problem Statement + Goals + Non-Goals** for: "Add rate limiting to public API."
+Complete com **must**, **should** ou **may**:
 
-**Template:**
-```
-## Problem Statement
-[2-3 sentences: what problem, who is affected, why it matters]
+1. "The service ____ reject requests without a valid token." (obrigatório) → **must**
+2. "The client ____ log retry attempts for observability." (fortemente recomendado) → **should**
+3. "The API ____ include a debug field in non-production environments." (opcional) → **may**
 
-## Goals
-- [ ] Goal 1
-- [ ] Goal 2
+### Exercício 3 — Reescrita para precisão
 
-## Non-Goals
-- [ ] Non-goal 1
-- [ ] Non-goal 2
-```
+| Vago (pt-BR → en-US) | Preciso (esperado) |
+|---|---|
+| "It would be nice if we had timeouts." | "The gateway **must** enforce a request timeout." |
+| "Maybe we can add metrics later." | "The service **should** emit latency and error metrics." |
+| "If someone wants, add tracing." | "Teams **may** enable distributed tracing in staging." |
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Open questions** in an RFC:
-| Slot | Value |
-|------|-------|
-| A | Are answered immediately |
-| B | **Uncertainties to resolve before/during implementation** |
-| C | Are optional |
-| D | Are the same as goals |
-**Key:** B
-**br_pt_form:** "perguntas em aberto / incertezas a resolver"
+### 5 sentenças-alvo (leia em voz corrida)
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **modal** for an RFC requirement:
-| Slot | Value |
-|------|-------|
-| A | The API **can** validate the key. |
-| B | The API **should** validate the key. |
-| C | The API **must** validate the key. |
-| D | The API **might** validate the key. |
-**Key:** C
-**br_pt_form:** "A API deve validar a chave."
+This RFC defines the problem, the goals, and the non-goals for the proposed change. The service must validate every request before it reaches the core business logic. The client should retry transient failures with exponential backoff. The implementation may include additional debug logs in staging environments. The rollout plan should describe migration steps, monitoring signals, and a safe rollback path.
+
+### Foco articulatório para falantes de pt-BR
+
+- **/ɒ/ ou /ɔː/ em *problem, rollback*** e **/oʊ/ em *rollout, goals***: evite reduzir tudo a /o/ fechado.
+- **/ʃ/ em *should*** e **/s/ em *must***: mantenha distinção clara em leitura técnica.
+- **Encontros em *strengths?* não — aqui: *requirements, requests***: evite vogal epentética entre consoantes.
+- **Ênfase em modais** em leitura de especificação: *must/should/may* devem soar destacados.
+
+### Prompt de produção (oral ou escrita)
+
+Escreva um mini-RFC (8–12 linhas) para uma mudança técnica simples (ex.: adicionar rate limiting, padronizar logs, criar endpoint de health check). Inclua: **Problem statement**, **Goals**, **Non-goals**, **Proposal** e **Rollout plan**. Use pelo menos um **must**, um **should** e um **may** com significados distintos.
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Gramática/requisitos (L1):** Qual frase expressa um requisito obrigatório?  
+   A) "The service may validate tokens."  B) "The service should validate tokens."  C) **"The service must validate tokens."**  D) "The service can validate tokens."  
+   **Chave:** C
+
+2. **Estrutura (L1):** A seção que delimita o que **não** será feito é:  
+   A) Problem statement  B) Proposal  C) **Non-goals**  D) Rollout plan  
+   **Chave:** C
 
 ---
 
@@ -122,93 +118,47 @@ Choose the correct **modal** for an RFC requirement:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_b2_it_rfc_writing",
   "cefr_level": "B2",
-  "provenance": {
-    "reuse_basis": "adapt_with_attribution",
-    "adapted_sources": [
-      {
-        "id": "S17",
-        "title": "Kubernetes Enhancement Proposals (KEP)",
-        "licence": "Apache-2.0",
-        "what_was_adapted": "RFC/KEP structure: problem statement, goals, non-goals, proposal, implementation plan, rollout plan, success criteria, open questions; adapted for B2 level",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      },
-      {
-        "id": "S01",
-        "title": "Google Developer Documentation Style Guide",
-        "licence": "CC-BY-4.0",
-        "what_was_adapted": "technical writing style, clarity, conciseness; terminology only",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      },
-      {
-        "id": "RFC 2119/8174",
-        "title": "IETF RFC 2119/8174 - Key words for use in RFCs",
-        "licence": "IETF TLP (quote-only)",
-        "what_was_adapted": "MUST/SHOULD/MAY normative keywords; quoted verbatim per IETF TLP, pending legal opinion per external-sources.md §7.3",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      }
-    ],
-    "authored_material": "all exercises, the mini-text (Author explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/Ingles-Tecnico-Para-Informatica.md (CETAM, all rights reserved) - scoping of RFC/design doc register"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - RFC structure adapted, not quoted; RFC 2119 keywords quoted per IETF TLP"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material; no external source text reproduced or adapted.",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "reading", "writing"],
-  "output_modalities": ["writing"],
+  "output_modalities": ["writing", "speaking"],
   "skill_items": {
     "grammar": [
-      "grammar.modals_requirements"
+      "grammar.modals_requirements_must_should_may"
     ],
     "vocabulary": [
-      "vocab.rfc.rfc",
-      "vocab.rfc.design_doc",
-      "vocab.rfc.kep",
       "vocab.rfc.problem_statement",
-      "vocab.rfc.goals",
-      "vocab.rfc.non_goals",
+      "vocab.rfc.goals_non_goals",
       "vocab.rfc.proposal",
-      "vocab.rfc.alternatives",
-      "vocab.rfc.implementation_plan",
-      "vocab.rfc.rollout_plan",
-      "vocab.rfc.success_criteria",
-      "vocab.rfc.open_questions"
+      "vocab.rfc.alternatives_considered",
+      "vocab.rfc.rollout_plan"
     ],
     "listening": [
       "listening.rfc_context"
     ],
     "pronunciation": [
-      "pronunciation.technical_terms"
+      "pronunciation.modal_stress",
+      "pronunciation.consonant_clusters"
     ],
     "reading": [
-      "reading.rfc"
+      "reading.design_document"
     ],
     "writing": [
-      "writing.rfc"
+      "writing.rfc_section"
     ]
   },
   "prereq_lessons": [
-    "les_a2_it_terms_basics",
-    "les_a2_it_communication",
-    "les_b1_it_technical",
-    "les_b1_fluency_project",
-    "les_b2_professional"
+    "les_b1_it_write_docs",
+    "les_b2_it_architecture_decisions"
   ],
   "estimated_time_min": 15
 }
 ```
-
----
-
-## Fontes e Atribuição
-
-- **S17** Kubernetes Enhancement Proposals, licensed under Apache-2.0. Adapted for RFC/KEP structure and sections.
-- **S01** Google Developer Documentation Style Guide, licensed under CC-BY-4.0. Referenced for technical writing style.
-- **RFC 2119/8174** IETF, licensed under IETF TLP (quote-only). Normative keywords MUST/SHOULD/MAY quoted verbatim. Legal opinion pending per `external-sources.md` §7.3.

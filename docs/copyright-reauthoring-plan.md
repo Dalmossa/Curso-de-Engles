@@ -1,0 +1,653 @@
+# Plano de Reautoria Jurídica — ITS Platform
+
+**Gerado em:** 2026-11-16  
+**Atualizado (Lote 1, Onda 1):** 2026-11-16 — reautoria clean-room de 5 lições/packs IT B1/B2 para `authored_material` (100% original).  
+**Escopo:** inventário original em modo leitura + atualizações do Lote 1 registradas abaixo.  
+**Fontes normativas lidas:** `AGENTS.md` (Licensing/Provenance), `PRD.md` (§2, §4, §7, RF-004, RF-008), `specs/curriculum-graph-spec.md` (§4.3–§4.4).  
+**Gate:** `python3 verify-integrity.py` deve permanecer `PASS 14/14`.
+
+---
+
+## 1. Critérios de publicabilidade e valores válidos (extraídos das specs)
+
+### 1.1 Bases de reuso/licenciamento (AGENTS, PRD §2, §7, RF-004/RF-008)
+| Valor | Significado | Publicabilidade (estado atual) | Obrigação |
+|---|---|---|---|
+| `cite_only` | Material original do autor; fonte citada como bibliografia, sem reprodução/adaptação de texto | **Pendente de reautoria** para a meta “100% `authored_material`” (não depende de permissão da fonte restrita, mas não é declarado `authored_material`) | Citação; nenhuma reprodução |
+| `adapt_with_attribution` | Adaptação de fonte externa permissiva (CC-BY/MIT/Apache etc.) | **Pendente de reautoria** para a meta “100% `authored_material`” (publicável com atribuição, mas não 100% autoral) | Publicar string de atribuição (`external-sources.md` §7.1) |
+| `adapt_requires_permission` | Conteúdo “list-shaped” cuja lista é a fonte (ou derivado de fonte restrita) | **Não publicável** sem permissão escrita, perpétua e com direito de redistribuição | Obter permissão; até lá, authored-but-unpublishable |
+| `authored_material` | Conteúdo 100% autoral, sem dependência de adaptação/reprodução de fonte externa restrita | **Liberado/publicável** (meta final) | Declaração de proveniência autoral conforme contrato do artefato |
+
+### 1.2 Status/sourcing relevantes no currículo (PRD §4, `curriculum-graph-spec.md` §4.3–§4.4)
+- **Vocabulário de estado (PRD §4):** `authored` (arquivo existe e passa checks), `specified`, `unauthored`, `blocked`, `withdrawn`.
+- **Registro §4.3:** coluna `Status` = estado de autoria no filesystem; sufixos nomeados preservam informação (ex.: `· cite_only`, `· sourcing: sourced_external`, `· trigger`). Nó bloqueado explícito: ``blocked_no_adequate_source`` (`les_b1_it_presentations`, 1).
+- **Sourcing IT pós-§4.4.5:** `sourced_external` (9), `sourced_external_thin` (3: `les_a2_it_meeting_standup`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`), `blocked_no_adequate_source` (1), `deferred_no_source` aposentado (0).
+- **Packs:** schema **canônico** `pack-les-*.md` (enforcement completo do check [9]) vs **legado v1** `pack_les_*_v1.md` (dívida de migração registrada em `post-lesson-practice-spec.md` §12 / PRD RF-001).
+
+---
+
+## 2. Resumo Executivo — Placar Jurídico
+
+### 2.1 Inventário auditado (somente leitura)
+- Lições em `lessons/` (`.md`): **123** arquivos (inclui `les_b1_it_presentations`, desbloqueada no Lote 1).
+- Packs em `packs/` (`.md`): **123** arquivos — **12 canônicos** (`pack-les-*.md`) + **111 legados v1** (`pack_les_*_v1.md`).
+- Nó do registro sem arquivo de lição: **0** (Lote 1 desbloqueou `les_b1_it_presentations`). Total do registro: **123** lições, todas com arquivo.
+- Lições por nível/trilha: `A1|General`=24, `A2|General`=30, `A2|IT`=16, `B1|General`=18, `B1|IT`=9, `B1|Remediation`=5, `B2|General`=12, `B2|IT`=8.
+
+### 2.2 Placar de proveniência das lições (estado atual × meta `authored_material`)
+| Categoria | Qtde (lições) | Situação frente à meta 100% `authored_material` |
+|---|---:|---|
+| **Já `authored_material` (liberadas)** | **5** | Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing` |
+| **`cite_only` (pendentes de reautoria)** | **108** | Material original/citado por base, mas **não declarado `authored_material`**; requer revisão e reclassificação/reautoria conforme checklist |
+| **`adapt_with_attribution` (pendentes de reautoria)** | **10** | Adaptação de fonte permissiva com atribuição; **não 100% autoral** — requer reautoria integral para atingir `authored_material` |
+| **`adapt_requires_permission` (pendentes)** | **0** | Não publicável sem permissão; requer permissão ou reautoria integral |
+| **`blocked` / `blocked_no_adequate_source` (pendentes)** | **0** | — |
+| **Total (registro)** | **123** | 122 arquivos auditados + 1 nó bloqueado do registro |
+
+> **`sourced_external_thin` (sinalização de sourcing no registro, subconjunto das lições pendentes):** 1 lição — `les_a2_it_meeting_standup`. `les_b2_it_mentoring` e `les_b2_it_rfc_writing` foram reautoradas no Lote 1.
+
+### 2.3 Placar dos packs
+| Dimensão | Valor |
+|---|---|
+| Total de packs `.md` | **123** |
+| Schema canônico (`pack-les-*.md`) | **12** |
+| Schema legado v1 (`pack_les_*_v1.md`) | **111** |
+| Packs com `reuse_basis` = `cite_only` | **121** |
+| Packs com `reuse_basis` = `adapt_requires_permission` | **1** |
+| Packs sem `reuse_basis` explícito | **0** |
+
+> **Observação:** PRD RF-001 e `post-lesson-practice-spec.md` §12 registram a dívida de migração dos packs legados (adição de `**Reuse basis:**` onde ausente no contrato v1 e renomeação de `item_id` para convenção §1.2). Para a meta 100% `authored_material`, cada pack deve ser reavaliado/reautorado junto da lição correspondente e migrado ao schema canônico.
+
+---
+
+## 3. Inventário detalhado — Lições (`lessons/`)
+
+| Lesson ID | CEFR | Trilha | Módulo | Status | Reuse basis / Proveniência declarada | Provenance (campo) | Arquivo |
+|---|---|---|---|---|---|---|---|
+| `les_a1_alphabet_sounds` | A1 | General | `mod_a1_foundation` | — | `cite_only` | — | `lessons/a1/les_a1_alphabet_sounds.md` |
+| `les_a1_articles_nouns` | A1 | General | `mod_a1_grammar_start` | — | `cite_only` | — | `lessons/a1/les_a1_articles_nouns.md` |
+| `les_a1_daily_basics` | A1 | General | `mod_a1_foundation` | — | `cite_only` | — | `lessons/a1/les_a1_daily_basics.md` |
+| `les_a1_days_months` | A1 | General | `mod_a1_vocab_core` | — | `cite_only` | — | `lessons/a1/les_a1_days_months.md` |
+| `les_a1_en_us_en_gb` | A1 | General | `mod_a1_foundation` | — | `cite_only` | — | `lessons/a1/les_a1_en_us_en_gb.md` |
+| `les_a1_false_cognates` | A1 | General | `mod_a1_comm_basic` | — | `cite_only` | — | `lessons/a1/les_a1_false_cognates.md` |
+| `les_a1_food` | A1 | General | `mod_a1_vocab_core` | — | `cite_only` | — | `lessons/a1/les_a1_food.md` |
+| `les_a1_greetings` | A1 | General | `mod_a1_foundation` | — | `cite_only` | — | `lessons/a1/les_a1_greetings.md` |
+| `les_a1_have_has` | A1 | General | `mod_a1_comm_basic` | — | `cite_only` | — | `lessons/a1/les_a1_have_has.md` |
+| `les_a1_intro_dialogue` | A1 | General | `mod_a1_foundation` | — | `cite_only` | — | `lessons/a1/les_a1_intro_dialogue.md` |
+| `les_a1_numbers_colors` | A1 | General | `mod_a1_vocab_core` | — | `cite_only` | — | `lessons/a1/les_a1_numbers_colors.md` |
+| `les_a1_occupations` | A1 | General | `mod_a1_vocab_core` | — | `cite_only` | — | `lessons/a1/les_a1_occupations.md` |
+| `les_a1_present_simple` | A1 | General | `mod_a1_comm_basic` | — | `cite_only` | — | `lessons/a1/les_a1_present_simple.md` |
+| `les_a1_present_simple_questions` | A1 | General | `mod_a1_comm_basic` | — | `cite_only` | — | `lessons/a1/les_a1_present_simple_questions.md` |
+| `les_a1_pronouns_demonstrative` | A1 | General | `mod_a1_grammar_start` | — | `cite_only` | — | `lessons/a1/les_a1_pronouns_demonstrative.md` |
+| `les_a1_pronouns_possessive` | A1 | General | `mod_a1_grammar_start` | — | `cite_only` | — | `lessons/a1/les_a1_pronouns_possessive.md` |
+| `les_a1_pronouns_subject_object` | A1 | General | `mod_a1_grammar_start` | — | `cite_only` | — | `lessons/a1/les_a1_pronouns_subject_object.md` |
+| `les_a1_pronunciation_intro` | A1 | General | `mod_a1_foundation` | — | `cite_only` | — | `lessons/a1/les_a1_pronunciation_intro.md` |
+| `les_a1_reading_skimming` | A1 | General | `mod_a1_comm_basic` | — | `cite_only` | — | `lessons/a1/les_a1_reading_skimming.md` |
+| `les_a1_regular_verbs_past` | A1 | General | `mod_a1_vocab_core` | — | `cite_only` | — | `lessons/a1/les_a1_regular_verbs_past.md` |
+| `les_a1_there_is_are` | A1 | General | `mod_a1_comm_basic` | — | `cite_only` | — | `lessons/a1/les_a1_there_is_are.md` |
+| `les_a1_time_dates` | A1 | General | `mod_a1_vocab_core` | — | `cite_only` | — | `lessons/a1/les_a1_time_dates.md` |
+| `les_a1_to_be_forms` | A1 | General | `mod_a1_grammar_start` | — | `cite_only` | — | `lessons/a1/les_a1_to_be_forms.md` |
+| `les_a1_wh_questions` | A1 | General | `mod_a1_grammar_start` | — | `cite_only` | — | `lessons/a1/les_a1_wh_questions.md` |
+| `les_a2_airport` | A2 | General | `mod_a2_travel` | — | `cite_only` | — | `lessons/a2/les_a2_airport.md` |
+| `les_a2_ask_for_help` | A2 | General | `mod_a2_workplace_comm` | — | `cite_only` | — | `lessons/a2/les_a2_ask_for_help.md` |
+| `les_a2_collocations` | A2 | General | `mod_a2_travel` | — | `cite_only` | — | `lessons/a2/les_a2_collocations.md` |
+| `les_a2_corporate_wrapup` | A2 | General | `mod_a2_workplace_comm` | — | `cite_only` | — | `lessons/a2/les_a2_corporate_wrapup.md` |
+| `les_a2_corpus_intro` | A2 | General | `mod_a2_workplace_comm` | — | `cite_only` | — | `lessons/a2/les_a2_corpus_intro.md` |
+| `les_a2_deadlines_tasks` | A2 | General | `mod_a2_workplace_comm` | — | `cite_only` | — | `lessons/a2/les_a2_deadlines_tasks.md` |
+| `les_a2_email_basics` | A2 | General | `—` | — | `cite_only` — material original; `frases-ingles-trabalho.md` Ch5 e `Dicionario...md` Ch10 são *bibliografia* (`external-sources.md` §7.0) | — | `lessons/a2/les_a2_email_basics.md` |
+| `les_a2_feedback_praise` | A2 | General | `mod_a2_workplace_comm` | — | `cite_only` | — | `lessons/a2/les_a2_feedback_praise.md` |
+| `les_a2_future_will` | A2 | General | `mod_a2_workplace_tasks` | — | `cite_only` | — | `lessons/a2/les_a2_future_will.md` |
+| `les_a2_greetings_intro` | A2 | General | `—` | — | `cite_only` — material original; `frases-ingles-trabalho.md` Ch2 e `apostila-ingles-para-iniciantes-impresso.md` §2.2 são *bibliografia*, não texto adaptado (ver `external-sources.md` §7.0) | — | `lessons/a2/lesson-15min-workplace-greetings.md` |
+| `les_a2_hotel_taxi` | A2 | General | `mod_a2_travel` | — | `cite_only` | — | `lessons/a2/les_a2_hotel_taxi.md` |
+| `les_a2_imperatives` | A2 | General | `mod_a2_workplace_tasks` | — | `cite_only` | — | `lessons/a2/les_a2_imperatives.md` |
+| `les_a2_introducing_others` | A2 | General | `—` | — | `cite_only` — material original; `frases-ingles-trabalho.md` Ch2 e `apostila-ingles-para-iniciantes-impresso.md` §2.2 são *bibliografia* (`external-sources.md` §7.0) | — | `lessons/a2/les_a2_introducing_others.md` |
+| `les_a2_meeting_open` | A2 | General | `—` | — | `cite_only` — material original; `frases-ingles-trabalho.md` Ch4 é *bibliografia* (`external-sources.md` §7.0) | — | `lessons/a2/les_a2_meeting_open.md` |
+| `les_a2_meeting_participate` | A2 | General | `—` | — | `cite_only` — material original; `frases-ingles-trabalho.md` Ch4 é *bibliografia* (`external-sources.md` §7.0) | — | `lessons/a2/les_a2_meeting_participate.md` |
+| `les_a2_modals_can_need` | A2 | General | `mod_a2_workplace_tasks` | — | `cite_only` | — | `lessons/a2/les_a2_modals_can_need.md` |
+| `les_a2_past_narrative` | A2 | General | `mod_a2_workplace_tasks` | — | `cite_only` | — | `lessons/a2/les_a2_past_narrative.md` |
+| `les_a2_phone_calls` | A2 | General | `mod_a2_workplace_comm` | — | `cite_only` | — | `lessons/a2/les_a2_phone_calls.md` |
+| `les_a2_prepositions_basic` | A2 | General | `mod_a2_workplace_tasks` | — | `cite_only` | — | `lessons/a2/les_a2_prepositions_basic.md` |
+| `les_a2_present_continuous` | A2 | General | `mod_a2_workplace_tasks` | — | `cite_only` | — | `lessons/a2/les_a2_present_continuous.md` |
+| `les_a2_reading_strategy` | A2 | General | `mod_a2_skills_rw` | — | `cite_only` | — | `lessons/a2/les_a2_reading_strategy.md` |
+| `les_a2_restaurant_shopping` | A2 | General | `mod_a2_travel` | — | `cite_only` | — | `lessons/a2/les_a2_restaurant_shopping.md` |
+| `les_a2_small_talk` | A2 | General | `—` | — | `cite_only` — material original; `frases-ingles-trabalho.md` Ch3 é *bibliografia*, não texto adaptado (ver `external-sources.md` §7.0) | — | `lessons/a2/les_a2_small_talk.md` |
+| `les_a2_stress_timing` | A2 | General | `mod_a2_travel` | — | `cite_only` | — | `lessons/a2/les_a2_stress_timing.md` |
+| `les_a2_travel_vocab_core` | A2 | General | `mod_a2_travel` | — | `cite_only` | — | `lessons/a2/les_a2_travel_vocab_core.md` |
+| `les_a2_writing_bio` | A2 | General | `mod_a2_skills_rw` | — | `cite_only` | — | `lessons/a2/les_a2_writing_bio.md` |
+| `les_a2_writing_messages` | A2 | General | `mod_a2_skills_rw` | — | `cite_only` | — | `lessons/a2/les_a2_writing_messages.md` |
+| `les_a2_writing_past` | A2 | General | `mod_a2_skills_rw` | — | `cite_only` | — | `lessons/a2/les_a2_writing_past.md` |
+| `les_a2_writing_selfcheck` | A2 | General | `mod_a2_skills_rw` | — | `cite_only` | — | `lessons/a2/les_a2_writing_selfcheck.md` |
+| `les_a2_writing_svo` | A2 | General | `mod_a2_skills_rw` | — | `cite_only` | — | `lessons/a2/les_a2_writing_svo.md` |
+| `les_a2_it_algorithms_basics` | A2 | IT | `mod_a2_it_fundamentals` | — | `cite_only` | — | `lessons/a2/les_a2_it_algorithms_basics.md` |
+| `les_a2_it_clean_code_basics` | A2 | IT | `mod_a2_it_fundamentals` | — | `cite_only` | — | `lessons/a2/les_a2_it_clean_code_basics.md` |
+| `les_a2_it_computer_parts` | A2 | IT | `mod_a2_it_fundamentals` | — | `cite_only` | — | `lessons/a2/les_a2_it_computer_parts.md` |
+| `les_a2_it_email_technical` | A2 | IT | `mod_a2_it_communication` | — | `cite_only` | — | `lessons/a2/les_a2_it_email_technical.md` |
+| `les_a2_it_incidents` | A2 | IT | `mod_a2_it_communication` | — | `adapt_with_attribution` | — | `lessons/a2/les_a2_it_incidents.md` |
+| `les_a2_it_internet_history` | A2 | IT | `mod_a2_it_fundamentals` | — | `cite_only` | — | `lessons/a2/les_a2_it_internet_history.md` |
+| `les_a2_it_meeting_standup` | A2 | IT | `mod_a2_it_communication` | — | `adapt_with_attribution` | — | `lessons/a2/les_a2_it_meeting_standup.md` |
+| `les_a2_it_nontech_tech` | A2 | IT | `mod_a2_it_communication` | — | `cite_only` | — | `lessons/a2/les_a2_it_nontech_tech.md` |
+| `les_a2_it_pr_tickets` | A2 | IT | `mod_a2_it_communication` | — | `cite_only` | — | `lessons/a2/les_a2_it_pr_tickets.md` |
+| `les_a2_it_reading_strategy` | A2 | IT | `mod_a2_it_fundamentals` | — | `cite_only` | — | `lessons/a2/les_a2_it_reading_strategy.md` |
+| `les_a2_it_roles_hierarchy` | A2 | IT | `mod_a2_it_fundamentals` | — | `cite_only` | — | `lessons/a2/les_a2_it_roles_hierarchy.md` |
+| `les_a2_it_system_unit` | A2 | IT | `mod_a2_it_fundamentals` | — | `cite_only` | — | `lessons/a2/les_a2_it_system_unit.md` |
+| `les_a2_it_terms_basics` | A2 | IT | `—` | — | `adapt_with_attribution` — **primeira lição do repositório com esta base.** Adapta, com atribuição, **S01** (Google developer documentation style guide, CC-BY-4.0) e **S16** (Kubernetes docs, CC-BY-4.0). Todo o restante é original. Ver `external-sources.md` §7.0 e "Fontes e Atribuição" no fim. | — | `lessons/a2/les_a2_it_terms_basics.md` |
+| `les_a2_it_testing_fundamentals` | A2 | IT | `mod_a2_it_fundamentals` | — | `cite_only` | — | `lessons/a2/les_a2_it_testing_fundamentals.md` |
+| `les_a2_it_typescript_basics` | A2 | IT | `mod_a2_it_fundamentals` | — | `cite_only` | — | `lessons/a2/les_a2_it_typescript_basics.md` |
+| `les_a2_it_word_formation` | A2 | IT | `mod_a2_it_communication` | — | `cite_only` | — | `lessons/a2/les_a2_it_word_formation.md` |
+| `les_b1_conditionals` | B1 | General | `mod_b1_grammar_consolidate` | — | `cite_only` | — | `lessons/b1/les_b1_conditionals.md` |
+| `les_b1_finance_business` | B1 | General | `mod_b1_workplace_adv` | — | `cite_only` | — | `lessons/b1/les_b1_finance_business.md` |
+| `les_b1_hr_career` | B1 | General | `mod_b1_workplace_adv` | — | `cite_only` | — | `lessons/b1/les_b1_hr_career.md` |
+| `les_b1_leadership_feedback` | B1 | General | `mod_b1_workplace_adv` | — | `cite_only` | — | `lessons/b1/les_b1_leadership_feedback.md` |
+| `les_b1_modals` | B1 | General | `mod_b1_grammar_consolidate` | — | `cite_only` | — | `lessons/b1/les_b1_modals.md` |
+| `les_b1_negotiation` | B1 | General | `mod_b1_workplace_adv` | — | `cite_only` | — | `lessons/b1/les_b1_negotiation.md` |
+| `les_b1_passive` | B1 | General | `mod_b1_grammar_consolidate` | — | `cite_only` | — | `lessons/b1/les_b1_passive.md` |
+| `les_b1_presentation_skills` | B1 | General | `mod_b1_workplace_adv` | — | `cite_only` | — | `lessons/b1/les_b1_presentation_skills.md` |
+| `les_b1_project_case_study` | B1 | General | `mod_b1_fluency_project` | — | `adapt_with_attribution` | — | `lessons/b1/les_b1_project_case_study.md` |
+| `les_b1_project_client_sim` | B1 | General | `mod_b1_fluency_project` | — | `cite_only` | — | `lessons/b1/les_b1_project_client_sim.md` |
+| `les_b1_project_integrated_review` | B1 | General | `mod_b1_fluency_project` | — | `cite_only` | — | `lessons/b1/les_b1_project_integrated_review.md` |
+| `les_b1_project_negotiation_roleplay` | B1 | General | `mod_b1_fluency_project` | — | `cite_only` | — | `lessons/b1/les_b1_project_negotiation_roleplay.md` |
+| `les_b1_project_presentation_final` | B1 | General | `mod_b1_fluency_project` | — | `cite_only` | — | `lessons/b1/les_b1_project_presentation_final.md` |
+| `les_b1_project_retrospective` | B1 | General | `mod_b1_fluency_project` | — | `cite_only` | — | `lessons/b1/les_b1_project_retrospective.md` |
+| `les_b1_question_forms` | B1 | General | `mod_b1_grammar_consolidate` | — | `cite_only` | — | `lessons/b1/les_b1_question_forms.md` |
+| `les_b1_reported_speech` | B1 | General | `mod_b1_grammar_consolidate` | — | `cite_only` | — | `lessons/b1/les_b1_reported_speech.md` |
+| `les_b1_sales_marketing` | B1 | General | `mod_b1_workplace_adv` | — | `cite_only` | — | `lessons/b1/les_b1_sales_marketing.md` |
+| `les_b1_tenses_review` | B1 | General | `mod_b1_grammar_consolidate` | — | `cite_only` | — | `lessons/b1/les_b1_tenses_review.md` |
+| `les_b1_it_acronyms_deep` | B1 | IT | `mod_b1_it_technical` | — | `cite_only` | — | `lessons/b1/les_b1_it_acronyms_deep.md` |
+| `les_b1_it_architecture_vocab` | B1 | IT | `mod_b1_it_technical` | — | `authored_material` | — | `lessons/b1/les_b1_it_architecture_vocab.md` |
+| `les_b1_it_bdd_specs` | B1 | IT | `mod_b1_it_technical` | — | `cite_only` | — | `lessons/b1/les_b1_it_bdd_specs.md` |
+| `les_b1_it_code_review` | B1 | IT | `mod_b1_it_technical` | — | `authored_material` | — | `lessons/b1/les_b1_it_code_review.md` |
+| `les_b1_it_ddd_modeling` | B1 | IT | `mod_b1_it_technical` | — | `cite_only` | — | `lessons/b1/les_b1_it_ddd_modeling.md` |
+| `les_b1_it_debugging` | B1 | IT | `mod_b1_it_technical` | — | `adapt_with_attribution` | — | `lessons/b1/les_b1_it_debugging.md` |
+| `les_b1_it_devops_basics` | B1 | IT | `mod_b1_it_technical` | — | `cite_only` | — | `lessons/b1/les_b1_it_devops_basics.md` |
+| `les_b1_it_ux_collab` | B1 | IT | `mod_b1_it_technical` | — | `cite_only` | — | `lessons/b1/les_b1_it_ux_collab.md` |
+| `les_b1_it_write_docs` | B1 | IT | `mod_b1_it_technical` | — | `adapt_with_attribution` | — | `lessons/b1/les_b1_it_write_docs.md` |
+| `les_rem_confidence_builder` | B1 | Remediation | `mod_b1_fluency_project` | — | `cite_only` | — | `lessons/remediation/les_rem_confidence_builder.md` |
+| `les_rem_grammar_be_pronouns` | B1 | Remediation | `mod_b1_fluency_project` | — | `cite_only` | — | `lessons/remediation/les_rem_grammar_be_pronouns.md` |
+| `les_rem_listening_slow_clear` | B1 | Remediation | `mod_b1_fluency_project` | — | `cite_only` | — | `lessons/remediation/les_rem_listening_slow_clear.md` |
+| `les_rem_pronunciation_th_vw` | B1 | Remediation | `mod_b1_fluency_project` | — | `cite_only` | — | `lessons/remediation/les_rem_pronunciation_th_vw.md` |
+| `les_rem_writing_svo` | B1 | Remediation | `mod_b1_fluency_project` | — | `cite_only` | — | `lessons/remediation/les_rem_writing_svo.md` |
+| `les_b2_celpe_br` | B2 | General | `mod_b2_cert_prep` | — | `cite_only` | — | `lessons/b2/les_b2_celpe_br.md` |
+| `les_b2_culture_brazil_vs_usa` | B2 | General | `mod_b2_professional` | — | `cite_only` | — | `lessons/b2/les_b2_culture_brazil_vs_usa.md` |
+| `les_b2_exam_simulations` | B2 | General | `mod_b2_cert_prep` | — | `cite_only` | — | `lessons/b2/les_b2_exam_simulations.md` |
+| `les_b2_exam_vocab` | B2 | General | `mod_b2_cert_prep` | — | `cite_only` | — | `lessons/b2/les_b2_exam_vocab.md` |
+| `les_b2_ielts_writing` | B2 | General | `mod_b2_cert_prep` | — | `cite_only` | — | `lessons/b2/les_b2_ielts_writing.md` |
+| `les_b2_professional_argument` | B2 | General | `mod_b2_professional` | — | `cite_only` | — | `lessons/b2/les_b2_professional_argument.md` |
+| `les_b2_professional_email_advanced` | B2 | General | `mod_b2_professional` | — | `cite_only` | — | `lessons/b2/les_b2_professional_email_advanced.md` |
+| `les_b2_professional_review` | B2 | General | `mod_b2_professional` | — | `cite_only` | — | `lessons/b2/les_b2_professional_review.md` |
+| `les_b2_professional_summary` | B2 | General | `mod_b2_professional` | — | `cite_only` | — | `lessons/b2/les_b2_professional_summary.md` |
+| `les_b2_register_nuance` | B2 | General | `mod_b2_professional` | — | `cite_only` | — | `lessons/b2/les_b2_register_nuance.md` |
+| `les_b2_toeic_reading` | B2 | General | `mod_b2_cert_prep` | — | `cite_only` | — | `lessons/b2/les_b2_toeic_reading.md` |
+| `les_b2_toeic_writing` | B2 | General | `mod_b2_cert_prep` | — | `cite_only` | — | `lessons/b2/les_b2_toeic_writing.md` |
+| `les_b2_it_advanced_patterns` | B2 | IT | `mod_b2_it_senior` | — | `cite_only` | — | `lessons/b2/les_b2_it_advanced_patterns.md` |
+| `les_b2_it_architecture_decisions` | B2 | IT | `mod_b2_it_senior` | — | `adapt_with_attribution` | — | `lessons/b2/les_b2_it_architecture_decisions.md` |
+| `les_b2_it_incident_postmortem` | B2 | IT | `mod_b2_it_senior` | — | `adapt_with_attribution` | — | `lessons/b2/les_b2_it_incident_postmortem.md` |
+| `les_b2_it_jargon_mastery` | B2 | IT | `mod_b2_it_senior` | — | `cite_only` | — | `lessons/b2/les_b2_it_jargon_mastery.md` |
+| `les_b2_it_mentoring` | B2 | IT | `mod_b2_it_senior` | — | `authored_material` | — | `lessons/b2/les_b2_it_mentoring.md` |
+| `les_b2_it_rfc_writing` | B2 | IT | `mod_b2_it_senior` | — | `authored_material` | — | `lessons/b2/les_b2_it_rfc_writing.md` |
+| `les_b2_it_strategy` | B2 | IT | `mod_b2_it_senior` | — | `cite_only` | — | `lessons/b2/les_b2_it_strategy.md` |
+| `les_b2_it_technical_leadership` | B2 | IT | `mod_b2_it_senior` | — | `cite_only` | — | `lessons/b2/les_b2_it_technical_leadership.md` |
+| `les_b1_it_presentations` | B1 | IT | `mod_b1_it_technical` | `blocked_no_adequate_source` | `blocked_no_adequate_source` | — | (sem arquivo em lessons/ — nó bloqueado no registro §4.3) |
+
+## 4. Inventário detalhado — Packs (`packs/`)
+
+| Pack / arquivo | Lesson ref | CEFR | Trilha | Schema | Reuse basis | Provenance | Arquivo |
+|---|---|---|---|---|---|---|---|
+| `pack_les_a1_alphabet_sounds_v1` | `les_a1_alphabet_sounds` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_alphabet_sounds_v1.md` |
+| `pack_les_a1_articles_nouns_v1` | `les_a1_articles_nouns` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_articles_nouns_v1.md` |
+| `pack_les_a1_daily_basics_v1` | `les_a1_daily_basics` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_daily_basics_v1.md` |
+| `pack_les_a1_days_months_v1` | `les_a1_days_months` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_days_months_v1.md` |
+| `pack_les_a1_en_us_en_gb_v1` | `les_a1_en_us_en_gb` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_en_us_en_gb_v1.md` |
+| `pack_les_a1_false_cognates_v1` | `les_a1_false_cognates` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_false_cognates_v1.md` |
+| `pack_les_a1_food_v1` | `les_a1_food` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_food_v1.md` |
+| `pack_les_a1_greetings_v1` | `les_a1_greetings` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_greetings_v1.md` |
+| `pack_les_a1_have_has_v1` | `les_a1_have_has` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_have_has_v1.md` |
+| `pack_les_a1_intro_dialogue_v1` | `les_a1_intro_dialogue` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_intro_dialogue_v1.md` |
+| `pack_les_a1_numbers_colors_v1` | `les_a1_numbers_colors` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_numbers_colors_v1.md` |
+| `pack_les_a1_occupations_v1` | `les_a1_occupations` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_occupations_v1.md` |
+| `pack_les_a1_present_simple_v1` | `les_a1_present_simple` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_present_simple_v1.md` |
+| `pack_les_a1_present_simple_questions_v1` | `les_a1_present_simple_questions` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_present_simple_questions_v1.md` |
+| `pack_les_a1_pronouns_demonstrative_v1` | `les_a1_pronouns_demonstrative` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_pronouns_demonstrative_v1.md` |
+| `pack_les_a1_pronouns_possessive_v1` | `les_a1_pronouns_possessive` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_pronouns_possessive_v1.md` |
+| `pack_les_a1_pronouns_subject_object_v1` | `les_a1_pronouns_subject_object` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_pronouns_subject_object_v1.md` |
+| `pack_les_a1_pronunciation_intro_v1` | `les_a1_pronunciation_intro` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_pronunciation_intro_v1.md` |
+| `pack_les_a1_reading_skimming_v1` | `les_a1_reading_skimming` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_reading_skimming_v1.md` |
+| `pack_les_a1_regular_verbs_past_v1` | `les_a1_regular_verbs_past` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_regular_verbs_past_v1.md` |
+| `pack_les_a1_there_is_are_v1` | `les_a1_there_is_are` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_there_is_are_v1.md` |
+| `pack_les_a1_time_dates_v1` | `les_a1_time_dates` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_time_dates_v1.md` |
+| `pack_les_a1_to_be_forms_v1` | `les_a1_to_be_forms` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_to_be_forms_v1.md` |
+| `pack_les_a1_wh_questions_v1` | `les_a1_wh_questions` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_wh_questions_v1.md` |
+| `pack_les_a2_airport_v1` | `les_a2_airport` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_airport_v1.md` |
+| `pack_les_a2_ask_for_help_v1` | `les_a2_ask_for_help` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_ask_for_help_v1.md` |
+| `pack_les_a2_collocations_v1` | `les_a2_collocations` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_collocations_v1.md` |
+| `pack_les_a2_corporate_wrapup_v1` | `les_a2_corporate_wrapup` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_corporate_wrapup_v1.md` |
+| `pack_les_a2_corpus_intro_v1` | `les_a2_corpus_intro` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_corpus_intro_v1.md` |
+| `pack_les_a2_deadlines_tasks_v1` | `les_a2_deadlines_tasks` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_deadlines_tasks_v1.md` |
+| `pack_les_a2_email_basics_v1` | `les_a2_email_basics` | A2 | General | canonical | cite_only | items `authored`. `frases-ingles-trabalho.md` Ch5 and `Dicionario-de-Siglas-e-Termos-Profissionais-em-Ingles.md` Ch10 are *bibliography only* (both **restricted**, `external-sources.md` §0.5 / §7.0). | `packs/a2/pack-les-a2-email-basics.md` |
+| `pack_les_a2_feedback_praise_v1` | `les_a2_feedback_praise` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_feedback_praise_v1.md` |
+| `pack_les_a2_future_will_v1` | `les_a2_future_will` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_future_will_v1.md` |
+| `pack_les_a2_hotel_taxi_v1` | `les_a2_hotel_taxi` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_hotel_taxi_v1.md` |
+| `pack_les_a2_imperatives_v1` | `les_a2_imperatives` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_imperatives_v1.md` |
+| `pack_les_a2_introducing_others_v1` | `les_a2_introducing_others` | A2 | General | canonical | cite_only | items `authored`. `frases-ingles-trabalho.md` Ch2 and `apostila-ingles-para-iniciantes-impresso.md` §2.2 are *bibliography only* (restricted / unlicensed sources, `external-sources.md` §0.5 / §7.0). | `packs/a2/pack-les-a2-introducing-others.md` |
+| `pack_les_a2_meeting_open_v1` | `les_a2_meeting_open` | A2 | General | canonical | cite_only | items `authored`. `frases-ingles-trabalho.md` Ch4 is *bibliography only* (restricted source, `external-sources.md` §0.5 / §7.0). | `packs/a2/pack-les-a2-meeting-open.md` |
+| `pack_les_a2_meeting_participate_v1` | `les_a2_meeting_participate` | A2 | General | canonical | cite_only | items `authored`. `frases-ingles-trabalho.md` Ch4 is *bibliography only* (restricted source, `external-sources.md` §0.5 / §7.0). | `packs/a2/pack-les-a2-meeting-participate.md` |
+| `pack_les_a2_modals_can_need_v1` | `les_a2_modals_can_need` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_modals_can_need_v1.md` |
+| `pack_les_a2_past_narrative_v1` | `les_a2_past_narrative` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_past_narrative_v1.md` |
+| `pack_les_a2_phone_calls_v1` | `les_a2_phone_calls` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_phone_calls_v1.md` |
+| `pack_les_a2_prepositions_basic_v1` | `les_a2_prepositions_basic` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_prepositions_basic_v1.md` |
+| `pack_les_a2_present_continuous_v1` | `les_a2_present_continuous` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_present_continuous_v1.md` |
+| `pack_les_a2_reading_strategy_v1` | `les_a2_reading_strategy` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_reading_strategy_v1.md` |
+| `pack_les_a2_restaurant_shopping_v1` | `les_a2_restaurant_shopping` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_restaurant_shopping_v1.md` |
+| `pack_les_a2_small_talk_v1` | `les_a2_small_talk` | A2 | General | canonical | cite_only | items `authored` — no verbatim source text. `frases-ingles-trabalho.md` Ch3 is *bibliography only* (restricted source, `external-sources.md` §0.5 / §7.0). | `packs/a2/pack-les-a2-small-talk.md` |
+| `pack_les_a2_stress_timing_v1` | `les_a2_stress_timing` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_stress_timing_v1.md` |
+| `pack_les_a2_travel_vocab_core_v1` | `les_a2_travel_vocab_core` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_travel_vocab_core_v1.md` |
+| `pack_les_a2_writing_bio_v1` | `les_a2_writing_bio` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_writing_bio_v1.md` |
+| `pack_les_a2_writing_messages_v1` | `les_a2_writing_messages` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_writing_messages_v1.md` |
+| `pack_les_a2_writing_past_v1` | `les_a2_writing_past` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_writing_past_v1.md` |
+| `pack_les_a2_writing_selfcheck_v1` | `les_a2_writing_selfcheck` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_writing_selfcheck_v1.md` |
+| `pack_les_a2_writing_svo_v1` | `les_a2_writing_svo` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_writing_svo_v1.md` |
+| `pack_les_a2_it_algorithms_basics_v1` | `les_a2_it_algorithms_basics` | A2 | IT | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_it_algorithms_basics_v1.md` |
+| `pack_les_a2_it_clean_code_basics_v1` | `les_a2_it_clean_code_basics` | A2 | IT | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_it_clean_code_basics_v1.md` |
+| `pack_les_a2_it_computer_parts_v1` | `les_a2_it_computer_parts` | A2 | IT | legacy_v1 | `cite_only` — every item is original. `Ingles-Tecnico-Para-Informatica.md` (CETAM, ©) Aula 4 is cited as bibliography; no text, diagram, or activity from it is reproduced. | — | `packs/a2/pack_les_a2_it_computer_parts_v1.md` |
+| `pack_les_a2_it_email_technical_v1` | `les_a2_it_email_technical` | A2 | IT | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_it_email_technical_v1.md` |
+| `pack_les_a2_it_incidents_v1` | `les_a2_it_incidents` | A2 | IT | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_it_incidents_v1.md` |
+| `pack_les_a2_it_internet_history_v1` | `les_a2_it_internet_history` | A2 | IT | legacy_v1 | `cite_only` — every item is original. `Ingles-Tecnico-Para-Informatica.md` (CETAM, ©) Aula 6 is cited as bibliography; no text, diagram, or activity from it is reproduced. | — | `packs/a2/pack_les_a2_it_internet_history_v1.md` |
+| `pack_les_a2_it_meeting_standup_v1` | `les_a2_it_meeting_standup` | A2 | IT | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_it_meeting_standup_v1.md` |
+| `pack_les_a2_it_nontech_tech_v1` | `les_a2_it_nontech_tech` | A2 | IT | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_it_nontech_tech_v1.md` |
+| `pack_les_a2_it_pr_tickets_v1` | `les_a2_it_pr_tickets` | A2 | IT | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_it_pr_tickets_v1.md` |
+| `pack_les_a2_it_reading_strategy_v1` | `les_a2_it_reading_strategy` | A2 | IT | legacy_v1 | `cite_only` — every item is original. `Ingles-Tecnico-Para-Informatica.md` (CETAM, ©) is cited as bibliography; no text, table, or activity from it is reproduced. | — | `packs/a2/pack_les_a2_it_reading_strategy_v1.md` |
+| `pack_les_a2_it_roles_hierarchy_v1` | `les_a2_it_roles_hierarchy` | A2 | IT | legacy_v1 | `cite_only` — every item is original. `Dicionario-de-Siglas-e-Termos-Profissionais-em-Ingles.md` Ch3 is cited as bibliography and nothing from it is reproduced. | — | `packs/a2/pack_les_a2_it_roles_hierarchy_v1.md` |
+| `pack_les_a2_it_system_unit_v1` | `les_a2_it_system_unit` | A2 | IT | legacy_v1 | `cite_only` — every item is original. `Ingles-Tecnico-Para-Informatica.md` (CETAM, ©) Aula 5.1 is cited as bibliography; no text, figure, caption, or activity from it is reproduced. | — | `packs/a2/pack_les_a2_it_system_unit_v1.md` |
+| `pack_les_a2_it_terms_basics_v1` | `les_a2_it_terms_basics` | A2 | IT | canonical | cite_only | items `authored`. The lesson adapts **S16** and **S01** (both CC-BY-4.0); see the lesson's | `packs/a2/pack-les-a2-it-terms-basics.md` |
+| `pack_les_a2_it_testing_fundamentals_v1` | `les_a2_it_testing_fundamentals` | A2 | IT | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_it_testing_fundamentals_v1.md` |
+| `pack_les_a2_it_typescript_basics_v1` | `les_a2_it_typescript_basics` | A2 | IT | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_it_typescript_basics_v1.md` |
+| `pack_les_a2_it_word_formation_v1` | `les_a2_it_word_formation` | A2 | IT | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_it_word_formation_v1.md` |
+| `pack_les_b1_conditionals_v1` | `les_b1_conditionals` | B1 | General | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_conditionals_v1.md` |
+| `pack_les_b1_finance_business_v1` | `les_b1_finance_business` | B1 | General | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_finance_business_v1.md` |
+| `pack_les_b1_hr_career_v1` | `les_b1_hr_career` | B1 | General | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_hr_career_v1.md` |
+| `pack_les_b1_leadership_feedback_v1` | `les_b1_leadership_feedback` | B1 | General | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_leadership_feedback_v1.md` |
+| `pack_les_b1_modals_v1` | `les_b1_modals` | B1 | General | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_modals_v1.md` |
+| `pack_les_b1_negotiation_v1` | `les_b1_negotiation` | B1 | General | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_negotiation_v1.md` |
+| `pack_les_b1_passive_v1` | `les_b1_passive` | B1 | General | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_passive_v1.md` |
+| `pack_les_b1_presentation_skills_v1` | `les_b1_presentation_skills` | B1 | General | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_presentation_skills_v1.md` |
+| `pack_les_b1_project_case_study_v1` | `les_b1_project_case_study` | B1 | General | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_project_case_study_v1.md` |
+| `pack_les_b1_project_client_sim_v1` | `les_b1_project_client_sim` | B1 | General | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_project_client_sim_v1.md` |
+| `pack_les_b1_project_integrated_review_v1` | `les_b1_project_integrated_review` | B1 | General | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_project_integrated_review_v1.md` |
+| `pack_les_b1_project_negotiation_roleplay_v1` | `les_b1_project_negotiation_roleplay` | B1 | General | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_project_negotiation_roleplay_v1.md` |
+| `pack_les_b1_project_presentation_final_v1` | `les_b1_project_presentation_final` | B1 | General | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_project_presentation_final_v1.md` |
+| `pack_les_b1_project_retrospective_v1` | `les_b1_project_retrospective` | B1 | General | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_project_retrospective_v1.md` |
+| `pack_les_b1_question_forms_v1` | `les_b1_question_forms` | B1 | General | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_question_forms_v1.md` |
+| `pack_les_b1_reported_speech_v1` | `les_b1_reported_speech` | B1 | General | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_reported_speech_v1.md` |
+| `pack_les_b1_sales_marketing_v1` | `les_b1_sales_marketing` | B1 | General | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_sales_marketing_v1.md` |
+| `pack_les_b1_tenses_review_v1` | `les_b1_tenses_review` | B1 | General | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_tenses_review_v1.md` |
+| `pack_les_b1_it_acronyms_deep_v1` | `les_b1_it_acronyms_deep` | B1 | IT | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_it_acronyms_deep_v1.md` |
+| `pack_les_b1_it_architecture_vocab_v1` | `les_b1_it_architecture_vocab` | B1 | IT | canonical (`pack-les-*.md`) | authored_material | ✅ Lote 1 | `packs/b1/pack-les-b1-it-architecture-vocab.md` |
+| `pack_les_b1_it_bdd_specs_v1` | `les_b1_it_bdd_specs` | B1 | IT | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_it_bdd_specs_v1.md` |
+| `pack_les_b1_it_code_review_v1` | `les_b1_it_code_review` | B1 | IT | canonical (`pack-les-*.md`) | authored_material | ✅ Lote 1 | `packs/b1/pack-les-b1-it-code-review.md` |
+| `pack_les_b1_it_ddd_modeling_v1` | `les_b1_it_ddd_modeling` | B1 | IT | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_it_ddd_modeling_v1.md` |
+| `pack_les_b1_it_debugging_v1` | `les_b1_it_debugging` | B1 | IT | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_it_debugging_v1.md` |
+| `pack_les_b1_it_devops_basics_v1` | `les_b1_it_devops_basics` | B1 | IT | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_it_devops_basics_v1.md` |
+| `pack_les_b1_it_ux_collab_v1` | `les_b1_it_ux_collab` | B1 | IT | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_it_ux_collab_v1.md` |
+| `pack_les_b1_it_write_docs_v1` | `les_b1_it_write_docs` | B1 | IT | legacy_v1 | cite_only | — | `packs/b1/pack_les_b1_it_write_docs_v1.md` |
+| `pack_les_b2_celpe_br_v1` | `les_b2_celpe_br` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_celpe_br_v1.md` |
+| `pack_les_b2_culture_brazil_vs_usa_v1` | `les_b2_culture_brazil_vs_usa` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_culture_brazil_vs_usa_v1.md` |
+| `pack_les_b2_exam_simulations_v1` | `les_b2_exam_simulations` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_exam_simulations_v1.md` |
+| `pack_les_b2_exam_vocab_v1` | `les_b2_exam_vocab` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_exam_vocab_v1.md` |
+| `pack_les_b2_ielts_writing_v1` | `les_b2_ielts_writing` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_ielts_writing_v1.md` |
+| `pack_les_b2_professional_argument_v1` | `les_b2_professional_argument` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_professional_argument_v1.md` |
+| `pack_les_b2_professional_email_advanced_v1` | `les_b2_professional_email_advanced` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_professional_email_advanced_v1.md` |
+| `pack_les_b2_professional_review_v1` | `les_b2_professional_review` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_professional_review_v1.md` |
+| `pack_les_b2_professional_summary_v1` | `les_b2_professional_summary` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_professional_summary_v1.md` |
+| `pack_les_b2_register_nuance_v1` | `les_b2_register_nuance` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_register_nuance_v1.md` |
+| `pack_les_b2_toeic_reading_v1` | `les_b2_toeic_reading` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_toeic_reading_v1.md` |
+| `pack_les_b2_toeic_writing_v1` | `les_b2_toeic_writing` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_toeic_writing_v1.md` |
+| `pack_les_b2_it_advanced_patterns_v1` | `les_b2_it_advanced_patterns` | B2 | IT | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_it_advanced_patterns_v1.md` |
+| `pack_les_b2_it_architecture_decisions_v1` | `les_b2_it_architecture_decisions` | B2 | IT | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_it_architecture_decisions_v1.md` |
+| `pack_les_b2_it_incident_postmortem_v1` | `les_b2_it_incident_postmortem` | B2 | IT | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_it_incident_postmortem_v1.md` |
+| `pack_les_b2_it_jargon_mastery_v1` | `les_b2_it_jargon_mastery` | B2 | IT | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_it_jargon_mastery_v1.md` |
+| `pack_les_b2_it_mentoring_v1` | `les_b2_it_mentoring` | B2 | IT | canonical (`pack-les-*.md`) | authored_material | ✅ Lote 1 | `packs/b2/pack-les-b2-it-mentoring.md` |
+| `pack_les_b2_it_rfc_writing_v1` | `les_b2_it_rfc_writing` | B2 | IT | canonical (`pack-les-*.md`) | authored_material | ✅ Lote 1 | `packs/b2/pack-les-b2-it-rfc-writing.md` |
+| `pack_les_b2_it_strategy_v1` | `les_b2_it_strategy` | B2 | IT | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_it_strategy_v1.md` |
+| `pack_les_b2_it_technical_leadership_v1` | `les_b2_it_technical_leadership` | B2 | IT | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_it_technical_leadership_v1.md` |
+| `pack_les_a2_greetings_intro_v1` | `lesson-15min-workplace-greetings` | None | General | canonical | adapt_requires_permission | 6 source_derived, 1 authored (`rdg_scanning_microtext_001`, CAT-excluded per G-Q7) | `packs/a2/pack-les-a2-greetings-intro.md` |
+| `pack_les_rem_confidence_builder_v1` | `les_rem_confidence_builder` | None | Remediation | legacy_v1 | cite_only | — | `packs/remediation/pack_les_rem_confidence_builder_v1.md` |
+| `pack_les_rem_grammar_be_pronouns_v1` | `les_rem_grammar_be_pronouns` | None | Remediation | legacy_v1 | cite_only | — | `packs/remediation/pack_les_rem_grammar_be_pronouns_v1.md` |
+| `pack_les_rem_listening_slow_clear_v1` | `les_rem_listening_slow_clear` | None | Remediation | legacy_v1 | cite_only | — | `packs/remediation/pack_les_rem_listening_slow_clear_v1.md` |
+| `pack_les_rem_pronunciation_th_vw_v1` | `les_rem_pronunciation_th_vw` | None | Remediation | legacy_v1 | cite_only | — | `packs/remediation/pack_les_rem_pronunciation_th_vw_v1.md` |
+| `pack_les_rem_writing_svo_v1` | `les_rem_writing_svo` | None | Remediation | legacy_v1 | cite_only | — | `packs/remediation/pack_les_rem_writing_svo_v1.md` |
+
+---
+
+## 5. Fila Priorizada em Ondas (Waves) de Reautoria
+
+Objetivo de cada onda: reescrever integralmente o conteúdo didático/itens para **`authored_material`** (autoria própria, sem reprodução/adaptação de fontes restritas ou dependência de `cite_only`/`adapt_with_attribution`/cobertura `thin`), atualizar metadados de proveniência, e migrar o pack associado ao schema canônico conforme aplicável.
+
+### Onda 1 — Crítica (Trilha TI B1/B2 e nós bloqueados)
+
+**Escopo:** 18 lições (toda a trilha IT B1/B2 + `les_b1_it_presentations` bloqueada). Inclui itens com `sourced_external_thin` e o nó sem fonte adequada.
+
+| Lesson ID | CEFR | Trilha | Base/estado atual | Habilidades/objetivo-alvo (reautoria) | Arquivo |
+|---|---|---|---|---|---|
+| `les_b1_it_acronyms_deep` | B1 | IT | `cite_only` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b1/les_b1_it_acronyms_deep.md` |
+| `les_b1_it_architecture_vocab` | B1 | IT | ~~`adapt_with_attribution`~~ → `authored_material` ✅ Lote 1 | Inglês técnico TI — reautoria integral concluída | `lessons/b1/les_b1_it_architecture_vocab.md` |
+| `les_b1_it_bdd_specs` | B1 | IT | `cite_only` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b1/les_b1_it_bdd_specs.md` |
+| `les_b1_it_code_review` | B1 | IT | ~~`adapt_with_attribution`~~ → `authored_material` ✅ Lote 1 | Inglês técnico TI — reautoria integral concluída | `lessons/b1/les_b1_it_code_review.md` |
+| `les_b1_it_ddd_modeling` | B1 | IT | `cite_only` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b1/les_b1_it_ddd_modeling.md` |
+| `les_b1_it_debugging` | B1 | IT | `adapt_with_attribution` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b1/les_b1_it_debugging.md` |
+| `les_b1_it_devops_basics` | B1 | IT | `cite_only` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b1/les_b1_it_devops_basics.md` |
+| `les_b1_it_presentations` | B1 | IT | `blocked_no_adequate_source` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks · **BLOQUEADA (criar arquivo e definir fonte/escopo autoral)** | `(sem arquivo em lessons/ — nó bloqueado no registro §4.3)` |
+| `les_b1_it_ux_collab` | B1 | IT | `cite_only` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b1/les_b1_it_ux_collab.md` |
+| `les_b1_it_write_docs` | B1 | IT | `adapt_with_attribution` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b1/les_b1_it_write_docs.md` |
+| `les_b2_it_advanced_patterns` | B2 | IT | `cite_only` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b2/les_b2_it_advanced_patterns.md` |
+| `les_b2_it_architecture_decisions` | B2 | IT | `adapt_with_attribution` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b2/les_b2_it_architecture_decisions.md` |
+| `les_b2_it_incident_postmortem` | B2 | IT | `adapt_with_attribution` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b2/les_b2_it_incident_postmortem.md` |
+| `les_b2_it_jargon_mastery` | B2 | IT | `cite_only` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b2/les_b2_it_jargon_mastery.md` |
+| `les_b2_it_mentoring` | B2 | IT | `adapt_with_attribution` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks · **thin** | `lessons/b2/les_b2_it_mentoring.md` |
+| `les_b2_it_rfc_writing` | B2 | IT | `adapt_with_attribution` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks · **thin** | `lessons/b2/les_b2_it_rfc_writing.md` |
+| `les_b2_it_strategy` | B2 | IT | `cite_only` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b2/les_b2_it_strategy.md` |
+| `les_b2_it_technical_leadership` | B2 | IT | `cite_only` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b2/les_b2_it_technical_leadership.md` |
+
+**Packs associados (Onda 1):** migrar os packs dos mesmos `lesson_id` para schema canônico, declarar `**Reuse basis:** authored_material` coerente com os itens, e garantir conformidade de `item_id`/chaves/distratores.
+- `packs/b1/pack_les_b1_it_acronyms_deep_v1.md` (lesson `les_b1_it_acronyms_deep`, schema legacy_v1, base atual `cite_only`)
+- ~~`packs/b1/pack_les_b1_it_architecture_vocab_v1.md`~~ → `packs/b1/pack-les-b1-it-architecture-vocab.md` (lesson `les_b1_it_architecture_vocab`, canônico, `authored_material`, ✅ Lote 1)
+- `packs/b1/pack_les_b1_it_bdd_specs_v1.md` (lesson `les_b1_it_bdd_specs`, schema legacy_v1, base atual `cite_only`)
+- ~~`packs/b1/pack_les_b1_it_code_review_v1.md`~~ → `packs/b1/pack-les-b1-it-code-review.md` (lesson `les_b1_it_code_review`, canônico, `authored_material`, ✅ Lote 1)
+- `packs/b1/pack_les_b1_it_ddd_modeling_v1.md` (lesson `les_b1_it_ddd_modeling`, schema legacy_v1, base atual `cite_only`)
+- `packs/b1/pack_les_b1_it_debugging_v1.md` (lesson `les_b1_it_debugging`, schema legacy_v1, base atual `cite_only`)
+- `packs/b1/pack_les_b1_it_devops_basics_v1.md` (lesson `les_b1_it_devops_basics`, schema legacy_v1, base atual `cite_only`)
+- `packs/b1/pack_les_b1_it_ux_collab_v1.md` (lesson `les_b1_it_ux_collab`, schema legacy_v1, base atual `cite_only`)
+- `packs/b1/pack_les_b1_it_write_docs_v1.md` (lesson `les_b1_it_write_docs`, schema legacy_v1, base atual `cite_only`)
+- `packs/b2/pack_les_b2_it_advanced_patterns_v1.md` (lesson `les_b2_it_advanced_patterns`, schema legacy_v1, base atual `cite_only`)
+- `packs/b2/pack_les_b2_it_architecture_decisions_v1.md` (lesson `les_b2_it_architecture_decisions`, schema legacy_v1, base atual `cite_only`)
+- `packs/b2/pack_les_b2_it_incident_postmortem_v1.md` (lesson `les_b2_it_incident_postmortem`, schema legacy_v1, base atual `cite_only`)
+- `packs/b2/pack_les_b2_it_jargon_mastery_v1.md` (lesson `les_b2_it_jargon_mastery`, schema legacy_v1, base atual `cite_only`)
+- ~~`packs/b2/pack_les_b2_it_mentoring_v1.md`~~ → `packs/b2/pack-les-b2-it-mentoring.md` (lesson `les_b2_it_mentoring`, canônico, `authored_material`, ✅ Lote 1)
+- ~~`packs/b2/pack_les_b2_it_rfc_writing_v1.md`~~ → `packs/b2/pack-les-b2-it-rfc-writing.md` (lesson `les_b2_it_rfc_writing`, canônico, `authored_material`, ✅ Lote 1)
+- `packs/b2/pack_les_b2_it_strategy_v1.md` (lesson `les_b2_it_strategy`, schema legacy_v1, base atual `cite_only`)
+- `packs/b2/pack_les_b2_it_technical_leadership_v1.md` (lesson `les_b2_it_technical_leadership`, schema legacy_v1, base atual `cite_only`)
+
+### Onda 2 — Fundação A1/A2 (Onboarding do aluno)
+
+**Escopo:** 70 lições (todos os níveis A1 e A2, trilhas General e IT). Prioridade: estabelecer base 100% autoral antes da progressão para B1/B2.
+
+| Lesson ID | CEFR | Trilha | Base atual | Habilidades/objetivo-alvo (reautoria) | Arquivo |
+|---|---|---|---|---|---|
+| `les_a1_alphabet_sounds` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_alphabet_sounds.md` |
+| `les_a1_articles_nouns` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_articles_nouns.md` |
+| `les_a1_daily_basics` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_daily_basics.md` |
+| `les_a1_days_months` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_days_months.md` |
+| `les_a1_en_us_en_gb` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_en_us_en_gb.md` |
+| `les_a1_false_cognates` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_false_cognates.md` |
+| `les_a1_food` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_food.md` |
+| `les_a1_greetings` | A1 | General | `cite_only` | Cumprimentos, apresentações e interação social básica — reautoria integral | `lessons/a1/les_a1_greetings.md` |
+| `les_a1_have_has` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_have_has.md` |
+| `les_a1_intro_dialogue` | A1 | General | `cite_only` | Cumprimentos, apresentações e interação social básica — reautoria integral | `lessons/a1/les_a1_intro_dialogue.md` |
+| `les_a1_numbers_colors` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_numbers_colors.md` |
+| `les_a1_occupations` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_occupations.md` |
+| `les_a1_present_simple` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_present_simple.md` |
+| `les_a1_present_simple_questions` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_present_simple_questions.md` |
+| `les_a1_pronouns_demonstrative` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_pronouns_demonstrative.md` |
+| `les_a1_pronouns_possessive` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_pronouns_possessive.md` |
+| `les_a1_pronouns_subject_object` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_pronouns_subject_object.md` |
+| `les_a1_pronunciation_intro` | A1 | General | `cite_only` | Pronúncia e consciência fonológica A1 — reautoria integral | `lessons/a1/les_a1_pronunciation_intro.md` |
+| `les_a1_reading_skimming` | A1 | General | `cite_only` | Leitura/escrita funcional A2 — reautoria integral | `lessons/a1/les_a1_reading_skimming.md` |
+| `les_a1_regular_verbs_past` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_regular_verbs_past.md` |
+| `les_a1_there_is_are` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_there_is_are.md` |
+| `les_a1_time_dates` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_time_dates.md` |
+| `les_a1_to_be_forms` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_to_be_forms.md` |
+| `les_a1_wh_questions` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_wh_questions.md` |
+| `les_a2_airport` | A2 | General | `cite_only` | Vocabulário e situações de viagem A2 — reautoria integral | `lessons/a2/les_a2_airport.md` |
+| `les_a2_ask_for_help` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_ask_for_help.md` |
+| `les_a2_collocations` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_collocations.md` |
+| `les_a2_corporate_wrapup` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_corporate_wrapup.md` |
+| `les_a2_corpus_intro` | A2 | General | `cite_only` | Cumprimentos, apresentações e interação social básica — reautoria integral | `lessons/a2/les_a2_corpus_intro.md` |
+| `les_a2_deadlines_tasks` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_deadlines_tasks.md` |
+| `les_a2_email_basics` | A2 | General | `cite_only` | Leitura/escrita funcional A2 — reautoria integral | `lessons/a2/les_a2_email_basics.md` |
+| `les_a2_feedback_praise` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_feedback_praise.md` |
+| `les_a2_future_will` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_future_will.md` |
+| `les_a2_greetings_intro` | A2 | General | `cite_only` | Cumprimentos, apresentações e interação social básica — reautoria integral | `lessons/a2/lesson-15min-workplace-greetings.md` |
+| `les_a2_hotel_taxi` | A2 | General | `cite_only` | Vocabulário e situações de viagem A2 — reautoria integral | `lessons/a2/les_a2_hotel_taxi.md` |
+| `les_a2_imperatives` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_imperatives.md` |
+| `les_a2_introducing_others` | A2 | General | `cite_only` | Cumprimentos, apresentações e interação social básica — reautoria integral | `lessons/a2/les_a2_introducing_others.md` |
+| `les_a2_meeting_open` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_meeting_open.md` |
+| `les_a2_meeting_participate` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_meeting_participate.md` |
+| `les_a2_modals_can_need` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_modals_can_need.md` |
+| `les_a2_past_narrative` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_past_narrative.md` |
+| `les_a2_phone_calls` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_phone_calls.md` |
+| `les_a2_prepositions_basic` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_prepositions_basic.md` |
+| `les_a2_present_continuous` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_present_continuous.md` |
+| `les_a2_reading_strategy` | A2 | General | `cite_only` | Leitura/escrita funcional A2 — reautoria integral | `lessons/a2/les_a2_reading_strategy.md` |
+| `les_a2_restaurant_shopping` | A2 | General | `cite_only` | Vocabulário e situações de viagem A2 — reautoria integral | `lessons/a2/les_a2_restaurant_shopping.md` |
+| `les_a2_small_talk` | A2 | General | `cite_only` | Cumprimentos, apresentações e interação social básica — reautoria integral | `lessons/a2/les_a2_small_talk.md` |
+| `les_a2_stress_timing` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_stress_timing.md` |
+| `les_a2_travel_vocab_core` | A2 | General | `cite_only` | Vocabulário e situações de viagem A2 — reautoria integral | `lessons/a2/les_a2_travel_vocab_core.md` |
+| `les_a2_writing_bio` | A2 | General | `cite_only` | Leitura/escrita funcional A2 — reautoria integral | `lessons/a2/les_a2_writing_bio.md` |
+| `les_a2_writing_messages` | A2 | General | `cite_only` | Leitura/escrita funcional A2 — reautoria integral | `lessons/a2/les_a2_writing_messages.md` |
+| `les_a2_writing_past` | A2 | General | `cite_only` | Leitura/escrita funcional A2 — reautoria integral | `lessons/a2/les_a2_writing_past.md` |
+| `les_a2_writing_selfcheck` | A2 | General | `cite_only` | Leitura/escrita funcional A2 — reautoria integral | `lessons/a2/les_a2_writing_selfcheck.md` |
+| `les_a2_writing_svo` | A2 | General | `cite_only` | Leitura/escrita funcional A2 — reautoria integral | `lessons/a2/les_a2_writing_svo.md` |
+| `les_a2_it_algorithms_basics` | A2 | IT | `cite_only` | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_algorithms_basics.md` |
+| `les_a2_it_clean_code_basics` | A2 | IT | `cite_only` | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_clean_code_basics.md` |
+| `les_a2_it_computer_parts` | A2 | IT | `cite_only` | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_computer_parts.md` |
+| `les_a2_it_email_technical` | A2 | IT | `cite_only` | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_email_technical.md` |
+| `les_a2_it_incidents` | A2 | IT | `adapt_with_attribution` | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_incidents.md` |
+| `les_a2_it_internet_history` | A2 | IT | `cite_only` | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_internet_history.md` |
+| `les_a2_it_meeting_standup` | A2 | IT | `adapt_with_attribution` · **thin** | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_meeting_standup.md` |
+| `les_a2_it_nontech_tech` | A2 | IT | `cite_only` | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_nontech_tech.md` |
+| `les_a2_it_pr_tickets` | A2 | IT | `cite_only` | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_pr_tickets.md` |
+| `les_a2_it_reading_strategy` | A2 | IT | `cite_only` | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_reading_strategy.md` |
+| `les_a2_it_roles_hierarchy` | A2 | IT | `cite_only` | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_roles_hierarchy.md` |
+| `les_a2_it_system_unit` | A2 | IT | `cite_only` | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_system_unit.md` |
+| `les_a2_it_terms_basics` | A2 | IT | `adapt_with_attribution` | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_terms_basics.md` |
+| `les_a2_it_testing_fundamentals` | A2 | IT | `cite_only` | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_testing_fundamentals.md` |
+| `les_a2_it_typescript_basics` | A2 | IT | `cite_only` | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_typescript_basics.md` |
+| `les_a2_it_word_formation` | A2 | IT | `cite_only` | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_word_formation.md` |
+
+**Packs associados (Onda 2):** reautoria e migração dos packs A1/A2 (canônicos e legados) alinhados aos novos textos autorais.
+
+### Onda 3 — Consolidação B1/B2 General + Remediação + Migração de Packs Legados
+
+**Escopo lições:** 35 lições B1/B2 General e remediação (não-IT). **Escopo packs:** migração integral dos **115 packs legados v1** remanescentes para schema canônico, com reautoria para `authored_material`.
+
+| Lesson ID | CEFR | Trilha | Base atual | Habilidades/objetivo-alvo (reautoria) | Arquivo |
+|---|---|---|---|---|---|
+| `les_b1_conditionals` | B1 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b1/les_b1_conditionals.md` |
+| `les_b1_finance_business` | B1 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b1/les_b1_finance_business.md` |
+| `les_b1_hr_career` | B1 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b1/les_b1_hr_career.md` |
+| `les_b1_leadership_feedback` | B1 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b1/les_b1_leadership_feedback.md` |
+| `les_b1_modals` | B1 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b1/les_b1_modals.md` |
+| `les_b1_negotiation` | B1 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b1/les_b1_negotiation.md` |
+| `les_b1_passive` | B1 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b1/les_b1_passive.md` |
+| `les_b1_presentation_skills` | B1 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b1/les_b1_presentation_skills.md` |
+| `les_b1_project_case_study` | B1 | General | `adapt_with_attribution` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b1/les_b1_project_case_study.md` |
+| `les_b1_project_client_sim` | B1 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b1/les_b1_project_client_sim.md` |
+| `les_b1_project_integrated_review` | B1 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b1/les_b1_project_integrated_review.md` |
+| `les_b1_project_negotiation_roleplay` | B1 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b1/les_b1_project_negotiation_roleplay.md` |
+| `les_b1_project_presentation_final` | B1 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b1/les_b1_project_presentation_final.md` |
+| `les_b1_project_retrospective` | B1 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b1/les_b1_project_retrospective.md` |
+| `les_b1_question_forms` | B1 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b1/les_b1_question_forms.md` |
+| `les_b1_reported_speech` | B1 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b1/les_b1_reported_speech.md` |
+| `les_b1_sales_marketing` | B1 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b1/les_b1_sales_marketing.md` |
+| `les_b1_tenses_review` | B1 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b1/les_b1_tenses_review.md` |
+| `les_rem_confidence_builder` | B1 | Remediation | `cite_only` | Remediação dirigida (lacunas diagnósticas) — reautoria integral e alinhamento ao gatilho | `lessons/remediation/les_rem_confidence_builder.md` |
+| `les_rem_grammar_be_pronouns` | B1 | Remediation | `cite_only` | Remediação dirigida (lacunas diagnósticas) — reautoria integral e alinhamento ao gatilho | `lessons/remediation/les_rem_grammar_be_pronouns.md` |
+| `les_rem_listening_slow_clear` | B1 | Remediation | `cite_only` | Remediação dirigida (lacunas diagnósticas) — reautoria integral e alinhamento ao gatilho | `lessons/remediation/les_rem_listening_slow_clear.md` |
+| `les_rem_pronunciation_th_vw` | B1 | Remediation | `cite_only` | Remediação dirigida (lacunas diagnósticas) — reautoria integral e alinhamento ao gatilho | `lessons/remediation/les_rem_pronunciation_th_vw.md` |
+| `les_rem_writing_svo` | B1 | Remediation | `cite_only` | Remediação dirigida (lacunas diagnósticas) — reautoria integral e alinhamento ao gatilho | `lessons/remediation/les_rem_writing_svo.md` |
+| `les_b2_celpe_br` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_celpe_br.md` |
+| `les_b2_culture_brazil_vs_usa` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_culture_brazil_vs_usa.md` |
+| `les_b2_exam_simulations` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_exam_simulations.md` |
+| `les_b2_exam_vocab` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_exam_vocab.md` |
+| `les_b2_ielts_writing` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_ielts_writing.md` |
+| `les_b2_professional_argument` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_professional_argument.md` |
+| `les_b2_professional_email_advanced` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_professional_email_advanced.md` |
+| `les_b2_professional_review` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_professional_review.md` |
+| `les_b2_professional_summary` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_professional_summary.md` |
+| `les_b2_register_nuance` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_register_nuance.md` |
+| `les_b2_toeic_reading` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_toeic_reading.md` |
+| `les_b2_toeic_writing` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_toeic_writing.md` |
+
+**Backlog de migração de packs legados (todos os schemas `legacy_v1`):**
+- `packs/a1/pack_les_a1_alphabet_sounds_v1.md` → migrar para schema canônico; lesson `les_a1_alphabet_sounds`, base atual `cite_only`
+- `packs/a1/pack_les_a1_articles_nouns_v1.md` → migrar para schema canônico; lesson `les_a1_articles_nouns`, base atual `cite_only`
+- `packs/a1/pack_les_a1_daily_basics_v1.md` → migrar para schema canônico; lesson `les_a1_daily_basics`, base atual `cite_only`
+- `packs/a1/pack_les_a1_days_months_v1.md` → migrar para schema canônico; lesson `les_a1_days_months`, base atual `cite_only`
+- `packs/a1/pack_les_a1_en_us_en_gb_v1.md` → migrar para schema canônico; lesson `les_a1_en_us_en_gb`, base atual `cite_only`
+- `packs/a1/pack_les_a1_false_cognates_v1.md` → migrar para schema canônico; lesson `les_a1_false_cognates`, base atual `cite_only`
+- `packs/a1/pack_les_a1_food_v1.md` → migrar para schema canônico; lesson `les_a1_food`, base atual `cite_only`
+- `packs/a1/pack_les_a1_greetings_v1.md` → migrar para schema canônico; lesson `les_a1_greetings`, base atual `cite_only`
+- `packs/a1/pack_les_a1_have_has_v1.md` → migrar para schema canônico; lesson `les_a1_have_has`, base atual `cite_only`
+- `packs/a1/pack_les_a1_intro_dialogue_v1.md` → migrar para schema canônico; lesson `les_a1_intro_dialogue`, base atual `cite_only`
+- `packs/a1/pack_les_a1_numbers_colors_v1.md` → migrar para schema canônico; lesson `les_a1_numbers_colors`, base atual `cite_only`
+- `packs/a1/pack_les_a1_occupations_v1.md` → migrar para schema canônico; lesson `les_a1_occupations`, base atual `cite_only`
+- `packs/a1/pack_les_a1_present_simple_questions_v1.md` → migrar para schema canônico; lesson `les_a1_present_simple_questions`, base atual `cite_only`
+- `packs/a1/pack_les_a1_present_simple_v1.md` → migrar para schema canônico; lesson `les_a1_present_simple`, base atual `cite_only`
+- `packs/a1/pack_les_a1_pronouns_demonstrative_v1.md` → migrar para schema canônico; lesson `les_a1_pronouns_demonstrative`, base atual `cite_only`
+- `packs/a1/pack_les_a1_pronouns_possessive_v1.md` → migrar para schema canônico; lesson `les_a1_pronouns_possessive`, base atual `cite_only`
+- `packs/a1/pack_les_a1_pronouns_subject_object_v1.md` → migrar para schema canônico; lesson `les_a1_pronouns_subject_object`, base atual `cite_only`
+- `packs/a1/pack_les_a1_pronunciation_intro_v1.md` → migrar para schema canônico; lesson `les_a1_pronunciation_intro`, base atual `cite_only`
+- `packs/a1/pack_les_a1_reading_skimming_v1.md` → migrar para schema canônico; lesson `les_a1_reading_skimming`, base atual `cite_only`
+- `packs/a1/pack_les_a1_regular_verbs_past_v1.md` → migrar para schema canônico; lesson `les_a1_regular_verbs_past`, base atual `cite_only`
+- `packs/a1/pack_les_a1_there_is_are_v1.md` → migrar para schema canônico; lesson `les_a1_there_is_are`, base atual `cite_only`
+- `packs/a1/pack_les_a1_time_dates_v1.md` → migrar para schema canônico; lesson `les_a1_time_dates`, base atual `cite_only`
+- `packs/a1/pack_les_a1_to_be_forms_v1.md` → migrar para schema canônico; lesson `les_a1_to_be_forms`, base atual `cite_only`
+- `packs/a1/pack_les_a1_wh_questions_v1.md` → migrar para schema canônico; lesson `les_a1_wh_questions`, base atual `cite_only`
+- `packs/a2/pack_les_a2_airport_v1.md` → migrar para schema canônico; lesson `les_a2_airport`, base atual `cite_only`
+- `packs/a2/pack_les_a2_ask_for_help_v1.md` → migrar para schema canônico; lesson `les_a2_ask_for_help`, base atual `cite_only`
+- `packs/a2/pack_les_a2_collocations_v1.md` → migrar para schema canônico; lesson `les_a2_collocations`, base atual `cite_only`
+- `packs/a2/pack_les_a2_corporate_wrapup_v1.md` → migrar para schema canônico; lesson `les_a2_corporate_wrapup`, base atual `cite_only`
+- `packs/a2/pack_les_a2_corpus_intro_v1.md` → migrar para schema canônico; lesson `les_a2_corpus_intro`, base atual `cite_only`
+- `packs/a2/pack_les_a2_deadlines_tasks_v1.md` → migrar para schema canônico; lesson `les_a2_deadlines_tasks`, base atual `cite_only`
+- `packs/a2/pack_les_a2_feedback_praise_v1.md` → migrar para schema canônico; lesson `les_a2_feedback_praise`, base atual `cite_only`
+- `packs/a2/pack_les_a2_future_will_v1.md` → migrar para schema canônico; lesson `les_a2_future_will`, base atual `cite_only`
+- `packs/a2/pack_les_a2_hotel_taxi_v1.md` → migrar para schema canônico; lesson `les_a2_hotel_taxi`, base atual `cite_only`
+- `packs/a2/pack_les_a2_imperatives_v1.md` → migrar para schema canônico; lesson `les_a2_imperatives`, base atual `cite_only`
+- `packs/a2/pack_les_a2_it_algorithms_basics_v1.md` → migrar para schema canônico; lesson `les_a2_it_algorithms_basics`, base atual `cite_only`
+- `packs/a2/pack_les_a2_it_clean_code_basics_v1.md` → migrar para schema canônico; lesson `les_a2_it_clean_code_basics`, base atual `cite_only`
+- `packs/a2/pack_les_a2_it_computer_parts_v1.md` → migrar para schema canônico; lesson `les_a2_it_computer_parts`, base atual `cite_only`
+- `packs/a2/pack_les_a2_it_email_technical_v1.md` → migrar para schema canônico; lesson `les_a2_it_email_technical`, base atual `cite_only`
+- `packs/a2/pack_les_a2_it_incidents_v1.md` → migrar para schema canônico; lesson `les_a2_it_incidents`, base atual `cite_only`
+- `packs/a2/pack_les_a2_it_internet_history_v1.md` → migrar para schema canônico; lesson `les_a2_it_internet_history`, base atual `cite_only`
+- `packs/a2/pack_les_a2_it_meeting_standup_v1.md` → migrar para schema canônico; lesson `les_a2_it_meeting_standup`, base atual `cite_only`
+- `packs/a2/pack_les_a2_it_nontech_tech_v1.md` → migrar para schema canônico; lesson `les_a2_it_nontech_tech`, base atual `cite_only`
+- `packs/a2/pack_les_a2_it_pr_tickets_v1.md` → migrar para schema canônico; lesson `les_a2_it_pr_tickets`, base atual `cite_only`
+- `packs/a2/pack_les_a2_it_reading_strategy_v1.md` → migrar para schema canônico; lesson `les_a2_it_reading_strategy`, base atual `cite_only`
+- `packs/a2/pack_les_a2_it_roles_hierarchy_v1.md` → migrar para schema canônico; lesson `les_a2_it_roles_hierarchy`, base atual `cite_only`
+- `packs/a2/pack_les_a2_it_system_unit_v1.md` → migrar para schema canônico; lesson `les_a2_it_system_unit`, base atual `cite_only`
+- `packs/a2/pack_les_a2_it_testing_fundamentals_v1.md` → migrar para schema canônico; lesson `les_a2_it_testing_fundamentals`, base atual `cite_only`
+- `packs/a2/pack_les_a2_it_typescript_basics_v1.md` → migrar para schema canônico; lesson `les_a2_it_typescript_basics`, base atual `cite_only`
+- `packs/a2/pack_les_a2_it_word_formation_v1.md` → migrar para schema canônico; lesson `les_a2_it_word_formation`, base atual `cite_only`
+- `packs/a2/pack_les_a2_modals_can_need_v1.md` → migrar para schema canônico; lesson `les_a2_modals_can_need`, base atual `cite_only`
+- `packs/a2/pack_les_a2_past_narrative_v1.md` → migrar para schema canônico; lesson `les_a2_past_narrative`, base atual `cite_only`
+- `packs/a2/pack_les_a2_phone_calls_v1.md` → migrar para schema canônico; lesson `les_a2_phone_calls`, base atual `cite_only`
+- `packs/a2/pack_les_a2_prepositions_basic_v1.md` → migrar para schema canônico; lesson `les_a2_prepositions_basic`, base atual `cite_only`
+- `packs/a2/pack_les_a2_present_continuous_v1.md` → migrar para schema canônico; lesson `les_a2_present_continuous`, base atual `cite_only`
+- `packs/a2/pack_les_a2_reading_strategy_v1.md` → migrar para schema canônico; lesson `les_a2_reading_strategy`, base atual `cite_only`
+- `packs/a2/pack_les_a2_restaurant_shopping_v1.md` → migrar para schema canônico; lesson `les_a2_restaurant_shopping`, base atual `cite_only`
+- `packs/a2/pack_les_a2_stress_timing_v1.md` → migrar para schema canônico; lesson `les_a2_stress_timing`, base atual `cite_only`
+- `packs/a2/pack_les_a2_travel_vocab_core_v1.md` → migrar para schema canônico; lesson `les_a2_travel_vocab_core`, base atual `cite_only`
+- `packs/a2/pack_les_a2_writing_bio_v1.md` → migrar para schema canônico; lesson `les_a2_writing_bio`, base atual `cite_only`
+- `packs/a2/pack_les_a2_writing_messages_v1.md` → migrar para schema canônico; lesson `les_a2_writing_messages`, base atual `cite_only`
+- `packs/a2/pack_les_a2_writing_past_v1.md` → migrar para schema canônico; lesson `les_a2_writing_past`, base atual `cite_only`
+- `packs/a2/pack_les_a2_writing_selfcheck_v1.md` → migrar para schema canônico; lesson `les_a2_writing_selfcheck`, base atual `cite_only`
+- `packs/a2/pack_les_a2_writing_svo_v1.md` → migrar para schema canônico; lesson `les_a2_writing_svo`, base atual `cite_only`
+- `packs/b1/pack_les_b1_conditionals_v1.md` → migrar para schema canônico; lesson `les_b1_conditionals`, base atual `cite_only`
+- `packs/b1/pack_les_b1_finance_business_v1.md` → migrar para schema canônico; lesson `les_b1_finance_business`, base atual `cite_only`
+- `packs/b1/pack_les_b1_hr_career_v1.md` → migrar para schema canônico; lesson `les_b1_hr_career`, base atual `cite_only`
+- `packs/b1/pack_les_b1_it_acronyms_deep_v1.md` → migrar para schema canônico; lesson `les_b1_it_acronyms_deep`, base atual `cite_only`
+- `packs/b1/pack_les_b1_it_architecture_vocab_v1.md` → migrar para schema canônico; lesson `les_b1_it_architecture_vocab`, base atual `cite_only`
+- `packs/b1/pack_les_b1_it_bdd_specs_v1.md` → migrar para schema canônico; lesson `les_b1_it_bdd_specs`, base atual `cite_only`
+- `packs/b1/pack_les_b1_it_code_review_v1.md` → migrar para schema canônico; lesson `les_b1_it_code_review`, base atual `cite_only`
+- `packs/b1/pack_les_b1_it_ddd_modeling_v1.md` → migrar para schema canônico; lesson `les_b1_it_ddd_modeling`, base atual `cite_only`
+- `packs/b1/pack_les_b1_it_debugging_v1.md` → migrar para schema canônico; lesson `les_b1_it_debugging`, base atual `cite_only`
+- `packs/b1/pack_les_b1_it_devops_basics_v1.md` → migrar para schema canônico; lesson `les_b1_it_devops_basics`, base atual `cite_only`
+- `packs/b1/pack_les_b1_it_ux_collab_v1.md` → migrar para schema canônico; lesson `les_b1_it_ux_collab`, base atual `cite_only`
+- `packs/b1/pack_les_b1_it_write_docs_v1.md` → migrar para schema canônico; lesson `les_b1_it_write_docs`, base atual `cite_only`
+- `packs/b1/pack_les_b1_leadership_feedback_v1.md` → migrar para schema canônico; lesson `les_b1_leadership_feedback`, base atual `cite_only`
+- `packs/b1/pack_les_b1_modals_v1.md` → migrar para schema canônico; lesson `les_b1_modals`, base atual `cite_only`
+- `packs/b1/pack_les_b1_negotiation_v1.md` → migrar para schema canônico; lesson `les_b1_negotiation`, base atual `cite_only`
+- `packs/b1/pack_les_b1_passive_v1.md` → migrar para schema canônico; lesson `les_b1_passive`, base atual `cite_only`
+- `packs/b1/pack_les_b1_presentation_skills_v1.md` → migrar para schema canônico; lesson `les_b1_presentation_skills`, base atual `cite_only`
+- `packs/b1/pack_les_b1_project_case_study_v1.md` → migrar para schema canônico; lesson `les_b1_project_case_study`, base atual `cite_only`
+- `packs/b1/pack_les_b1_project_client_sim_v1.md` → migrar para schema canônico; lesson `les_b1_project_client_sim`, base atual `cite_only`
+- `packs/b1/pack_les_b1_project_integrated_review_v1.md` → migrar para schema canônico; lesson `les_b1_project_integrated_review`, base atual `cite_only`
+- `packs/b1/pack_les_b1_project_negotiation_roleplay_v1.md` → migrar para schema canônico; lesson `les_b1_project_negotiation_roleplay`, base atual `cite_only`
+- `packs/b1/pack_les_b1_project_presentation_final_v1.md` → migrar para schema canônico; lesson `les_b1_project_presentation_final`, base atual `cite_only`
+- `packs/b1/pack_les_b1_project_retrospective_v1.md` → migrar para schema canônico; lesson `les_b1_project_retrospective`, base atual `cite_only`
+- `packs/b1/pack_les_b1_question_forms_v1.md` → migrar para schema canônico; lesson `les_b1_question_forms`, base atual `cite_only`
+- `packs/b1/pack_les_b1_reported_speech_v1.md` → migrar para schema canônico; lesson `les_b1_reported_speech`, base atual `cite_only`
+- `packs/b1/pack_les_b1_sales_marketing_v1.md` → migrar para schema canônico; lesson `les_b1_sales_marketing`, base atual `cite_only`
+- `packs/b1/pack_les_b1_tenses_review_v1.md` → migrar para schema canônico; lesson `les_b1_tenses_review`, base atual `cite_only`
+- `packs/b2/pack_les_b2_celpe_br_v1.md` → migrar para schema canônico; lesson `les_b2_celpe_br`, base atual `cite_only`
+- `packs/b2/pack_les_b2_culture_brazil_vs_usa_v1.md` → migrar para schema canônico; lesson `les_b2_culture_brazil_vs_usa`, base atual `cite_only`
+- `packs/b2/pack_les_b2_exam_simulations_v1.md` → migrar para schema canônico; lesson `les_b2_exam_simulations`, base atual `cite_only`
+- `packs/b2/pack_les_b2_exam_vocab_v1.md` → migrar para schema canônico; lesson `les_b2_exam_vocab`, base atual `cite_only`
+- `packs/b2/pack_les_b2_ielts_writing_v1.md` → migrar para schema canônico; lesson `les_b2_ielts_writing`, base atual `cite_only`
+- `packs/b2/pack_les_b2_it_advanced_patterns_v1.md` → migrar para schema canônico; lesson `les_b2_it_advanced_patterns`, base atual `cite_only`
+- `packs/b2/pack_les_b2_it_architecture_decisions_v1.md` → migrar para schema canônico; lesson `les_b2_it_architecture_decisions`, base atual `cite_only`
+- `packs/b2/pack_les_b2_it_incident_postmortem_v1.md` → migrar para schema canônico; lesson `les_b2_it_incident_postmortem`, base atual `cite_only`
+- `packs/b2/pack_les_b2_it_jargon_mastery_v1.md` → migrar para schema canônico; lesson `les_b2_it_jargon_mastery`, base atual `cite_only`
+- `packs/b2/pack_les_b2_it_mentoring_v1.md` → migrar para schema canônico; lesson `les_b2_it_mentoring`, base atual `cite_only`
+- `packs/b2/pack_les_b2_it_rfc_writing_v1.md` → migrar para schema canônico; lesson `les_b2_it_rfc_writing`, base atual `cite_only`
+- `packs/b2/pack_les_b2_it_strategy_v1.md` → migrar para schema canônico; lesson `les_b2_it_strategy`, base atual `cite_only`
+- `packs/b2/pack_les_b2_it_technical_leadership_v1.md` → migrar para schema canônico; lesson `les_b2_it_technical_leadership`, base atual `cite_only`
+- `packs/b2/pack_les_b2_professional_argument_v1.md` → migrar para schema canônico; lesson `les_b2_professional_argument`, base atual `cite_only`
+- `packs/b2/pack_les_b2_professional_email_advanced_v1.md` → migrar para schema canônico; lesson `les_b2_professional_email_advanced`, base atual `cite_only`
+- `packs/b2/pack_les_b2_professional_review_v1.md` → migrar para schema canônico; lesson `les_b2_professional_review`, base atual `cite_only`
+- `packs/b2/pack_les_b2_professional_summary_v1.md` → migrar para schema canônico; lesson `les_b2_professional_summary`, base atual `cite_only`
+- `packs/b2/pack_les_b2_register_nuance_v1.md` → migrar para schema canônico; lesson `les_b2_register_nuance`, base atual `cite_only`
+- `packs/b2/pack_les_b2_toeic_reading_v1.md` → migrar para schema canônico; lesson `les_b2_toeic_reading`, base atual `cite_only`
+- `packs/b2/pack_les_b2_toeic_writing_v1.md` → migrar para schema canônico; lesson `les_b2_toeic_writing`, base atual `cite_only`
+- `packs/remediation/pack_les_rem_confidence_builder_v1.md` → migrar para schema canônico; lesson `les_rem_confidence_builder`, base atual `cite_only`
+- `packs/remediation/pack_les_rem_grammar_be_pronouns_v1.md` → migrar para schema canônico; lesson `les_rem_grammar_be_pronouns`, base atual `cite_only`
+- `packs/remediation/pack_les_rem_listening_slow_clear_v1.md` → migrar para schema canônico; lesson `les_rem_listening_slow_clear`, base atual `cite_only`
+- `packs/remediation/pack_les_rem_pronunciation_th_vw_v1.md` → migrar para schema canônico; lesson `les_rem_pronunciation_th_vw`, base atual `cite_only`
+- `packs/remediation/pack_les_rem_writing_svo_v1.md` → migrar para schema canônico; lesson `les_rem_writing_svo`, base atual `cite_only`
+
+---
+
+## 6. Checklist de Conformidade por Lição Reautorada
+
+Aplicar a **cada lição** (e ao pack correspondente) ao concluir a reautoria, garantindo aprovação em `python3 verify-integrity.py` (checks relevantes: [2] registro↔filesystem/status, [3b] bases de reuso, [4] JSON, [7] xrefs, [8] lições, [9]/[11b–e] packs, [10]/[12]/[13] conforme conteúdo).
+
+### 6.1 Metadados e proveniência (arquivo da lição)
+- [ ] `**Lesson ID:** \`les_...\`` presente, igual ao identificador canônico do registro §4.3 e consistente com o arquivo.
+- [ ] `**Reuse basis:** \`authored_material\`` (ou valor válido exigido pelo contrato) declarado no topo/metadados, refletindo autoria 100% original (sem reprodução/adaptação de fonte restrita).
+- [ ] `**Status:**` coerente com o estado real (ex.: lição com arquivo válido não pode permanecer como `designed`; nó bloqueado tratado conforme registro). Remover sufixos de sourcing externo (`cite_only`/`adapt_with_attribution`/`sourced_external_thin`) quando a reautoria for integral para `authored_material`.
+- [ ] `**Source/Provenance:**` atualizado para refletir autoria própria (sem alegar adaptação de fonte restrita; sem depender de `Ingles/`/`archive/`).
+- [ ] CEFR, `**Module:**`/trilha e objetivos alinhados ao nó do currículo; pré-requisitos/desbloqueios preservados conforme grafo.
+
+### 6.2 Estrutura pedagógica e JSON da lição (contrato consumido pelos engines)
+- [ ] Estrutura da lição preservada: Input (i+1) → Guided Practice → Output Task → Formative Check (conforme arquitetura ITS).
+- [ ] Blocos JSON embutidos **válidos** (parseáveis) e aderentes ao schema esperado pelo repositório (check [4]): campos, tipos e chaves obrigatórias do template de lição vigente.
+- [ ] Campos pedagógicos/operacionais do JSON da lição atualizados de forma consistente: identificadores (`lesson_id`/refs), `cefr`, habilidades/domínios-alvo, objetivos/can-do, itens/exercícios, gabaritos/rubricas, metadados de proveniência quando presentes no schema, e links/referências internos válidos.
+- [ ] Vocabulário, exemplos e contextos 100% autorais; sem texto/estrutura copiada das fontes restritas listadas em `AGENTS.md`/`external-sources.md` §0.5.1.
+
+### 6.3 Pack associado (migração e conformidade)
+- [ ] Pack migrado para **schema canônico** `pack-les-*.md` (quando aplicável), com manifesto/estrutura conforme `post-lesson-practice-spec.md`.
+- [ ] `**Reuse basis:**` do pack compatível com a proveniência dos itens (check [11b]) e alinhado a `authored_material` após reautoria.
+- [ ] `item_id` único e no padrão/namespace exigido (`assessment-item-spec.md` §1.2; checks [9]/[11c]); cada item com chave/gabarito quando houver conjunto de alternativas (check [11d]) e sem opções duplicadas (check [11e]).
+- [ ] `br_pt_form`/glossário e notas de distratores presentes conforme o schema canônico; proveniência dos itens declarada e coerente.
+
+### 6.4 Gates finais por lote de reautoria
+- [ ] `python3 verify-integrity.py` → **PASS 14/14**.
+- [ ] `python3 prd-score.py` executado quando aplicável a mudanças de estado documental cobertas pelo score (recomendado para auditoria de consistência).
+- [ ] Atualização do registro `specs/curriculum-graph-spec.md` §4.3 (status/sufixos) consistente com o filesystem, se a reautoria alterar estado declarado.
+
+---
+
+## 7. Notas de conformidade desta auditoria
+- Auditoria **não destrutiva**: nenhum arquivo em `lessons/`, `packs/`, `specs/` ou código de `its-platform/` foi modificado.
+- Diretórios `Ingles/` e `archive/` **não** foram lidos, abertos, listados nem transcritos.
+- O placar reflete o estado observado nos arquivos `.md` auditados e no nó bloqueado registrado em `curriculum-graph-spec.md` §4.3; divergências históricas entre contagens resumidas em specs/PRD devem ser tratadas pelas verificações de integridade existentes.
+
+
+---
+
+## 6. Registro de Execução — Lote 1 (2026-11-16)
+
+- **Escopo entregue:** `les_b1_it_presentations` (criada/desbloqueada), `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing` — lições e packs 100% `authored_material` (clean-room, pt-BR → en-US, TI).
+- **Packs migrados para schema canônico:** `pack-les-b1-it-presentations.md`, `pack-les-b1-it-architecture-vocab.md`, `pack-les-b1-it-code-review.md`, `pack-les-b2-it-mentoring.md`, `pack-les-b2-it-rfc-writing.md`. Legados v1 correspondentes removidos; catraca `_legacy_packs_baseline.json` = 111.
+- **Registros/gates atualizados:** `specs/curriculum-graph-spec.md`, `specs/assessment-item-spec.md` (censo), `external-sources.md` (§0.5), `verify-integrity.py`, `TASK_PROGRESS.md`.
+- **Validação:** `python3 verify-integrity.py` → `PASS 14/14` (0 falhas, 0 warnings).
+- **Seed/carga DB (:5433):** não identificado script dedicado de seed/sincronização de lições/packs em `its-platform/src`; nenhuma alteração em dados de usuários/tentativas de pronúncia.
+- **Placar pós-Lote 1:** 5/123 `authored_material`, 0 bloqueadas, 118 pendentes; packs 12 canônicos / 111 legados.

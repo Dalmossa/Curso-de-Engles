@@ -1,27 +1,27 @@
-# TASK_PROGRESS — Frentes 2 e 3 (ITS Platform)
+# TASK_PROGRESS — Onda 1 / Lote 1 (IT B1/B2)
 
-## Concluído
-- [x] Backend: `PronunciationScorer` enriquecido com `contrastive_tips` (vogal epentética, TH, contrastes `ship/sheep`, `live/leave`, `pull/pool`, `host/ghost`, `release`, `query`, `queue`, `asynchronous`) sem quebrar contrato.
-- [x] Backend: entidade `pronunciation_attempts` + migration `1803000000000-create-pronunciation-attempts-table` (UUID PK, FK `learner_id`→`learners.id` ON DELETE CASCADE, `lesson_id` nullable, campos de texto/score/JSONB, `created_at`, índice `(learner_id, created_at DESC)`).
-- [x] Backend: persistência automática de tentativas em `POST /api/v1/practice/pronunciation-evaluate` associada ao aprendiz autenticado (`principal.subject`), com falha de histórico não anulando avaliação.
-- [x] Backend: endpoint protegido `GET /api/v1/practice/pronunciation-history` (`learner:self`) retornando `{ attempts, summary: { totalAttempts, averageScore, bestScore, weakWords } }`.
-- [x] Backend: endpoint protegido `GET /api/v1/content/grammar-tip?topic=...` com execução sanitizada via `execFile` no RAG local (`tools/grammar-rag`), validação de `topic` e fallback gracioso `{ topic, tips: [], source: 'local-rag' }`.
-- [x] Contrato OpenAPI atualizado (`contrastive_tips` em `PronunciationEvaluation`, `PronunciationHistoryResponse`, `GrammarTipResponse`, novos paths e erros `application/problem+json`).
-- [x] Testes unitários adicionados/ajustados: dicas contrastivas no scorer e persistência/histórico no `PronunciationService`.
-- [x] Migration aplicada no PostgreSQL `:5433` (`its_platform`) e confirmada (tabela, FK, índice e registro em `migrations`).
-- [x] Frontend: operações BFF (`practice.pronunciationHistory`, `content.grammarTip`), mapeadores/repositório, use cases e server actions.
-- [x] Frontend: `contrastive_tips` exibidas no feedback de pronúncia e botão discreto "Dica de Gramática" no painel de pronúncia da lição.
-- [x] Frontend: cartão "Prática Oral e Pronúncia" em `/mastery` (total, média, melhor, "Palavras para Reforçar" com TTS).
-- [x] `npm run api:types` executado no frontend.
+## Modo
+- [x] Execução autônoma (sem perguntas/confirmações).
+- [x] `Ingles/` e `archive/` não foram lidos, abertos, listados nem transcritos.
+- [x] Infra tratada como bare-metal (PostgreSQL `:5433`, backend `:3000`, frontend `:3100`) — sem Docker/Helm/kind/ArgoCD.
 
-## Em validação
-- [ ] Gates backend: `typecheck`, `lint`, `test`, `contract:gate`, `domain:check`.
-- [ ] Gates frontend: `typecheck`, `lint`, `test`, `build`.
-- [ ] `python3 verify-integrity.py` (PASS 14/14).
-- [ ] Reinício bare-metal `:3000`/`:3100` e validação real de `POST /api/v1/practice/pronunciation-evaluate`, `GET /api/v1/practice/pronunciation-history`, `GET /api/v1/content/grammar-tip?topic=Present+Simple`.
-- [ ] Commits separados (backend/frontend), apenas arquivos da tarefa.
+## Lote 1 — Reautoria 100% `authored_material` (concluído)
+- [x] Consultas RAG realizadas (`tools/grammar-rag/.venv/bin/python tools/grammar-rag/query_grammar.py --top-k 2`) para: passive voice/design decisions, modais must/should/could (code review), modais de conselho/recomendação (mentoria), MUST/SHOULD/MAY em requisitos/RFC, signposting/sequencing de apresentações técnicas.
+- [x] `lessons/b1/les_b1_it_presentations.md` criado/desbloqueado (4 fases, glossário contrastivo pt-BR↔en-US, armadilhas, 5 sentenças-alvo corridas, foco articulatório, prompt, Shadow CAT, JSON `provenance`/`reuse_basis`=`authored_material`, `status`=`authored`).
+- [x] `lessons/b1/les_b1_it_architecture_vocab.md` reautorado para `authored_material`.
+- [x] `lessons/b1/les_b1_it_code_review.md` reautorado para `authored_material`.
+- [x] `lessons/b2/les_b2_it_mentoring.md` reautorado para `authored_material`.
+- [x] `lessons/b2/les_b2_it_rfc_writing.md` reautorado para `authored_material`.
+- [x] Packs canônicos `authored_material` criados: `packs/b1/pack-les-b1-it-presentations.md`, `packs/b1/pack-les-b1-it-architecture-vocab.md`, `packs/b1/pack-les-b1-it-code-review.md`, `packs/b2/pack-les-b2-it-mentoring.md`, `packs/b2/pack-les-b2-it-rfc-writing.md` (itens originais, `br_pt_form`/distratores plausíveis, sem duplicatas).
+- [x] Packs legados migrados removidos (`pack_les_b1_it_architecture_vocab_v1.md`, `pack_les_b1_it_code_review_v1.md`, `pack_les_b2_it_mentoring_v1.md`, `pack_les_b2_it_rfc_writing_v1.md`) e `_legacy_packs_baseline.json` atualizado para 111.
+- [x] `specs/curriculum-graph-spec.md` atualizado (desbloqueio de `les_b1_it_presentations`, remoção de sufixos `sourced_external*` nas 4 lições reautoradas, marcação `reauthored_authored_material`, contagens/sumários ajustados).
+- [x] `specs/assessment-item-spec.md` (censo `br_pt_form`), `external-sources.md` (§0.5) e `verify-integrity.py` alinhados para reconhecer/validar `authored_material` e o novo estado.
+- [x] `docs/copyright-reauthoring-plan.md` atualizado com conclusão do Lote 1 e novo placar jurídico.
+- [x] `python3 verify-integrity.py` → `PASS 14/14` (0 falhas, 0 warnings).
+
+## Seed/sincronização em `its_platform` (:5433)
+- [x] Verificação de scripts de seed/carga dedicada para lições/packs em `its-platform/src`: não encontrado script de carga/seed específico das 5 lições/packs além do carregamento de conteúdo existente no backend; nenhuma exclusão de dados de usuários/tentativas de pronúncia realizada.
 
 ## Observações
-- Infra bare-metal: PostgreSQL `:5433`, backend `:3000`, frontend `:3100`.
-- `Ingles/` e `archive/` não foram lidos/abertos; grammar-tip usa `tools/grammar-rag/.venv/bin/python tools/grammar-rag/query_grammar.py --topic "<tema>" --top-k 2`.
-- Baseline git sujo pré-existente mantido intacto.
+- Placar jurídico pós-Lote 1: **5/123** lições `authored_material` (Lote 1), 0 bloqueadas; packs legados restantes: **111** (catraca).
+- Commit desta entrega limitado aos arquivos da tarefa (lições/packs do Lote 1 e atualizações estritamente necessárias de specs/registros/gates/progresso/plano).

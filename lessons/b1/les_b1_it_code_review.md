@@ -3,121 +3,107 @@
 **Lesson ID:** `les_b1_it_code_review`
 **Module:** `mod_b1_it_technical`
 **CEFR:** B1
-**Reuse basis:** `adapt_with_attribution`
-**Source:** S07 (Google Code Review Guide, CC-BY-4.0), S06 (Google Engineering Practices, CC-BY-3.0), S08 (Google Style Guide, CC-BY-4.0), S10 (Google Testing, CC-BY-4.0), S18 (opensource.guide, CC-BY-4.0) — `sourced_external`
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US).
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: comentários em um pull request
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **code review** | revisão de código | *análise de código por pares antes do merge* |
-| **comment** | comentário | *anotação no diff do PR* |
-| **suggestion** | sugestão | *proposta de alteração (pode ser aplicada com 1 clique)* |
-| **nitpick** | detalhe menor | *questão de estilo, não bloqueante* |
-| **blocking** | bloqueante | *precisa ser corrigido antes do merge* |
-| **non-blocking** | não bloqueante | *opcional, pode seguir depois* |
-| **LGTM** | LGTM | *Looks Good To Me — aprovação* |
-| **refactor** | refatorar | *reestruturar sem mudar comportamento* |
-| **extract method** | extrair método | *mover código para nova função* |
-| **magic number** | número mágico | *literal numérico sem explicação* |
-| **edge case** | caso de borda | *cenário raro mas possível* |
-| **test coverage** | cobertura de testes | *% de código exercitado por testes* |
+> **Bianca (reviewer):** "Overall, this refactor looks solid. I have one blocking issue: the input is not validated before the database call, so this must be fixed before merge."
+>
+> **Thiago (author):** "Good catch. I can add validation and update the tests."
+>
+> **Bianca:** "Great. I also have a suggestion: this helper could be extracted to improve readability. And a small nitpick: the variable name could be more descriptive."
+>
+> **Thiago:** "I'll address the blocking issue now, apply the suggestion, and rename the variable. After that, I think it should be ready for approval."
 
-### Mini-texto (áudio: `deferred_render`)
+### Glossário contrastivo (pt-BR ↔ en-US)
 
-> **Reviewer:** "LGTM overall. **Blocking**: line 45 — SQL injection risk. Use parameterized query. **Suggestion** added."
->
-> **Reviewer:** "**Non-blocking**: line 12 — **magic number** `300`. Extract to constant `DEFAULT_TIMEOUT_MS`."
->
-> **Reviewer:** "**Nitpick**: line 8 — trailing whitespace. **Refactor**: lines 20-35 — **extract method** `calculateTotal()`."
->
-> **Author:** "Fixed blocking. Applied suggestions. Added **test coverage** for **edge case** (empty cart)."
->
-> **Reviewer:** "LGTM. Ready to merge."
+| Inglês (en-US) | Português (pt-BR) | Nota de uso em TI |
+|---|---|---|
+| **code review** | revisão de código | Avaliação de mudanças antes do merge. |
+| **pull request (PR)** | solicitação de mesclagem | Proposta de alteração em um repositório. |
+| **blocking issue** | problema bloqueante | Impede aprovação/merge até ser corrigido. |
+| **suggestion** | sugestão | Melhoria recomendada, às vezes não obrigatória. |
+| **nitpick** | detalhe menor | Comentário de estilo/clareza, baixo impacto. |
+| **LGTM (Looks Good To Me)** | "para mim está ok" | Sinal de aprovação (quando não há bloqueios). |
+| **to refactor** | refatorar | Reorganizar código sem mudar comportamento esperado. |
+| **edge case** | caso extremo/borda | Situação incomum que pode quebrar a lógica. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "You **must to** fix this." | "You **must fix** this." | Modal (*must/should/could*) é seguido de verbo base, sem *to*. |
+| "I **suggest you to** rename this." | "I **suggest renaming** this." / "I **suggest that you rename** this." | *Suggest* não usa *to + infinitivo* diretamente com pessoa. |
+| "This is **more easy** to read." | "This is **easier** to read." | Comparativo curto: *easy → easier*. |
+| "Do a **revision** of my code." (calco) | "Do a **review** of my code." / "Review my code." | Em PRs o termo padrão é *code review*, não *revision*. |
+| Tom direto demais: "This is wrong." | "This **might** cause an issue because…" / "Could we handle this case?" | Modais suavizam feedback e mantêm tom colaborativo. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-A **blocking** comment means:
-| Slot | Value |
-|------|-------|
-| A | Optional, can merge anyway |
-| B | **Must fix before merge** |
-| C | Style only |
-| D | Compliment |
-**Key:** B
-**br_pt_form:** "bloqueante / deve corrigir antes do merge"
+### Exercício 1 — Classificação de comentários
 
-### Item 2 — Vocabulary (Matching)
-Match the review action to its severity:
-| Action | Severity |
-|--------|----------|
-| **LGTM** | a. Approval |
-| **Blocking** | b. Must fix |
-| **Suggestion** | c. One-click fix |
-| **Nitpick** | d. Minor style |
-**Key:** LGTM→a, Blocking→b, Suggestion→c, Nitpick→d
-**br_pt_form:** "aprovação", "bloqueante", "sugestão", "detalhe menor"
+Classifique cada comentário como **blocking**, **suggestion** ou **nitpick**:
 
-### Item 3 — Grammar: Modal verbs for review feedback (fill-in-blank)
-Complete with **must / should / could / mustn't**:
-"You ______ fix the SQL injection (blocking). You ______ extract the magic number (suggestion). You ______ remove trailing whitespace (nitpick). You ______ merge without fixing blocking."
-**Key:** must / should / could / mustn't
-**br_pt_form:** "deve", "deveria", "poderia", "não deve"
+| Comentário | Tipo |
+|---|---|
+| "This null check is missing and can crash in production." | **blocking** |
+| "We could extract this block into a helper for clarity." | **suggestion** |
+| "Consider renaming `x` to `retryCount`." | **nitpick** (ou suggestion leve) |
+
+### Exercício 2 — Gramática (modais para feedback)
+
+Complete com **must**, **should** ou **could**:
+
+1. "You ____ add input validation before merging." (obrigatório) → **must**
+2. "We ____ add a test for this edge case." (recomendação forte) → **should**
+3. "You ____ simplify this condition to improve readability." (opção) → **could**
+
+### Exercício 3 — Reescrita L1 → L2 (tom colaborativo)
+
+| Intenção em pt-BR | Resposta esperada |
+|---|---|
+| "Isso está errado, arruma." | "This might break when the input is empty. Could you add a check here?" |
+| "Sugiro você mudar o nome." | "I suggest renaming this variable for clarity." / "Could we rename this variable?" |
+| "Você tem que cobrir esse caso." | "We must cover this edge case before merge." |
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Writing: Code Review Simulation (individual)
-**Scenario:** Review this diff. Write **4 comments** (1 blocking, 1 suggestion, 1 nitpick, 1 LGTM summary).
+### 5 sentenças-alvo (leia em voz corrida)
 
-```python
-# Before
-def process_payment(user, amount):
-    query = f"UPDATE accounts SET balance = balance - {amount} WHERE id = {user.id}"
-    db.execute(query)
-    return True
-```
+This change looks good overall, but the missing validation must be fixed before merge. We should add a test to cover this edge case in the payment flow. You could extract this helper function to make the code easier to read. I suggest renaming this variable so its purpose is clearer. Once these points are addressed, the pull request should be ready for approval.
 
-**Your comments:**
-1. **Blocking:** line 2 — SQL injection. Use parameterized query.
-2. **Suggestion:** line 2 — extract `amount` validation to `validate_amount()`.
-3. **Nitpick:** line 1 — missing type hints.
-4. **LGTM summary:** "Blocking fixed → LGTM."
+### Foco articulatório para falantes de pt-BR
+
+- **/ʃ/ em *should, suggestion*** e **/tʃ/ em *change***: diferencie os sons ("sh" vs "tch").
+- **/v/ em *validation, variable, improve***: evite trocar por /w/.
+- **Redução em *could/should*** em fala natural: /kʊd/, /ʃʊd/ (sem vogal cheia).
+- **Grupos finais em *fixed, addressed, tests***: evite vogal epentética.
+
+### Prompt de produção (oral ou escrita)
+
+Escreva (ou fale) **4 comentários de code review** para um PR fictício: 1 bloqueante, 1 sugestão, 1 nitpick e 1 mensagem de aprovação condicional. Use pelo menos **três modais** diferentes (*must/should/could*) e justifique cada comentário.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**LGTM** in a code review means:
-| Slot | Value |
-|------|-------|
-| A | Let's Get This Merged |
-| B | **Looks Good To Me** |
-| C | Last Git Test Merge |
-| D | Local Git Tag Master |
-**Key:** B
-**br_pt_form:** "Parece bom para mim"
+1. **Gramática (L1):** Escolha a opção correta: "You ___ fix this null pointer before merge."  
+   A) must to  B) **must**  C) musting  D) to must  
+   **Chave:** B
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct modal for a **blocking** issue:
-| Slot | Value |
-|------|-------|
-| A | You **could** fix this before merge. |
-| B | You **should** fix this before merge. |
-| C | You **must** fix this before merge. |
-| D | You **might** fix this before merge. |
-**Key:** C
-**br_pt_form:** "Você deve corrigir antes do merge."
+2. **Vocabulário (L1):** Um comentário *nitpick* é:  
+   A) um bug crítico  B) uma exigência de segurança  C) **um detalhe menor de estilo ou clareza**  D) uma aprovação formal  
+   **Chave:** C
 
 ---
 
@@ -126,106 +112,45 @@ Choose the correct modal for a **blocking** issue:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_b1_it_code_review",
   "cefr_level": "B1",
-  "provenance": {
-    "reuse_basis": "adapt_with_attribution",
-    "adapted_sources": [
-      {
-        "id": "S07",
-        "title": "Google Code Review Guide",
-        "licence": "CC-BY-4.0",
-        "what_was_adapted": "code review comment taxonomy (blocking, non-blocking, suggestion, nitpick, LGTM); feedback style guidance",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      },
-      {
-        "id": "S06",
-        "title": "Google Engineering Practices - Code Review",
-        "licence": "CC-BY-3.0",
-        "what_was_adapted": "review process, blocking vs non-blocking, suggestion feature, reviewer/author roles",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      },
-      {
-        "id": "S08",
-        "title": "Google Developer Documentation Style Guide",
-        "licence": "CC-BY-4.0",
-        "what_was_adapted": "technical writing style for review comments; clarity, tone, actionable feedback",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      },
-      {
-        "id": "S10",
-        "title": "Google Testing Blog - Code Review",
-        "licence": "CC-BY-4.0",
-        "what_was_adapted": "test coverage expectations in review, edge case checking",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      },
-      {
-        "id": "S18",
-        "title": "opensource.guide - Code Review",
-        "licence": "CC-BY-4.0",
-        "what_was_adapted": "open source review conventions, welcoming tone, constructive feedback",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      }
-    ],
-    "authored_material": "all exercises, the mini-text (review simulation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/Ingles-Tecnico-Para-Informatica.md (CETAM, all rights reserved) - scoping of code review register"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - terminology adapted, not quoted; all sources CC-BY permissive"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material; no external source text reproduced or adapted.",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "reading", "writing"],
-  "output_modalities": ["writing", "speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.modals_review_feedback"
+      "grammar.modals_feedback_must_should_could",
+      "grammar.suggest_patterns"
     ],
     "vocabulary": [
-      "vocab.codereview.code_review",
-      "vocab.codereview.comment",
+      "vocab.codereview.blocking_issue",
       "vocab.codereview.suggestion",
       "vocab.codereview.nitpick",
-      "vocab.codereview.blocking",
-      "vocab.codereview.non_blocking",
       "vocab.codereview.lgtm",
-      "vocab.codereview.refactor",
-      "vocab.codereview.extract_method",
-      "vocab.codereview.magic_number",
-      "vocab.codereview.edge_case",
-      "vocab.codereview.test_coverage"
+      "vocab.codereview.edge_case"
     ],
     "listening": [
-      "listening.codereview_context"
+      "listening.code_review_context"
     ],
     "pronunciation": [
-      "pronunciation.technical_terms"
-    ],
-    "reading": [
-      "reading.code_diff"
+      "pronunciation.sh_ch_contrast",
+      "pronunciation.v_sound"
     ],
     "writing": [
-      "writing.code_review"
+      "writing.code_review_comment"
     ]
   },
   "prereq_lessons": [
     "les_a2_it_terms_basics",
-    "les_a2_it_communication"
+    "les_b1_it_architecture_vocab"
   ],
   "estimated_time_min": 15
 }
 ```
-
----
-
-## Fontes e Atribuição
-
-- **S07** Google Code Review Guide, licensed under CC-BY-4.0. Adapted for comment taxonomy and feedback style.
-- **S06** Google Engineering Practices - Code Review, licensed under CC-BY-3.0. Adapted for review process and roles.
-- **S08** Google Developer Documentation Style Guide, licensed under CC-BY-4.0. Adapted for technical writing style in reviews.
-- **S10** Google Testing Blog, licensed under CC-BY-4.0. Adapted for test coverage and edge case expectations.
-- **S18** opensource.guide - Code Review, licensed under CC-BY-4.0. Adapted for open source conventions.

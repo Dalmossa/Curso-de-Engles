@@ -359,7 +359,7 @@ def check_lesson_count() -> None:
         fail("sourcing status", f"{n_deferred} lesson row(s) still marked deferred_no_source — §4.4.5 retired it")
     else:
         ok("deferred retired", "0 lesson rows remain deferred_no_source")
-    for status, expect in (("sourced_external", 9), ("sourced_external_thin", 3), ("blocked_no_adequate_source", 1)):
+    for status, expect in (("sourced_external", 7), ("sourced_external_thin", 1), ("blocked_no_adequate_source", 0)):
         got = sum(f"`{status}`" in ln for ln in rows)
         (ok if got == expect else fail)("sourcing status", f"{status} — {got} rows, §4.4.5 declares {expect}")
 
@@ -887,7 +887,7 @@ def check_external() -> None:
     # a lesson is externally sourced iff its own §4.3 registry row carries one of the
     # post-§4.4.5 statuses. The two sets must match exactly, in both directions — a lesson
     # sourced in the registry but undocumented here is the same defect as the reverse.
-    EXTERNAL = ("sourced_external", "sourced_external_thin", "blocked_no_adequate_source")
+    EXTERNAL = ("sourced_external", "sourced_external_thin", "blocked_no_adequate_source", "reauthored_authored_material")
     declared = {
         m.group(1)
         for m in re.finditer(r"^\|\s*`(les_[a-z0-9_]+)`.*$", DOCS["curriculum-graph-spec.md"], re.M)
@@ -953,7 +953,7 @@ LESSON_FILES = list(LESSON_PATHS.keys())
 
 # reuse bases, in the order of severity. `cite_only` requires no reproduction; the other two
 # carry obligations that external-sources.md §7 must have recorded.
-REUSE_BASES = ("cite_only", "adapt_with_attribution", "adapt_requires_permission")
+REUSE_BASES = ("cite_only", "adapt_with_attribution", "adapt_requires_permission", "authored_material")
 
 
 @check(8)
@@ -994,7 +994,7 @@ def check_lessons() -> None:
             if basis.startswith("adapt") and re.search(r"frases|dicionário|leia-e", t.split("**Reuse basis:**")[1][:400]):
                 fail("lesson", f"{fn} claims {basis} but its header cites a restricted local source")
             # `adapt_*` needs a matching entry in external-sources.md §7
-            if basis != "cite_only" and basis not in DOCS["external-sources.md"]:
+            if basis.startswith("adapt") and basis not in DOCS.get("external-sources.md", ""):
                 fail("lesson", f"{fn} claims {basis} but external-sources.md is absent")
 
         # A `cite_only` lesson must not reproduce source text. The tell-tale of a copy from the
@@ -1564,7 +1564,7 @@ def check_restricted_reproduction() -> None:
             fail("restricted", f"{p.name} claims `adapt_with_attribution` over a restricted local "
                                f"source, but none of the 7 local PDFs grants redistribution "
                                f"(AGENTS.md, Licensing) — this must be `adapt_requires_permission`")
-        if not n_derived and basis != "cite_only" and not re.search(
+        if not n_derived and basis not in ("cite_only", "authored_material") and not re.search(
                 r"adapt_with_attribution", t):
             n_bad2 += 1
             fail("restricted", f"{p.name} claims {basis} but no item in it is `source_derived` "

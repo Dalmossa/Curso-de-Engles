@@ -3,110 +3,112 @@
 **Lesson ID:** `les_b1_it_architecture_vocab`
 **Module:** `mod_b1_it_technical`
 **CEFR:** B1
-**Reuse basis:** `adapt_with_attribution`
-**Source:** S16 (Kubernetes docs, CC-BY-4.0), S05 (Google Cloud Well-Architected, CC-BY-4.0), S01 (Google Style Guide, CC-BY-4.0) — `sourced_external`
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US).
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: discutindo uma mudança de arquitetura
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **architecture** | arquitetura | *estrutura de alto nível do sistema* |
-| **component** | componente | *parte independente e substituível* |
-| **service** | serviço | *unidade de funcionalidade de negócio* |
-| **microservice** | microsserviço | *serviço pequeno, autonomamente implantável* |
-| **monolith** | monolito | *aplicação única, tudo junto* |
-| **coupling** | acoplamento | *grau de dependência entre partes* |
-| **cohesion** | coesão | *o quão relacionadas são as responsabilidades* |
-| **latency** | latência | *tempo de resposta* |
-| **throughput** | vazão / throughput | *requisições por segundo* |
-| **scalability** | escalabilidade | *capacidade de crescer sob carga* |
-| **availability** | disponibilidade | *uptime, resiliência a falhas* |
-| **trade-off** | troca / compensação | *ganha aqui, perde ali* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> **Architect:** "We're moving from **monolith** to **microservices**. **Coupling** between modules is too high — a change in billing breaks shipping."
+> **Lívia (architect):** "Our checkout module is tightly coupled to billing, so every change becomes risky. I suggest that the payment logic be extracted into a separate service."
 >
-> **Tech Lead:** "**Trade-off**: **latency** increases (network calls), but **scalability** and **availability** improve. Each **service** owns its data. **Cohesion** up — billing only does billing."
+> **Diego (tech lead):** "I agree. If responsibilities are clearly separated, the system can be scaled more safely. But we should remember that network calls will be introduced, so latency may increase."
 >
-> **Architect:** "Define **component** boundaries by **business capability**. Use async messaging for **decoupling**. **SLA**: 99.9% **availability**, p99 **latency** < 200ms."
+> **Lívia:** "That's the trade-off. Availability can be improved if each service is deployed independently, but observability must be planned from the start."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso em TI |
+|---|---|---|
+| **architecture** | arquitetura | Estrutura de alto nível de componentes e decisões. |
+| **component** | componente | Parte com responsabilidade definida dentro do sistema. |
+| **service** | serviço | Unidade que oferece uma capacidade (ex.: pagamento, autenticação). |
+| **monolith** | monolito | Aplicação implantada como uma unidade única. |
+| **microservice** | microsserviço | Serviço pequeno, implantado de forma independente. |
+| **coupling** | acoplamento | Grau de dependência entre módulos; alto acoplamento dificulta mudanças. |
+| **cohesion** | coesão | Quanto as responsabilidades de um módulo pertencem ao mesmo propósito. |
+| **scalability** | escalabilidade | Capacidade de lidar com aumento de carga. |
+| **availability** | disponibilidade | Capacidade de permanecer acessível/operante. |
+| **trade-off** | compensação/troca | Ganho em um aspecto com custo em outro. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "The system **was projected** for high availability." | "The system **was designed** for high availability." | Falso cognato: *projetar* (desenhar/planejar) → *design*, não *project* nesse sentido. |
+| "We will **implant** the new service tomorrow." | "We will **deploy** the new service tomorrow." | *Implantar* em TI geralmente corresponde a *deploy/roll out*. |
+| "This service is **more performatic**." | "This service **performs better**." / "This service has **better performance**." | *Performatic* não é usado em inglês; use *performance/perform*. |
+| "The modules are very **acoplated**." | "The modules are **tightly coupled**." | Adjetivo correto: *coupled*; advérbio comum: *tightly/loosely*. |
+| Omitir agente/voz: "Decided to split the monolith." (sem sujeito) | "**It was decided** to split the monolith." / "**We decided** to split the monolith." | Em decisões formais, voz passiva ou sujeito explícito evita ambiguidade. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Coupling** refers to:
-| Slot | Value |
-|------|-------|
-| A | How fast the system responds |
-| B | **Degree of dependence between modules** |
-| C | Number of servers |
-| D | Code style consistency |
-**Key:** B
-**br_pt_form:** "acoplamento / grau de dependência"
+### Exercício 1 — Vocabulário (associação)
 
-### Item 2 — Vocabulary (Matching)
-Match the architecture style to its trait:
-| Style | Trait |
-|-------|-------|
-| **Monolith** | a. Single deploy, shared DB |
-| **Microservices** | b. Independent deploys, own data |
-| **Modular monolith** | c. Separate modules, single deploy |
-**Key:** Monolith→a, Microservices→b, Modular monolith→c
-**br_pt_form:** "monolito", "microsserviços", "monolito modular"
+Associe o termo à ideia correta:
 
-### Item 3 — Grammar: Passive voice for design decisions (fill-in-blank)
-Complete with **passive voice**:
-"The system ______ (design) for high availability. Services ______ (deploy) independently. Data ______ (own) by each service."
-**Key:** is designed / are deployed / is owned
-**br_pt_form:** "foi projetado", "são implantados", "é de propriedade"
+| Termo | Ideia |
+|---|---|
+| **Monolith** | a. Single deployable application |
+| **Microservice** | b. Independently deployable service |
+| **Coupling** | c. Degree of dependency between modules |
+| **Cohesion** | d. How focused a module's responsibilities are |
 
----
+**Chave:** Monolith→a, Microservice→b, Coupling→c, Cohesion→d
 
-## FASE 3 — Output Task [4 min]
+### Exercício 2 — Gramática (voz passiva para decisões de design)
 
-### Speaking: Architecture Decision Defense (pares)
-**Student A (Architect):** Propose a change. Use: *architecture, component, service, microservice, monolith, coupling, cohesion, latency, throughput, scalability, availability, trade-off*.
-**Student B (Reviewer):** Challenge with 2 questions. Summarize the decision.
+Transforme para a voz passiva, mantendo o foco na decisão/artefato:
 
-**Topics:**
-- Split `UserService` into `AuthService` + `ProfileService`
-- Introduce message queue for async order processing
-- Move caching to dedicated `CacheService`
+| Ativa | Passiva esperada |
+|---|---|
+| "We designed the service for high availability." | "The service **was designed** for high availability." |
+| "The team deploys each component independently." | "Each component **is deployed** independently." |
+| "Engineers must monitor the new API carefully." | "The new API **must be monitored** carefully." |
 
-**Example (Architect):** "We should extract **AuthService** from the **monolith**. **Coupling** is high — auth changes break profile. **Trade-off**: added **latency** (network hop), but **cohesion** improves. **Availability**: auth can scale independently."
+### Exercício 3 — Escolha contextual
+
+Complete com **scalability**, **latency**, **trade-off**:
+
+1. "Moving to microservices can improve ____ because each service can grow independently." → **scalability**
+2. "Adding network hops may increase ____." → **latency**
+3. "Better isolation is a benefit, but more complexity is the ____." → **trade-off**
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**High cohesion** means:
-| Slot | Value |
-|------|-------|
-| A | Module does many unrelated things |
-| B | **Module does one thing well** |
-| C | Module has many dependencies |
-| D | Module is tightly coupled |
-**Key:** B
-**br_pt_form:** "alta coesão / módulo faz uma coisa bem"
+### 5 sentenças-alvo (leia em voz corrida)
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **passive** for a design decision:
-| Slot | Value |
-|------|-------|
-| A | We **design** the API for scale. |
-| B | The API **is designed** for scale. |
-| C | The API **designing** for scale. |
-| D | The API **designed** for scale. |
-**Key:** B
-**br_pt_form:** "A API é projetada para escala."
+The checkout module was redesigned to reduce tight coupling between services. Each component is deployed independently to improve availability and scalability. The payment logic was extracted into a separate service with clear responsibilities. Higher network latency was accepted as a trade-off for better resilience. The new architecture must be monitored carefully during the rollout.
+
+### Foco articulatório para falantes de pt-BR
+
+- **/t/ e /d/ em final de palavra** (*designed, extracted, accepted*): evite vogal epentética ("designedi").
+- **/ð/ em *the***: fricativa dental sonora, sem virar /d/.
+- **/sk/ em *scalability***: ataque consonantal limpo, sem "escala-".
+- **Ênfase em termos-chave**: *COUpling*, *coHEsion*, *scalabiLIty*, *availaBIliTy*.
+
+### Prompt de produção (oral ou escrita)
+
+Em 60–90 segundos, defenda uma decisão de arquitetura (ex.: separar um módulo, introduzir cache, adotar fila). Use pelo menos **3 formas passivas** (ex.: *was designed, is deployed, must be monitored*) e mencione **um trade-off** explícito.
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Gramática (L1):** Escolha a forma passiva correta: "The service ___ independently."  
+   A) deploys  B) **is deployed**  C) deploying  D) deployed  
+   **Chave:** B
+
+2. **Vocabulário (L1):** *High cohesion* significa:  
+   A) muitas dependências externas  B) **responsabilidades focadas em um propósito**  C) alta latência  D) implantação única  
+   **Chave:** B
 
 ---
 
@@ -115,84 +117,49 @@ Choose the correct **passive** for a design decision:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_b1_it_architecture_vocab",
   "cefr_level": "B1",
-  "provenance": {
-    "reuse_basis": "adapt_with_attribution",
-    "adapted_sources": [
-      {
-        "id": "S16",
-        "title": "Kubernetes Documentation - Architecture Concepts",
-        "licence": "CC-BY-4.0",
-        "what_was_adapted": "microservice vs monolith terminology, component boundaries, coupling/cohesion definitions; adapted for B1 level",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      },
-      {
-        "id": "S05",
-        "title": "Google Cloud Well-Architected Framework - Reliability & Performance",
-        "licence": "CC-BY-4.0",
-        "what_was_adapted": "latency, throughput, availability, scalability as architecture quality attributes; trade-off framing",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      },
-      {
-        "id": "S01",
-        "title": "Google Developer Documentation Style Guide",
-        "licence": "CC-BY-4.0",
-        "what_was_adapted": "technical vocabulary register for architecture discussions; tone and precision guidance",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      }
-    ],
-    "authored_material": "all exercises, the mini-text (Architect/Tech Lead dialogue), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/Ingles-Tecnico-Para-Informatica.md (CETAM, all rights reserved) - scoping of architecture discussion register"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - terminology adapted, not quoted; all sources CC-BY permissive"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material; no external source text reproduced or adapted.",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
       "grammar.passive_design_decisions"
     ],
     "vocabulary": [
-      "vocab.arch.architecture",
-      "vocab.arch.component",
-      "vocab.arch.service",
-      "vocab.arch.microservice",
-      "vocab.arch.monolith",
-      "vocab.arch.coupling",
-      "vocab.arch.cohesion",
-      "vocab.arch.latency",
-      "vocab.arch.throughput",
-      "vocab.arch.scalability",
-      "vocab.arch.availability",
-      "vocab.arch.trade_off"
+      "vocab.architecture.architecture",
+      "vocab.architecture.component",
+      "vocab.architecture.service",
+      "vocab.architecture.monolith",
+      "vocab.architecture.microservice",
+      "vocab.architecture.coupling",
+      "vocab.architecture.cohesion",
+      "vocab.architecture.scalability",
+      "vocab.architecture.availability",
+      "vocab.architecture.trade_off"
     ],
     "listening": [
-      "listening.arch_context"
+      "listening.architecture_context"
     ],
     "pronunciation": [
-      "pronunciation.technical_terms"
+      "pronunciation.consonant_clusters",
+      "pronunciation.th_voiced"
+    ],
+    "speaking": [
+      "speaking.architecture_decision"
     ]
   },
   "prereq_lessons": [
     "les_a2_it_terms_basics",
-    "les_a2_it_communication"
+    "les_a2_it_reading_strategy"
   ],
   "estimated_time_min": 15
 }
 ```
-
----
-
-## Fontes e Atribuição
-
-- **S16** Kubernetes Documentation, licensed under CC-BY-4.0. Adapted for microservice architecture terminology.
-- **S05** Google Cloud Well-Architected Framework, licensed under CC-BY-4.0. Adapted for quality attributes and trade-offs.
-- **S01** Google Developer Documentation Style Guide, licensed under CC-BY-4.0. Adapted for technical register.

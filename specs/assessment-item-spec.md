@@ -209,8 +209,8 @@ fields, and **every `null` must be explained by exactly one of the following**, 
 > no choice to score otherwise. Production items carry `scoring: asr_phoneme_match` instead. The 6
 > `minimal_pair_*` items in `pack-les-a2-*.md` are the distractor-free population.
 
-Counts as of 2026-10-01, across the 7 `pack-les-*.md` files (135 fields): **81 filled / 49
-null-with-note / 5 null-not-applicable / 0 undocumented.** Recomputed from the files rather than
+Counts as of 2026-11-16, across all packs: **156 filled / 64 null-with-note / 10
+null-not-applicable / 0 undocumented.** Recomputed from the files rather than
 written by hand, so the first new item cannot make this table quietly wrong.
 
 ### 2.3 Non-MCQ Types
