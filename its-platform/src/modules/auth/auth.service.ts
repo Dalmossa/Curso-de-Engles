@@ -76,12 +76,25 @@ export class AuthService {
   private readonly refreshTokenTtl = 30 * 24 * 60 * 60; // 30 days
 
   /**
-   * The scopes the learner UI needs. This is deliberately the least authority that makes the
-   * dashboard, lessons and practice work: `learner:self` for the portfolio routes and
-   * `content:read` for the lesson/pack routes. Export and erasure stay out — they require a
-   * deliberate grant and are not part of the normal signing flow.
+   * The scopes the learner UI needs.
+   *
+   * `learner:self` for the portfolio routes, `content:read` for the lesson/pack routes, and
+   * `learner:export` / `learner:erase` for the LGPD rights (Art. 18 II/V and IV/VI) that the
+   * account screen exercises.
+   *
+   * **The two LGPD scopes add no authority — they open two doors that were already the
+   * learner's.** `learner:self` already lets the holder read and write its **own**
+   * resources, and the two routes behind these scopes are restricted to the caller's own
+   * row by the RLS policy and by `withVisible` (ADR-038 D3). What the scopes decide is
+   * whether the *route* is open, not *whose* data it can reach.
+   *
+   * **Why they are here now.** ADR-038 D2 names the **learner** as the holder of both
+   * scopes: they are the learner's own rights, not a staff privilege and not something
+   * that needs a separate grant. The platform used to leave them out of the signed token
+   * because no screen exercised them — the account screen does, and a right that the
+   * product cannot reach is not a right.
    */
-  private readonly accessTokenScopes = 'learner:self content:read';
+  private readonly accessTokenScopes = 'learner:self content:read learner:export learner:erase';
 
   constructor(
     @InjectRepository(UserEntity)
