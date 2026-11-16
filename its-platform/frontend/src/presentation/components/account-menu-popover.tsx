@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import type { AccountIdentity } from '@/core';
 import { UNNAMED_ACCOUNT_FALLBACK } from '@/core';
+import { useAccountIdentity } from '@/presentation/providers/account-identity-provider';
 import { account as copy } from '@/presentation/lib/copy';
 import { routes } from '@/shared/routes';
 import { AccountAvatar } from './account-avatar';
@@ -14,9 +14,16 @@ import { AccountProfileEditor } from './account-profile-editor';
  * O menu flutuante da conta — o popover que abre no avatar do cabeçalho.
  *
  * **Ele é um Client Component, e é o menor possível.** O servidor já sabe quem é o aluno
- * (o `SiteHeader` leu o perfil), e esse dado chega aqui como prop: nenhuma requisição
- * acontece no navegador, e o token nunca chega ao bundle. O que o componente precisa de
- * estado é o que é *interação* — aberto, contas expandidas, editor aberto — e nada mais.
+ * (o layout raiz leu o perfil), e esse dado chega aqui pelo contexto da identidade —
+ * nenhuma requisição acontece no navegador, e o token nunca chega ao bundle. O que o
+ * componente precisa de estado é o que é *interação* — aberto, contas expandidas, editor
+ * aberto — e nada mais.
+ *
+ * **A identidade vem do contexto, e é por isso que o menu não fica velho.** O nome que o
+ * gatilho e o cartão mostram é o valor que o contexto guarda; quem grava o nome publica
+ * a identidade nova, e o menu a desenha na hora — inclusive quando a gravação foi feita
+ * noutra tela (a de conta), que é o caso em que o defeito antigo aparecia: o banco tinha
+ * o nome novo e o cabeçalho, o nome antigo.
  *
  * **As três saídas, e todas as três fecham.** O botão `X`, a tecla `Esc` e o clique fora.
  * Uma janela flutuante que só se fecha por um caminho é uma janela que captura a pessoa
@@ -35,15 +42,11 @@ import { AccountProfileEditor } from './account-profile-editor';
  * texto que ninguém lê. A entrada é ancorada no gatilho (`transform-origin: top right`),
  * porque é de lá que o popover *nasce*.
  */
-export interface AccountMenuPopoverProps {
-  readonly identity: AccountIdentity;
-}
-
-export function AccountMenuPopover({ identity }: AccountMenuPopoverProps) {
+export function AccountMenuPopover() {
+  const { identity, setIdentity } = useAccountIdentity();
   const [open, setOpen] = useState(false);
   const [accountsExpanded, setAccountsExpanded] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
-  const [current, setCurrent] = useState(identity);
 
   const triggerRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -93,7 +96,12 @@ export function AccountMenuPopover({ identity }: AccountMenuPopoverProps) {
     if (open) popoverRef.current?.focus();
   }, [open]);
 
-  const name = current.displayName ?? UNNAMED_ACCOUNT_FALLBACK;
+  // **No identity, no menu.** The trigger is a promise — "here is your account" — and
+  // without an identity there is nothing to promise. The check is after the hooks, so
+  // the rules of hooks do not depend on whether somebody is signed in.
+  if (identity === null) return null;
+
+  const name = identity.displayName ?? UNNAMED_ACCOUNT_FALLBACK;
 
   return (
     <div ref={containerRef} className="relative">
@@ -104,17 +112,17 @@ export function AccountMenuPopover({ identity }: AccountMenuPopoverProps) {
         aria-expanded={open}
         aria-controls="account-menu-popover"
         aria-label={
-          current.displayName === null
+          identity.displayName === null
             ? copy.triggerLabel
-            : copy.triggerLabelNamed(current.displayName)
+            : copy.triggerLabelNamed(identity.displayName)
         }
         onClick={() => (open ? close(false) : setOpen(true))}
         className="rounded-full transition-transform duration-150 ease-out active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
       >
         <AccountAvatar
-          avatarUrl={current.avatarUrl}
-          displayName={current.displayName}
-          cefrLevel={current.cefrLevel}
+          avatarUrl={identity.avatarUrl}
+          displayName={identity.displayName}
+          cefrLevel={identity.cefrLevel}
           size={36}
         />
       </button>
@@ -145,10 +153,13 @@ export function AccountMenuPopover({ identity }: AccountMenuPopoverProps) {
 
           {editorOpen ? (
             <AccountProfileEditor
-              identity={current}
+              identity={identity}
               onCancel={() => setEditorOpen(false)}
               onSaved={(updated) => {
-                setCurrent(updated);
+                // A identidade nova é publicada no contexto: o cabeçalho — que vive no
+                // layout raiz e não é redesenhado pelo cliente — passa a mostrar o nome
+                // novo sem esperar um recarregamento.
+                setIdentity(updated);
                 setEditorOpen(false);
               }}
             />
@@ -160,9 +171,9 @@ export function AccountMenuPopover({ identity }: AccountMenuPopoverProps) {
                 <div className="flex items-start gap-4">
                   <div className="relative">
                     <AccountAvatar
-                      avatarUrl={current.avatarUrl}
-                      displayName={current.displayName}
-                      cefrLevel={current.cefrLevel}
+                      avatarUrl={identity.avatarUrl}
+                      displayName={identity.displayName}
+                      cefrLevel={identity.cefrLevel}
                       size={64}
                     />
                     <button
@@ -189,13 +200,13 @@ export function AccountMenuPopover({ identity }: AccountMenuPopoverProps) {
                     >
                       {name}
                     </p>
-                    <p className="truncate text-sm text-ink-600" title={current.email ?? undefined}>
-                      {current.email ?? copy.emailMissing}
+                    <p className="truncate text-sm text-ink-600" title={identity.email ?? undefined}>
+                      {identity.email ?? copy.emailMissing}
                     </p>
                     <span className="mt-1 inline-flex w-fit items-center rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700 ring-1 ring-inset ring-brand-200">
-                      {current.cefrLevel === null
+                      {identity.cefrLevel === null
                         ? copy.levelMissing
-                        : `${copy.levelLabel} ${current.cefrLevel}`}
+                        : `${copy.levelLabel} ${identity.cefrLevel}`}
                     </span>
                   </div>
                 </div>
@@ -222,11 +233,11 @@ export function AccountMenuPopover({ identity }: AccountMenuPopoverProps) {
                         aria-hidden="true"
                         className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700"
                       >
-                        {current.displayName === null
+                        {identity.displayName === null
                           ? 'A'
-                          : current.displayName.trim().charAt(0).toUpperCase()}
+                          : identity.displayName.trim().charAt(0).toUpperCase()}
                       </span>
-                      <span className="truncate">{current.email ?? name}</span>
+                      <span className="truncate">{identity.email ?? name}</span>
                       <span className="ml-auto text-xs text-ink-500">{copy.currentAccount}</span>
                     </p>
                   </div>

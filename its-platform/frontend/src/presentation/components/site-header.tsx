@@ -1,9 +1,7 @@
 import Link from 'next/link';
-import { cookies } from 'next/headers';
 
 import { APP_NAME } from '@/shared/constants';
 import { routes } from '@/shared/routes';
-import { SESSION_TOKEN_COOKIE } from '@/shared/auth-cookies';
 import { AccountMenuPopover } from './account-menu-popover';
 import { ThemeToggle } from './theme-toggle';
 
@@ -16,31 +14,26 @@ const NAV_ITEMS = [
 /**
  * The global header — the same block on every route.
  *
- * **It is a Server Component, and it decides whether there is a profile trigger at all.**
- * The trigger is only rendered when the request carries a session cookie: a popover that
- * opens onto an empty account is worse than no popover, and a header that shows a
- * profile button to somebody who is not signed in is a promise the platform cannot keep.
- * The check is a cookie's presence, not a verification — the API remains the only party
- * that can decide whether the credential is good, and a header that duplicated that
- * would be a second answer to a security question.
+ * **It does not read the identity, and that is deliberate.** The identity used to be read
+ * here, on the server, and handed to the popover as a prop. It worked — until the learner
+ * changed their name: the write reached the database, the server re-rendered this very
+ * component with the new name, and **the client never applied it**, because a shared
+ * layout is reused from the client cache and is not swapped when a Server Action mutates
+ * the data behind it. The header kept the old name until the page was reloaded.
  *
- * **The identity is read server-side and never leaves the server.** The profile is fetched
- * with the server's own credential (`ITS_API_TOKEN` or the session's access token), and
- * only the three members the popover draws — the name, the picture and the band — are
- * handed to the client component. The token never enters the browser bundle, and the
- * browser never names a learner.
+ * The identity now lives in a client context (`AccountIdentityProvider`), seeded by the
+ * root layout from the server. The server is still the one that reads the profile and the
+ * one that writes it; what changed is that the value the header draws is a value the
+ * client can replace the moment its owner changes it — which is the same thing the Google
+ * Account popover does, and the reason a global menu does not go stale under you.
  *
  * **A failure to read the profile must not take the header down.** The header is the
  * frame of every screen; a header that throws because the API is down replaces a small
- * inconvenience with a blank page. So a failure here means *no trigger* — the learner
- * keeps the navigation, and the pages below still render (and show their own error).
+ * inconvenience with a blank page. So a failure to read the identity means *no trigger* —
+ * the learner keeps the navigation, and the pages below still render (and show their own
+ * error).
  */
-export async function SiteHeader() {
-  const jar = await cookies();
-  const hasSession = jar.get(SESSION_TOKEN_COOKIE)?.value !== undefined;
-
-  const identity = hasSession ? await readIdentity() : null;
-
+export function SiteHeader() {
   return (
     <header className="site-header sticky top-0 z-40 border-b border-border-subtle bg-surface-raised/90 backdrop-blur">
       <div className="mx-auto flex h-14 w-full max-w-5xl items-center gap-4 px-4">
@@ -68,26 +61,10 @@ export async function SiteHeader() {
 
         <ThemeToggle />
 
-        {identity !== null && <AccountMenuPopover identity={identity} />}
+        {/* The popover renders nothing when there is no session — the trigger is the
+            promise, and without an identity there is nothing to promise. */}
+        <AccountMenuPopover />
       </div>
     </header>
   );
-}
-
-/**
- * The learner's identity, read server-side.
- *
- * `null` on any failure — no session, an unreachable API, a learner the API refuses.
- * The header renders without the trigger in that case, and the pages below carry their
- * own error state. A header that threw would be a worse outcome than a header without a
- * profile button.
- */
-async function readIdentity() {
-  try {
-    const { getServerContext } = await import('@/infrastructure/composition/server-container');
-    const { useCases, learnerId } = await getServerContext();
-    return await useCases.getAccountIdentity.execute(learnerId);
-  } catch {
-    return null;
-  }
 }

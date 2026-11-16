@@ -32,6 +32,9 @@ const updateAccountProfileAction = vi.fn();
 vi.mock('@/presentation/actions/account-actions', () => ({ updateAccountProfileAction }));
 
 const { AccountMenuPopover } = await import('@/presentation/components/account-menu-popover');
+const { AccountIdentityProvider, useAccountIdentity } = await import(
+  '@/presentation/providers/account-identity-provider'
+);
 const { routes } = await import('@/shared/routes');
 
 const IDENTITY: AccountIdentity = {
@@ -42,8 +45,35 @@ const IDENTITY: AccountIdentity = {
   cefrLevel: 'A2',
 };
 
+/**
+ * O popover lê a identidade do contexto — é de lá que o layout raiz a semeia. O teste
+ * monta o mesmo desenho: o provider com a identidade e o popover dentro dele.
+ */
 function renderPopover(identity: AccountIdentity = IDENTITY) {
-  return render(<AccountMenuPopover identity={identity} />);
+  return render(
+    <AccountIdentityProvider initialIdentity={identity}>
+      <AccountMenuPopover />
+    </AccountIdentityProvider>,
+  );
+}
+
+/** O mesmo desenho, sem identidade — o caso de quem não está com a sessão aberta. */
+function renderWithoutIdentity() {
+  return render(
+    <AccountIdentityProvider initialIdentity={null}>
+      <AccountMenuPopover />
+    </AccountIdentityProvider>,
+  );
+}
+
+/** Um botão que publica uma identidade nova no contexto — quem salva o nome. */
+function Publisher({ identity }: { readonly identity: AccountIdentity }) {
+  const { setIdentity } = useAccountIdentity();
+  return (
+    <button type="button" onClick={() => setIdentity(identity)}>
+      publicar
+    </button>
+  );
 }
 
 /** O gatilho — o botão que abre o popover. */
@@ -161,7 +191,7 @@ describe('RN23 — o clique fora fecha o popover', () => {
 describe('RN24 — o nome longo é truncado, e não empurrado', () => {
   it('mostra o nome inteiro no `title` e aplica a truncagem no texto', () => {
     const longName =
-      'Maria das Graças Albuquerque de Vasconcelos 도움 Santa Ana';
+      'Maria das Graças Albuquerque de Vasconcelos e Sant Anna';
     renderPopover({ ...IDENTITY, displayName: longName });
     open();
 
@@ -208,5 +238,34 @@ describe('RN26 — o rodapé leva à tela de conta', () => {
 
     expect(link.getAttribute('href')).toBe(routes.loginWithSwitch);
     expect(link.getAttribute('href')).toBe('/login?switch=1');
+  });
+});
+
+describe('RN31 — o popover segue a identidade publicada no contexto', () => {
+  it('não desenha gatilho nenhum quando não há identidade', () => {
+    renderWithoutIdentity();
+
+    expect(screen.queryByRole('button', { name: /menu da conta/i })).toBeNull();
+  });
+
+  it('desenha o nome novo assim que a identidade nova é publicada', () => {
+    const renamed: AccountIdentity = { ...IDENTITY, displayName: 'Maria das Graças' };
+
+    render(
+      <AccountIdentityProvider initialIdentity={IDENTITY}>
+        <AccountMenuPopover />
+        <Publisher identity={renamed} />
+      </AccountIdentityProvider>,
+    );
+
+    expect(trigger().getAttribute('aria-label')).toContain('Ana Souza');
+
+    fireEvent.click(screen.getByRole('button', { name: 'publicar' }));
+
+    // O gatilho — o `aria-label` é o nome que a pessoa lê no leitor de tela.
+    expect(trigger().getAttribute('aria-label')).toContain('Maria das Graças');
+    // E o cartão de identidade.
+    fireEvent.click(trigger());
+    expect(screen.getByTestId('account-display-name').textContent).toBe('Maria das Graças');
   });
 });
