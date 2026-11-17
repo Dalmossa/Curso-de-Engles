@@ -3,113 +3,126 @@
 **Lesson ID:** `les_a1_pronouns_possessive`
 **Module:** `mod_a1_grammar_start`
 **CEFR:** A1
-**Reuse basis:** `cite_only`
-**Source:** `docs/apostila-ingles-para-iniciantes-impresso.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US).
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: dividindo equipamentos no começo do sprint
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **possessive adjective** | adjetivo possessivo | *my, your, his, her, its, our, their* |
-| **possessive pronoun** | pronome possessivo | *mine, yours, his, hers, its, ours, theirs* |
-| **my** | meu/minha | *adjetivo possessivo 1ª pessoa* |
-| **mine** | meu/minha (pronome) | *pronome possessivo 1ª pessoa* |
-| **your** | seu/sua | *adjetivo possessivo 2ª pessoa* |
-| **yours** | seu/sua (pronome) | *pronome possessivo 2ª pessoa* |
-| **his** | dele | *adjetivo/pronome possessivo 3ª pessoa masc.* |
-| **her** | dela | *adjetivo possessivo 3ª pessoa fem.* |
-| **hers** | dela (pronome) | *pronome possessivo 3ª pessoa fem.* |
-| **its** | dele/dela (coisa) | *adjetivo/pronome possessivo 3ª pessoa neutro* |
-| **our** | nosso/nossa | *adjetivo possessivo 1ª pessoa plural* |
-| **ours** | nosso/nossa (pronome) | *pronome possessivo 1ª pessoa plural* |
-| **their** | deles/delas | *adjetivo possessivo 3ª pessoa plural* |
-| **theirs** | deles/delas (pronome) | *pronome possessivo 3ª pessoa plural* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**Possessive adjectives**: **my** book, **your** pen, **his** car, **her** house, **its** tail, **our** team, **their** dog."
+> **Marina (backend dev):** "Is this my build badge or yours? Our standup starts in five minutes."
 >
-> "**Possessive pronouns**: The book is **mine**. The pen is **yours**. The car is **his**. The house is **hers**. The team is **ours**. The dog is **theirs**."
+> **Rafael (platform engineer):** "That one is yours. Mine is the blue one. Their team already left, but her script is still running."
 >
-> "**My** book is red. The red book is **mine**. **Her** house is big. The big house is **hers**."
+> **Marina:** "Got it. I'll carry my laptop and our test rig to their room."
+>
+> **Rafael:** "Perfect. Its battery is full, and my charger is in his drawer."
+>
+> **Marina:** "Thanks. I'll bring my own headphones, because the meeting is long."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **my badge / mine** | meu crachá / o meu | *my* vem **antes** do substantivo; *mine* **substitui** o substantivo. |
+| **your laptop / yours** | seu notebook / o seu | *your* acompanha o substantivo; *yours* fica sozinho no fim. |
+| **his drawer / it's his** | a gaveta dele / é dele | *his* é igual como adjetivo e como pronome. |
+| **her script / it's hers** | o script dela / é dela | *her* (antes) e *hers* (sozinho) — a forma muda no feminino. |
+| **its battery** | a bateria dele (da coisa) | *its* = possessivo de coisa/objeto; não confunda com *it's* (= it is). |
+| **our standup / ours** | nosso standup / o nosso | *our* antes do substantivo; *ours* sozinho. |
+| **their room / theirs** | a sala deles / a deles | *their* antes; *theirs* sozinho — nunca *their's*. |
+| **my own headphones** | meus próprios fones | *my own* reforça posse exclusiva — nunca "*an own*" headphones. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "O livro **de** ele." → "The book of he." | "**His** book." / "The book is **his**." | O pt-BR usa *de* + pronome; o en-US prefere o possessivo antes do substantivo ou o pronome possessivo sozinho. |
+| "O notebook **de** Maria." → "The notebook of Maria." | "**Maria's** notebook." | Com pessoas, o en-US usa `'s` para marcar posse, não *of*. |
+| "A sala **de** meus irmãos." → "The room of my brothers." | "**My brothers'** room." | Com substantivo plural terminado em *-s*, o apóstrofo vai **depois** do *s*. |
+| "Esse laptop é **meu**." → "This laptop is my." | "This laptop is **mine**." | No fim da frase, use o pronome possessivo (*mine*, *yours*, *hers*), não o adjetivo. |
+| "*Their's* room is big." | "**Their** room is big." / "The room is **theirs**." | Formas com `'s` (*their's*, *your's*, *her's*) não existem: o possessivo já marca a posse. |
+| "**Your** on the call." (confusão) | "**You're** on the call." (you are) | *your* = possessivo; *you're* = *you are*. A diferença é de função, não de som. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Possessive pronouns**:
-| Slot | Value |
-|------|-------|
-| A | Come before nouns |
-| B | **Replace nouns (mine, yours, his)** |
-| C | Are verbs |
-| D | Are prepositions |
+### Exercício 1 — Reconhecimento (adjetivo vs. pronome possessivo)
+
+Qual par de frases está **correto**?
+
+| Opção | Frase |
+|---|---|
+| A | "This laptop is **my**. Our standup is at nine." |
+| B | **"This laptop is mine. Our standup is at nine."** |
+| C | "Mine laptop is new. Our standup is at nine." |
+| D | "This laptop is mine. Ours standup is at nine." |
+
+**Chave:** B — *mine* substitui o substantivo depois de *is*; *our* continua acompanhando *standup*.
 **Key:** B
-**br_pt_form:** "pronomes possessivos / substituem substantivos"
 
-### Item 2 — Vocabulary (Matching)
-Match the adjective to its pronoun:
-| Adjective | Pronoun |
-|-----------|---------|
-| **My** | a. mine |
-| **Your** | b. yours |
-| **Her** | c. hers |
-| **Their** | d. theirs |
-**Key:** My→a, Your→b, Her→c, Their→d
-**br_pt_form:** "meu", "seu", "dela", "deles"
+### Exercício 2 — Transformação L1 → L2 (posse com `'s` vs. *of*)
 
-### Item 3 — Grammar: Adjective vs pronoun (fill-in-blank)
-Complete with **possessive adjective or pronoun**:
-"______ (my/mine) book is red. The red book is ______ (my/mine). ______ (her/hers) house is big. The big house is ______ (her/hers)."
-**Key:** My / mine / Her / hers
-**br_pt_form:** "Meu / meu / Dela / dela"
+Reescreva a intenção em inglês natural:
+
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "O script de Marina está pronto." | "Marina's script is ready." / "The script of Marina is ready." (segunda forma é rara) |
+| "As senhas dos usuários estão no arquivo." | "The users' passwords are in the file." |
+| "Esse crachá é dela." | "That badge is hers." |
+| "A sala deles fica no segundo andar." | "Their room is on the second floor." |
+
+**Chave:** pessoas → `'s` (ou `'` depois de plural em *-s*); coisa + coisa → *of*; pronome sozinho no fim → *hers* / *theirs*.
+**Key:** people take `'s`; *hers* and *theirs* stand alone at the end.
+
+### Exercício 3 — Complete com a forma correta
+
+Complete com: **my**, **mine**, **your**, **yours**, **their**, **theirs**
+
+1. "Is this badge ____ or ____ ?" → **yours**, **mine**
+2. "____ laptop is heavier than ____ ." → **My**, **yours**
+3. "That room is ____ , and these keys are ____ ." → **theirs**, **ours** (ou **theirs**, **mine** conforme o dono)
+
+**Chave:** 1) yours + mine; 2) My + yours; 3) theirs + ours. O adjetivo acompanha o substantivo; o pronome fica sozinho.
+**Key:** adjective + noun or pronoun alone — never "my" alone at the end.
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Speaking: Possession Game (pares)
-**Game**: Point to objects and say who they own.
+### 5 sentenças-alvo (leia em voz corrida)
 
-**Example:**
-> A: "This is **my** pen." / "The pen is **mine**."
-> B: "That is **your** book." / "The book is **yours**."
-> A: "This is **his** car." / "The car is **his**."
-> B: "That is **her** house." / "The house is **hers**."
+This laptop is mine, and that charger is yours. Our standup starts at nine in the morning. Her pull request is ready for review today. Their team shipped its update yesterday evening. My notebook and my badge are in my backpack.
 
-**Practice with**: my/mine, your/yours, his/his, her/hers, our/ours, their/theirs.
+### Foco articulatório para falantes de pt-BR
+
+- **Terminações de `'s`** (*Kate's script*, *Tom's badge*, *Chris's machine*): realize /s/ após som surdo, /z/ após som sonoro e /ɪz/ depois de *s, z, sh, ch*. Não engula o som final.
+- **/ð/ em *their* e *theirs***: coloque a ponta da língua entre os dentes; evite /d/ ("deir") e evite /t/.
+- ***its* vs *it's***: em *its battery* o final é /s/ sem pausa; em *it's* o /t/ aparece claro, como em *it is*.
+- **Ritmo e ligação**: em *mine and yours*, ligue as vogais suavemente; em *my own*, mantenha o ditongo de *my* e a nasal final de *own*.
+- **Não adicione vogal final**: *mine* e *theirs* terminam em consoante ou ditongo — evite "maini" ou "deirsi".
+
+### Prompt de produção (oral ou escrita)
+
+Você está no início de um sprint, dividindo equipamentos e arquivos com o time. Escreva um diálogo de **4 a 6 falas** em que duas pessoas identificam o que é de cada uma (*my*, *your*, *his*, *her*, *our*, *their*) e usam ao menos **dois pronomes possessivos sozinhos** (*mine*, *yours*, *hers*, *ours*, *theirs*). Inclua um detalhe real do seu trabalho: um laptop, um crachá, uma sala, um script ou um repositório.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Its** (possessive) vs **it's** (contraction):
-| Slot | Value |
-|------|-------|
-| A | Same meaning |
-| B | **Its = possessive; It's = it is** |
-| C | Its = it is; It's = possessive |
-| D | Both are contractions |
-**Key:** B
-**br_pt_form:** "its = possessivo; it's = it is"
+1. **Gramática (L1):** Qual frase usa o pronome possessivo corretamente?  
+   A) "This badge is my."  B) **"This badge is mine."**  C) "This badge is me."  D) "This badge is I."  
+   **Chave:** B  
+   **Key:** B
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **possessive**:
-| Slot | Value |
-|------|-------|
-| A | The book is **my**. |
-| B | The book is **mine**. |
-| C | The book is **I**. |
-| D | The book is **me**. |
-**Key:** B
-**br_pt_form:** "O livro é meu."
+2. **Gramática (L1):** Complete: "____ team shipped ____ update yesterday."  
+   A) "They / it's"  B) **"Their / its"**  C) "There / it's"  D) "Their / it's"  
+   **Chave:** B  
+   **Key:** B
 
 ---
 
@@ -118,53 +131,38 @@ Choose the correct **possessive**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a1_pronouns_possessive",
   "cefr_level": "A1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (possessive explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/apostila-ingles-para-iniciantes-impresso.md (no licence grant) - scoping of possessive pronouns"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - possessive terms are unprotectable linguistic knowledge; definitions authored"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material; no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.possessive_adjectives_pronouns"
+      "grammar.possessives.adjective_form",
+      "grammar.possessives.of_vs_s"
     ],
     "vocabulary": [
-      "vocab.possessive.possessive_adjective",
-      "vocab.possessive.possessive_pronoun",
-      "vocab.possessive.my",
-      "vocab.possessive.mine",
-      "vocab.possessive.your",
-      "vocab.possessive.yours",
-      "vocab.possessive.his",
-      "vocab.possessive.her",
-      "vocab.possessive.hers",
-      "vocab.possessive.its",
-      "vocab.possessive.our",
-      "vocab.possessive.ours",
-      "vocab.possessive.their",
-      "vocab.possessive.theirs"
+      "vocab.possessives.pronoun_forms",
+      "vocab.possessives.adjective_pronoun_pair"
     ],
     "listening": [
-      "listening.possessive_context"
+      "listening.possessives_context"
     ],
     "pronunciation": [
-      "pronunciation.possessives"
+      "pronunciation.possessive_s_endings",
+      "pronunciation.th_dental_their"
     ],
     "speaking": [
-      "speaking.possession_game"
+      "speaking.possessives_equipment_dialogue"
     ]
   },
   "prereq_lessons": [

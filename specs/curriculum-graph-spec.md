@@ -122,19 +122,19 @@ This is the authoritative list of lesson IDs. Any spec (`content-map.md`, `diagn
 **`mod_a1_foundation`** (A1, General)
 | Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
 |-----------|-------|--------|------------|---------------------|--------|
-| `les_a1_alphabet_sounds` | Alphabet, Sounds, Letter Names | apostila 2.1 | alphabet_letter_names |  | ✅ **authored** |
+| `les_a1_alphabet_sounds` | Alphabet, Sounds, Letter Names | Original (clean-room, Onda 2 — Lote 2 (batch 2)) | alphabet_letter_names |  | ✅ **authored** · reauthored_authored_material |
 | `les_a1_greetings` | Greetings & Basic Phrases | Original (clean-room, Lote 2 Onda 2) | greetings_time,present_simple_be |  | ✅ **authored** · reauthored_authored_material |
 | `les_a1_intro_dialogue` | Introducing Yourself: 3-Step Dialogue | Original (clean-room, Lote 2 Onda 2) | present_simple_be,wh_questions_how,greetings_time |  | ✅ **authored** · reauthored_authored_material |
 | `les_a1_daily_basics` | Everyday Survival Phrases | Original (clean-room, Lote 2 Onda 2) | daily_expressions | present_simple_be,greetings_time | ✅ **authored** · reauthored_authored_material |
 | `les_a1_pronunciation_intro` | TH / H / R / S+C Minimal Pairs | Original (clean-room, Lote 2 Onda 2) | th_voiced,th_unvoiced,h_aspirated |  | ✅ **authored** · reauthored_authored_material |
-| `les_a1_en_us_en_gb` | American vs. British English | apostila 2.3 | greetings_formal_informal |  | ✅ **authored** (enrichment) |
+| `les_a1_en_us_en_gb` | American vs. British English | Original (clean-room, Onda 2 — Lote 2 (batch 2)) | greetings_formal_informal |  | ✅ **authored** · reauthored_authored_material |
 
 **`mod_a1_grammar_start`** (A1, General)
 | Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
 |-----------|-------|--------|------------|---------------------|--------|
-| `les_a1_to_be_forms` | Verb To Be: Affirmative/Negative/Interrogative | apostila 3.2.3 | present_simple_be | present_simple_be | ✅ **authored** |
-| `les_a1_pronouns_subject_object` | Personal Pronouns: Subject & Object | apostila 3.1.1 | personal_pronouns_subject,personal_pronouns_object | present_simple_be | ✅ **authored** |
-| `les_a1_pronouns_possessive` | Possessive Pronouns | apostila 3.1.2 | possessive_pronouns | personal_pronouns_subject,personal_pronouns_object | ✅ **authored** |
+| `les_a1_to_be_forms` | Verb To Be: Affirmative/Negative/Interrogative | Original (clean-room, Onda 2 — Lote 2 (batch 2)) | present_simple_be | present_simple_be | ✅ **authored** · reauthored_authored_material |
+| `les_a1_pronouns_subject_object` | Personal Pronouns: Subject & Object | Original (clean-room, Onda 2 — Lote 2 (batch 2)) | personal_pronouns_subject,personal_pronouns_object | present_simple_be | ✅ **authored** · reauthored_authored_material |
+| `les_a1_pronouns_possessive` | Possessive Pronouns | Original (clean-room, Onda 2 — Lote 2 (batch 2)) | possessive_pronouns | personal_pronouns_subject,personal_pronouns_object | ✅ **authored** · reauthored_authored_material |
 | `les_a1_pronouns_demonstrative` | Demonstratives: This/That/These/Those | apostila 3.1.3 + IT A3 | demonstrative_pronouns | possessive_pronouns | ✅ **authored** |
 | `les_a1_wh_questions` | Interrogatives: WH-words + How+Adverb | apostila 3.1.4 | interrogative_pronouns | present_simple_be | ✅ **authored** |
 | `les_a1_articles_nouns` | Articles, Nouns, Adjectives | apostila 4.1-4.3 | articles_definite,articles_indefinite,noun_plurals,adjectives_basic | demonstrative_pronouns | ✅ **authored** |
@@ -427,7 +427,7 @@ was hiding the distinction that caused the original error:
 |--------|------:|---------|
 | `sourced_external` | **7** | licence permits adaptation **and** the source's discourse matches the lesson title (still pending full reautoria) |
 | `sourced_external_thin` | **0** | licence permits, but coverage is partial — none remain |
-| `reauthored_authored_material` | **10** | fully reauthored in clean-room as 100% original `authored_material` (Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2 Onda 2: `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`) |
+| `reauthored_authored_material` | **15** | fully reauthored in clean-room as 100% original `authored_material` (Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2 Onda 2: `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`; Onda 2 — Lote 2 (batch 2): `les_a1_alphabet_sounds`, `les_a1_en_us_en_gb`, `les_a1_to_be_forms`, `les_a1_pronouns_subject_object`, `les_a1_pronouns_possessive`) |
 | `blocked_no_adequate_source` | **0** | none |
 | `deferred_no_source` | **0** | retired |
 
@@ -670,7 +670,7 @@ If P(mastery_skill) declining 3+ consecutive sessions:
 | Lessons per module | 6, except `mod_a2_it_fundamentals` and `mod_b1_it_technical` (10 each) and `mod_b2_it_senior` (8) |
 | Lessons authored | **123** — every registry ID has a file declaring it |
 | Lessons blocked | **0** |
-| Practice packs authored | **123** — 17 in the `pack-les-*.md` schema, 106 in `pack_les_*_v1.md`; see `post-lesson-practice-spec.md` §12 |
+| Practice packs authored | **123** — 22 in the `pack-les-*.md` schema, 101 in `pack_les_*_v1.md`; see `post-lesson-practice-spec.md` §12 |
 | Source files mapped | 7 / 7 (100%) |
 | Source sections mapped | 87 / 87 (100%, 6 marked meta) |
 | Orphan lesson IDs across all specs | **0** |

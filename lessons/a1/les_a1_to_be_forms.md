@@ -1,116 +1,123 @@
-# Lesson: Verb To Be — Affirmative, Negative, Interrogative
+# Lesson: Verb To Be: Affirmative/Negative/Interrogative
 
 **Lesson ID:** `les_a1_to_be_forms`
 **Module:** `mod_a1_grammar_start`
 **CEFR:** A1
-**Reuse basis:** `cite_only`
-**Source:** `docs/apostila-ingles-para-iniciantes-impresso.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US).
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: apresentação no time remoto
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **affirmative** | afirmativa | *frase positiva* |
-| **negative** | negativa | *frase com not* |
-| **interrogative** | interrogativa | *pergunta* |
-| **am** | sou/estou | *1ª pessoa singular* |
-| **is** | é/está | *3ª pessoa singular* |
-| **are** | são/estão | *2ª pessoa e plural* |
-| **I am** | eu sou/estou | *afirmativa 1ª pessoa* |
-| **I am not** | eu não sou/estou | *negativa 1ª pessoa* |
-| **Am I?** | eu sou/estou? | *interrogativa 1ª pessoa* |
-| **contraction** | contração | *I'm, he's, you're* |
-| **short answer** | resposta curta | *Yes, I am / No, I'm not* |
-| **subject** | sujeito | *quem pratica a ação* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**Affirmative**: I **am** happy. She **is** a doctor. They **are** students."
+> **Maya (new backend developer):** "Good morning, everyone. I'm Maya, the new backend developer."
 >
-> "**Negative**: I **am not** sad. She **is not** tired. They **are not** here."
+> **Leo (tech lead):** "Good morning, Maya. Welcome to the team! How are you today?"
 >
-> "**Interrogative**: **Am I** late? **Is she** ready? **Are they** coming?"
+> **Maya:** "I'm fine, thank you. Nice to meet you."
 >
-> "**Contractions**: I'm, she's, they're. **Short answers**: Yes, I am. / No, I'm not."
+> **Leo:** "Nice to meet you, too. This is Sofia, our QA engineer."
+>
+> **Sofia:** "Hi, Maya. Good to meet you. We are ready for the daily meeting."
+>
+> **Maya:** "Thank you. Excuse me, is the meeting room free now?"
+>
+> **Leo:** "Yes, it is. Take a seat. See you at the daily."
+
+### Glossário contrastivo (en-US ↔ pt-BR)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **Good morning** | Bom dia | Saudação usada pela manhã, até cerca do meio-dia. |
+| **Welcome to the team** | Bem-vinda(o) ao time | Usada para receber quem chega ao time ou projeto. |
+| **I'm fine, thank you** | Estou bem, obrigado(a) | Resposta natural e curta a "How are you?". |
+| **Nice to meet you** | Prazer em conhecer você | Usada no primeiro contato; resposta: *Nice to meet you, too.* |
+| **This is Sofia** | Esta é a Sofia | Apresenta uma terceira pessoa no presente. |
+| **We are ready** | Estamos prontos | *are* com *we* (1ª pessoa do plural). |
+| **Is the meeting room free?** | A sala de reunião está livre? | Pergunta com *is* + sujeito (3ª pessoa do singular). |
+| **Yes, it is** | Sim, está | Resposta curta afirmativa com *to be*. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural en-US | Por quê? |
+|---|---|---|
+| "Maya 28 anos." / "Maya have 28." | "Maya **is** 28." / "Maya **is** 28 years old." | Em inglês a idade usa *to be* (*am/is/are*), nunca *have*. |
+| "Eu engenheiro." / "I engineer." | "I **am** an engineer." | O português omite o verbo de ligação; o inglês exige um sujeito explícito com *to be*. |
+| "Ela feliz." / "She happy." | "She **is** happy." | Sem um verbo, a frase não está completa em inglês. |
+| "Eles é alunos." / "They is students." | "They **are** students." | Concordância de número: *they* leva *are*, não *is*. |
+| "Você é professor?" → "Yes, I am." / "No, I am not." | "Yes, I am." / "No, I'm not." | Respostas curtas repetem apenas o verbo *to be*, não o adjetivo ou substantivo. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Am** is used with:
-| Slot | Value |
-|------|-------|
-| A | He, she, it |
-| B | **I** |
-| C | You, we, they |
-| D | All subjects |
-**Key:** B
-**br_pt_form:** "am / com I"
+### Exercício 1 — Reconhecimento (sujeito + forma correta)
 
-### Item 2 — Vocabulary (Matching)
-Match the form to its example:
-| Form | Example |
-|------|---------|
-| **Affirmative** | a. I am happy. |
-| **Negative** | b. I am not sad. |
-| **Interrogative** | c. Am I late? |
-| **Contraction** | d. I'm happy. |
-**Key:** Affirmative→a, Negative→b, Interrogative→c, Contraction→d
-**br_pt_form:** "afirmativa", "negativa", "interrogativa", "contração"
+Qual frase usa a forma correta do verbo *to be* com o sujeito destacado?
 
-### Item 3 — Grammar: To be forms (fill-in-blank)
-Complete with **am / is / are**:
-"I ______ a student. She ______ my friend. They ______ here. You ______ late."
-**Key:** am / is / are / are
-**br_pt_form:** "sou / é / estão / está"
+| Opção | Frase |
+|---|---|
+| A | He **am** a developer. |
+| B | **She **is** a QA engineer.** |
+| C | They **is** ready. |
+| D | We **is** fine. |
 
----
+**Key:** B — *She* (3ª pessoa do singular) combina com *is*; *am* vai apenas com *I*, e *are* com *we/you/they*.
 
-## FASE 3 — Output Task [4 min]
+### Exercício 2 — Transformação L1 → L2
 
-### Speaking: To Be Interview (pares)
-**Interview your partner** using only **to be** questions:
+Reescreva a intenção em inglês natural, usando a forma correta de *to be*:
 
-1. **Are you** a student?
-2. **Is** your teacher here?
-3. **Are** you happy?
-4. **Am I** late?
-5. **Is** she your friend?
-6. **Are** they ready?
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Eu sou a nova desenvolvedora backend." | "I am the new backend developer." / "I'm the new backend developer." |
+| "Ela é a engenheira de QA." | "She is the QA engineer." / "She's the QA engineer." |
+| "Nós estamos prontos para a daily." | "We are ready for the daily." / "We're ready for the daily." |
 
-**Answer with short answers**: Yes, I am. / No, I'm not. / Yes, she is. / No, they aren't.
+### Exercício 3 — Afirmativa, negativa e interrogativa
+
+Complete com a forma correta de *to be* (incluindo contrações quando couber):
+
+1. "Good morning. I ____ Maya, the new backend developer." → **am** / **I'm**
+2. "This ____ Sofia, our QA engineer." → **is** / **She's**
+3. "We ____ ready for the daily meeting." → **are** / **We're**
+4. "The meeting room ____ free now." → **is** / **It's**
+
+**Key:** 1) am / I'm; 2) is / She's; 3) are / We're; 4) is / It's.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Contraction** of "I am" is:
-| Slot | Value |
-|------|-------|
-| A | I'm |
-| B | **I'm** |
-| C | Im |
-| D | Iam |
-**Key:** B
-**br_pt_form:** "I'm / contração de I am"
+### 5 sentenças-alvo (leia em voz corrida)
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **to be** form:
-| Slot | Value |
-|------|-------|
-| A | She **am** happy. |
-| B | She **is** happy. |
-| C | She **are** happy. |
-| D | She **be** happy. |
-**Key:** B
-**br_pt_form:** "Ela está feliz."
+I am Maya, the new backend developer on this team. She is Sofia, our QA engineer. We are ready for the daily meeting. Is the meeting room free now? Yes, it is, and we are here.
+
+### Foco articulatório para falantes de pt-BR
+
+- **Contrações *I'm / he's / she's / it's / we're / they're***: o som /h/ de *he* e *she* é aspirado; em *I'm* não há /h/, apenas a vogal /aɪ/ seguida de /m/.
+- **Ligação fonética**: *I am* soa como *I'm* /aɪm/; *he is* soa como *he's* /hiːz/; *it is* soa como *it's* /ɪts/. Não separe as palavras na fala corrida.
+- **Ritmo de frase Yes/No**: em *Is the meeting room free?*, suba ligeiramente a entonação no final (*free?*), típico de pergunta sim/não.
+- **Ausência de concordância verbal como no português**: *to be* muda conforme o sujeito (*I am / she is / they are*), mas não há flexão de pessoa no verbo principal de outras frases.
+
+### Prompt de produção (oral ou escrita)
+
+Imagine que você está entrando em uma reunião de boas-vindas com o time remoto. Apresente-se com *I am...*, diga quem é outra pessoa do time com *She is...* / *He is...*, confirme que o time está pronto com *We are...*, e faça uma pergunta sim/não com *Is...?*. Escreva ou grave um mini diálogo de 4 a 6 falas.
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Gramática (L1):** Qual frase está correta?  
+   A) "He am a developer."  B) **"She is a QA engineer."**  C) "They is ready."  D) "We is fine."  
+   **Key:** B
+
+2. **Vocabulário (L1):** Qual é a resposta curta natural para "Is the meeting room free?"  
+   A) "Yes, the meeting room is free."  B) **"Yes, it is."**  C) "Yes, free."  D) "Yes, room."  
+   **Key:** B
 
 ---
 
@@ -119,61 +126,48 @@ Choose the correct **to be** form:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a1_to_be_forms",
   "cefr_level": "A1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (to be explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/apostila-ingles-para-iniciantes-impresso.md (no licence grant) - scoping of verb to be"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - grammar terms are unprotectable linguistic knowledge; definitions authored"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material; no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.to_be_forms"
+      "grammar.to_be_affirmative",
+      "grammar.to_be_negative",
+      "grammar.to_be_interrogative",
+      "grammar.to_be_contractions",
+      "grammar.to_be_short_answers"
     ],
     "vocabulary": [
-      "vocab.tobe.affirmative",
-      "vocab.tobe.negative",
-      "vocab.tobe.interrogative",
-      "vocab.tobe.am",
-      "vocab.tobe.is",
-      "vocab.tobe.are",
       "vocab.tobe.i_am",
-      "vocab.tobe.i_am_not",
-      "vocab.tobe.am_i",
-      "vocab.tobe.contraction",
-      "vocab.tobe.short_answer",
-      "vocab.tobe.subject"
+      "vocab.tobe.she_is",
+      "vocab.tobe.we_are",
+      "vocab.tobe.it_is",
+      "vocab.tobe.yes_it_is"
     ],
     "listening": [
       "listening.tobe_context"
     ],
     "pronunciation": [
-      "pronunciation.tobe_forms"
+      "pronunciation.contractions_be",
+      "pronunciation.yes_no_intonation",
+      "pronunciation.linking_im_hes"
     ],
     "speaking": [
-      "speaking.tobe_interview"
+      "speaking.introduction_dialogue"
     ]
   },
-  "prereq_lessons": [
-    "les_a1_alphabet_sounds",
-    "les_a1_greetings",
-    "les_a1_intro_dialogue",
-    "les_a1_daily_basics",
-    "les_a1_pronunciation_intro",
-    "les_a1_en_us_en_gb"
-  ],
+  "prereq_lessons": ["les_a1_alphabet_sounds", "les_a1_greetings", "les_a1_intro_dialogue", "les_a1_daily_basics", "les_a1_pronunciation_intro", "les_a1_en_us_en_gb"],
   "estimated_time_min": 15
 }
 ```

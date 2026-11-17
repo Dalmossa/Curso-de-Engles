@@ -97,11 +97,11 @@ sources is permissively licensed.** Applying it to the 123-lesson registry:
 |-------|--------:|------:|---------|
 | cites an **explicitly restricted** source (BaixeLivros) | **57** | 46% | ❌ blocked by an explicit term |
 | cites a **©-only** source (CETAM, Tiago Rodrigues) — no licence grant | 16 | 13% | ❌ all rights reserved by default |
-| cites a source with **no copyright statement at all** | 19 | 15% | ❌ reserved by default |
+| cites a source with **no copyright statement at all** | 14 | 11% | ❌ reserved by default |
 | cites a **permissive external** source (this file, §2) | **11** | 9% | ✅ reusable with attribution (7 `sourced_external` lições IT ainda pendentes de reautoria integral) |
-| cites **no specific source** (inclui 5 exam, 5 remediação e lições reautoradas/originais clean-room) | 20 | 16% | ⚠️ sem fonte externa declarada no registro — inclui 10 lições `authored_material` (5 Lote 1 + 5 Lote 2 Onda 2) |
+| cites **no specific source** (inclui 5 exam, 5 remediação e lições reautoradas/originais clean-room) | 25 | 20% | ⚠️ sem fonte externa declarada no registro — inclui 15 lições `authored_material` (5 Lote 1 + 5 Lote 2 Onda 2 + 5 Onda 2 — Lote 2 (batch 2)) |
 
-> **Placar pós-Lote 2 Onda 2 (2026-11-16): 17 de 123 lições** estão em base reutilizável/autoralmente limpa para a meta — **10 `authored_material`** (Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2: `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`) + **7 `sourced_external`** permissivas ainda pendentes de reautoria integral. **104 lições permanecem `cite_only`** (108 menos as 4 A1 reautoradas) e as demais bases de reuso/adaptação seguem conforme o inventário e a política de `cite_only`/reautoria. 57 lições seguem bloqueadas por termo explícito e 35 por ausência de licença/padrão restritivo no corpus local (©/sem declaração). |
+> **Placar pós-Onda 2 — Lote 2 (batch 2) (2026-11-16): 22 de 123 lições** estão em base reutilizável/autoralmente limpa para a meta — **15 `authored_material`** (Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2 Onda 2: `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`; Onda 2 — Lote 2 (batch 2): `les_a1_alphabet_sounds`, `les_a1_en_us_en_gb`, `les_a1_to_be_forms`, `les_a1_pronouns_subject_object`, `les_a1_pronouns_possessive`) + **7 `sourced_external`** permissivas ainda pendentes de reautoria integral. **101 lições permanecem `cite_only`** e as demais bases de reuso/adaptação seguem conforme o inventário e a política de `cite_only`/reautoria: **7 `adapt_with_attribution`** e 0 `adapt_requires_permission`. As 5 classes de `§0.5` somam 123: 57 bloqueadas por termo explícito e 30 por ausência de licença/padrão restritivo no corpus local (©/sem declaração), 11 em fonte externa permissiva e 25 sem fonte específica declarada no registro. |
 
 ### 0.5.1 What this does and does not change
 
@@ -784,7 +784,17 @@ Historicamente, cada lição abaixo moveu de `deferred_no_source` para um sourci
 | 16 | `les_a1_daily_basics` | — (clean-room) | n/a | `reauthored_authored_material` (Lote 2 Onda 2) | Antes `cite_only`; reautoria integral. |
 | 17 | `les_a1_pronunciation_intro` | — (clean-room) | n/a | `reauthored_authored_material` (Lote 2 Onda 2) | Antes `cite_only`; reautoria integral. |
 
-**Resumo (estado atual):** 7 lições permanecem `sourced_external`, 10 estão `reauthored_authored_material` (5 Lote 1 + 5 Lote 2), 0 `sourced_external_thin`, 0 `blocked_no_adequate_source`. O conjunto documentado aqui corresponde exatamente aos nós marcados como externamente relacionados/reautorados no `curriculum-graph-spec.md` §4.3.
+**Lições reautoradas adicionadas na Onda 2 — Lote 2 (batch 2) (fora do conjunto original dos 13):**
+
+| # | Lesson | Primary source(s) | Coverage | Estado atual (2026-11-16) | Nota |
+|---|--------|-------------------|----------|---------------------------|------|
+| 18 | `les_a1_alphabet_sounds` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 2 (batch 2)) | Antes `cite_only` (bibliografia local restrita); reautoria integral. |
+| 19 | `les_a1_en_us_en_gb` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 2 (batch 2)) | Antes `cite_only`; reautoria integral. |
+| 20 | `les_a1_to_be_forms` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 2 (batch 2)) | Antes `cite_only`; reautoria integral. |
+| 21 | `les_a1_pronouns_subject_object` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 2 (batch 2)) | Antes `cite_only`; reautoria integral. |
+| 22 | `les_a1_pronouns_possessive` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 2 (batch 2)) | Antes `cite_only`; reautoria integral. |
+
+**Resumo (estado atual):** 7 lições permanecem `sourced_external`, 15 estão `reauthored_authored_material` (5 Lote 1 + 5 Lote 2 Onda 2 + 5 Onda 2 — Lote 2 (batch 2)), 0 `sourced_external_thin`, 0 `blocked_no_adequate_source`. O conjunto documentado aqui corresponde exatamente aos nós marcados como externamente relacionados/reautorados no `curriculum-graph-spec.md` §4.3.
 
 ### 5.1 The vocabulary debt this repays
 
@@ -833,7 +843,7 @@ Per §0.5, every `Source` citation in the registry now needs a second field: the
 | Reuse basis | Applies to | Obligation | Cost |
 |-------------|-----------|------------|------|
 | **`cite_only`** (default) | the ~38 silent/©-only lessons, and any restricted lesson whose content is original | Reproduce nothing. Cite in the bibliography. | none |
-| **`adapt_with_attribution`** | the 13 external-sourced lessons | Reproduce/adapt, publish the §7.1 attribution string | one line per lesson |
+| **`adapt_with_attribution`** | the 7 external-sourced lessons | Reproduce/adapt, publish the §7.1 attribution string | one line per lesson |
 | **`adapt_requires_permission`** | the 48 restricted lessons that are list-shaped | **Written, perpetual, redistribution-granting permission** before publication | a letter and a wait |
 
 **The `cite_only` default is genuinely cheap for grammar and register work.** A rule like "third
@@ -872,7 +882,8 @@ permission; it is a promise to ask again. Given notice §0.5, any grant we accep
 outlive the revocation clause.
 
 **Track this as an open dependency, not a task.** Until §7.0's `adapt_requires_permission` set is
-cleared, the honest publishable scope of the course is the 13 externally-sourced lessons plus
+cleared, the honest publishable scope of the course is the 22 lessons already on a reusable
+clean-room basis (15 `authored_material` + 7 `sourced_external`) plus
 original material — which is a small course, and the product plan should say so rather than discover
 it at launch.
 
