@@ -63,8 +63,10 @@
 Escolha a melhor opção:
 
 1. Para perguntar o nome de alguém: **A)** "How old are you?" · **B)** "What is your name?" · **C)** "Where are you from?"  
+   **Key:** B
    **Chave:** B
 2. Para dizer sua profissão: **A)** "I am from a developer." · **B)** "I have developer." · **C)** "I work as a developer."  
+   **Key:** C
    **Chave:** C
 
 ### Exercício 2 — Transformação e ordem (gramática)
@@ -113,10 +115,12 @@ Prepare uma apresentação oral curta (**30–45 segundos**) para seu primeiro d
 
 1. **Gramática (L1):** Complete a pergunta corretamente: "___ you from Brazil?"  
    A) "What are"  B) **"Where are"**  C) "How old are"  D) "Who are"  
+   **Key:** B
    **Chave:** B
 
 2. **Vocabulário/uso (L1):** Qual frase está correta para falar de idade?  
    A) "I have 24 years."  B) "I am 24 year."  C) **"I am 24 years old."**  D) "I have 24 years old."  
+   **Key:** C
    **Chave:** C
 
 ---

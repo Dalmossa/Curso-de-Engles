@@ -58,6 +58,7 @@ Associe cada palavra ao foco principal de pronúncia:
 | **report** | c. R em inglês americano |
 | **script** | d. Grupo S+consoante sem vogal epentética |
 
+**Key:** think → a, help → b, report → c, script → d.
 **Chave:** think → a, help → b, report → c, script → d.
 
 ### Exercício 2 — Transformação L1 → L2 (forma oral clara)
@@ -108,6 +109,7 @@ Grave um áudio curto (45–60 segundos) simulando um aviso técnico para seu ti
    B) **three / tree**  
    C) help / helps  
    D) report / reports  
+   **Key:** B
    **Chave:** B
 
 2. **Pronúncia (L1):** Para produzir o som inicial de **"think"** em inglês, o falante deve:
@@ -115,6 +117,7 @@ Grave um áudio curto (45–60 segundos) simulando um aviso técnico para seu ti
    B) **colocar a língua entre os dentes e soltar o ar sem voz**  
    C) omitir o primeiro som e começar pela vogal  
    D) acrescentar "i" antes da palavra  
+   **Key:** B
    **Chave:** B
 
 ---

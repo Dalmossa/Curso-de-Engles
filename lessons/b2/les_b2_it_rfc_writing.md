@@ -62,6 +62,7 @@ Associe cada seção ao seu propósito:
 | **Alternatives considered** | d. Other options and why they were not chosen |
 | **Rollout plan** | e. How the change will be delivered safely |
 
+**Key:** Problem→a, Goals/Non-goals→b, Proposal→c, Alternatives→d, Rollout→e
 **Chave:** Problem→a, Goals/Non-goals→b, Proposal→c, Alternatives→d, Rollout→e
 
 ### Exercício 2 — Linguagem de requisitos (must / should / may)
@@ -105,10 +106,12 @@ Escreva um mini-RFC (8–12 linhas) para uma mudança técnica simples (ex.: adi
 
 1. **Gramática/requisitos (L1):** Qual frase expressa um requisito obrigatório?  
    A) "The service may validate tokens."  B) "The service should validate tokens."  C) **"The service must validate tokens."**  D) "The service can validate tokens."  
+   **Key:** C
    **Chave:** C
 
 2. **Estrutura (L1):** A seção que delimita o que **não** será feito é:  
    A) Problem statement  B) Proposal  C) **Non-goals**  D) Rollout plan  
+   **Key:** C
    **Chave:** C
 
 ---

@@ -69,6 +69,7 @@ Associe a expressão à situação mais adequada:
 | Você precisa passar por alguém no corredor. | **Excuse me** |
 | Você vai embora após a reunião diária. | **See you later** / **Goodbye** |
 
+**Key:** manhã → *Good morning*; primeiro contato → *Nice to meet you*; pedir passagem → *Excuse me*; despedida → *See you later*/*Goodbye*.
 **Chave:** manhã → *Good morning*; primeiro contato → *Nice to meet you*; pedir passagem → *Excuse me*; despedida → *See you later*/*Goodbye*.
 
 ### Exercício 2 — Transformação L1 → L2
@@ -117,10 +118,12 @@ Prepare um mini diálogo de **40–60 segundos** para um primeiro contato no tra
 
 1. **Vocabulário (L1):** Qual resposta é natural para "Nice to meet you"?  
    A) "I'm fine, thank you."  B) **"Nice to meet you, too."**  C) "Good night."  D) "You're welcome."  
+   **Key:** B
    **Chave:** B
 
 2. **Gramática (L1):** Complete: "Good morning. I ____ the new QA engineer."  
    A) is  B) are  C) **am**  D) be  
+   **Key:** C
    **Chave:** C
 
 ---

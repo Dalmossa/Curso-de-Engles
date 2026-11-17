@@ -99,10 +99,12 @@ Escreva (ou fale) **4 comentários de code review** para um PR fictício: 1 bloq
 
 1. **Gramática (L1):** Escolha a opção correta: "You ___ fix this null pointer before merge."  
    A) must to  B) **must**  C) musting  D) to must  
+   **Key:** B
    **Chave:** B
 
 2. **Vocabulário (L1):** Um comentário *nitpick* é:  
    A) um bug crítico  B) uma exigência de segurança  C) **um detalhe menor de estilo ou clareza**  D) uma aprovação formal  
+   **Key:** C
    **Chave:** C
 
 ---

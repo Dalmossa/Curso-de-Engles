@@ -58,6 +58,7 @@ Qual frase é o pedido mais educado no escritório?
 | C | "You give report." |
 | D | "Report now, please." |
 
+**Key:** B
 **Chave:** B — *Could you... please?* é o pedido educado; *give me* soa como ordem, e *you give report* tem ordem de palavras errada.
 
 ### Exercício 2 — Transformação L1 → L2
@@ -78,6 +79,7 @@ Complete com: **could**, **help**, **please**, **sure**
 2. "Can I get the report?" → **Sure**.
 3. "____ you help me find the file?" → **Could**
 
+**Key:** 1) Could / help / please; 2) Sure; 3) Could.
 **Chave:** 1) Could / help / please; 2) Sure; 3) Could.
 
 ---
@@ -108,6 +110,7 @@ Imagine que você trabalha em uma empresa com escritórios nos EUA e no Reino Un
    B) **"Here you go."**  
    C) "Wait for."  
    D) "Before noon."  
+   **Key:** B
    **Chave:** B
 
 2. **Gramática (L1):** Qual frase é um pedido educado correto?  
@@ -115,6 +118,7 @@ Imagine que você trabalha em uma empresa com escritórios nos EUA e no Reino Un
    B) "You help me please?"  
    C) **"Could you help me, please?"**  
    D) "Could you to help me, please?"  
+   **Key:** C
    **Chave:** C
 
 ---

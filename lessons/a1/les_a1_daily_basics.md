@@ -60,6 +60,7 @@ Qual frase é o pedido mais educado para repetir uma informação?
 | C | "You repeat." |
 | D | "Repeat that slow." |
 
+**Key:** B
 **Chave:** B — *Could you... please?* torna o pedido mais educado; *can* também é possível, mas a forma com *could* é mais suave.
 
 ### Exercício 2 — Transformação L1 → L2
@@ -80,6 +81,7 @@ Complete com: **can**, **could**, **please**, **help**
 2. "____ wait here for a moment." → **Please**
 3. "____ I have the Wi-Fi password, ____?" → **Could/Can**, **please**
 
+**Key:** 1) Can/Could + help; 2) Please; 3) Could/Can + please.
 **Chave:** 1) Can/Could + help; 2) Please; 3) Could/Can + please.
 
 ---
@@ -107,10 +109,12 @@ Imagine que você está em um evento de tecnologia ou no escritório de um clien
 
 1. **Vocabulário (L1):** Qual frase você usa quando não compreendeu algo?  
    A) "Please wait here."  B) **"I don't understand."**  C) "Turn left."  D) "I would like coffee."  
+   **Key:** B
    **Chave:** B
 
 2. **Gramática (L1):** Qual opção é um pedido educado correto?  
    A) "Help me now."  B) "You can help me?"  C) **"Could you help me, please?"**  D) "Could you to help me, please?"  
+   **Key:** C
    **Chave:** C
 
 ---

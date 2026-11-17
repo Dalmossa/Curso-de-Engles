@@ -66,6 +66,7 @@ Quais letras são vogais em inglês?
 | C | A, B, C, D, E |
 | D | X, Y, Z |
 
+**Key:** B
 **Chave:** B — As vogais em inglês são A, E, I, O, U; as demais letras são consoantes.
 
 ### Exercício 2 — Transformação L1 → L2 (artigo antes da letra)
@@ -82,6 +83,7 @@ Complete com **a** ou **an** antes do nome da letra:
 | S | "ess" | **an** S |
 | X | "ex" | **an** X |
 
+**Key:** an A · a B · an F · an H · an M · an S · an X
 **Chave:** an A · a B · an F · an H · an M · an S · an X — Use *an* quando o nome da letra começa com som de vogal (ay, eff, aitch, em, ess, ex) e *a* quando começa com som de consoante (bee).
 
 ### Exercício 3 — Contraste de forma e significado (maiúscula vs minúscula)
@@ -95,6 +97,7 @@ Associe cada forma ao seu nome:
 | C | "1" é uma letra |
 | D | "@" é uma vogal |
 
+**Key:** B
 **Chave:** B — *Uppercase* (maiúscula) é a forma grande da letra; *lowercase* (minúscula) é a forma pequena. Números e símbolos não são letras.
 
 ---
@@ -122,10 +125,12 @@ Imagine que você está no primeiro dia de trabalho e precisa informar seu e-mai
 
 1. **Vocabulário (L1):** Qual letra é uma vogal em inglês?  
    A) "B"  B) **"A"**  C) "C"  D) "D"  
+   **Key:** B
    **Chave:** B
 
 2. **Gramática (L1):** Qual artigo fica correto antes do nome da letra "F" (pronunciado "eff")?  
    A) "a F"  B) **"an F"**  C) "the F"  D) "(no article)"  
+   **Key:** B
    **Chave:** B
 
 ---

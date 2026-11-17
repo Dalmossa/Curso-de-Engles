@@ -59,6 +59,7 @@ Associe o termo à ideia correta:
 | **Coupling** | c. Degree of dependency between modules |
 | **Cohesion** | d. How focused a module's responsibilities are |
 
+**Key:** Monolith→a, Microservice→b, Coupling→c, Cohesion→d
 **Chave:** Monolith→a, Microservice→b, Coupling→c, Cohesion→d
 
 ### Exercício 2 — Gramática (voz passiva para decisões de design)
@@ -104,10 +105,12 @@ Em 60–90 segundos, defenda uma decisão de arquitetura (ex.: separar um módul
 
 1. **Gramática (L1):** Escolha a forma passiva correta: "The service ___ independently."  
    A) deploys  B) **is deployed**  C) deploying  D) deployed  
+   **Key:** B
    **Chave:** B
 
 2. **Vocabulário (L1):** *High cohesion* significa:  
    A) muitas dependências externas  B) **responsabilidades focadas em um propósito**  C) alta latência  D) implantação única  
+   **Key:** B
    **Chave:** B
 
 ---

@@ -69,6 +69,7 @@ Coloque as partes na ordem natural de um update curto:
 | 2 | **Today:** o que será feito hoje |
 | 3 | **Blocker:** impedimento ou "No blockers" |
 
+**Key:** 1 → 2 → 3. Em times ágeis, essa ordem ajuda a manter o stand-up objetivo.
 **Chave:** 1 → 2 → 3. Em times ágeis, essa ordem ajuda a manter o stand-up objetivo.
 
 ### Exercício 3 — Transformação L1 → L2 (contexto TI)
@@ -113,6 +114,7 @@ Use pelo menos **duas formas de present perfect** (*I have finished...*, *I have
    B) **"Yesterday I fixed the API bug."**  
    C) "Yesterday I have fix the API bug."  
    D) "Yesterday I am fixed the API bug."  
+   **Key:** B
    **Chave:** B
 
 2. **Gramática e vocabulário (L1):** Escolha a melhor atualização de status para agora:  
@@ -120,6 +122,7 @@ Use pelo menos **duas formas de present perfect** (*I have finished...*, *I have
    B) "I finished already the code review, but I didn't receive feedback yet."  
    C) **"I have already finished the code review, but I haven't received feedback yet."**  
    D) "I already finish the code review, but I haven't receive feedback yesterday."  
+   **Key:** C
    **Chave:** C
 
 ---

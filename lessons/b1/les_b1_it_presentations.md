@@ -60,6 +60,7 @@ Coloque os marcadores na ordem mais clara para uma apresentação técnica:
 | 3 | **After that** |
 | 4 | **Finally / To conclude** |
 
+**Key:** 1 → abertura do primeiro ponto; 2 → próximo ponto; 3 → ponto seguinte; 4 → fechamento.
 **Chave:** 1 → abertura do primeiro ponto; 2 → próximo ponto; 3 → ponto seguinte; 4 → fechamento.
 
 ### Exercício 2 — Transformação L1 → L2
@@ -106,10 +107,12 @@ Prepare uma miniapresentação de **60–90 segundos** sobre uma melhoria técni
 
 1. **Vocabulário (L1):** Qual frase abre melhor uma apresentação?  
    A) "I explain you the plan."  B) **"I'll walk you through the plan."**  C) "I presentate the plan."  D) "For first, the plan."  
+   **Key:** B
    **Chave:** B
 
 2. **Discurso (L1):** Escolha o marcador adequado para encerrar:  
    A) "In the first…"  B) "After that…"  C) **"To conclude, I'll summarize our recommendation."**  D) "I have a doubt."  
+   **Key:** C
    **Chave:** C
 
 ---

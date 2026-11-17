@@ -102,10 +102,12 @@ Simule uma conversa de mentoria (2–3 minutos). Dê **3 recomendações** a uma
 
 1. **Gramática (L1):** Qual opção expressa recomendação educada?  
    A) "You must reading this."  B) **"I would recommend reading this guide."**  C) "You should to read this."  D) "Read this now."  
+   **Key:** B
    **Chave:** B
 
 2. **Vocabulário/pragmática (L1):** Feedback mais acionável:  
    A) "Improve your code."  B) "Be better next time."  C) **"You could add tests for the failure path to make this change safer."**  D) "This is not good."  
+   **Key:** C
    **Chave:** C
 
 ---
