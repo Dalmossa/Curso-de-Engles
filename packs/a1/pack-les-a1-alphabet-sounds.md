@@ -138,9 +138,9 @@ cefr: A1
 domain: grammar
 provenance: authored
 distractors:
-  - option: "a B"
-    br_pt_form: "um B"
-    note: "incorrect: the letter name 'bee' starts with a consonant sound, so it takes 'a'"
+  - option: "a F"
+    br_pt_form: "um F"
+    note: "incorrect: 'a' is used before consonant sounds, and the name 'eff' starts with a vowel sound, so it takes 'an'"
   - option: "the F"
     br_pt_form: "o F"
     note: "definite article does not fit this general introduction of a letter"
@@ -269,13 +269,13 @@ domain: grammar
 provenance: authored
 prereq_lesson: `les_a1_alphabet_sounds`
 distractors:
-  - option: "a" is uppercase
+  - option: "'a' is uppercase"
     br_pt_form: "a é maiúscula"
     note: "incorrect: 'a' is the lowercase form"
-  - option: "1" is a letter
+  - option: "'1' is a letter"
     br_pt_form: "1 é uma letra"
     note: "digits are not letters; case applies only to letters"
-  - option: "@" is uppercase
+  - option: "'@' is uppercase"
     br_pt_form: "@ é maiúscula"
     note: "symbols have no uppercase/lowercase form"
 ```
