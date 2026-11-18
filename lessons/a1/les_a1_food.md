@@ -3,124 +3,133 @@
 **Lesson ID:** `les_a1_food`
 **Module:** `mod_a1_vocab_core`
 **CEFR:** A1
-**Reuse basis:** `cite_only`
-**Source:** `docs/apostila-ingles-para-iniciantes-impresso.md` + `docs/Ingles-basico.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US).
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: primeiro almoço em equipe no escritório de São Paulo
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **food** | comida | *o que se come* |
-| **drink** | bebida | *o que se bebe* |
-| **water** | água | *bebida* |
-| **bread** | pão | *alimento* |
-| **rice** | arroz | *alimento* |
-| **meat** | carne | *alimento* |
-| **fish** | peixe | *alimento* |
-| **fruit** | fruta | *alimento* |
-| **apple** | maçã | *fruta* |
-| **banana** | banana | *fruta* |
-| **milk** | leite | *bebida* |
-| **coffee** | café | *bebida* |
-| **tea** | chá | *bebida* |
-| **juice** | suco | *bebida* |
-| **breakfast** | café da manhã | *refeição* |
-| **lunch** | almoço | *refeição* |
-| **dinner** | jantar | *refeição* |
-| **hungry** | com fome | *sensação* |
-| **thirsty** | com sede | *sensação* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**Food**: **bread, rice, meat, fish, fruit, apple, banana, vegetables**."
+> **Ana (backend developer):** "Hi, Mark. Welcome to the São Paulo office. Are you hungry after the flight?"
 >
-> "**Drink**: **water, milk, coffee, tea, juice**."
+> **Mark (visiting engineer):** "Yes, I'm very hungry. What's good here?"
 >
-> "**Meals**: **breakfast** (morning), **lunch** (midday), **dinner** (evening)."
+> **Ana:** "The rice and the fish are great. And the fruit is really fresh today."
 >
-> "I am **hungry**. I am **thirsty**. I would like **water**, please."
+> **Mark:** "I would like some fish, please. Can I have a glass of water, too?"
+>
+> **Ana:** "Of course. The water and the juice are free for the team."
+>
+> **Mark:** "Is the coffee good here? I am thirsty and it is a long afternoon."
+>
+> **Ana:** "It's excellent. Two coffees, please — one for you and one for me."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **food** | comida | Termo genérico, normalmente incontável: *some food*. |
+| **bread** | pão | Incontável: *some bread* (nunca *a bread*); a fatia é *a piece of bread*. |
+| **rice** | arroz | Incontável: *some rice*. Não se pode dizer *one rice* ou *two rices*. |
+| **fish** | peixe | Incontável como alimento: *some fish*. |
+| **fruit** | fruta | Incontável como categoria: *some fruit*. A unidade é contável: *an apple*, *a banana*. |
+| **water** | água | Incontável: *some water*. A dose é *a glass of water*. |
+| **coffee / tea / juice** | café / chá / suco | Bebidas são normalmente incontáveis: *I don't like coffee*. No pedido, *a coffee* = uma xícara (*two coffees* = duas xícaras). |
+| **milk** | leite | Incontável: *some milk*; a dose é *a glass of milk*. |
+| **breakfast / lunch / dinner** | café da manhã / almoço / jantar | Nomes das refeições: *I have lunch at noon.* (sem artigo antes do nome da refeição). |
+| **hungry** | com fome | Adjetivo depois de *be*: *I'm hungry* — a construção é *be* + adjetivo. |
+| **thirsty** | com sede | Adjetivo depois de *be*: *I'm thirsty*. |
+| **a cup of / a glass of** | uma xícara de / um copo de | A forma natural de pedir uma dose de algo incontável: *a cup of coffee*, *a glass of water*. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "Quero uma água" → "I want **a water**." | "I'd like **some water**, please." / "**a glass of water**, please" | Água é incontável e não recebe *a/an* diretamente; a dose se pede com *a glass of*. |
+| "Um arroz, por favor" → "**One rice**, please." | "**Some rice**, please." | Incontáveis não aceitam *one/two*: não existe *one rice*; use *some*. |
+| "Um pão, por favor" → "**A bread**, please." | "**Some bread**, please." / "a piece of bread" | Pão é incontável; a unidade natural é *a piece of bread*. |
+| "Eu gostaria uma maçã" → "I'd like **a** apple." | "I'd like **an** apple." | Substantivo singular contável pede artigo: *an* antes de som de vogal. |
+| "Estou com fome" → "I **am with** hungry." | "**I'm hungry.**" / "**I'm thirsty.**" | Depois de *be* vem o adjetivo; *with* não entra nessa construção. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Breakfast** is:
-| Slot | Value |
-|------|-------|
-| A | Evening meal |
-| B | **Morning meal** |
-| C | Midday meal |
-| D | Snack |
+### Exercício 1 — Reconhecimento (pedido no refeitório)
+
+Qual pedido está correto em inglês natural?
+
+| Opção | Frase |
+|---|---|
+| A | "I would like a water, please." |
+| B | **"I would like some water, please."** |
+| C | "I would like one water, please." |
+| D | "I would like water some, please." |
+
 **Key:** B
-**br_pt_form:** "café da manhã / refeição da manhã"
+**Chave:** B — *water* é incontável: a forma natural é *some water*. Para uma dose: *a glass of water, please*.
 
-### Item 2 — Vocabulary (Matching)
-Match the food to its category:
-| Food | Category |
-|------|----------|
-| **Apple** | a. Fruit |
-| **Bread** | b. Grain |
-| **Milk** | c. Drink |
-| **Meat** | d. Protein |
-**Key:** Apple→a, Bread→b, Milk→c, Meat→d
-**br_pt_form:** "maçã", "pão", "leite", "carne"
+### Exercício 2 — Completar (some / a / an)
 
-### Item 3 — Grammar: Countable/uncountable (fill-in-blank)
-Complete with **some / a / an**:
-"______ water. ______ apple. ______ bread. ______ bananas. ______ milk."
-**Key:** some / an / some / some / some
-**br_pt_form:** "um pouco de / uma / um pouco de / alguns / um pouco de"
+Complete com **some**, **a** ou **an**:
+
+1. "Can I have ____ rice and ____ apple, please?" → **some**, **an**
+2. "Could I have ____ glass of water, please?" → **a**
+3. "There is ____ bread and ____ milk on the table." → **some**, **some**
+4. "I would like ____ cup of coffee, please." → **a**
+
+**Key:** 1) some / an; 2) a; 3) some / some; 4) a.
+**Chave:** 1) some / an; 2) a; 3) some / some; 4) a.
+
+### Exercício 3 — Transformação (pt-BR → en-US)
+
+Reescreva as intenções em inglês natural:
+
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Estou com fome depois da reunião." | "I'm hungry after the meeting." |
+| "Eu gostaria de arroz e peixe, por favor." | "I'd like some rice and fish, please." |
+| "Um copo de água, por favor." | "A glass of water, please." |
+
+**Key:** I'm hungry after the meeting. / I'd like some rice and fish, please. / A glass of water, please.
+**Chave:** I'm hungry after the meeting. / I'd like some rice and fish, please. / A glass of water, please.
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Speaking: Restaurant Order (pares)
-**Scenario**: Order food and drink at a restaurant.
+### 5 sentenças-alvo (leia em voz corrida)
 
-**Useful phrases:**
-- "I would like..."
-- "Can I have...?"
-- "A glass of water, please."
-- "The bill, please."
+I am hungry after the long meeting. I would like some rice and fish, please. Can I have a glass of water, too? The coffee in this cafeteria is very good. I am thirsty, so I need two cups of water today.
 
-**Example:**
-> Waiter: "What would you like?"
-> A: "I would like rice and meat. Can I have a glass of water, please?"
-> Waiter: "Anything else?"
-> A: "No, thank you. The bill, please."
+### Foco articulatório para falantes de pt-BR
+
+- **/θ/ em *thirsty***: ponta da língua entre os dentes; evite /t/ ("tirsty") e /d/ ("dirsty").
+- **/h/ em *hungry* e *have***: sopre ar antes da vogal; não apague o som nem troque-o por /r/.
+- **Consoantes finais em *bread*, *milk***: mantenha o som final sem acrescentar vogal ("milki").
+- **Vogais**: /iː/ alongado em *eat* e *meat*; /ɪ/ curto em *it* e *fish* — a troca muda a palavra.
+- **Ritmo do pedido educado**: em *I would like..., please*, tom calmo e queda suave no final.
+
+### Prompt de produção (oral ou escrita)
+
+Imagine que você está no refeitório do escritório com um colega estrangeiro. Crie um diálogo curto com **4 a 6 falas** em que você: diz que está com fome ou com sede, pede uma refeição usando *some/a/an* corretamente, pede uma dose (*a glass of water*, *a cup of coffee*) e pergunta o que é bom no menu de hoje.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Hungry** means:
-| Slot | Value |
-|------|-------|
-| A | Thirsty |
-| B | **Wanting food** |
-| C | Full |
-| D | Tired |
-**Key:** B
-**br_pt_form:** "com fome / querer comida"
+1. **Vocabulário (L1):** Você não come nada de manhã e são 11h. Qual frase descreve você?
+   A) "I am full."  B) **"I am hungry."**  C) "I am thirsty."  D) "I am tired."
+   **Key:** B
+   **Chave:** B
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **countable/uncountable**:
-| Slot | Value |
-|------|-------|
-| A | **a** water |
-| B | **some** water |
-| C | **a** bread |
-| D | **a** milk |
-**Key:** B
-**br_pt_form:** "um pouco de água"
+2. **Gramática (L1):** Qual pedido está correto?
+   A) "Can I have a bread, please?"  B) "Can I have one bread, please?"  C) **"Can I have some bread, please?"**  D) "Can I have bread some, please?"
+   **Key:** C
+   **Chave:** C
 
 ---
 
@@ -129,59 +138,41 @@ Choose the correct **countable/uncountable**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a1_food",
   "cefr_level": "A1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (food/drink explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/apostila-ingles-para-iniciantes-impresso.md (no licence grant) - scoping of food and drink vocabulary",
-      "docs/Ingles-basico.md (Tiago Rodrigues, all rights reserved) - scoping of basic vocabulary"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - food/drink terms are unprotectable linguistic knowledge; definitions authored"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.countable_uncountable_food"
+      "grammar.countable_uncountable_food",
+      "grammar.some_a_an_quantifiers"
     ],
     "vocabulary": [
-      "vocab.food.food",
-      "vocab.food.drink",
-      "vocab.food.water",
-      "vocab.food.bread",
-      "vocab.food.rice",
-      "vocab.food.meat",
-      "vocab.food.fish",
-      "vocab.food.fruit",
-      "vocab.food.apple",
-      "vocab.food.banana",
-      "vocab.food.milk",
-      "vocab.food.coffee",
-      "vocab.food.tea",
-      "vocab.food.juice",
-      "vocab.food.breakfast",
-      "vocab.food.lunch",
-      "vocab.food.dinner",
-      "vocab.food.hungry",
-      "vocab.food.thirsty"
+      "vocab.food_basic.items",
+      "vocab.food_basic.meals",
+      "vocab.food_basic.hungry_thirsty",
+      "vocab.food_basic.ordering_servings"
     ],
     "listening": [
-      "listening.food_context"
+      "listening.food_basic.context"
     ],
     "pronunciation": [
-      "pronunciation.food_vocabulary"
+      "pronunciation.th_dental",
+      "pronunciation.h_initial",
+      "pronunciation.final_consonant_epenthesis"
     ],
     "speaking": [
-      "speaking.restaurant_order"
+      "speaking.food_ordering"
     ]
   },
   "prereq_lessons": [

@@ -145,15 +145,15 @@ This is the authoritative list of lesson IDs. Any spec (`content-map.md`, `diagn
 | `les_a1_numbers_colors` | Numbers & Colors | Original (clean-room, Onda 2 — Lote 3 (batch 3) — Fase A) | numbers,colors |  | ✅ **authored** · reauthored_authored_material |
 | `les_a1_days_months` | Days of Week & Months | Original (clean-room, Onda 2 — Lote 3 (batch 3) — Fase A) | days_months |  | ✅ **authored** · reauthored_authored_material |
 | `les_a1_time_dates` | Hours & Dates | Original (clean-room, Onda 2 — Lote 3 (batch 3) — Fase A) | times_dates |  | ✅ **authored** · reauthored_authored_material |
-| `les_a1_food` | Food & Drink | apostila 5.4 + basico 1L3 | food_basic |  | ✅ **authored** |
-| `les_a1_occupations` | Occupations & Roles | apostila 5.5 | occupations |  | ✅ **authored** |
-| `les_a1_regular_verbs_past` | Regular Verbs Past: ED Rules | apostila 3.2.1 | past_simple_regular | present_simple_regular | ✅ **authored** |
+| `les_a1_food` | Food & Drink | Original (clean-room, Onda 2 — Lote 4 (batch 4) — Fase B) | food_basic |  | ✅ **authored** · reauthored_authored_material |
+| `les_a1_occupations` | Occupations & Roles | Original (clean-room, Onda 2 — Lote 4 (batch 4) — Fase B) | occupations |  | ✅ **authored** · reauthored_authored_material |
+| `les_a1_regular_verbs_past` | Regular Verbs Past: ED Rules | Original (clean-room, Onda 2 — Lote 4 (batch 4) — Fase B) | past_simple_regular | present_simple_regular | ✅ **authored** · reauthored_authored_material |
 
 **`mod_a1_comm_basic`** (A1, General) — entry node for A1 track
 | Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
 |-----------|-------|--------|------------|---------------------|--------|
-| `les_a1_present_simple` | Present Simple Affirmative | basico 2L2 | present_simple_regular | present_simple_be,articles_definite,articles_indefinite,noun_plurals,adjectives_basic | ✅ **authored** |
-| `les_a1_present_simple_questions` | Do/Does Questions | basico 3ª | present_simple_do_does | present_simple_regular | ✅ **authored** |
+| `les_a1_present_simple` | Present Simple Affirmative | Original (clean-room, Onda 2 — Lote 4 (batch 4) — Fase B) | present_simple_regular | present_simple_be,articles_definite,articles_indefinite,noun_plurals,adjectives_basic | ✅ **authored** · reauthored_authored_material |
+| `les_a1_present_simple_questions` | Do/Does Questions | Original (clean-room, Onda 2 — Lote 4 (batch 4) — Fase B) | present_simple_do_does | present_simple_regular | ✅ **authored** · reauthored_authored_material |
 | `les_a1_have_has` | Verb To Have | IT A3 | present_simple_regular | present_simple_regular | ✅ **authored** |
 | `les_a1_there_is_are` | There Is / There Are | IT A6 | there_is_are | present_simple_regular | ✅ **authored** |
 | `les_a1_reading_skimming` | Skimming & Scanning | leia Ch2 + IT A2 | reading_skimming | articles_definite,articles_indefinite,noun_plurals,adjectives_basic | ✅ **authored** |
@@ -427,7 +427,7 @@ was hiding the distinction that caused the original error:
 |--------|------:|---------|
 | `sourced_external` | **7** | licence permits adaptation **and** the source's discourse matches the lesson title (still pending full reautoria) |
 | `sourced_external_thin` | **0** | licence permits, but coverage is partial — none remain |
-| `reauthored_authored_material` | **20** | fully reauthored in clean-room as 100% original `authored_material` (Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2 Onda 2: `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`; Onda 2 — Lote 2 (batch 2): `les_a1_alphabet_sounds`, `les_a1_en_us_en_gb`, `les_a1_to_be_forms`, `les_a1_pronouns_subject_object`, `les_a1_pronouns_possessive`; Onda 2 — Lote 3 (batch 3) — Fase A: `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates`) |
+| `reauthored_authored_material` | **25** | fully reauthored in clean-room as 100% original `authored_material` (Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2 Onda 2: `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`; Onda 2 — Lote 2 (batch 2): `les_a1_alphabet_sounds`, `les_a1_en_us_en_gb`, `les_a1_to_be_forms`, `les_a1_pronouns_subject_object`, `les_a1_pronouns_possessive`; Onda 2 — Lote 3 (batch 3) — Fase A: `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates`; Onda 2 — Lote 4 (batch 4) — Fase B: `les_a1_food`, `les_a1_occupations`, `les_a1_regular_verbs_past`, `les_a1_present_simple`, `les_a1_present_simple_questions`) |
 | `blocked_no_adequate_source` | **0** | none |
 | `deferred_no_source` | **0** | retired |
 
@@ -670,7 +670,7 @@ If P(mastery_skill) declining 3+ consecutive sessions:
 | Lessons per module | 6, except `mod_a2_it_fundamentals` and `mod_b1_it_technical` (10 each) and `mod_b2_it_senior` (8) |
 | Lessons authored | **123** — every registry ID has a file declaring it |
 | Lessons blocked | **0** |
-| Practice packs authored | **123** — 27 in the `pack-les-*.md` schema, 96 in `pack_les_*_v1.md`; see `post-lesson-practice-spec.md` §12 |
+| Practice packs authored | **123** — 32 in the `pack-les-*.md` schema, 91 in `pack_les_*_v1.md`; see `post-lesson-practice-spec.md` §12 |
 | Source files mapped | 7 / 7 (100%) |
 | Source sections mapped | 87 / 87 (100%, 6 marked meta) |
 | Orphan lesson IDs across all specs | **0** |

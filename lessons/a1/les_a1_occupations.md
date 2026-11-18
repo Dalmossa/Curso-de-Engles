@@ -3,119 +3,125 @@
 **Lesson ID:** `les_a1_occupations`
 **Module:** `mod_a1_vocab_core`
 **CEFR:** A1
-**Reuse basis:** `cite_only`
-**Source:** `docs/apostila-ingles-para-iniciantes-impresso.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US).
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: primeiro dia de um colega novo no time
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **occupation** | ocupação / profissão | *trabalho* |
-| **job** | emprego / trabalho | *ocupação* |
-| **work** | trabalhar | *atividade* |
-| **student** | estudante | *quem estuda* |
-| **teacher** | professor | *quem ensina* |
-| **doctor** | médico | *profissão* |
-| **nurse** | enfermeiro | *profissão* |
-| **engineer** | engenheiro | *profissão* |
-| **developer** | desenvolvedor | *profissão* |
-| **manager** | gerente | *profissão* |
-| **driver** | motorista | *profissão* |
-| **cook** | cozinheiro | *profissão* |
-| **waiter** | garçom | *profissão* |
-| **What do you do?** | o que você faz? | *pergunta de profissão* |
-| **I work as...** | eu trabalho como... | *resposta* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**What do you do?** — **I work as a teacher**. **I am a student**."
+> **Larissa (backend developer):** "Hi! I don't think we met. I'm Larissa — I work as a backend developer."
 >
-> "**Occupations**: **doctor, nurse, engineer, developer, manager, driver, cook, waiter**."
+> **Cody (QA analyst):** "Nice to meet you. I'm Cody, the new QA analyst."
 >
-> "She is a **doctor**. He is an **engineer**. They are **students**."
+> **Larissa:** "Welcome to the team! What do you do every day?"
+>
+> **Cody:** "I test the app before each release. And you? What do you do?"
+>
+> **Larissa:** "I'm a developer. I write services and fix bugs with the support team."
+>
+> **Cody:** "Cool. Our manager, Priya, is an engineer too."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **occupation** | ocupação / profissão | Substantivo contável para o tipo de trabalho de alguém. |
+| **job** | emprego | A posição concreta de trabalho; *the job* é o emprego específico (a vaga, o cargo identificado). |
+| **What do you do?** | O que você faz? | Pergunta natural de profissão em conversas curtas. |
+| **I work as a/an ...** | Eu trabalho como... | Apresenta a sua profissão; sempre com artigo: *as a developer*, *as an engineer*. |
+| **I work at a company.** | Eu trabalho em uma empresa. | *At* liga a pessoa à empresa ou ao lugar; *in* liga à área ou equipe (*in tech*, *in the same team*). |
+| **He/She is a/an ...** | Ele/Ela é... | Apresenta a profissão de outra pessoa: *She is a nurse.* |
+| **They are developers.** | Eles são desenvolvedores. | No plural, a profissão não usa artigo. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "I am developer." | "I am **a** developer." | pt-BR dispensa artigo antes de profissão; en-US exige *a/an* no singular. |
+| "I am **a** engineer." / "I am **an** developer." | "I am **an** engineer." / "I am **a** developer." | *a/an* segue o **som**, não a letra: vogal sonora pede *an* (*an engineer, an architect, an analyst*); som de consoante pede *a*. |
+| "I am **the** developer." (ao se apresentar) | "I am **a** developer." | *The* aponta algo já identificado — como *the job*, o emprego específico. Ao apresentar sua profissão, use *a/an*. |
+| "What is your work?" | "What **do** you **do**?" | Tradução literal do pt-BR; soa estranha em en-US. A pergunta natural é *What do you do?*. |
+| "He is **an** university professor." | "He is **a** university professor." | *U* com som de /j/ (como em *user*, *European*) conta como consoante: *a university*. |
+| "developer-i" / "engineer-i" | "developer" / "engineer" | Não adicione vogal depois da consoante final; mantenha o grupo final fechado. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**What do you do?** asks about:
-| Slot | Value |
-|------|-------|
-| A | Name |
-| B | **Occupation** |
-| C | Age |
-| D | Origin |
+### Exercício 1 — Reconhecimento (artigo com profissão)
+
+Qual frase apresenta uma profissão em en-US corretamente?
+
+| Opção | Frase |
+|---|---|
+| A | "I am developer." |
+| B | **"I am a developer."** |
+| C | "I am the developer." |
+| D | "I am an developer." |
+
 **Key:** B
-**br_pt_form:** "o que você faz? / profissão"
+**Chave:** B — profissão no singular pede artigo indefinido *a/an*; *the* só quando o referente já está identificado (como *the job*, o emprego específico).
 
-### Item 2 — Vocabulary (Matching)
-Match the occupation to its workplace:
-| Occupation | Workplace |
-|------------|-----------|
-| **Doctor** | a. Hospital |
-| **Teacher** | b. School |
-| **Cook** | c. Restaurant |
-| **Driver** | d. Bus/Car |
-**Key:** Doctor→a, Teacher→b, Cook→c, Driver→d
-**br_pt_form:** "médico", "professor", "cozinheiro", "motorista"
+### Exercício 2 — Preenchimento (a ou an, pelo som)
 
-### Item 3 — Grammar: A/An with occupations (fill-in-blank)
-Complete with **a / an**:
-"______ teacher. ______ doctor. ______ engineer. ______ manager. ______ student."
-**Key:** a / a / an / a / a
-**br_pt_form:** "um / uma / um / uma / um"
+Complete com **a** ou **an**:
+
+1. "She is ____ analyst." → **an**
+2. "He is ____ manager." → **a**
+3. "I am ____ ux designer." → **a**
+
+**Key:** 1) an; 2) a; 3) a.
+**Chave:** 1) an; 2) a; 3) a — *a/an* segue o som: *analyst* começa com vogal; *manager* começa com consoante; *ux* começa com som de /j/ (como *a university*), que soa como consoante.
+
+### Exercício 3 — Transformação L1 → L2
+
+Reescreva as intenções em inglês natural:
+
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Eu sou engenheira." | "I am an engineer." |
+| "No que você trabalha?" | "What do you do?" |
+| "Eu trabalho como desenvolvedor backend." | "I work as a backend developer." |
+
+**Key:** I am an engineer. / What do you do? / I work as a backend developer.
+**Chave:** I am an engineer. / What do you do? / I work as a backend developer. — apresente a profissão com *a/an*, pergunte com *What do you do?* e use *work as* + artigo para declarar a sua função.
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Speaking: Job Interview (pares)
-**Practice a mini job interview:**
+### 5 sentenças-alvo (leia em voz corrida)
 
-1. What do you do?
-2. Where do you work?
-3. Do you like your job?
-4. What is your dream job?
+Hi, I am Larissa and I work as a backend developer. What do you do at this company? I am a QA analyst and I test the app every morning. My manager is an engineer with ten years of experience. We work in the same team on the new login service.
 
-**Example:**
-> A: "What do you do?"
-> B: "I work as a developer."
-> A: "Where do you work?"
-> B: "I work at a tech company."
-> A: "Do you like your job?"
-> B: "Yes, I love it!"
+### Foco articulatório para falantes de pt-BR
+
+- **/dʒ/ em *engineer, manager***: uma oclusão seguida de fricção — não é só o /ʒ/ do pt-BR ("gente"); solte o ar depois da parada.
+- **/v/ em *developer, very, leave***: lábio inferior + dentes; não troque por /w/ ("wery").
+- **Final "-er" em *developer, manager, engineer***: o /r/ do en-US é suave e sem vibrar; evite o /r/ forte do pt-BR e a vogal epentética ("developer-i").
+- **Ritmo de apresentação**: em *What do you do?*, ligue as palavras ("whaddaya do") sem pausar em cada uma.
+
+### Prompt de produção (oral ou escrita)
+
+Imagine que você chega a um novo time de tecnologia. Grave ou escreva uma apresentação curta com **4 a 6 falas** em que você: diz seu nome, declara sua profissão com o artigo correto (*a/an*), diz onde trabalha (*I work at/in...*), descreve o que faz e pergunta a profissão da outra pessoa (*What do you do?*). Depois, troque os papéis: seu colega se apresenta e você confirma a profissão dele com *He/She is...*.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**I work as** is used to:
-| Slot | Value |
-|------|-------|
-| A | Ask about job |
-| B | **State your occupation** |
-| C | Say goodbye |
-| D | Thank someone |
-**Key:** B
-**br_pt_form:** "eu trabalho como / estado minha profissão"
+1. **Vocabulário (L1):** "What do you do?" pergunta sobre...  
+   A) Name  B) **Profession**  C) Age  D) Address  
+   **Key:** B
+   **Chave:** B
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **article** with occupation:
-| Slot | Value |
-|------|-------|
-| A | **a** engineer |
-| B | **an** engineer |
-| C | **the** engineer |
-| D | **—** engineer |
-**Key:** B
-**br_pt_form:** "um engenheiro"
+2. **Gramática (L1):** Qual opção completa corretamente "He is ____ architect."?  
+   A) a  B) **an**  C) the  D) (sem artigo)  
+   **Key:** B
+   **Chave:** B — *architect* começa com som de vogal, então pede *an*; *the* só para referente já identificado, e profissão no singular não fica sem artigo.
 
 ---
 
@@ -124,54 +130,42 @@ Choose the correct **article** with occupation:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a1_occupations",
   "cefr_level": "A1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (occupations explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/apostila-ingles-para-iniciantes-impresso.md (no licence grant) - scoping of occupations"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - occupation terms are unprotectable linguistic knowledge; definitions authored"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material; no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.a_an_occupations"
+      "grammar.articles_a_an_occupations"
     ],
     "vocabulary": [
       "vocab.occupations.occupation",
-      "vocab.occupations.job",
-      "vocab.occupations.work",
-      "vocab.occupations.student",
-      "vocab.occupations.teacher",
-      "vocab.occupations.doctor",
-      "vocab.occupations.nurse",
-      "vocab.occupations.engineer",
-      "vocab.occupations.developer",
-      "vocab.occupations.manager",
-      "vocab.occupations.driver",
-      "vocab.occupations.cook",
-      "vocab.occupations.waiter",
+      "vocab.occupations.job_work",
       "vocab.occupations.what_do_you_do",
-      "vocab.occupations.i_work_as"
+      "vocab.occupations.work_as",
+      "vocab.occupations.work_at_in",
+      "vocab.occupations.tech_roles"
     ],
     "listening": [
       "listening.occupations_context"
     ],
     "pronunciation": [
-      "pronunciation.occupations"
+      "pronunciation.occupations_dʒ_engineer",
+      "pronunciation.occupations_v_developer",
+      "pronunciation.occupations_final_er"
     ],
     "speaking": [
-      "speaking.job_interview"
+      "speaking.self_introduction_job"
     ]
   },
   "prereq_lessons": [

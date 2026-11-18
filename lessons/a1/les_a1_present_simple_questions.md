@@ -3,118 +3,126 @@
 **Lesson ID:** `les_a1_present_simple_questions`
 **Module:** `mod_a1_comm_basic`
 **CEFR:** A1
-**Reuse basis:** `cite_only`
-**Source:** `docs/Ingles-basico.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US).
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: rotina de release em um time distribuído
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **do** | fazer | *auxiliar 1ª/2ª pessoa, plural* |
-| **does** | faz | *auxiliar 3ª pessoa singular* |
-| **Do you...?** | você...? | *pergunta 2ª pessoa* |
-| **Does he/she...?** | ele/ela...? | *pergunta 3ª pessoa* |
-| **Yes, I do** | sim, eu faço | *resposta curta afirmativa* |
-| **No, I don't** | não, eu não faço | *resposta curta negativa* |
-| **Yes, she does** | sim, ela faz | *resposta curta 3ª pessoa* |
-| **No, she doesn't** | não, ela não faz | *resposta curta negativa 3ª pessoa* |
-| **question word** | palavra interrogativa | *what, where, when* |
-| **base form** | forma base | *verbo sem -s* |
-| **auxiliary** | auxiliar | *verbo que ajuda* |
-| **short answer** | resposta curta | *Yes/No + pronoun + do/does* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**Do you** like coffee? — **Yes, I do**. / **No, I don't**."
+> **Rafa (QA engineer, São Paulo):** "Hi, Ben. Sorry to interrupt. **Do** you **have** five minutes before the stand-up?"
 >
-> "**Does she** work here? — **Yes, she does**. / **No, she doesn't**."
+> **Ben (backend developer, remote):** "Sure. **Do** you **want** to talk about today's release?"
 >
-> "**Do they** play soccer? — **Yes, they do**."
+> **Rafa:** "Yes. **Does** the nightly build **run** on the new server?"
 >
-> "**What do** you want? **Where does** he live? **When do** they arrive?"
+> **Ben:** "Yes, it **does**. The pipeline **does** the final check at noon."
+>
+> **Rafa:** "And **do** the smoke tests **pass** on staging?"
+>
+> **Ben:** "No, they **don't**. I **don't** see the green check yet."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **Do you...?** | Você...? | Pergunta sim/não para I, you, we, they. |
+| **Does he/she/it...?** | Ele/ela...? | Pergunta sim/não para a 3ª pessoa do singular. |
+| **run / runs** | rodar / roda | Com do/does, use a forma base: does it run? |
+| **Yes, I do.** | Sim, eu faço. | A resposta curta repete o auxiliar, não o verbo principal. |
+| **No, I don't.** | Não, eu não faço. | don't = do not; usa-se com I/you/we/they. |
+| **Yes, she does.** | Sim, ela faz. | A resposta curta repete o auxiliar does. |
+| **stand-up** | reunião diária rápida | Substantivo comum em times de tecnologia. |
+| **release** | lançamento de versão | Substantivo; como verbo, to release. |
+| **pipeline** | esteira automatizada | Fluxo de build, teste e deploy. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "Does the build **runs**?" | "Does the build **run**?" | Depois do auxiliar, o verbo principal fica na forma base; a marca de 3ª pessoa já está em does. |
+| "You **like** coffee?" (só com entonação) | "**Do** you like coffee?" | Em pt-BR a entonação faz a pergunta; em en-US a pergunta sim/não precisa do auxiliar. |
+| "Do she work here?" | "Does she work here?" | He, she e it pedem does. |
+| "Where **he lives**?" | "Where **does** he live?" | Wh-questions também levam o auxiliar quando a wh-word não é o sujeito. |
+| "What **does mean** 'deploy'?" | "What **does** 'deploy' **mean**?" / "What happened?" | Quando what/who é o sujeito da pergunta, não se usa do/does. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Does** is used with:
-| Slot | Value |
-|------|-------|
-| A | I, you, we, they |
-| B | **He, she, it** |
-| C | All subjects |
-| D | No subjects |
+### Exercício 1 — Reconhecimento (L1)
+
+Qual é a pergunta correta para saber quando os testes rodam em staging?
+
+| Opção | Frase |
+|---|---|
+| A | "Do the tests runs on staging?" |
+| B | **"Do the tests run on staging?"** |
+| C | "Does the tests run on staging?" |
+| D | "The tests run on staging?" |
+
 **Key:** B
-**br_pt_form:** "does / com he, she, it"
+**Chave:** B — sujeito no plural pede *do* e o verbo fica na forma base (*run*, sem -s).
 
-### Item 2 — Vocabulary (Matching)
-Match the question to its short answer:
-| Question | Answer |
-|----------|--------|
-| **Do you like tea?** | a. Yes, I do. |
-| **Does she work?** | b. Yes, she does. |
-| **Do they play?** | c. Yes, they do. |
-| **Does he study?** | d. Yes, he does. |
-**Key:** Do you like tea?→a, Does she work?→b, Do they play?→c, Does he study?→d
-**br_pt_form:** "você gosta de chá?", "ela trabalha?", "eles jogam?", "ele estuda?"
+### Exercício 2 — Completar (L1 → L2)
 
-### Item 3 — Grammar: Do/Does + base verb (fill-in-blank)
-Complete with **Do/Does + base verb**:
-"______ you ______ (like) coffee? ______ she ______ (work) here? ______ they ______ (play)?"
-**Key:** Do / like / Does / work / Do / play
-**br_pt_form:** "Você gosta? / Ela trabalha? / Eles jogam?"
+Complete com **do/does** + verbo na forma base:
+
+1. "____ the stand-up ____ (start) at nine thirty?" → **does**, **start**
+2. "____ you ____ (check) the logs in the morning?" → **do**, **check**
+3. "____ the smoke tests ____ (pass) after the deploy?" → **do**, **pass**
+
+**Key:** 1) does + start; 2) do + check; 3) do + pass.
+**Chave:** 1) does + start; 2) do + check; 3) do + pass.
+
+### Exercício 3 — Transformação (L2)
+
+Reescreva as afirmações como perguntas com do/does:
+
+| Afirmação | Pergunta esperada |
+|---|---|
+| "The deploy starts on Friday." | "Does the deploy start on Friday?" |
+| "She works on the API team." | "Does she work on the API team?" |
+| "They report the blockers first." | "Do they report the blockers first?" |
+
+**Key:** 1) Does the deploy start on Friday?; 2) Does she work on the API team?; 3) Do they report the blockers first?
+**Chave:** 1) Does the deploy start on Friday?; 2) Does she work on the API team?; 3) Do they report the blockers first?
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Speaking: Question Game (pares)
-**Ask and answer** 10 Do/Does questions:
+### 5 sentenças-alvo (leia em voz corrida)
 
-1. Do you like pizza?
-2. Does she play guitar?
-3. Do they speak English?
-4. Does he work here?
-5. Do you study every day?
-6. Does she watch TV?
-7. Do they live near here?
-8. Does he have a car?
-9. Do you drink coffee?
-10. Does she read books?
+Do you run the tests before the stand-up. Does the deploy start on Friday. Do the new developers use the VPN. Does she check the logs every morning. What do you do when the build fails.
 
-**Answer with short answers**: Yes, I do. / No, I don't. / Yes, she does. / No, she doesn't.
+### Foco articulatório para falantes de pt-BR
+
+- **Vogal de *does* /ʌ/**: em "does the deploy", o som é aberto e central; evite aproximá-lo de "dâs" ou "dós".
+- **Vogal de *do* /u/**: em "do you", o som é arredondado e curto; na fala rápida ele enfraquece naturalmente.
+- **Final de *don't***: em "No, they don't", termine com um /t/ audível; não solte a consoante final.
+- **Ritmo encadeado**: em "what do you do", ligue as palavras sem pausas longas e mantenha a sílaba tônica nas palavras de conteúdo (*what, build, fails*).
+
+### Prompt de produção (oral ou escrita)
+
+Você entrou em um time distribuído e precisa entender a rotina. Escreva (ou grave) **5 perguntas** com do/does sobre: horário do stand-up, dia do deploy, quem checa os logs, onde rodam os testes e o que fazer quando o build falha. Depois, responda cada pergunta com *short answer* (Yes, I do. / No, I don't. / Yes, she does. / No, she doesn't.).
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Short answer** to "Do you like coffee?":
-| Slot | Value |
-|------|-------|
-| A | Yes, I like coffee. |
-| B | **Yes, I do.** |
-| C | Yes, coffee. |
-| D | Yes, like. |
-**Key:** B
-**br_pt_form:** "Sim, eu gosto. / resposta curta"
+1. **Gramática (L1):** Qual pergunta está correta?  
+   A) "Does she works on the API team?"  B) "Do she work on the API team?"  C) **"Does she work on the API team?"**  D) "Does she to work on the API team?"  
+   **Key:** C
+   **Chave:** C — com o auxiliar *does*, o verbo fica na forma base (*work*).
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **auxiliary + base verb**:
-| Slot | Value |
-|------|-------|
-| A | Does she **works** here? |
-| B | Does she **work** here? |
-| C | Does she **working** here? |
-| D | Does she **worked** here? |
-**Key:** B
-**br_pt_form:** "Ela trabalha aqui?"
+2. **Vocabulário (L1):** Qual é a *short answer* natural para "Do you check the logs every morning?" (resposta afirmativa sobre você)?  
+   A) "Yes, I check."  B) **"Yes, I do."**  C) "Yes, I am."  D) "Yes, you do."  
+   **Key:** B
+   **Chave:** B — a resposta curta repete o auxiliar (*do*) e mantém a pessoa da pergunta.
 
 ---
 
@@ -123,51 +131,38 @@ Choose the correct **auxiliary + base verb**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a1_present_simple_questions",
   "cefr_level": "A1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (do/does explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/Ingles-basico.md (Tiago Rodrigues, all rights reserved) - scoping of do/does questions"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - grammar terms are unprotectable linguistic knowledge; definitions authored"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.do_does_questions"
+      "grammar.do_does_questions",
+      "grammar.auxiliary_base_form"
     ],
     "vocabulary": [
-      "vocab.questions.do",
-      "vocab.questions.does",
-      "vocab.questions.do_you",
-      "vocab.questions.does_he_she",
-      "vocab.questions.yes_i_do",
-      "vocab.questions.no_i_dont",
-      "vocab.questions.yes_she_does",
-      "vocab.questions.no_she_doesnt",
-      "vocab.questions.question_word",
-      "vocab.questions.base_form",
-      "vocab.questions.auxiliary",
-      "vocab.questions.short_answer"
+      "vocab.do_does_short_answers",
+      "vocab.team_routine_verbs"
     ],
     "listening": [
-      "listening.questions_context"
+      "listening.do_does_context"
     ],
     "pronunciation": [
-      "pronunciation.questions"
+      "pronunciation.does_vowel_us",
+      "pronunciation.aux_weak_form_do"
     ],
     "speaking": [
-      "speaking.question_game"
+      "speaking.routine_interview"
     ]
   },
   "prereq_lessons": [

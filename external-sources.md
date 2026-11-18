@@ -97,11 +97,11 @@ sources is permissively licensed.** Applying it to the 123-lesson registry:
 |-------|--------:|------:|---------|
 | cites an **explicitly restricted** source (BaixeLivros) | **57** | 46% | ❌ blocked by an explicit term |
 | cites a **©-only** source (CETAM, Tiago Rodrigues) — no licence grant | **15** | 12% | ❌ all rights reserved by default |
-| cites a source with **no copyright statement at all** | **10** | 8% | ❌ reserved by default |
+| cites a source with **no copyright statement at all** | **7** | 6% | ❌ reserved by default |
 | cites a **permissive external** source (this file, §2) | **11** | 9% | ✅ reusable with attribution (7 `sourced_external` lições IT ainda pendentes de reautoria integral) |
-| cites **no specific source** (inclui 5 exam, 5 remediação e lições reautoradas/originais clean-room) | **30** | 24% | ⚠️ sem fonte externa declarada no registro — inclui 20 lições `authored_material` (5 Lote 1 + 5 Lote 2 Onda 2 + 5 Onda 2 — Lote 2 (batch 2) + 5 Onda 2 — Lote 3 (batch 3) — Fase A) |
+| cites **no specific source** (inclui 5 exam, 5 remediação e lições reautoradas/originais clean-room) | **33** | 27% | ⚠️ sem fonte externa declarada no registro — inclui 25 lições `authored_material` (5 Lote 1 + 5 Lote 2 Onda 2 + 5 Onda 2 — Lote 2 (batch 2) + 5 Onda 2 — Lote 3 (batch 3) — Fase A + 5 Onda 2 — Lote 4 (batch 4) — Fase B) |
 
-> **Placar pós-Onda 2 — Lote 3 (batch 3) — Fase A (2026-11-16): 27 de 123 lições** estão em base reutilizável/autoralmente limpa para a meta — **20 `authored_material`** (Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2 Onda 2: `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`; Onda 2 — Lote 2 (batch 2): `les_a1_alphabet_sounds`, `les_a1_en_us_en_gb`, `les_a1_to_be_forms`, `les_a1_pronouns_subject_object`, `les_a1_pronouns_possessive`; Onda 2 — Lote 3 (batch 3) — Fase A: `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates`) + **7 `sourced_external`** permissivas ainda pendentes de reautoria integral. **96 lições permanecem `cite_only`** e as demais bases de reuso/adaptação seguem conforme o inventário e a política de `cite_only`/reautoria: **7 `adapt_with_attribution`** e 0 `adapt_requires_permission`. As 5 classes de `§0.5` somam 123: 57 bloqueadas por termo explícito e 25 por ausência de licença/padrão restritivo no corpus local (©/sem declaração), 11 em fonte externa permissiva e 30 sem fonte específica declarada no registro. |
+> **Placar pós-Onda 2 — Lote 4 (batch 4) — Fase B (2026-11-16): 32 de 123 lições** estão em base reutilizável/autoralmente limpa para a meta — **25 `authored_material`** (Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2 Onda 2: `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`; Onda 2 — Lote 2 (batch 2): `les_a1_alphabet_sounds`, `les_a1_en_us_en_gb`, `les_a1_to_be_forms`, `les_a1_pronouns_subject_object`, `les_a1_pronouns_possessive`; Onda 2 — Lote 3 (batch 3) — Fase A: `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates`; Onda 2 — Lote 4 (batch 4) — Fase B: `les_a1_food`, `les_a1_occupations`, `les_a1_regular_verbs_past`, `les_a1_present_simple`, `les_a1_present_simple_questions`) + **7 `sourced_external`** permissivas ainda pendentes de reautoria integral. **91 lições permanecem `cite_only`** e as demais bases de reuso/adaptação seguem conforme o inventário e a política de `cite_only`/reautoria: **7 `adapt_with_attribution`** e 0 `adapt_requires_permission`. As 5 classes de `§0.5` somam 123: 57 bloqueadas por termo explícito e 22 por ausência de licença/padrão restritivo no corpus local (©/sem declaração), 11 em fonte externa permissiva e 33 sem fonte específica declarada no registro. |
 
 ### 0.5.1 What this does and does not change
 
@@ -174,7 +174,7 @@ governs publication:
 |--------|------------------------------------------|--------------------------------------|
 | `les_a1_false_cognates` | `leia` Ch2 + IT A7 | `cite_only` — original Tier A/B analysis replaces the source list |
 | `les_b2_it_postmortem` | S02 (CC-BY-4.0) | `adapt_with_attribution` |
-| `les_a1_present_simple` | `apostila` §3 | `cite_only` — grammar rules are unprotectable facts, but the *presentation* is ours |
+| `les_a1_present_simple` | ~~`apostila` §3~~ (histórico — reautoria clean-room de 2026-11-16) | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 4 (batch 4) — Fase B — grammar rules are unprotectable facts, and the *presentation* is now fully authored |
 
 `cite_only` is the default and it is cheap. `adapt_with_attribution` is the exception and requires a
 §7.1 attribution string. `adapt_requires_permission` is the third state, and it is where the 48
@@ -757,7 +757,7 @@ a pack citing S09 must not transitively cite the dead anchor.
 
 ## 5. THE 13 DEFERRED LESSONS, REPOINTED (e lições reautoradas correlatas)
 
-Historicamente, cada lição abaixo moveu de `deferred_no_source` para um sourcing externo. A coluna **Coverage** preserva a avaliação honesta original; a coluna **Estado atual (2026-11-16)** reflete o `curriculum-graph-spec.md` §4.3/§4.4.5 após os Lotes 1 e 2 e a Onda 2 — Lote 3 (batch 3) — Fase A.
+Historicamente, cada lição abaixo moveu de `deferred_no_source` para um sourcing externo. A coluna **Coverage** preserva a avaliação honesta original; a coluna **Estado atual (2026-11-16)** reflete o `curriculum-graph-spec.md` §4.3/§4.4.5 após os Lotes 1 e 2 e as Onda 2 — Lote 2 (batch 2), Lote 3 (batch 3) — Fase A e Lote 4 (batch 4) — Fase B.
 
 | # | Lesson | Primary source(s) | Coverage (original) | Estado atual (2026-11-16) | Authoring consequence / nota |
 |---|--------|-------------------|---------------------|---------------------------|-----------------------------|
@@ -804,7 +804,17 @@ Historicamente, cada lição abaixo moveu de `deferred_no_source` para um sourci
 | 26 | `les_a1_days_months` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 3 (batch 3) — Fase A) | Antes `cite_only`; reautoria integral. |
 | 27 | `les_a1_time_dates` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 3 (batch 3) — Fase A) | Antes `cite_only`; reautoria integral. |
 
-**Resumo (estado atual):** 7 lições permanecem `sourced_external`, 20 estão `reauthored_authored_material` (5 Lote 1 + 5 Lote 2 Onda 2 + 5 Onda 2 — Lote 2 (batch 2) + 5 Onda 2 — Lote 3 (batch 3) — Fase A), 0 `sourced_external_thin`, 0 `blocked_no_adequate_source`. O conjunto documentado aqui corresponde exatamente aos nós marcados como externamente relacionados/reautorados no `curriculum-graph-spec.md` §4.3.
+**Lições reautoradas adicionadas na Onda 2 — Lote 4 (batch 4) — Fase B (fora do conjunto original dos 13):**
+
+| # | Lesson | Primary source(s) | Coverage | Estado atual (2026-11-16) | Nota |
+|---|--------|-------------------|----------|---------------------------|------|
+| 28 | `les_a1_food` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 4 (batch 4) — Fase B) | Antes `cite_only` (apostila 5.4 + basico 1L3); reautoria integral. |
+| 29 | `les_a1_occupations` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 4 (batch 4) — Fase B) | Antes `cite_only` (apostila 5.5); reautoria integral. |
+| 30 | `les_a1_regular_verbs_past` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 4 (batch 4) — Fase B) | Antes `cite_only` (apostila 3.2.1); reautoria integral. |
+| 31 | `les_a1_present_simple` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 4 (batch 4) — Fase B) | Antes `cite_only` (basico 2L2); reautoria integral. |
+| 32 | `les_a1_present_simple_questions` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 4 (batch 4) — Fase B) | Antes `cite_only` (basico 3ª); reautoria integral. |
+
+**Resumo (estado atual):** 7 lições permanecem `sourced_external`, 25 estão `reauthored_authored_material` (5 Lote 1 + 5 Lote 2 Onda 2 + 5 Onda 2 — Lote 2 (batch 2) + 5 Onda 2 — Lote 3 (batch 3) — Fase A + 5 Onda 2 — Lote 4 (batch 4) — Fase B), 0 `sourced_external_thin`, 0 `blocked_no_adequate_source`. O conjunto documentado aqui corresponde exatamente aos nós marcados como externamente relacionados/reautorados no `curriculum-graph-spec.md` §4.3.
 
 ### 5.1 The vocabulary debt this repays
 
@@ -852,7 +862,7 @@ Per §0.5, every `Source` citation in the registry now needs a second field: the
 
 | Reuse basis | Applies to | Obligation | Cost |
 |-------------|-----------|------------|------|
-| **`cite_only`** (default) | the ~38 silent/©-only lessons, and any restricted lesson whose content is original | Reproduce nothing. Cite in the bibliography. | none |
+| **`cite_only`** (default) | the ~22 silent/©-only lessons, and any restricted lesson whose content is original | Reproduce nothing. Cite in the bibliography. | none |
 | **`adapt_with_attribution`** | the 7 external-sourced lessons | Reproduce/adapt, publish the §7.1 attribution string | one line per lesson |
 | **`adapt_requires_permission`** | the 48 restricted lessons that are list-shaped | **Written, perpetual, redistribution-granting permission** before publication | a letter and a wait |
 
@@ -892,8 +902,8 @@ permission; it is a promise to ask again. Given notice §0.5, any grant we accep
 outlive the revocation clause.
 
 **Track this as an open dependency, not a task.** Until §7.0's `adapt_requires_permission` set is
-cleared, the honest publishable scope of the course is the 27 lessons already on a reusable
-clean-room basis (20 `authored_material` + 7 `sourced_external`) plus
+cleared, the honest publishable scope of the course is the 32 lessons already on a reusable
+clean-room basis (25 `authored_material` + 7 `sourced_external`) plus
 original material — which is a small course, and the product plan should say so rather than discover
 it at launch.
 
