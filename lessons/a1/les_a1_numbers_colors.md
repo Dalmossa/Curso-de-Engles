@@ -3,116 +3,125 @@
 **Lesson ID:** `les_a1_numbers_colors`
 **Module:** `mod_a1_vocab_core`
 **CEFR:** A1
-**Reuse basis:** `cite_only`
-**Source:** `docs/apostila-ingles-para-iniciantes-impresso.md` + `docs/Ingles-basico.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US).
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: primeiro dia de onboarding em uma equipe de desenvolvimento
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **number** | número | *1, 2, 3...* |
-| **zero** | zero | *0* |
-| **one** | um | *1* |
-| **two** | dois | *2* |
-| **three** | três | *3* |
-| **ten** | dez | *10* |
-| **twenty** | vinte | *20* |
-| **thirty** | trinta | *30* |
-| **hundred** | cem/cento | *100* |
-| **thousand** | mil | *1000* |
-| **color** | cor | *red, blue, green* |
-| **red** | vermelho | *cor* |
-| **blue** | azul | *cor* |
-| **green** | verde | *cor* |
-| **yellow** | amarelo | *cor* |
-| **black** | preto | *cor* |
-| **white** | branco | *cor* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**Numbers**: **zero, one, two, three, four, five, six, seven, eight, nine, ten**. **Twenty, thirty, forty, fifty**. **One hundred, one thousand**."
+> **Ana (junior dev):** "Hi, can you point me to the coding standards folder?"
 >
-> "**Colors**: **red, blue, green, yellow, black, white, orange, purple, pink, brown, gray**."
+> **Bruno (senior dev):** "Sure, it's on the shared drive under project docs. Go straight and open the 'Coding Standards'."
 >
-> "The car is **red**. The sky is **blue**. The grass is **green**. The sun is **yellow**."
+> **Ana:** "Thanks. How old is the server room?"
+>
+> **Bruno:** "It's six years old, the hardware was upgraded last year."
+>
+> **Ana:** "Do you know what color the breakout panel is?"
+>
+> **Bruno:** "Yes, it's red."
+>
+> **Ana:** "Great, I also need a green label for the new cable."
+>
+> **Bruno:** "Got it. Let's meet by the coffee machine later."
+>
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **One** | Um | Contagem básica, aplicações numéricas |
+| **Ten** | Dez | Usado em listas de documentos, execuções em lote |
+| **Red** | Vermelho | Identificação de cores de segurança |
+| **Green** | Verde | Identificação de cores de segurança |
+| **Brown** | Marrom | Cor de áreas de risco e de status falha |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "I can one ten." | "I can read one to ten." | Uso incorreto de verbos acompanhando números |
+| "He red a car." | "He painted a red car." | Gênero e adjetivo antes do substantivo |
+| "I am greened." | "I have a green shirt." | Verbos inexistentes em inglês |
+| "umber and color" | "Number and color" | Ordem dos substantivos |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Twenty** is:
-| Slot | Value |
-|------|-------|
-| A | 12 |
-| B | **20** |
-| C | 13 |
-| D | 30 |
+### Exercício 1 — Reconhecimento (pedido educado)
+
+Qual frase é o pedido mais educado para repetir uma informação?
+
+| Opção | Frase |
+|---|---|
+| A | "Repeat now." |
+| B | **"Could you repeat that, please?"** |
+| C | "You repeat." |
+| D | "Repeat that slow." |
+
 **Key:** B
-**br_pt_form:** "vinte / 20"
+**Chave:** B
 
-### Item 2 — Vocabulary (Matching)
-Match the number to its English:
-| Number | English |
-|--------|---------|
-| **5** | a. five |
-| **10** | b. ten |
-| **15** | c. fifteen |
-| **20** | d. twenty |
-**Key:** 5→a, 10→b, 15→c, 20→d
-**br_pt_form:** "cinco", "dez", "quinze", "vinte"
+### Exercício 2 — Transformação L1 → L2
 
-### Item 3 — Grammar: Numbers + noun (fill-in-blank)
-Complete with **number + noun**:
-"______ (3) books. ______ (10) pens. ______ (2) cars. ______ (5) students."
-**Key:** three / ten / two / five
-**br_pt_form:** "três / dez / dois / cinco"
+Reescreva as intenções em inglês natural:
+
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Você pode me ajudar, por favor?" | "Can you help me, please?" |
+| "Espere aqui, por favor." | "Please wait here." |
+| "Eu gostaria de fazer o check-in." | "I would like to check in." |
+
+**Key:** 1) Can you help me, please? 2) Please wait here. 3) I would like to check in.
+**Chave:** 1) Can you help me, please? 2) Please wait here. 3) I would like to check in.
+
+### Exercício 3 — Contraste de forma e significado
+
+Complete com: **can**, **could**, **please**, **help**
+
+1. "____ you ____ me find the meeting room?" → **Can/Could**, **help**
+2. "____ wait here for a moment." → **Please**
+3. "____ I have the Wi‑Fi password, ____?" → **Could/Can**, **please**
+
+**Key:** 1) Can/Could + help; 2) Please; 3) Could/Can + please.
+**Chave:** 1) Can/Could + help; 2) Please; 3) Could/Can + please.
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Speaking: Number & Color Game (pares)
-**Game**: Ask and answer about objects.
+### 5 sentenças-alvo (leia em voz corrida)
 
-**Example:**
-> A: "How many **red** books do you have?"
-> B: "I have **three** red books."
-> A: "What color is your car?"
-> B: "My car is **blue**."
+Hi, can you point me to the coding standards folder? Can you read one to ten? Please wait here while I check the room number. Could I have a visitor badge, please, before the meeting starts. I would like to ask a quick question about the deployment today.
 
-**Practice with**: numbers 1-20, colors (red, blue, green, yellow, black, white).
+### Foco articulatório para falantes de pt‑BR
+
+- **/h/ em *help, have, here***: solte ar antes da vogal; evite apagar o som ou trocá‑lo por /r/.
+- **/ð/ e /θ/ em *this, thank***: coloque a ponta da língua entre os dentes; evite /d/ em *this* e /t/ em *thank*.
+- **Grupos finais e epêntese**: em *help, ask, badge*, mantenha as consoantes finais sem adicionar vogal extra.
+- **Entonação educada**: em pedidos com *Could you… please?*, use tom calmo e suba levemente no final para soar cortês.
+
+### Prompt de produção (oral ou escrita)
+
+Imagine que você está em um evento de tecnologia ou no escritório de um cliente. Crie um diálogo curto com 4 a 6 falas em que você: pede ajuda, pede para a pessoa falar devagar, segue uma instrução simples e faz um pedido educado com *can/could* + *please*. Se possível, inclua um detalhe do seu contexto de trabalho (reunião, deploy, suporte, crachá ou sala).
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**One hundred** is:
-| Slot | Value |
-|------|-------|
-| A | 10 |
-| B | **100** |
-| C | 1000 |
-| D | 110 |
-**Key:** B
-**br_pt_form:** "cem / 100"
+1. **Vocabulário (L1):** Qual frase você usa quando não compreendeu algo?  
+   A) "Please wait here."  B) **"I don't understand."**  C) "Turn left."  D) "I would like coffee."
+   **Key:** B
+   **Chave:** B
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **number + noun**:
-| Slot | Value |
-|------|-------|
-| A | **three** book |
-| B | **three** books |
-| C | **threes** books |
-| D | **three** bookes |
-**Key:** B
-**br_pt_form:** "três livros"
+2. **Gramática (L1):** Qual opção é um pedido educado correto?  
+   A) "Help me now."  B) "You can help me?"  C) **"Could you help me, please?"**  D) "Could you to help me, please?"
+   **Key:** C
+   **Chave:** C
 
 ---
 
@@ -121,57 +130,42 @@ Choose the correct **number + noun**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a1_numbers_colors",
   "cefr_level": "A1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (numbers/colors explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/apostila-ingles-para-iniciantes-impresso.md (no licence grant) - scoping of numbers and colors",
-      "docs/Ingles-basico.md (Tiago Rodrigues, all rights reserved) - scoping of basic vocabulary"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - number/color terms are unprotectable linguistic knowledge; definitions authored"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material; no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.numbers_nouns"
+      "grammar.requests_can_could",
+      "grammar.imperatives_please"
     ],
     "vocabulary": [
-      "vocab.numbers.number",
-      "vocab.numbers.zero",
-      "vocab.numbers.one",
-      "vocab.numbers.two",
-      "vocab.numbers.three",
-      "vocab.numbers.ten",
-      "vocab.numbers.twenty",
-      "vocab.numbers.thirty",
-      "vocab.numbers.hundred",
-      "vocab.numbers.thousand",
-      "vocab.colors.color",
-      "vocab.colors.red",
-      "vocab.colors.blue",
-      "vocab.colors.green",
-      "vocab.colors.yellow",
-      "vocab.colors.black",
-      "vocab.colors.white"
+      "vocab.survival.numbers_one",
+      "vocab.survival.numbers_ten",
+      "vocab.survival.colors_red",
+      "vocab.survival.colors_green",
+      "vocab.survival.colors_brown"
     ],
     "listening": [
-      "listening.numbers_context"
+      "listening.survival_context"
     ],
     "pronunciation": [
-      "pronunciation.numbers"
+      "pronunciation.h_initial",
+      "pronunciation.th_dental",
+      "pronunciation.final_consonant_epenthesis"
     ],
     "speaking": [
-      "speaking.number_color_game"
+      "speaking.survival_dialogue"
     ]
   },
   "prereq_lessons": [
@@ -191,3 +185,4 @@ Choose the correct **number + noun**:
   "estimated_time_min": 15
 }
 ```
+

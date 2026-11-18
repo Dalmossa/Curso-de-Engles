@@ -3,120 +3,114 @@
 **Lesson ID:** `les_a1_days_months`
 **Module:** `mod_a1_vocab_core`
 **CEFR:** A1
-**Reuse basis:** `cite_only`
-**Source:** `docs/apostila-ingles-para-iniciantes-impresso.md` + `docs/Ingles-basico.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US).
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: planejamento de um sprint de desenvolvimento
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **day** | dia | *24 horas* |
-| **week** | semana | *7 dias* |
-| **Monday** | segunda-feira | *dia da semana* |
-| **Tuesday** | terça-feira | *dia da semana* |
-| **Wednesday** | quarta-feira | *dia da semana* |
-| **Thursday** | quinta-feira | *dia da semana* |
-| **Friday** | sexta-feira | *dia da semana* |
-| **Saturday** | sábado | *dia da semana* |
-| **Sunday** | domingo | *dia da semana* |
-| **month** | mês | *~30 dias* |
-| **January** | janeiro | *mês do ano* |
-| **December** | dezembro | *mês do ano* |
-| **year** | ano | *12 meses* |
-| **today** | hoje | *dia atual* |
-| **tomorrow** | amanhã | *dia seguinte* |
-| **yesterday** | ontem | *dia anterior* |
+Na reunião de planejamento, o scrummaster precisa informar o calendário de entregas:
 
-### Mini-texto (áudio: `deferred_render`)
+> **Scrum Master:** "Our first demo is on Friday, November 15th. The client review will happen next Wednesday, December 4th. We will start the next sprint on Monday, January 6th, 2025. Please mark your calendars for Thursday, February 20th, and Monday, March 10th. The retrospective is scheduled for Friday, April 11th."
 
-> "**Days of the week**: **Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday**."
->
-> "**Months**: **January, February, March, April, May, June, July, August, September, October, November, December**."
->
-> "**Today** is Monday. **Tomorrow** is Tuesday. **Yesterday** was Sunday. My birthday is in **June**."
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday** | Segunda-feira, terça-feira, quarta-feira, quinta-feira, sexta-feira, sábado, domingo | Sempre com letra maiúscula. Em agenda corporativa, usamos "on [day]" (on Monday). |
+| **January, February, March, April, May, June, July, August, September, October, November, December** | Janeiro, Fevereiro, Março, Abril, Maio, Junho, Julho, Agosto, Setembro, Outubro, Novembro, Dezembro | Sempre com letra maiúscula. Em en-US, apenas "March" e "May" têm abreviações comuns (Mar, May). |
+| **on Friday, on Monday** | na sexta-feira, no segundo dia | Usamos **on** para dias da semana e datas específicas. |
+| **in November, in December** | em novembro, em dezembro | Usamos **in** para meses. |
+| **#15, #4, #6** | 15, 4, 6 | Sempre usamos **on** com o dia + mês (on Friday, the 15th). |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "I go to work **everyday**" | "I go to work **every day**" | "Everyday" é um adjetivo (ex.: everyday object); "every day" é a expressão temporal. |
+| "The meeting is **in Wednesday**" | "The meeting is **on Wednesday**" | Dias usam **on**, não **in**. |
+| "Our deadline is **the 15 November**" | "Our deadline is **November 15th**" | Em en-US, mês vem primeiro, seguido do dia. |
+| "I was born **in May 5th**" | "I was born **on May 5th**" | Datas específicas usam **on**, não **in**. |
+| "We finish **the Friday**" | "We finish **on Friday**" | Não usamos artigos definidos com dias da semana. |
+| "My birthday **in March**" | "My birthday **in March**" | ✅ Correto! Mas para datas completas: "My birthday is March 10th". |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Wednesday** is:
-| Slot | Value |
-|------|-------|
-| A | 2nd day |
-| B | **3rd day** |
-| C | 4th day |
-| D | 5th day |
-**Key:** B
-**br_pt_form:** "quarta-feira / 3º dia"
+### Exercício 1 — Reconhecimento temporal (dia da semana)
 
-### Item 2 — Vocabulary (Matching)
-Match the month to its number:
-| Month | Number |
-|-------|--------|
-| **January** | a. 1st |
-| **June** | b. 6th |
-| **December** | c. 12th |
-| **March** | d. 3rd |
-**Key:** January→a, June→b, December→c, March→d
-**br_pt_form:** "janeiro", "junho", "dezembro", "março"
+Qual é a melhor opção para marcar uma reunião semanal?
 
-### Item 3 — Grammar: Prepositions with days/months (fill-in-blank)
-Complete with **in / on / at**:
-"______ Monday. ______ June. ______ the morning. ______ night. ______ 2024."
-**Key:** on / in / in / at / in
-**br_pt_form:** "na / em / na / à / em"
+| Opção | Frase |
+|---|---|
+| A | "We meet everyday on the team." |
+| B | **"We meet every day on the team."** |
+| C | "We meet every day in the team." |
+| D | "We meet everyday in team." |
 
----
+**Chave:** B — *every day* (dois palavras) indica frequência diária; "everyday" é adjetivo. E usamos "on the team" para indicar lugar.
 
-## FASE 3 — Output Task [4 min]
+### Exercício 2 — Transformação: data ↔ formato
 
-### Speaking: Calendar Game (pares)
-**Ask and answer** about days and months:
+Converta estas expressões para o formato padrão em inglês:
 
-1. What day is today?
-2. What day is tomorrow?
-3. What day was yesterday?
-4. When is your birthday? (month)
-5. What month is Christmas?
-6. What day is New Year's Day?
+| Português (contexto) | Resposta esperada |
+|---|---|
+| Reunião no próximo segunda-feira | "on next Monday" |
+| Entrega no dia 15 do mês passado | "on the 15th of last month" |
+| Sprint começa em junho 2025 | "in June 2025" |
 
-**Example:**
-> A: "What day is today?"
-> B: "Today is Monday."
-> A: "When is your birthday?"
-> B: "My birthday is in June."
+### Exercício 3 — Seleção de preposições
+
+Complete com **on**, **in**, ou **at**:
+
+1. "Our demo is ___ Friday, ___ November." → **on**, **in**
+2. "I start working ___ the 3rd week ___ March." → **in**, **in**
+3. "We meet ___ 9 a.m. ___ Monday mornings." → **at**, **at**
+
+**Chave:** 1) on, in (dia + mês); 2) in (semana + mês); 3) at (hora + período).
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Tomorrow** is:
-| Slot | Value |
-|------|-------|
-| A | Yesterday |
-| B | **The day after today** |
-| C | Last week |
-| D | Next month |
-**Key:** B
-**br_pt_form:** "amanhã / dia após hoje"
+### 5 sentenças-alvo (leia em voz corrida)
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **preposition**:
-| Slot | Value |
-|------|-------|
-| A | **in** Monday |
-| B | **on** Monday |
-| C | **at** Monday |
-| D | **—** Monday |
-**Key:** B
-**br_pt_form:** "na segunda-feira"
+Our first milestone is on Friday, March 15th. The client feedback session happens on Wednesday, April 24th. Next month, in May, we start the second phase on Monday, May 13th. The design review is on Tuesday, June 4th. Please remember the final deadline is Thursday, June 20th, and the project ends on Friday, July 12th.
+
+### Foco articulatório para falantes de pt-BR
+
+- **/th/ em *the* (artigo definido)**: coloque a ponta da língua entre os dentes; em "the April", o "th" é sonoro.
+- **/z/ em *March***: o "r" é retroflexo; o "ch" é /k/ + /h/, não /tʃ/.
+- **Sílabas tônicas**: "Ma**rch**", "**Thurs**day", "**Fri**day" — destaque a sílaba correta.
+- **Ordem de palavras**: dia da semana + data (on Friday, March 15th) — ordem obrigatória em en-US.
+
+### Prompt de produção (oral ou escrita)
+
+Você é um desenvolvedor em um time remoto. Escreva um e-mail curto (4-5 frases) informando ao time a data do próximo release, incluindo: um dia da semana e um mês específico em inglês, e um item de calendário (como "mark your calendars"). Use preposições corretas (on/in/at). Exemplo: "The next release is on Wednesday, September 18th."
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Vocabulário (L1):** Qual a forma correta para um dia específico?  
+   A) "on the Friday"  
+   B) "in Friday"  
+   C) **"on Friday"**  
+   D) "at Friday"  
+   **Key:** C — não usamos artigos definidos com dias da semana.
+
+2. **Gramática (L1):** Como se diz uma data em inglês americano?  
+   A) "the 15 November"  
+   B) "15 November"  
+   C) **"November 15th"**  
+   D) "15th November"  
+   **Key:** C — em en-US, o mês vem primeiro, seguido do dia com sufixo "-th".
 
 ---
 
@@ -125,56 +119,37 @@ Choose the correct **preposition**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a1_days_months",
   "cefr_level": "A1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (days/months explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/apostila-ingles-para-iniciantes-impresso.md (no licence grant) - scoping of days and months",
-      "docs/Ingles-basico.md (Tiago Rodrigues, all rights reserved) - scoping of basic vocabulary"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - calendar terms are unprotectable linguistic knowledge; definitions authored"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material; no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.prepositions_days_months"
+      "grammar.prep_on_in_at_dates",
+      "grammar.word_order_dates"
     ],
     "vocabulary": [
-      "vocab.calendar.day",
-      "vocab.calendar.week",
-      "vocab.calendar.monday",
-      "vocab.calendar.tuesday",
-      "vocab.calendar.wednesday",
-      "vocab.calendar.thursday",
-      "vocab.calendar.friday",
-      "vocab.calendar.saturday",
-      "vocab.calendar.sunday",
-      "vocab.calendar.month",
-      "vocab.calendar.january",
-      "vocab.calendar.december",
-      "vocab.calendar.year",
-      "vocab.calendar.today",
-      "vocab.calendar.tomorrow",
-      "vocab.calendar.yesterday"
+      "vocab.date_vocabulary.days_of_week",
+      "vocab.date_vocabulary.months_of_year"
     ],
     "listening": [
-      "listening.calendar_context"
+      "listening.date_context"
     ],
     "pronunciation": [
-      "pronunciation.days_months"
+      "pronunciation.th_sound"
     ],
     "speaking": [
-      "speaking.calendar_game"
+      "speaking.date_oral_production"
     ]
   },
   "prereq_lessons": [

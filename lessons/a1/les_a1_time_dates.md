@@ -3,118 +3,125 @@
 **Lesson ID:** `les_a1_time_dates`
 **Module:** `mod_a1_vocab_core`
 **CEFR:** A1
-**Reuse basis:** `cite_only`
-**Source:** `docs/apostila-ingles-para-iniciantes-impresso.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US).
 **Estimated time:** 15 min
 
+## FASE 1 — Input Contextualizado (i+1) [4 min]
+
+### Cenário: daily stand-up por vídeo
+
+> **Ana (product manager):** "Good morning team. Let's start the stand-up at nine o'clock."
+> 
+> **Carlos (developer):** "It's nine fifteen now. Can you speak slowly, please?"
+> 
+> **Ana:** "Sure. The demo is scheduled for three thirty PM today."
+> 
+> **Juliana (designer):** "My birthday is on July twenty-second. Can we review the mockups at half past ten?"
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **o'clock** | em ponto | Horas exatas; nunca se usa com minutos. |
+| **half past** | e meia | 30 minutos após a hora. |
+| **quarter past** | e quinze | 15 minutos após a hora. |
+| **quarter to** | quinze para | 15 minutos antes da hora cheia. |
+| **AM** | da manhã | Antes do meio-dia; usado em contexto técnico e agenda. |
+| **PM** | da tarde/noite | Após o meio-dia; essencial para evitar ambiguidade. |
+| **on** (dates) | em | Usado com dia da semana e data específica: *on Monday, on July 22nd*. |
+| **at** (time) | às | Usado com horas exatas: *at nine o'clock*. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "It's nine of the morning" | "It's nine AM" / "It's nine in the morning" | *of* não acompanha horas; use *AM/PM* ou *in the morning*. |
+| "It's twenty-two of July" | "It's July twenty-second" / "It's the twenty-second of July" | Ordem mês-dia-número ordinal; *of* é usado com *the*. |
+| "On nine o'clock" | "At nine o'clock" | Horas usam *at*; dias e datas usam *on*. |
+| "Half past nine AM" com pronúncia *meia nove* | "Half past nine AM" com /h/ em *half* | Mantenha /h/ inicial e finalize *half* sem epêntese vocal. |
+| "Quarter for ten" | "Quarter to ten" | *for* é falso cognato; o correto é *to* para aproximação antes da hora. |
+
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Exercício 1 — Reconhecimento (horas exatas)
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **time** | hora / tempo | *momento do dia* |
-| **hour** | hora | *60 minutos* |
-| **minute** | minuto | *60 segundos* |
-| **o'clock** | em ponto | *hora exata* |
-| **half past** | meia (hora) | *30 minutos* |
-| **quarter past** | quinze (minutos) | *15 minutos* |
-| **quarter to** | quinze para | *45 minutos* |
-| **AM** | da manhã | *antes do meio-dia* |
-| **PM** | da tarde/noite | *após o meio-dia* |
-| **noon** | meio-dia | *12:00 PM* |
-| **midnight** | meia-noite | *12:00 AM* |
-| **date** | data | *dia/mês/ano* |
-| **birthday** | aniversário | *data de nascimento* |
-| **What time is it?** | que horas são? | *pergunta de hora* |
-| **It's...** | são... | *resposta de hora* |
+Qual opção expressa a hora exata?
 
-### Mini-texto (áudio: `deferred_render`)
+| Opção | Frase |
+|---|---|
+| A | "It's nine fifteen." |
+| B | **"It's nine o'clock."** |
+| C | "It's half past nine." |
+| D | "It's quarter to ten." |
 
-> "**What time is it?** — **It's three o'clock**. **It's half past three**. **It's quarter past three**. **It's quarter to four**."
->
-> "**AM/PM**: 9:00 **AM** (morning). 9:00 **PM** (night). **Noon** = 12:00 PM. **Midnight** = 12:00 AM."
->
-> "**Date**: January 1st, 2024. My **birthday** is on June 15th."
-
----
-
-## FASE 2 — Guided Practice [5 min]
-
-### Item 1 — Vocabulary (MCQ)
-**Half past three** is:
-| Slot | Value |
-|------|-------|
-| A | 3:15 |
-| B | **3:30** |
-| C | 3:45 |
-| D | 3:00 |
+**Chave:** B — *o'clock* indica hora cheia, sem minutos.
 **Key:** B
-**br_pt_form:** "três e meia / 3:30"
 
-### Item 2 — Vocabulary (Matching)
-Match the time to its English:
-| Time | English |
-|------|---------|
-| **3:00** | a. three o'clock |
-| **3:15** | b. quarter past three |
-| **3:30** | c. half past three |
-| **3:45** | d. quarter to four |
-**Key:** 3:00→a, 3:15→b, 3:30→c, 3:45→d
-**br_pt_form:** "três em ponto", "três e quinze", "três e meia", "quinze para as quatro"
+### Exercício 2 — Preposição para datas e horas
 
-### Item 3 — Grammar: Telling time (fill-in-blank)
-Complete with **It's...**:
-"______ (3:00). ______ (3:15). ______ (3:30). ______ (3:45)."
-**Key:** It's three o'clock / It's quarter past three / It's half past three / It's quarter to four
-**br_pt_form:** "São três em ponto / São três e quinze / São três e meia / São quinze para as quatro"
+Complete com *at*, *on* ou *in*:
 
----
+1. The sprint review is ____ Monday ____ July twenty-second ____ three PM.
+2. We deploy ____ nine o'clock ____ the morning.
+3. My contract ends ____ December.
 
-## FASE 3 — Output Task [4 min]
+**Chave:** 1) *on* / *on* / *at*; 2) *at* / *in*; 3) *in*
+**Key:** on on at; at in; in
 
-### Speaking: Time Game (pares)
-**Ask and answer** about time:
+### Exercício 3 — Transformação L1 → L2
 
-1. What time is it?
-2. What time is your English class?
-3. What time do you wake up?
-4. What time do you have lunch?
-5. What time do you go to bed?
+Reescreva as frases com a forma natural em en-US:
 
-**Example:**
-> A: "What time is it?"
-> B: "It's half past two."
-> A: "What time do you wake up?"
-> B: "I wake up at seven o'clock."
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "São nove e meia da manhã" | "It's half past nine AM." |
+| "Quinze para as quatro da tarde" | "It's quarter to four PM." |
+| "O aniversário é em vinte e dois de julho" | "My birthday is on July twenty-second." |
+
+**Chave:** half past nine AM; quarter to four PM; on July twenty-second
+**Key:** half past nine AM; quarter to four PM; on July twenty-second
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Noon** is:
-| Slot | Value |
-|------|-------|
-| A | 12:00 AM |
-| B | **12:00 PM** |
-| C | 6:00 AM |
-| D | 6:00 PM |
+### 5 sentenças-alvo (leia em voz corrida)
+
+It's nine o'clock AM. The meeting is on Monday at half past ten. My birthday is on July twenty-second. The demo starts at three thirty PM. Can you repeat that at quarter past nine?
+
+### Foco articulatório para falantes de pt-BR
+
+- **/h/ em *half, half past***: solte ar antes da vogal; evite omitir o som.
+- **/k/ em *o'clock***: finalize a sílaba sem adicionar vogal extra (*oclock* → não *oclocki*).
+- **/t/ em *quarter*** e *-to* em *quarter to*: articule consoante final sem epêntese.
+- **Ritmo**: horas e datas são ditas em bloco; não pause entre *July* e *twenty-second*.
+
+### Prompt de produção (oral ou escrita)
+
+Imagine um daily com o time remoto. Crie um diálogo curto com **4 a 6 falas** em que você: confirma a hora do stand-up, indica o dia da semana e a data da sprint review, usa AM/PM e pede confirmação de horário. Se possível, inclua o contexto do seu projeto.
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Vocabulário (L1):** Como se diz "três e meia" em en-US?
+A) "It's three quarter past."
+B) **"It's half past three."** 
+C) "It's three half."
+D) "It's three to half."
+**Chave:** B
 **Key:** B
-**br_pt_form:** "meio-dia / 12:00 PM"
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **time expression**:
-| Slot | Value |
-|------|-------|
-| A | It's **quarter past** four. (4:15) |
-| B | It's **quarter to** four. (4:15) |
-| C | It's **half past** four. (4:15) |
-| D | It's **o'clock** four. (4:15) |
-**Key:** A
-**br_pt_form:** "São quatro e quinze."
+2. **Gramática (L1):** Qual preposição é correta para hora exata?
+A) "on nine o'clock"
+B) "in nine o'clock"
+C) **"at nine o'clock"**
+D) "by nine o'clock"
+**Chave:** C
+**Key:** C
 
 ---
 
@@ -123,54 +130,38 @@ Choose the correct **time expression**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a1_time_dates",
   "cefr_level": "A1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (time/dates explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/apostila-ingles-para-iniciantes-impresso.md (no licence grant) - scoping of time and dates"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - time/date terms are unprotectable linguistic knowledge; definitions authored"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US).",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.telling_time"
+      "grammar.time.telling",
+      "grammar.time.prepositions"
     ],
     "vocabulary": [
-      "vocab.time.time",
-      "vocab.time.hour",
-      "vocab.time.minute",
       "vocab.time.oclock",
-      "vocab.time.half_past",
-      "vocab.time.quarter_past",
-      "vocab.time.quarter_to",
-      "vocab.time.am",
-      "vocab.time.pm",
-      "vocab.time.noon",
-      "vocab.time.midnight",
-      "vocab.time.date",
-      "vocab.time.birthday",
-      "vocab.time.what_time_is_it",
-      "vocab.time.its"
+      "vocab.time.ampm",
+      "vocab.time.days_months"
     ],
     "listening": [
       "listening.time_context"
     ],
     "pronunciation": [
-      "pronunciation.time_expressions"
+      "pronunciation.time.expressions"
     ],
     "speaking": [
-      "speaking.time_game"
+      "speaking.time_dates_dialogue"
     ]
   },
   "prereq_lessons": [

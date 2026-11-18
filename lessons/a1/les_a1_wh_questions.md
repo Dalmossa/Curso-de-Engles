@@ -1,119 +1,122 @@
-# Lesson: Interrogatives — WH-words + How+Adverb
+# Lesson: Interrogatives: WH-words + How+Adverb
 
 **Lesson ID:** `les_a1_wh_questions`
 **Module:** `mod_a1_grammar_start`
 **CEFR:** A1
-**Reuse basis:** `cite_only`
-**Source:** `docs/apostila-ingles-para-iniciantes-impresso.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US).
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: a primeira janela de deploy
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **WH-word** | palavra WH | *what, where, when, who, why, which* |
-| **what** | o que | *coisa* |
-| **where** | onde | *lugar* |
-| **when** | quando | *tempo* |
-| **who** | quem | *pessoa* |
-| **why** | por que | *razão* |
-| **which** | qual | *escolha* |
-| **how** | como | *maneira* |
-| **how old** | quantos anos | *idade* |
-| **how much** | quanto | *quantidade/preço* |
-| **how many** | quantos | *quantidade contável* |
-| **how often** | com que frequência | *frequência* |
-| **question word** | palavra interrogativa | *inicia pergunta* |
+> **Duda (engenheira de backend, primeira semana):** "Otto, I have a few questions about the release process."
+> **Otto (staff engineer):** "Sure. Ask them."
+> **Duda:** "What time does the deploy window open? And how long does the smoke test take?"
+> **Otto:** "It opens at nine, and the code freeze starts at eight. The smoke test takes about ten minutes when everything is green."
+> **Duda:** "Where do I find the rollback guide? Why do we need a second approval for the payment service?"
+> **Otto:** "The guide is in the wiki, under Operations. Because it moves customer money. And who reviews it depends on the day — the payments lead is on call this week."
 
-### Mini-texto (áudio: `deferred_render`)
+### Glossário contrastivo (pt-BR ↔ en-US)
 
-> "**What** is your name? **Where** are you from? **When** is your birthday? **Who** is your friend? **Why** are you here? **Which** color do you like?"
->
-> "**How** are you? **How old** are you? **How much** is this? **How many** books do you have? **How often** do you study?"
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **What time does the deploy window open?** | A que horas abre a janela de deploy? | *What time* pergunta o horário; *when* também pergunta sobre tempo. |
+| **How long does the smoke test take?** | Quanto tempo leva o teste de fumaça? | *How long* pergunta **duração**; *how far* pergunta **distância**. |
+| **Where do I find the rollback guide?** | Onde encontro o guia de rollback? | *Where* + auxiliar (*do*) + sujeito + verbo. |
+| **Why do we need a second approval?** | Por que precisamos de uma segunda aprovação? | *Why* pergunta o motivo. |
+| **Who is on call this week?** | Quem está de plantão esta semana? | *Who* pergunta por pessoa. |
+| **He asked me where the runbook is.** | Ele me perguntou onde está o runbook. | Em perguntas indiretas, o verbo vem depois do sujeito e sem auxiliar. |
 
----
+### Tabela de armadilhas comuns (falantes de pt-BR)
 
-## FASE 2 — Guided Practice [5 min]
-
-### Item 1 — Vocabulary (MCQ)
-**Where** asks about:
-| Slot | Value |
-|------|-------|
-| A | Time |
-| B | **Place** |
-| C | Person |
-| D | Reason |
-**Key:** B
-**br_pt_form:** "onde / lugar"
-
-### Item 2 — Vocabulary (Matching)
-Match the WH-word to its question:
-| WH-word | Question |
-|---------|----------|
-| **What** | a. What is your name? |
-| **Where** | b. Where are you from? |
-| **When** | c. When is your birthday? |
-| **Who** | d. Who is your friend? |
-| **Why** | e. Why are you here? |
-| **Which** | f. Which color do you like? |
-**Key:** What→a, Where→b, When→c, Who→d, Why→e, Which→f
-**br_pt_form:** "o que", "onde", "quando", "quem", "por que", "qual"
-
-### Item 3 — Grammar: WH-question word order (fill-in-blank)
-Complete with **WH-word + auxiliary + subject + verb**:
-"______ (what/you/do)? ______ (where/you/live)? ______ (when/you/go)? ______ (who/you/see)?"
-**Key:** What do you do? / Where do you live? / When do you go? / Who do you see?
-**br_pt_form:** "O que você faz? / Onde você mora? / Quando você vai? / Quem você vê?"
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "Where you do find the guide?" (sujeito antes do auxiliar) | "Where do you find the guide?" | Em inglês, o auxiliar vem **antes** do sujeito: palavra interrogativa + auxiliar + sujeito + verbo. |
+| "Where the guide is?" (ordem de pergunta indireta) | "Where is the guide?" | O pt-BR dispensa auxiliar na pergunta; o inglês exige *do/does* quando não há outro auxiliar. |
+| "How much time takes the test?" | "How long does the test take?" | Para **duração**, use *how long* seguido do auxiliar *does*. |
+| "He asked me where is the station." | "He asked me where the station is." | Em perguntas indiretas, o verbo vem **depois** do sujeito e sem *do/does*. |
+| "How far is the build?" (querendo falar de tempo) | "How long does the build take?" | *How far* pergunta **distância**; *how long* pergunta **duração**. |
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Speaking: WH-Question Interview (pares)
-**Interview your partner** using 10 WH-questions:
+### Exercício 1 — Reconhecimento (posição do auxiliar)
 
-1. What is your name?
-2. Where are you from?
-3. When is your birthday?
-4. Who is your best friend?
-5. Why are you studying English?
-6. Which color do you like?
-7. How are you?
-8. How old are you?
-9. How many books do you have?
-10. How often do you study?
+Assinale a frase que **coloca o auxiliar *do* depois da palavra interrogativa**.
 
-**Answer in complete sentences.**
+| Opção | Frase |
+|---|---|
+| A | "Where is the rollback guide?" |
+| B | **"Where do you find the rollback guide?"** |
+| C | "Where do find the rollback guide you?" |
+| D | "Where the rollback guide do you find?" |
+
+**Chave:** B — com *do/does*, a ordem é palavra interrogativa + auxiliar + sujeito + verbo.
+**Key:** B
+
+### Exercício 2 — Complete com a palavra interrogativa
+
+Complete com: **what, where, when, who, why, how far, how long**
+
+1. "____ time does the meeting start?" → **what**
+2. "____ does the meeting start?" → **when**
+3. "____ do I sign the deploy request?" → **where**
+4. "____ is on call this week?" → **who**
+5. "____ do we need a second approval?" → **why**
+6. "____ is it to the office?" → **how far**
+7. "____ does the smoke test take?" → **how long**
+
+**Chave:** 1) what; 2) when; 3) where; 4) who; 5) why; 6) how far; 7) how long.
+**Key:** 1) what; 2) when; 3) where; 4) who; 5) why; 6) how far; 7) how long.
+
+### Exercício 3 — Transformação (pergunta indireta → pergunta direta)
+
+Reescreva cada pergunta indireta como uma pergunta direta ao colega.
+
+1. "Otto asked me where the rollback guide is." → "Where is the rollback guide?"
+2. "Duda asked me how long the smoke test takes." → "How long does the smoke test take?"
+3. "Otto asked me why we need a second approval." → "Why do we need a second approval?"
+
+**Chave:** 1) "Where is the rollback guide?"; 2) "How long does the smoke test take?"; 3) "Why do we need a second approval?"
+**Key:** 1) "Where is the rollback guide?"; 2) "How long does the smoke test take?"; 3) "Why do we need a second approval?"
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**How many** is used for:
-| Slot | Value |
-|------|-------|
-| A | Uncountable nouns |
-| B | **Countable nouns (books, pens)** |
-| C | Price |
-| D | Frequency |
-**Key:** B
-**br_pt_form:** "quantos / substantivos contáveis"
+### 5 sentenças-alvo (leia em voz corrida)
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **WH-question**:
-| Slot | Value |
-|------|-------|
-| A | **How much** books do you have? |
-| B | **How many** books do you have? |
-| C | **How** books do you have? |
-| D | **What** books do you have? |
-**Key:** B
-**br_pt_form:** "Quantos livros você tem?"
+What time does the deploy window open? How long does the smoke test take? Where do I find the rollback guide? Why do we need a second approval? Who is on call this week?
+
+### Foco articulatório para falantes de pt-BR
+
+- **/w/ em *what, where, window***: lábios arredondados e som contínuo; não use /v/ como em *very*.
+- **/h/ em *how, who***: solte ar antes da vogal; não omita o som.
+- **Vogal de *what***: mantenha o /ʌ/ curto e aberto; não diga "uate".
+- **Entonação**: a pergunta direta sobe no final (*Where do I find…?*); a pergunta indireta desce (*"He asked me where the guide is."*).
+
+### Prompt de produção (oral ou escrita)
+
+Imagine que você entrou em uma equipe de tecnologia em um ambiente de trabalho em inglês. Escreva (ou grave) um pequeno diálogo de **4 a 6 falas** em que você pergunta: (a) o horário de uma janela de deploy, (b) quanto tempo uma tarefa de teste leva, (c) onde encontrar um documento, (d) por que uma segunda aprovação é necessária e (e) quem está de plantão. Inclua **uma pergunta indireta** (por exemplo, *"I asked Otto where the guide is."*) e uma frase com **how + adjetivo**.
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Gramática (L1):** Em qual frase o auxiliar está na posição correta?
+   A) "Where do find the guide you?"  B) **"Where do you find the guide?"**  C) "Where you do find the guide?"  D) "Where the guide do you find?"
+   **Key:** B
+   **Chave:** B
+
+2. **Vocabulário (L1):** Qual pergunta fala sobre **duração**?
+   A) "How far is it to the office?"  B) "How old is the build server?"  C) **"How long does the smoke test take?"**  D) "What time does the window open?"
+   **Key:** C
+   **Chave:** C
 
 ---
 
@@ -122,52 +125,39 @@ Choose the correct **WH-question**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a1_wh_questions",
   "cefr_level": "A1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (WH-question explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/apostila-ingles-para-iniciantes-impresso.md (no licence grant) - scoping of WH-questions"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - WH-question terms are unprotectable linguistic knowledge; definitions authored"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material; no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.wh_question_order"
+      "grammar.wh_questions_word_order",
+      "grammar.how_adjective_questions",
+      "grammar.indirect_questions"
     ],
     "vocabulary": [
-      "vocab.wh.wh_word",
-      "vocab.wh.what",
-      "vocab.wh.where",
-      "vocab.wh.when",
-      "vocab.wh.who",
-      "vocab.wh.why",
-      "vocab.wh.which",
-      "vocab.wh.how",
-      "vocab.wh.how_old",
-      "vocab.wh.how_much",
-      "vocab.wh.how_many",
-      "vocab.wh.how_often",
-      "vocab.wh.question_word"
+      "vocab.wh_question_words",
+      "vocab.how_adjective_forms"
     ],
     "listening": [
-      "listening.wh_context"
+      "listening.wh_question_context"
     ],
     "pronunciation": [
-      "pronunciation.wh_questions"
+      "pronunciation.w_initials",
+      "pronunciation.question_intonation"
     ],
     "speaking": [
-      "speaking.wh_interview"
+      "speaking.wh_question_dialogue"
     ]
   },
   "prereq_lessons": [

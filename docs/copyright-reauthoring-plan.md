@@ -4,7 +4,8 @@
 **Atualizado (Lote 1, Onda 1):** 2026-11-16 — reautoria clean-room de 5 lições/packs IT B1/B2 para `authored_material` (100% original).  
 **Atualizado (Lote 1, Onda 2, Fundação A1/A2):** 2026-11-16 — reautoria clean-room de 5 lições/packs A1/A2 para `authored_material` (100% original).  
 **Atualizado (Onda 2 — Lote 2 (batch 2), Fundação A1/A2):** 2026-11-16 — reautoria clean-room de 5 lições/packs A1 para `authored_material` (100% original).  
-**Escopo:** inventário original em modo leitura + atualizações dos Lotes 1 e 2 (Ondas 1 e 2) registradas abaixo.  
+**Atualizado (Onda 2 — Lote 3 (batch 3) — Fase A, Fundação A1/A2):** 2026-11-16 — reautoria clean-room de 5 lições/packs A1 para `authored_material` (100% original).  
+**Escopo:** inventário original em modo leitura + atualizações dos Lotes 1 e 2 e da Onda 2 — Lote 3 (batch 3) — Fase A registradas abaixo.  
 **Fontes normativas lidas:** `AGENTS.md` (Licensing/Provenance), `PRD.md` (§2, §4, §7, RF-004, RF-008), `specs/curriculum-graph-spec.md` (§4.3–§4.4).  
 **Gate:** `python3 verify-integrity.py` deve permanecer `PASS 14/14`.
 
@@ -32,15 +33,15 @@
 
 ### 2.1 Inventário auditado (somente leitura)
 - Lições em `lessons/` (`.md`): **123** arquivos. Total do registro: **123** lições, todas com arquivo.
-- Packs em `packs/` (`.md`): **123** arquivos — **22 canônicos** (`pack-les-*.md`) + **101 legados v1** (`pack_les_*_v1.md`).
+- Packs em `packs/` (`.md`): **123** arquivos — **27 canônicos** (`pack-les-*.md`) + **96 legados v1** (`pack_les_*_v1.md`).
 - Nó do registro sem arquivo de lição: **0**.
 - Lições por nível/trilha: `A1|General`=24, `A2|General`=30, `A2|IT`=16, `B1|General`=18, `B1|IT`=9, `B1|Remediation`=5, `B2|General`=12, `B2|IT`=8.
 
 ### 2.2 Placar de proveniência das lições (estado atual × meta `authored_material`)
 | Categoria | Qtde (lições) | Situação frente à meta 100% `authored_material` |
 |---|---:|---|
-| **Já `authored_material` (liberadas)** | **15** | Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2 (Onda 2): `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`; Onda 2 — Lote 2 (batch 2): `les_a1_alphabet_sounds`, `les_a1_en_us_en_gb`, `les_a1_to_be_forms`, `les_a1_pronouns_subject_object`, `les_a1_pronouns_possessive` |
-| **`cite_only` (pendentes de reautoria)** | **101** | Material original/citado por base, mas **não declarado `authored_material`**; requer revisão e reclassificação/reautoria conforme checklist |
+| **Já `authored_material` (liberadas)** | **20** | Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2 (Onda 2): `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`; Onda 2 — Lote 2 (batch 2): `les_a1_alphabet_sounds`, `les_a1_en_us_en_gb`, `les_a1_to_be_forms`, `les_a1_pronouns_subject_object`, `les_a1_pronouns_possessive`; Onda 2 — Lote 3 (batch 3) — Fase A: `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates` |
+| **`cite_only` (pendentes de reautoria)** | **96** | Material original/citado por base, mas **não declarado `authored_material`**; requer revisão e reclassificação/reautoria conforme checklist |
 | **`adapt_with_attribution` (pendentes de reautoria)** | **7** | Adaptação de fonte permissiva com atribuição; **não 100% autoral** — requer reautoria integral para atingir `authored_material` |
 | **`adapt_requires_permission` (pendentes)** | **0** | Não publicável sem permissão; requer permissão ou reautoria integral |
 | **`blocked` / `blocked_no_adequate_source` (pendentes)** | **0** | — |
@@ -52,10 +53,10 @@
 | Dimensão | Valor |
 |---|---|
 | Total de packs `.md` | **123** |
-| Schema canônico (`pack-les-*.md`) | **22** |
-| Schema legado v1 (`pack_les_*_v1.md`) | **101** |
-| Packs com `reuse_basis` = `authored_material` | **15** |
-| Packs com `reuse_basis` = `cite_only` | **107** |
+| Schema canônico (`pack-les-*.md`) | **27** |
+| Schema legado v1 (`pack_les_*_v1.md`) | **96** |
+| Packs com `reuse_basis` = `authored_material` | **20** |
+| Packs com `reuse_basis` = `cite_only` | **102** |
 | Packs com `reuse_basis` = `adapt_requires_permission` | **1** |
 | Packs sem `reuse_basis` explícito | **0** |
 
@@ -70,27 +71,27 @@
 | `les_a1_alphabet_sounds` | A1 | General | `mod_a1_foundation` | — | `authored_material` | — | `lessons/a1/les_a1_alphabet_sounds.md` |
 | `les_a1_articles_nouns` | A1 | General | `mod_a1_grammar_start` | — | `cite_only` | — | `lessons/a1/les_a1_articles_nouns.md` |
 | `les_a1_daily_basics` | A1 | General | `mod_a1_foundation` | — | `authored_material` | — | `lessons/a1/les_a1_daily_basics.md` |
-| `les_a1_days_months` | A1 | General | `mod_a1_vocab_core` | — | `cite_only` | — | `lessons/a1/les_a1_days_months.md` |
+| `les_a1_days_months` | A1 | General | `mod_a1_vocab_core` | — | `authored_material` | — | `lessons/a1/les_a1_days_months.md` |
 | `les_a1_en_us_en_gb` | A1 | General | `mod_a1_foundation` | — | `authored_material` | — | `lessons/a1/les_a1_en_us_en_gb.md` |
 | `les_a1_false_cognates` | A1 | General | `mod_a1_comm_basic` | — | `cite_only` | — | `lessons/a1/les_a1_false_cognates.md` |
 | `les_a1_food` | A1 | General | `mod_a1_vocab_core` | — | `cite_only` | — | `lessons/a1/les_a1_food.md` |
 | `les_a1_greetings` | A1 | General | `mod_a1_foundation` | — | `authored_material` | — | `lessons/a1/les_a1_greetings.md` |
 | `les_a1_have_has` | A1 | General | `mod_a1_comm_basic` | — | `cite_only` | — | `lessons/a1/les_a1_have_has.md` |
 | `les_a1_intro_dialogue` | A1 | General | `mod_a1_foundation` | — | `authored_material` | — | `lessons/a1/les_a1_intro_dialogue.md` |
-| `les_a1_numbers_colors` | A1 | General | `mod_a1_vocab_core` | — | `cite_only` | — | `lessons/a1/les_a1_numbers_colors.md` |
+| `les_a1_numbers_colors` | A1 | General | `mod_a1_vocab_core` | — | `authored_material` | — | `lessons/a1/les_a1_numbers_colors.md` |
 | `les_a1_occupations` | A1 | General | `mod_a1_vocab_core` | — | `cite_only` | — | `lessons/a1/les_a1_occupations.md` |
 | `les_a1_present_simple` | A1 | General | `mod_a1_comm_basic` | — | `cite_only` | — | `lessons/a1/les_a1_present_simple.md` |
 | `les_a1_present_simple_questions` | A1 | General | `mod_a1_comm_basic` | — | `cite_only` | — | `lessons/a1/les_a1_present_simple_questions.md` |
-| `les_a1_pronouns_demonstrative` | A1 | General | `mod_a1_grammar_start` | — | `cite_only` | — | `lessons/a1/les_a1_pronouns_demonstrative.md` |
+| `les_a1_pronouns_demonstrative` | A1 | General | `mod_a1_grammar_start` | — | `authored_material` | — | `lessons/a1/les_a1_pronouns_demonstrative.md` |
 | `les_a1_pronouns_possessive` | A1 | General | `mod_a1_grammar_start` | — | `authored_material` | — | `lessons/a1/les_a1_pronouns_possessive.md` |
 | `les_a1_pronouns_subject_object` | A1 | General | `mod_a1_grammar_start` | — | `authored_material` | — | `lessons/a1/les_a1_pronouns_subject_object.md` |
 | `les_a1_pronunciation_intro` | A1 | General | `mod_a1_foundation` | — | `authored_material` | — | `lessons/a1/les_a1_pronunciation_intro.md` |
 | `les_a1_reading_skimming` | A1 | General | `mod_a1_comm_basic` | — | `cite_only` | — | `lessons/a1/les_a1_reading_skimming.md` |
 | `les_a1_regular_verbs_past` | A1 | General | `mod_a1_vocab_core` | — | `cite_only` | — | `lessons/a1/les_a1_regular_verbs_past.md` |
 | `les_a1_there_is_are` | A1 | General | `mod_a1_comm_basic` | — | `cite_only` | — | `lessons/a1/les_a1_there_is_are.md` |
-| `les_a1_time_dates` | A1 | General | `mod_a1_vocab_core` | — | `cite_only` | — | `lessons/a1/les_a1_time_dates.md` |
+| `les_a1_time_dates` | A1 | General | `mod_a1_vocab_core` | — | `authored_material` | — | `lessons/a1/les_a1_time_dates.md` |
 | `les_a1_to_be_forms` | A1 | General | `mod_a1_grammar_start` | — | `authored_material` | — | `lessons/a1/les_a1_to_be_forms.md` |
-| `les_a1_wh_questions` | A1 | General | `mod_a1_grammar_start` | — | `cite_only` | — | `lessons/a1/les_a1_wh_questions.md` |
+| `les_a1_wh_questions` | A1 | General | `mod_a1_grammar_start` | — | `authored_material` | — | `lessons/a1/les_a1_wh_questions.md` |
 | `les_a2_airport` | A2 | General | `mod_a2_travel` | — | `cite_only` | — | `lessons/a2/les_a2_airport.md` |
 | `les_a2_ask_for_help` | A2 | General | `mod_a2_workplace_comm` | — | `cite_only` | — | `lessons/a2/les_a2_ask_for_help.md` |
 | `les_a2_collocations` | A2 | General | `mod_a2_travel` | — | `cite_only` | — | `lessons/a2/les_a2_collocations.md` |
@@ -198,27 +199,27 @@
 | `pack_les_a1_alphabet_sounds_v1` | `les_a1_alphabet_sounds` | A1 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 2 (batch 2) | `packs/a1/pack-les-a1-alphabet-sounds.md` |
 | `pack_les_a1_articles_nouns_v1` | `les_a1_articles_nouns` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_articles_nouns_v1.md` |
 | `pack_les_a1_daily_basics_v1` | `les_a1_daily_basics` | A1 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Lote 2 (Onda 2) | `packs/a1/pack-les-a1-daily-basics.md` |
-| `pack_les_a1_days_months_v1` | `les_a1_days_months` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_days_months_v1.md` |
+| `pack_les_a1_days_months_v1` | `les_a1_days_months` | A1 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 3 (batch 3) — Fase A | `packs/a1/pack-les-a1-days-months.md` |
 | `pack_les_a1_en_us_en_gb_v1` | `les_a1_en_us_en_gb` | A1 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 2 (batch 2) | `packs/a1/pack-les-a1-en-us-en-gb.md` |
 | `pack_les_a1_false_cognates_v1` | `les_a1_false_cognates` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_false_cognates_v1.md` |
 | `pack_les_a1_food_v1` | `les_a1_food` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_food_v1.md` |
 | `pack_les_a1_greetings_v1` | `les_a1_greetings` | A1 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Lote 2 (Onda 2) | `packs/a1/pack-les-a1-greetings.md` |
 | `pack_les_a1_have_has_v1` | `les_a1_have_has` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_have_has_v1.md` |
 | `pack_les_a1_intro_dialogue_v1` | `les_a1_intro_dialogue` | A1 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Lote 2 (Onda 2) | `packs/a1/pack-les-a1-intro-dialogue.md` |
-| `pack_les_a1_numbers_colors_v1` | `les_a1_numbers_colors` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_numbers_colors_v1.md` |
+| `pack_les_a1_numbers_colors_v1` | `les_a1_numbers_colors` | A1 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 3 (batch 3) — Fase A | `packs/a1/pack-les-a1-numbers-colors.md` |
 | `pack_les_a1_occupations_v1` | `les_a1_occupations` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_occupations_v1.md` |
 | `pack_les_a1_present_simple_v1` | `les_a1_present_simple` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_present_simple_v1.md` |
 | `pack_les_a1_present_simple_questions_v1` | `les_a1_present_simple_questions` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_present_simple_questions_v1.md` |
-| `pack_les_a1_pronouns_demonstrative_v1` | `les_a1_pronouns_demonstrative` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_pronouns_demonstrative_v1.md` |
+| `pack_les_a1_pronouns_demonstrative_v1` | `les_a1_pronouns_demonstrative` | A1 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 3 (batch 3) — Fase A | `packs/a1/pack-les-a1-pronouns-demonstrative.md` |
 | `pack_les_a1_pronouns_possessive_v1` | `les_a1_pronouns_possessive` | A1 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 2 (batch 2) | `packs/a1/pack-les-a1-pronouns-possessive.md` |
 | `pack_les_a1_pronouns_subject_object_v1` | `les_a1_pronouns_subject_object` | A1 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 2 (batch 2) | `packs/a1/pack-les-a1-pronouns-subject-object.md` |
 | `pack_les_a1_pronunciation_intro_v1` | `les_a1_pronunciation_intro` | A1 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Lote 2 (Onda 2) | `packs/a1/pack-les-a1-pronunciation-intro.md` |
 | `pack_les_a1_reading_skimming_v1` | `les_a1_reading_skimming` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_reading_skimming_v1.md` |
 | `pack_les_a1_regular_verbs_past_v1` | `les_a1_regular_verbs_past` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_regular_verbs_past_v1.md` |
 | `pack_les_a1_there_is_are_v1` | `les_a1_there_is_are` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_there_is_are_v1.md` |
-| `pack_les_a1_time_dates_v1` | `les_a1_time_dates` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_time_dates_v1.md` |
+| `pack_les_a1_time_dates_v1` | `les_a1_time_dates` | A1 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 3 (batch 3) — Fase A | `packs/a1/pack-les-a1-time-dates.md` |
 | `pack_les_a1_to_be_forms_v1` | `les_a1_to_be_forms` | A1 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 2 (batch 2) | `packs/a1/pack-les-a1-to-be-forms.md` |
-| `pack_les_a1_wh_questions_v1` | `les_a1_wh_questions` | A1 | General | legacy_v1 | cite_only | — | `packs/a1/pack_les_a1_wh_questions_v1.md` |
+| `pack_les_a1_wh_questions_v1` | `les_a1_wh_questions` | A1 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 3 (batch 3) — Fase A | `packs/a1/pack-les-a1-wh-questions.md` |
 | `pack_les_a2_airport_v1` | `les_a2_airport` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_airport_v1.md` |
 | `pack_les_a2_ask_for_help_v1` | `les_a2_ask_for_help` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_ask_for_help_v1.md` |
 | `pack_les_a2_collocations_v1` | `les_a2_collocations` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_collocations_v1.md` |
@@ -377,27 +378,27 @@ Objetivo de cada onda: reescrever integralmente o conteúdo didático/itens para
 | `les_a1_alphabet_sounds` | A1 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 2 (batch 2) | Alfabeto, sons e nomes das letras — reautoria integral concluída | `lessons/a1/les_a1_alphabet_sounds.md` |
 | `les_a1_articles_nouns` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_articles_nouns.md` |
 | `les_a1_daily_basics` | A1 | General | ~~`cite_only`~~ → `authored_material` ✅ Lote 2 (Onda 2) | Fundação comunicativa/gramatical/vocabulário A1–A2 — reautoria integral concluída | `lessons/a1/les_a1_daily_basics.md` |
-| `les_a1_days_months` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_days_months.md` |
+| `les_a1_days_months` | A1 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 3 (batch 3) — Fase A | Dias da semana e meses — reautoria integral concluída | `lessons/a1/les_a1_days_months.md` |
 | `les_a1_en_us_en_gb` | A1 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 2 (batch 2) | Inglês americano vs. britânico — reautoria integral concluída | `lessons/a1/les_a1_en_us_en_gb.md` |
 | `les_a1_false_cognates` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_false_cognates.md` |
 | `les_a1_food` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_food.md` |
 | `les_a1_greetings` | A1 | General | ~~`cite_only`~~ → `authored_material` ✅ Lote 2 (Onda 2) | Cumprimentos, apresentações e interação social básica — reautoria integral concluída | `lessons/a1/les_a1_greetings.md` |
 | `les_a1_have_has` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_have_has.md` |
 | `les_a1_intro_dialogue` | A1 | General | ~~`cite_only`~~ → `authored_material` ✅ Lote 2 (Onda 2) | Cumprimentos, apresentações e interação social básica — reautoria integral concluída | `lessons/a1/les_a1_intro_dialogue.md` |
-| `les_a1_numbers_colors` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_numbers_colors.md` |
+| `les_a1_numbers_colors` | A1 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 3 (batch 3) — Fase A | Números e cores — reautoria integral concluída | `lessons/a1/les_a1_numbers_colors.md` |
 | `les_a1_occupations` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_occupations.md` |
 | `les_a1_present_simple` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_present_simple.md` |
 | `les_a1_present_simple_questions` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_present_simple_questions.md` |
-| `les_a1_pronouns_demonstrative` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_pronouns_demonstrative.md` |
+| `les_a1_pronouns_demonstrative` | A1 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 3 (batch 3) — Fase A | Demonstrativos: this/that/these/those — reautoria integral concluída | `lessons/a1/les_a1_pronouns_demonstrative.md` |
 | `les_a1_pronouns_possessive` | A1 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 2 (batch 2) | Pronomes possessivos — reautoria integral concluída | `lessons/a1/les_a1_pronouns_possessive.md` |
 | `les_a1_pronouns_subject_object` | A1 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 2 (batch 2) | Pronomes pessoais: sujeito e objeto — reautoria integral concluída | `lessons/a1/les_a1_pronouns_subject_object.md` |
 | `les_a1_pronunciation_intro` | A1 | General | ~~`cite_only`~~ → `authored_material` ✅ Lote 2 (Onda 2) | Pronúncia e consciência fonológica A1 — reautoria integral concluída | `lessons/a1/les_a1_pronunciation_intro.md` |
 | `les_a1_reading_skimming` | A1 | General | `cite_only` | Leitura/escrita funcional A2 — reautoria integral | `lessons/a1/les_a1_reading_skimming.md` |
 | `les_a1_regular_verbs_past` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_regular_verbs_past.md` |
 | `les_a1_there_is_are` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_there_is_are.md` |
-| `les_a1_time_dates` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_time_dates.md` |
+| `les_a1_time_dates` | A1 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 3 (batch 3) — Fase A | Horas e datas — reautoria integral concluída | `lessons/a1/les_a1_time_dates.md` |
 | `les_a1_to_be_forms` | A1 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 2 (batch 2) | Verbo To Be: afirmativa/negativa/interrogativa — reautoria integral concluída | `lessons/a1/les_a1_to_be_forms.md` |
-| `les_a1_wh_questions` | A1 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a1/les_a1_wh_questions.md` |
+| `les_a1_wh_questions` | A1 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 3 (batch 3) — Fase A | Interrogativas: WH-words + How+Advérbio — reautoria integral concluída | `lessons/a1/les_a1_wh_questions.md` |
 | `les_a2_airport` | A2 | General | `cite_only` | Vocabulário e situações de viagem A2 — reautoria integral | `lessons/a2/les_a2_airport.md` |
 | `les_a2_ask_for_help` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_ask_for_help.md` |
 | `les_a2_collocations` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_collocations.md` |
@@ -452,7 +453,7 @@ Objetivo de cada onda: reescrever integralmente o conteúdo didático/itens para
 
 ### Onda 3 — Consolidação B1/B2 General + Remediação + Migração de Packs Legados
 
-**Escopo lições:** 35 lições B1/B2 General e remediação (não-IT). **Escopo packs:** migração integral dos **101 packs legados v1** remanescentes para schema canônico, com reautoria para `authored_material`.
+**Escopo lições:** 35 lições B1/B2 General e remediação (não-IT). **Escopo packs:** migração integral dos **96 packs legados v1** remanescentes para schema canônico, com reautoria para `authored_material`.
 
 | Lesson ID | CEFR | Trilha | Base atual | Habilidades/objetivo-alvo (reautoria) | Arquivo |
 |---|---|---|---|---|---|
@@ -493,30 +494,30 @@ Objetivo de cada onda: reescrever integralmente o conteúdo didático/itens para
 | `les_b2_toeic_writing` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_toeic_writing.md` |
 
 **Backlog de migração de packs legados (todos os schemas `legacy_v1`):**
-- `packs/a1/pack_les_a1_alphabet_sounds_v1.md` → migrar para schema canônico; lesson `les_a1_alphabet_sounds`, base atual `cite_only`
+- ~~`packs/a1/pack_les_a1_alphabet_sounds_v1.md`~~ → `packs/a1/pack-les-a1-alphabet-sounds.md` (lesson `les_a1_alphabet_sounds`, canônico, `authored_material`, ✅ Onda 2 — Lote 2 (batch 2))
 - `packs/a1/pack_les_a1_articles_nouns_v1.md` → migrar para schema canônico; lesson `les_a1_articles_nouns`, base atual `cite_only`
 - ~~`packs/a1/pack_les_a1_daily_basics_v1.md`~~ → `packs/a1/pack-les-a1-daily-basics.md` (lesson `les_a1_daily_basics`, canônico, `authored_material`, ✅ Lote 2 Onda 2)
-- `packs/a1/pack_les_a1_days_months_v1.md` → migrar para schema canônico; lesson `les_a1_days_months`, base atual `cite_only`
-- `packs/a1/pack_les_a1_en_us_en_gb_v1.md` → migrar para schema canônico; lesson `les_a1_en_us_en_gb`, base atual `cite_only`
+- ~~`packs/a1/pack_les_a1_days_months_v1.md`~~ → `packs/a1/pack-les-a1-days-months.md` (lesson `les_a1_days_months`, canônico, `authored_material`, ✅ Onda 2 — Lote 3 (batch 3) — Fase A)
+- ~~`packs/a1/pack_les_a1_en_us_en_gb_v1.md`~~ → `packs/a1/pack-les-a1-en-us-en-gb.md` (lesson `les_a1_en_us_en_gb`, canônico, `authored_material`, ✅ Onda 2 — Lote 2 (batch 2))
 - `packs/a1/pack_les_a1_false_cognates_v1.md` → migrar para schema canônico; lesson `les_a1_false_cognates`, base atual `cite_only`
 - `packs/a1/pack_les_a1_food_v1.md` → migrar para schema canônico; lesson `les_a1_food`, base atual `cite_only`
 - ~~`packs/a1/pack_les_a1_greetings_v1.md`~~ → `packs/a1/pack-les-a1-greetings.md` (lesson `les_a1_greetings`, canônico, `authored_material`, ✅ Lote 2 Onda 2)
 - `packs/a1/pack_les_a1_have_has_v1.md` → migrar para schema canônico; lesson `les_a1_have_has`, base atual `cite_only`
 - ~~`packs/a1/pack_les_a1_intro_dialogue_v1.md`~~ → `packs/a1/pack-les-a1-intro-dialogue.md` (lesson `les_a1_intro_dialogue`, canônico, `authored_material`, ✅ Lote 2 Onda 2)
-- `packs/a1/pack_les_a1_numbers_colors_v1.md` → migrar para schema canônico; lesson `les_a1_numbers_colors`, base atual `cite_only`
+- ~~`packs/a1/pack_les_a1_numbers_colors_v1.md`~~ → `packs/a1/pack-les-a1-numbers-colors.md` (lesson `les_a1_numbers_colors`, canônico, `authored_material`, ✅ Onda 2 — Lote 3 (batch 3) — Fase A)
 - `packs/a1/pack_les_a1_occupations_v1.md` → migrar para schema canônico; lesson `les_a1_occupations`, base atual `cite_only`
 - `packs/a1/pack_les_a1_present_simple_questions_v1.md` → migrar para schema canônico; lesson `les_a1_present_simple_questions`, base atual `cite_only`
 - `packs/a1/pack_les_a1_present_simple_v1.md` → migrar para schema canônico; lesson `les_a1_present_simple`, base atual `cite_only`
-- `packs/a1/pack_les_a1_pronouns_demonstrative_v1.md` → migrar para schema canônico; lesson `les_a1_pronouns_demonstrative`, base atual `cite_only`
-- `packs/a1/pack_les_a1_pronouns_possessive_v1.md` → migrar para schema canônico; lesson `les_a1_pronouns_possessive`, base atual `cite_only`
-- `packs/a1/pack_les_a1_pronouns_subject_object_v1.md` → migrar para schema canônico; lesson `les_a1_pronouns_subject_object`, base atual `cite_only`
+- ~~`packs/a1/pack_les_a1_pronouns_demonstrative_v1.md`~~ → `packs/a1/pack-les-a1-pronouns-demonstrative.md` (lesson `les_a1_pronouns_demonstrative`, canônico, `authored_material`, ✅ Onda 2 — Lote 3 (batch 3) — Fase A)
+- ~~`packs/a1/pack_les_a1_pronouns_possessive_v1.md`~~ → `packs/a1/pack-les-a1-pronouns-possessive.md` (lesson `les_a1_pronouns_possessive`, canônico, `authored_material`, ✅ Onda 2 — Lote 2 (batch 2))
+- ~~`packs/a1/pack_les_a1_pronouns_subject_object_v1.md`~~ → `packs/a1/pack-les-a1-pronouns-subject-object.md` (lesson `les_a1_pronouns_subject_object`, canônico, `authored_material`, ✅ Onda 2 — Lote 2 (batch 2))
 - ~~`packs/a1/pack_les_a1_pronunciation_intro_v1.md`~~ → `packs/a1/pack-les-a1-pronunciation-intro.md` (lesson `les_a1_pronunciation_intro`, canônico, `authored_material`, ✅ Lote 2 Onda 2)
 - `packs/a1/pack_les_a1_reading_skimming_v1.md` → migrar para schema canônico; lesson `les_a1_reading_skimming`, base atual `cite_only`
 - `packs/a1/pack_les_a1_regular_verbs_past_v1.md` → migrar para schema canônico; lesson `les_a1_regular_verbs_past`, base atual `cite_only`
 - `packs/a1/pack_les_a1_there_is_are_v1.md` → migrar para schema canônico; lesson `les_a1_there_is_are`, base atual `cite_only`
-- `packs/a1/pack_les_a1_time_dates_v1.md` → migrar para schema canônico; lesson `les_a1_time_dates`, base atual `cite_only`
+- ~~`packs/a1/pack_les_a1_time_dates_v1.md`~~ → `packs/a1/pack-les-a1-time-dates.md` (lesson `les_a1_time_dates`, canônico, `authored_material`, ✅ Onda 2 — Lote 3 (batch 3) — Fase A)
 - `packs/a1/pack_les_a1_to_be_forms_v1.md` → migrar para schema canônico; lesson `les_a1_to_be_forms`, base atual `cite_only`
-- `packs/a1/pack_les_a1_wh_questions_v1.md` → migrar para schema canônico; lesson `les_a1_wh_questions`, base atual `cite_only`
+- ~~`packs/a1/pack_les_a1_wh_questions_v1.md`~~ → `packs/a1/pack-les-a1-wh-questions.md` (lesson `les_a1_wh_questions`, canônico, `authored_material`, ✅ Onda 2 — Lote 3 (batch 3) — Fase A)
 - `packs/a2/pack_les_a2_airport_v1.md` → migrar para schema canônico; lesson `les_a2_airport`, base atual `cite_only`
 - `packs/a2/pack_les_a2_ask_for_help_v1.md` → migrar para schema canônico; lesson `les_a2_ask_for_help`, base atual `cite_only`
 - `packs/a2/pack_les_a2_collocations_v1.md` → migrar para schema canônico; lesson `les_a2_collocations`, base atual `cite_only`
@@ -682,3 +683,15 @@ Aplicar a **cada lição** (e ao pack correspondente) ao concluir a reautoria, g
 - **Seed/carga DB (:5433):** não identificado script dedicado de seed/sincronização de lições/packs em `its-platform/src`; nenhuma alteração em dados de usuários/tentativas de pronúncia.
 - **NOTA DE NOMENCLATURA:** o plano usa "Lote 2 (Onda 2)" para o lote anterior (`les_a1_greetings`…`les_a2_it_meeting_standup`), cujo bloco da §6 se chama "Lote 1 Onda 2"; a entrega atual é padronizada como **"Onda 2 — Lote 2 (batch 2)"**. As entradas antigas **não** foram renomeadas: o histórico acima permanece como estava.
 - **Placar pós-Lote 2 — Onda 2 (batch 2):** **15/123** lições `authored_material`, 0 bloqueadas, `cite_only` 101, `adapt_with_attribution` 7, `sourced_external_thin` 0; packs **22 canônicos / 101 legados**. Registro desta entrega = este bloco da §6.
+
+
+---
+
+## 6. Registro de Execução — Onda 2 — Lote 3 (batch 3) — Fase A, Fundação A1/A2 (2026-11-16)
+
+- **Escopo entregue:** `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates` — lições e packs 100% `authored_material` (clean-room, A1 General).
+- **Packs migrados para schema canônico:** `packs/a1/pack-les-a1-pronouns-demonstrative.md`, `packs/a1/pack-les-a1-wh-questions.md`, `packs/a1/pack-les-a1-numbers-colors.md`, `packs/a1/pack-les-a1-days-months.md`, `packs/a1/pack-les-a1-time-dates.md`. Legados v1 correspondentes removidos do disco; catraca `_legacy_packs_baseline.json` = **96**.
+- **Registros/gates atualizados:** `specs/curriculum-graph-spec.md` (§4.3 das 5 lições, §4.4.5 `reauthored_authored_material` 15→20, §13 packs 27 canônicos / 96 legados), `specs/assessment-item-spec.md` §2.2.1 (censo `br_pt_form` recomputado: **417 filled / 76 null-with-note / 24 null-not-applicable / 0 undocumented**), `external-sources.md` (§0.5: classes A57/B15/C10/D11/E30; placar 27/123; §5 lições 23–27), `_legacy_packs_baseline.json` (101→96).
+- **Validação:** ✅ `python3 verify-integrity.py` PASS — 14/14 (0 falhas, 0 warnings), reexecutado nesta unidade de banco/gates. Demais gates executados: typecheck, lint, build, contract:gate (3 pins re-derivados), domain:check, prd-score e npm test — resultados registrados no `TASK_PROGRESS.md`.
+- **Seed/carga DB (:5433):** sincronização realizada via `npm --prefix its-platform run content:sync` com backup prévio em `/tmp/opencode/backup_pre_fase_a.sql`; 20 lições e 20 packs `authored_material` sincronizados, 27 packs canônicos / 96 legados no disco; 2ª execução idempotente. Nenhuma alteração em dados de usuários/tentativas de pronúncia.
+- **Placar pós-Onda 2 — Lote 3 (batch 3) — Fase A:** **20/123** lições `authored_material`, 0 bloqueadas, `cite_only` 96, `adapt_with_attribution` 7, `sourced_external_thin` 0; packs **27 canônicos / 96 legados**. Registro desta entrega = este bloco da §6.

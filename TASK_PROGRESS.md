@@ -169,3 +169,75 @@ Não há outras pendências fora do escopo do commit de 8 arquivos.
 - (DR) Segue sem backup periódico do `its_platform` (pgBackRest/`pg_dump` agendado) — nesta entrega foi feito apenas o dump pontual em `/tmp/opencode`.
 - (ambiente) O arquivo de ambiente pontuado da raiz do repo permanece modificado no working tree; não foi lido nem stageado. As modificações pré-existentes do usuário (`its-platform/package.json`, migrations `1791331200000`/`1794508563775-1800000000001`, refactor do `pack-parser.ts`, etc.) seguem unstaged.
 - (dados) ~61 itens órfãos (em `items`, fora de `packs.item_ids`) seguem sem reinserção.
+
+---
+
+## Unidade — Onda 2 — Lote 3 (batch 3) — Fase A, Fundação A1/A2 (2026-11-16)
+
+- [x] 5 lições + 5 packs reautorados como `authored_material` (clean-room): `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates`; packs legados v1 correspondentes migrados **em-lugar** (mesmo id `pack_les_a1_*_v1`, `schema_version` legacy→canonical) e removidos do disco.
+- [x] Catraca `_legacy_packs_baseline.json` 101 → **96**; placar **20/123** lições `authored_material`; `cite_only` 96; `adapt_with_attribution` 7; packs **27 canônicos / 96 legados** (soma 123).
+- [x] Backup preventivo em `/tmp/opencode/backup_pre_fase_a.sql` — **556.812 bytes**, formato custom (`-Fc`), 367 entradas TOC, validado com `pg_restore --list`. Credenciais extraídas da userinfo de `DATABASE_URL` direto para `PGPASSWORD`, sem impressão.
+- [x] `content:sync` executado (2×, idempotente) e confirmação SQL **20 lições + 20 packs** `reuse_basis='authored_material'` (15→20 em ambos); packs canônicos 22→27, `legacy_v1` 101→96; `items` 140 upsertados, 484 opções, 104 arestas.
+- [x] Gates executados (tabela abaixo).
+- [x] Modelo que concluiu a fase: `nvidia/stepfun-ai/step-5-preview`.
+- [x] Pendências que dependem do usuário (última seção).
+
+### Resultado de cada gate
+
+| Gate | Exit | Resultado |
+|---|---|---|
+| backend `typecheck` | 0 | OK |
+| backend `lint` | 0 | OK (0 erros; 129 warnings pré-existentes) |
+| `contract:gate` (1ª) | 1 | FALHOU nos 3 pins (esperado) |
+| `contract:gate` (2ª, pós re-derivação) | 0 | **OK** |
+| backend `domain:check` | 0 | OK (30 arquivos, 0 violações) |
+| frontend `typecheck` | 0 | OK |
+| frontend `lint` | 0 | OK (0 erros; 1 warning pré-existente) |
+| frontend `build` | 1 → 0 | nudge de advisory do Next 1× → retry OK |
+| `python3 verify-integrity.py` | 0 | **PASS 14/14, 0 falhas, 0 warnings** (reexecutado após re-derivação dos pins e após a edição do plano) |
+| `python3 prd-score.py` | 0 | **PASS 90.4%** (≥80) |
+| backend `npm test` | 1 | 670 passed / 13 failed / 5 suítes falhas (baseline não-verde; 0 falhas atribuíveis a este lote) |
+
+### `npm test` — atribuição das 13 falhas
+- **Atribuíveis ao Lote 2 (2), conhecidas:** `tests/integration/content-api.spec.ts` ainda espera `reuse_basis=cite_only` e `schema_version=legacy_v1` para `les_a1_alphabet_sounds`/`pack_les_a1_alphabet_sounds_v1` (hoje `authored_material`/`canonical`).
+- **Pré-existentes (11), NÃO atribuíveis a este lote:** suítes `learner-routes-bodies`, `learner-scope-rls`, `post-success-status`, `request-validation` (A5a/A5b/A7 — corpos de contrato e migration `1791331200000`).
+- **zero** menções aos 5 ids deste lote em qualquer falha (verificado por grep na saída completa). Nenhum teste alterado.
+- Observação: baseline da entrega anterior era 669 passed / 14 failed; agora 670/13 — uma falha pré-existente a menos, nenhuma a mais.
+
+### SQL — antes → depois
+| Métrica | Antes | Depois |
+|---|---|---|
+| `lessons` `authored_material` | 15 | **20** |
+| `packs` `authored_material` | 15 | **20** |
+| packs canônicos | 22 | **27** |
+| packs `legacy_v1` | 101 | **96** |
+| total de packs | 123 | 123 |
+| `lesson_prerequisites` total | 1404 | 1404 |
+| `users` / `practice_attempts` / `listening_attempts` | — | 1 / 0 / 0 (intactos; sync não toca dados de usuário) |
+
+- Os 20 ids de lição = os 15 anteriores + os 5 deste lote (conferido por `SELECT id ... ORDER BY id`).
+- Os 5 packs novos: `pack_les_a1_{pronouns_demonstrative,wh_questions,numbers_colors,days_months,time_dates}_v1`, todos `canonical` + `authored_material` (migrados em-lugar, **sem deleção destrutiva**).
+- Legados `v1` desta fase remanescentes: **0**.
+- **Ressalva (divergência do briefing):** as arestas pedidas (22/18/18/30/26, 114) **não** correspondem ao conteúdo em disco. O que os markdowns declaram no bloco `json` (`prereq_lessons`) e o que foi gravado é: `pronouns_demonstrative`=9, `wh_questions`=10, `numbers_colors`=12, `days_months`=13, `time_dates`=14 (**58** no total; 46 dos 15 anteriores = 104 no sync). Banco fiel à declaração; nenhuma aresta perdida por FK inexistente.
+
+### Pins de contrato (`its-platform/docs/api-spec.openapi.yaml` → `x-contract-provenance.spec-blobs`)
+- `specs/assessment-item-spec.md`: `3b0a6a8fbb8f…` → `2c5576e0c615ea3cff55d6127aea8e5b99ef0a6c`
+- `specs/curriculum-graph-spec.md`: `7f061d2f6904…` → `abb40e058f4c871f07be872aa09000e43f494ae9`
+- `external-sources.md`: `301ce5f221be…` → `c341bafad0f1d0541311f4da5b94fb4ebac72330`
+- Outros 3 pins inalterados (`295e1b85…`, `9566fe60…`, `a8ae6bb6…`); `derived-at` já `2026-11-16`. Nenhum schema OpenAPI alterado.
+
+### Modelo / fallback (política de rotação do repo)
+- [x] Primário `nvidia/nemotron-3.5-super-vl-120b-a12b` esgotou a cota. Authoring desta fase rodou em: `step-5-preview`, `minimax-m3.1-flash`, `gpt-oss-20b`, `muse-glimmer-30b`, `laguna-xs-2.1`; unidade de registros em `step-5-preview`; **esta unidade de banco/gates em `nvidia/stepfun-ai/step-5-preview`**.
+- [x] Rotação observada: `deepseek-v4.1-flash` entrou em EOL em 2026-11-16 (rejeitado pelo provider apesar de constar no catálogo); `glm-5.3-flash` deu timeout em uma unidade e foi substituído.
+
+### Commits desta unidade (ordem do mais recente para o mais antigo)
+1. `feat(content): reauthor wave 2 batch 3 A1/A2 lessons (fase-a)` — 22 paths.
+2. `fix(content): align distractor evidence and repair item YAML in alphabet_sounds pack` — 1 path (`packs/a1/pack-les-a1-alphabet-sounds.md`; 6 linhas, já aplicadas em disco por unidade anterior).
+3. `fix(content): restore Key markers in authored lessons for D5 parity` — 12 paths de lição (marcadores `**Key:**` espelhando `**Chave:**`, já aplicados em disco).
+
+### Pendências que dependem do usuário
+- (teste) Atualizar as 2 assertivas de fixture de `content-api.spec.ts` que ainda esperam `cite_only`/`legacy_v1` para `les_a1_alphabet_sounds`/`pack_les_a1_alphabet_sounds_v1`.
+- (infra, unstaged) `its-platform/scripts/sync-authored-content.mjs` estendido com os 5 ids/paths **não** entrou no commit; decidir se comita como mudança de infra.
+- (segurança frontend) Build do Next acusou advisory de vulnerabilidade da versão instalada; avaliar `next upgrade --agent=security` (não executado).
+- (DR) Sem backup periódico agendado do `its_platform`; apenas o dump pontual em `/tmp/opencode/backup_pre_fase_a.sql`.
+- (conteúdo, pré-existente) D5 permanece para as lições sem gabarito detectado no corpo.
