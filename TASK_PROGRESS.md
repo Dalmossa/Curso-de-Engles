@@ -305,7 +305,7 @@ Não há outras pendências fora do escopo do commit de 8 arquivos.
 - [x] Plano `docs/copyright-reauthoring-plan.md` §6: linha "Seed/carga DB (:5433)" substituída pelo resultado real do sync; linha "Validação" da unidade de registros preservada verbatim.
 
 ### Commits desta unidade (ordem do mais recente para o mais antigo)
-1. `feat(content): reauthor wave 2 batch 4 A1/A2 lessons (fase-b)` — 22 paths (hash registrado após o commit, abaixo).
+1. `b1d6aaa feat(content): reauthor wave 2 batch 4 A1/A2 lessons (fase-b)` — 22 paths (`git diff-tree` confirma 22), índice limpo após o commit.
 
 ### Pendências que dependem do usuário
 - (teste) Atualizar as 2 assertivas de fixture de `content-api.spec.ts` que ainda esperam `cite_only`/`legacy_v1` para `les_a1_alphabet_sounds`/`pack_les_a1_alphabet_sounds_v1`.
@@ -314,3 +314,108 @@ Não há outras pendências fora do escopo do commit de 8 arquivos.
 - (DR) Sem backup periódico agendado do `its_platform`; apenas o dump pontual em `/tmp/opencode/backup_pre_fase_b.sql`.
 - (conteúdo, pré-existente) D5 permanece para as lições sem gabarito detectado no corpo.
 - (banco) `items` acumula 7 itens legados por pack reautorado (banco legado preservado por design do sincronador); decidir se futuramente vale uma limpeza orientada.
+---
+
+## Unidade — Onda 2 — Lote 5 (batch 5) — Fase C, Fundação A1/A2 (2026-11-18)
+
+- [x] 5 lições + 5 packs reautorados como `authored_material` (clean-room): `les_a1_have_has`, `les_a1_there_is_are`, `les_a1_reading_skimming`, `les_a1_false_cognates` (A1 General) e `les_a2_phone_calls` (A2 General). Packs legados v1 correspondentes (`pack_les_a1_{have_has,there_is_are,reading_skimming,false_cognates}_v1.md`, `pack_les_a2_phone_calls_v1.md`) removidos do disco; no banco migrados **em-lugar** (mesmo id, `schema_version` legacy_v1→canonical), sem deleção destrutiva.
+- [x] Catraca `_legacy_packs_baseline.json` 91 → **86**; placar **30/123** lições `authored_material`; `cite_only` **86**; `adapt_with_attribution` **7**; `adapt_requires_permission` 1 (lições); packs **37 canônicos / 86 legados** (soma 123).
+- [x] Backup preventivo em `/tmp/opencode/backup_pre_fase_c.sql` — **579.800 bytes**, formato custom (`-Fc`), **367 entradas** na TOC, validado com `pg_restore --list`. Credenciais extraídas da userinfo de `DATABASE_URL` direto para `PGPASSWORD` (helper `/tmp/opencode/db_ops.py`, que nunca imprime segredos); nenhum segredo ecoado em log ou relatório.
+- [x] `content:sync` executado (2×, idempotente — JSON de resumo idêntico nas duas execuções, `checkWidened` false/false em ambas) e confirmação SQL **30 lições + 30 packs** `reuse_basis='authored_material'` (25→30 em ambos); packs canônicos 32→37, `legacy_v1` 91→86; total `packs` 123; `items` 1036→1071 (+35); `lesson_prerequisites` 1404→1404; `users`/`practice_attempts`/`listening_attempts`/`item_responses` intactos (1/0/0/0).
+- [x] Gates executados (tabela abaixo). Pins de `api-spec.openapi.yaml` re-derivados (1ª execução do `contract:gate` falhou nos 3 pins — comportamento esperado).
+- [x] Modelo que concluiu a fase: `nvidia/stepfun-ai/step-5-preview` (unidade de banco/gates).
+- [x] Pendências que dependem do usuário (última seção).
+
+### Resultado de cada gate
+
+| Gate | Exit | Resultado |
+|---|---|---|
+| backend `typecheck` | 0 | OK |
+| backend `lint` | 0 | OK (0 erros; 129 warnings pré-existentes) |
+| `contract:gate` (1ª) | 1 | FALHOU nos 3 pins (esperado: `assessment-item-spec`, `curriculum-graph-spec`, `external-sources`) |
+| `contract:gate` (2ª, pós re-derivação) | 0 | **OK** |
+| backend `domain:check` | 0 | OK (30 arquivos, 0 violações) |
+| frontend `typecheck` | 0 | OK |
+| frontend `lint` | 0 | OK (0 erros; 1 warning pré-existente) |
+| frontend `build` | 1 → 0 | nudge de advisory do Next 1× → retry **OK** |
+| `python3 verify-integrity.py` | 0 | **PASS 14/14, 0 falhas, 0 warnings** (reexecutado após a re-derivação dos pins e após a edição do plano) |
+| `python3 prd-score.py` | 0 | **PASS — 90,4%** (limite 80,0%) |
+| `npm test` (backend) | 1 | **670 passed / 13 failed / 691 total** (5 suítes falhas, 1 skipped) — nenhuma falha atribuída ao Lote 5 |
+
+- Detalhe das 13 falhas de `npm test`: 2 em `content-api.spec.ts` para `les_a1_alphabet_sounds`/`pack_les_a1_alphabet_sounds_v1` (fixture ainda espera `cite_only`/`legacy_v1` — atribuíveis ao **Lote 2**) e 11 pré-existentes (`post-success-status.spec.ts`, `request-validation.spec.ts`, `learner-scope-rls.spec.ts`, `learner-routes-bodies.spec.ts` — A5a/A5b/A7 e D5 catálogo-wide). **0 menções** aos ids deste lote no log (`grep -c` = 0); 2 asserts dos 5 packs novatos não foram quebradas por item novo, id duplicado, schema de pack ou `br_pt_form`.
+
+### SQL — antes → depois
+| Métrica | Antes | Depois |
+|---|---|---|
+| `lessons` `authored_material` | 25 | **30** |
+| `packs` `authored_material` | 25 | **30** |
+| packs canônicos | 32 | **37** |
+| packs `legacy_v1` | 91 | **86** |
+| total de packs | 123 | 123 |
+| `lesson_prerequisites` total | 1404 | 1404 |
+| `items` total | 1036 | **1071** |
+| `users` / `practice_attempts` / `listening_attempts` / `item_responses` | 1 / 0 / 0 / 0 | 1 / 0 / 0 / 0 (intactos; sync não toca dados de usuário) |
+
+- Os 30 ids de lição = os 25 anteriores + os 5 deste lote (conferido por `SELECT id ... ORDER BY id`; coluna PK é `id`, não `lesson_id`).
+- Os 5 packs desta fase: `pack_les_a1_{have_has,there_is_are,reading_skimming,false_cognates}_v1` e `pack_les_a2_phone_calls_v1`, todos `canonical` + `authored_material` (migrados em-lugar, mesmo id `_v1`, **sem deleção destrutiva**).
+- Legados `legacy_v1` desta fase remanescentes: **0**.
+
+### Arestas — divergência do briefing (corrigida)
+- O briefing pedia 22/18/18/30/26 arestas (114 no total). O que os markdowns declaram no bloco `json` (`prereq_lessons`) e o que foi gravado é: `have_has`=**20**, `there_is_are`=**21**, `reading_skimming`=**22**, `false_cognates`=**23**, `phone_calls`=**6** (**92 no total**). Divergência de briefing = **−22 arestas**; banco fiel à declaração dos arquivos, 1:1 — nenhuma aresta perdida por FK inexistente.
+
+### Pins de contrato (`its-platform/docs/api-spec.openapi.yaml` → `x-contract-provenance.spec-blobs`)
+- `specs/assessment-item-spec.md`: `fb148316c928e8…` → **`174ed891ad97a430b4a93c97fb8701b16e7f107e`**
+- `specs/curriculum-graph-spec.md`: `a8f7db3a9d39db11…` → **`761af9fc8d27c74ef3672da09a6dc704c29294f9`**
+- `external-sources.md`: `8647664342aab271…` → **`e0de2feb3c57b27cb3dedf1c13037cc01539421e`**
+- Outros 3 pins inalterados (`295e1b85…`, `9566fe60…`, `a8ae6bb6…`); `derived-at` já `2026-11-16`. Nenhum schema OpenAPI alterado.
+
+### Modelo / fallback (política de rotação do repo)
+- [x] Primário `nvidia/nemotron-3.5-super-vl-120b-a12b` esgotou a cota. Authoring da Onda 2 rodou em: `step-5-preview`, `glm-5.3-flash`, `gpt-oss-20b`, `muse-glimmer-30b`, `minimax-m3.1-flash`; **esta unidade de banco/gates em `nvidia/stepfun-ai/step-5-preview`**.
+- [x] Plano `docs/copyright-reauthoring-plan.md` §6: linha "Seed/carga DB (:5433)" substituída pelo resultado real do sync; linha "Validação" da unidade de registros preservada verbatim.
+
+### Commits desta unidade (ordem do mais recente para o mais antigo)
+1. `feat(content): reauthor wave 2 batch 5 A1/A2 lessons (fase-c)` — 22 paths (`git diff-tree` confirma 22), índice limpo após o commit; hash consultável em `git log --oneline -3` (não fixado neste log para preservar a regra de commit único).
+
+### Pendências que dependem do usuário
+- (teste) Atualizar as 2 assertivas de fixture de `content-api.spec.ts` que ainda esperam `cite_only`/`legacy_v1` para `les_a1_alphabet_sounds`/`pack_les_a1_alphabet_sounds_v1`.
+- (infra, unstaged) `its-platform/scripts/sync-authored-content.mjs` estendido com os 5 ids/paths **não** entrou no commit; decidir se comita como mudança de infra.
+- (segurança frontend) Build do Next acusou advisory de vulnerabilidade da versão instalada; avaliar `next upgrade --agent=security` (não executado).
+- (DR) Sem backup periódico agendado do `its_platform`; apenas o dump pontual em `/tmp/opencode/backup_pre_fase_c.sql`.
+- (conteúdo, pré-existente) D5 permanece para as lições sem gabarito detectado no corpo.
+- (banco) `items` acumula 7 itens legados por pack reautorado (banco legado preservado por design do sincronizador); decidir se futuramente vale uma limpeza orientada.
+
+---
+
+## Resumo consolidado — Onda 2 (Fases A/B/C, Lotes 3–5)
+
+**Fechamento da Onda 2 — Fundação A1/A2.** Estado final do repositório:
+
+- Placar de lições: **30/123 `authored_material`**; `cite_only` **86**; `adapt_with_attribution` **7**; `adapt_requires_permission` **1**; `sourced_external_thin` 0.
+- Packs: **37 canônicos / 86 legados** (soma 123); catraca `_legacy_packs_baseline.json` em **86** (só pode cair).
+- Censo `br_pt_form` (`assessment-item-spec.md` §2.2.1): **597 filled / 76 null-with-note / 34 null-not-applicable / 0 undocumented**.
+- Classes de fontes em `external-sources.md` §0.5: A54/B13/C7/D11/E38.
+
+### Cadeia de 15 lições reautoradas na Onda 2 (Fases A/B/C)
+
+1. **Fase A (Lote 3):** `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates`
+2. **Fase B (Lote 4):** `les_a1_food`, `les_a1_occupations`, `les_a1_regular_verbs_past`, `les_a1_present_simple`, `les_a1_present_simple_questions`
+3. **Fase C (Lote 5):** `les_a1_have_has`, `les_a1_there_is_are`, `les_a1_reading_skimming`, `les_a1_false_cognates`, `les_a2_phone_calls`
+
+### Placar consolidado dos gates
+
+| Gate | Resultado |
+|---|---|
+| backend `typecheck` | OK |
+| backend `lint` | OK (warnings pré-existentes) |
+| `contract:gate` | OK após re-derivação dos 3 pins (1ª falhou nos pins — comportamento esperado) |
+| backend `domain:check` | OK |
+| frontend `typecheck` | OK |
+| frontend `lint` | OK |
+| frontend `build` | OK (1ª tentativa da Fase B caiu no nudge de advisory do Next; retry OK) |
+| `verify-integrity.py` | **PASS — 14/14, 0 falhas, 0 warnings** |
+| `prd-score.py` | **PASS — 90,4%** |
+| `npm test` | **670 passed / 13 failed / 691 total** — nenhuma falha atribuível aos lotes A/B/C |
+
+### Modelos (política de rotação do repo)
+
+- Primário `nvidia/nemotron-3.5-super-vl-120b-a12b` sem cota; rotação usou, no authoring das fases: `nvidia/stepfun-ai/step-5-preview`, `glm-5.3-flash`, `gpt-oss-20b`, `muse-glimmer-30b`, `minimax-m3.1-flash`; nas unidades de banco/gates/commit: `nvidia/stepfun-ai/step-5-preview`.

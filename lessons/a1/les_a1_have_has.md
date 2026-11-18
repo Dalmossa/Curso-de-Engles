@@ -3,114 +3,127 @@
 **Lesson ID:** `les_a1_have_has`
 **Module:** `mod_a1_comm_basic`
 **CEFR:** A1
-**Reuse basis:** `cite_only`
-**Source:** `docs/Ingles-Tecnico-Para-Informatica.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: mob session na mesa de um colega
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **have** | ter | *1ª/2ª pessoa, plural* |
-| **has** | tem | *3ª pessoa singular* |
-| **I have** | eu tenho | *afirmativa 1ª pessoa* |
-| **you have** | você tem | *afirmativa 2ª pessoa* |
-| **he/she/it has** | ele/ela tem | *afirmativa 3ª pessoa* |
-| **we have** | nós temos | *afirmativa 1ª pessoa plural* |
-| **they have** | eles têm | *afirmativa 3ª pessoa plural* |
-| **have got** | ter (UK) | *forma britânica* |
-| **I've got** | eu tenho (UK) | *contração britânica* |
-| **Do you have...?** | você tem...? | *pergunta* |
-| **Does she have...?** | ela tem...? | *pergunta 3ª pessoa* |
-| **car** | carro | *posse* |
-| **house** | casa | *posse* |
-| **family** | família | *posse* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**I have** a car. **You have** a bike. **He has** a dog. **She has** a cat. **We have** a house. **They have** a family**."
+> **Nanda (frontend developer):** "Hi, Leo. Do you have five minutes? I have a bug in the checkout flow."
 >
-> "**Have got** (UK): **I've got** a car. **She's got** a cat."
+> **Leo (backend developer):** "Sure. I have the laptop with the debug logs right here."
 >
-> "**Do you have** a pen? — **Yes, I do**. **Does she have** a bike? — **Yes, she does**."
+> **Nanda:** "Great. Marco has the credentials for staging, and the QA pair has the test devices."
+>
+> **Leo:** "I have got an idea: let's reproduce the bug together on my machine."
+>
+> **Nanda:** "Perfect. I have to ship this fix today, so let's start now."
+>
+> **Leo:** "Then we have a plan. Open your branch and I have the server ready."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **I have** | eu tenho | Posse ou disponibilidade na 1ª pessoa. |
+| **You have** | você tem | 2ª pessoa; a forma não muda. |
+| **He / she / it has** | ele / ela tem | 3ª pessoa do singular leva **has**. |
+| **We / they have** | nós / eles têm | O plural continua com **have**. |
+| **I've got** | eu tenho (variante com got) | **Have got** significa o mesmo que **have** na posse. |
+| **She's got** | ela tem (variante com got) | A contração de **she has got** é **she's got**. |
+| **I have to ship** | eu tenho que entregar | **Have to** expressa necessidade, não posse. |
+| **have / has / had + participle** | forma de perfeito | O mesmo verbo também aparece como auxiliar em tempos perfeitos. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "My manager **have** two monitors." | "My manager **has** two monitors." | He, she e it pedem **has**; **have** fica com I, you, we e they. |
+| "She **haves** a laptop." | "She **has** a laptop." | A marca de 3ª pessoa é a troca para **has**, não o acréscimo de -es. |
+| "**Does** she **has** a laptop?" | "**Does** she **have** a laptop?" | Depois do auxiliar **does**, o verbo principal fica na forma base. |
+| "He **don't have** access." | "He **doesn't have** access." | Na negativa, **does** carrega a marca de 3ª pessoa e **have** fica na forma base. |
+| "I **have** que entregar hoje." | "I **have to** ship this fix today." | **Have to** vem com o verbo principal na forma base e indica necessidade. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Has** is used with:
-| Slot | Value |
-|------|-------|
-| A | I, you, we, they |
-| B | **He, she, it** |
-| C | All subjects |
-| D | No subjects
+### Exercício 1 — Reconhecimento (L1)
+
+Qual frase descreve a mesa de um colega de forma correta?
+
+| Opção | Frase |
+|---|---|
+| A | "The intern haves the test devices." |
+| B | **"The intern has the test devices."** |
+| C | "The interns has the test devices." |
+| D | "The intern having the test devices." |
+
 **Key:** B
-**br_pt_form:** "has / com he, she, it"
+**Chave:** B — *intern* é 3ª pessoa do singular, então o verbo é **has**; *haves* não existe e *having* exige auxiliar.
 
-### Item 2 — Vocabulary (Matching)
-Match the subject to its form:
-| Subject | Form |
-|---------|------|
-| **I** | a. have |
-| **He** | b. has |
-| **They** | c. have |
-| **She** | d. has |
-**Key:** I→a, He→b, They→c, She→d
-**br_pt_form:** "eu / ele / eles / ela"
+### Exercício 2 — Transformação L1 → L2
 
-### Item 3 — Grammar: Have/Has (fill-in-blank)
-Complete with **have/has**:
-"I ______ a car. She ______ a bike. They ______ a house. He ______ a dog."
-**Key:** have / has / have / has
-**br_pt_form:** "tenho / tem / têm / tem"
+Reescreva as intenções em inglês natural, prestando atenção no sujeito:
+
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Ela tem as credenciais de staging." | "She has the credentials for staging." |
+| "Nós temos a sala de reunião até as dez." | "We have the meeting room until ten." |
+| "Eles têm uma ideia para o bug." | "They have an idea for the bug." |
+| "Você tem cinco minutos?" | "Do you have five minutes?" |
+
+**Key:** has / have / have / Do you have
+**Chave:** has com *she*; have com *we* e *they*; na pergunta com *you*, o auxiliar **Do** entra antes do sujeito.
+
+### Exercício 3 — Contraste de forma: have, has, have got
+
+Complete as lacunas com **have**, **has**, **have got** ou **has got**:
+
+1. "Ana ______ two monitors on her desk." → **has** / **has got**
+2. "We ______ a demo at eleven." → **have** / **have got**
+3. "Leo and Nanda ______ the same blocker twice." → **have** / **have got**
+
+**Key:** 1) has / has got; 2) have / have got; 3) have / have got.
+**Chave:** Nas três frases as duas formas cabem: **have** e **have got** têm o mesmo significado na posse; a escolha é de estilo, e o que muda de verdade é o sujeito (has na 3ª pessoa, have nas outras).
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Speaking: Possessions Game (pares)
-**Ask and answer** about possessions:
+### 5 sentenças-alvo (leia em voz corrida)
 
-1. Do you have a car?
-2. Does she have a bike?
-3. Do they have a house?
-4. Does he have a dog?
-5. Do you have a computer?
-6. Does she have a phone?
+I have a new laptop and my manager has two monitors. She has a standing desk because she works from home three days a week. We have a stand-up at nine, so I don't have much time before the demo. Do you have the adapter for the projector in your bag? He doesn't have access to the staging server yet.
 
-**Answer with short answers**: Yes, I do. / No, I don't. / Yes, she does. / No, she doesn't.
+### Foco articulatório para falantes de pt-BR
+
+- **/h/ em *have, has***: solte ar antes da vogal; não omita o som nem troque-o por /r/ ("rave").
+- **Final de *has***: o -s soa como /z/ e não acrescenta sílaba; evite pronunciar "has-i" ou "has-ê".
+- **Contração *I've***: na forma contraída, *have* perde o /h/ e soa fraco, quase /v/ colado em *I*; em *have* isolado, o /h/ volta a ser aspirado.
+- **Sequência *doesn't have***: uma as palavras sem inserir vogal entre *doesn't* e *have*; o /t/ final de *doesn't* pede bico leve, não uma sílaba extra.
+- **Ritmo**: em *Do you have...?*, mantenha *do* curto e fraco para que o contraste com *Does...?* fique audível.
+
+### Prompt de produção (oral ou escrita)
+
+Imagine que você chega em um time novo e descreve o que cada pessoa tem na mesa de trabalho. Crie um diálogo curto com **4 a 6 falas** em que você: pergunta se alguém tem um item do dia a dia (carregador, adaptador, fone, notebook), responde com **have/has**, usa **uma** forma com **have got**, faz **uma** negativa com **don't/doesn't** e inclui **uma** pergunta com **Do you...? / Does she...?**. Se possível, mencione um detalhe do seu contexto (sprint, demo, plantão, home office).
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Have got** is:
-| Slot | Value |
-|------|-------|
-| A | American English |
-| B | **British English form of have** |
-| C | Past tense |
-| D | Future tense |
-**Key:** B
-**br_pt_form:** "have got / forma britânica de have"
+1. **Gramática (L1):** Qual frase está correta?  
+   A) "She have the credentials."  B) "She haves the credentials."  C) **"She has the credentials."**  D) "She having the credentials."  
+   **Key:** C
+   **Chave:** C
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **have/has**:
-| Slot | Value |
-|------|-------|
-| A | She **have** a bike. |
-| B | She **has** a bike. |
-| C | She **having** a bike. |
-| D | She **had** a bike. |
-**Key:** B
-**br_pt_form:** "Ela tem uma bicicleta."
+2. **Vocabulário (L1):** Qual frase significa o mesmo que "I've got a blocker on the login page"?  
+   A) "I had a blocker on the login page."  B) **"I have a blocker on the login page."**  C) "I have to fix a blocker on the login page."  D) "I am having a blocker on the login page."  
+   **Key:** B
+   **Chave:** B — *have* e *have got* têm o mesmo significado na posse; *had* muda o tempo e *have to* indica necessidade.
 
 ---
 
@@ -119,53 +132,38 @@ Choose the correct **have/has**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a1_have_has",
   "cefr_level": "A1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (have/has explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/Ingles-Tecnico-Para-Informatica.md (CETAM, all rights reserved) - scoping of verb to have"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - grammar terms are unprotectable linguistic knowledge; definitions authored"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.have_has"
+      "grammar.have_has_present_simple",
+      "grammar.have_vs_have_got",
+      "grammar.have_to_necessity"
     ],
     "vocabulary": [
-      "vocab.have.have",
-      "vocab.have.has",
-      "vocab.have.i_have",
-      "vocab.have.you_have",
-      "vocab.have.he_she_it_has",
-      "vocab.have.we_have",
-      "vocab.have.they_have",
-      "vocab.have.have_got",
-      "vocab.have.ive_got",
-      "vocab.have.do_you_have",
-      "vocab.have.does_she_have",
-      "vocab.have.car",
-      "vocab.have.house",
-      "vocab.have.family"
+      "vocab.possession_nouns",
+      "vocab.have_got_form"
     ],
     "listening": [
-      "listening.have_context"
+      "listening.have_has_context"
     ],
     "pronunciation": [
-      "pronunciation.have_has"
+      "pronunciation.have_has_sibilant"
     ],
     "speaking": [
-      "speaking.possessions_game"
+      "speaking.possession_interview"
     ]
   },
   "prereq_lessons": [

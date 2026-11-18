@@ -95,13 +95,13 @@ sources is permissively licensed.** Applying it to the 123-lesson registry:
 
 | Class | Lessons | Share | Verdict |
 |-------|--------:|------:|---------|
-| cites an **explicitly restricted** source (BaixeLivros) | **57** | 46% | ❌ blocked by an explicit term |
-| cites a **©-only** source (CETAM, Tiago Rodrigues) — no licence grant | **15** | 12% | ❌ all rights reserved by default |
+| cites an **explicitly restricted** source (BaixeLivros) | **54** | 44% | ❌ blocked by an explicit term |
+| cites a **©-only** source (CETAM, Tiago Rodrigues) — no licence grant | **13** | 11% | ❌ all rights reserved by default |
 | cites a source with **no copyright statement at all** | **7** | 6% | ❌ reserved by default |
 | cites a **permissive external** source (this file, §2) | **11** | 9% | ✅ reusable with attribution (7 `sourced_external` lições IT ainda pendentes de reautoria integral) |
-| cites **no specific source** (inclui 5 exam, 5 remediação e lições reautoradas/originais clean-room) | **33** | 27% | ⚠️ sem fonte externa declarada no registro — inclui 25 lições `authored_material` (5 Lote 1 + 5 Lote 2 Onda 2 + 5 Onda 2 — Lote 2 (batch 2) + 5 Onda 2 — Lote 3 (batch 3) — Fase A + 5 Onda 2 — Lote 4 (batch 4) — Fase B) |
+| cites **no specific source** (inclui 5 exam, 5 remediação e lições reautoradas/originais clean-room) | **38** | 31% | ⚠️ sem fonte externa declarada no registro — inclui 30 lições `authored_material` (5 Lote 1 + 5 Lote 2 Onda 2 + 5 Onda 2 — Lote 2 (batch 2) + 5 Onda 2 — Lote 3 (batch 3) — Fase A + 5 Onda 2 — Lote 4 (batch 4) — Fase B + 5 Onda 2 — Lote 5 (batch 5) — Fase C) |
 
-> **Placar pós-Onda 2 — Lote 4 (batch 4) — Fase B (2026-11-16): 32 de 123 lições** estão em base reutilizável/autoralmente limpa para a meta — **25 `authored_material`** (Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2 Onda 2: `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`; Onda 2 — Lote 2 (batch 2): `les_a1_alphabet_sounds`, `les_a1_en_us_en_gb`, `les_a1_to_be_forms`, `les_a1_pronouns_subject_object`, `les_a1_pronouns_possessive`; Onda 2 — Lote 3 (batch 3) — Fase A: `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates`; Onda 2 — Lote 4 (batch 4) — Fase B: `les_a1_food`, `les_a1_occupations`, `les_a1_regular_verbs_past`, `les_a1_present_simple`, `les_a1_present_simple_questions`) + **7 `sourced_external`** permissivas ainda pendentes de reautoria integral. **91 lições permanecem `cite_only`** e as demais bases de reuso/adaptação seguem conforme o inventário e a política de `cite_only`/reautoria: **7 `adapt_with_attribution`** e 0 `adapt_requires_permission`. As 5 classes de `§0.5` somam 123: 57 bloqueadas por termo explícito e 22 por ausência de licença/padrão restritivo no corpus local (©/sem declaração), 11 em fonte externa permissiva e 33 sem fonte específica declarada no registro. |
+> **Placar pós-Onda 2 — Lote 5 (batch 5) — Fase C (2026-11-16): 37 de 123 lições** estão em base reutilizável/autoralmente limpa para a meta — **30 `authored_material`** (Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2 Onda 2: `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`; Onda 2 — Lote 2 (batch 2): `les_a1_alphabet_sounds`, `les_a1_en_us_en_gb`, `les_a1_to_be_forms`, `les_a1_pronouns_subject_object`, `les_a1_pronouns_possessive`; Onda 2 — Lote 3 (batch 3) — Fase A: `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates`; Onda 2 — Lote 4 (batch 4) — Fase B: `les_a1_food`, `les_a1_occupations`, `les_a1_regular_verbs_past`, `les_a1_present_simple`, `les_a1_present_simple_questions`; Onda 2 — Lote 5 (batch 5) — Fase C: `les_a1_have_has`, `les_a1_there_is_are`, `les_a1_reading_skimming`, `les_a1_false_cognates`, `les_a2_phone_calls`) + **7 `sourced_external`** permissivas ainda pendentes de reautoria integral. **86 lições permanecem `cite_only`** e as demais bases de reuso/adaptação seguem conforme o inventário e a política de `cite_only`/reautoria: **7 `adapt_with_attribution`** e 0 `adapt_requires_permission`. As 5 classes de `§0.5` somam 123: 54 bloqueadas por termo explícito e 20 por ausência de licença/padrão restritivo no corpus local (©/sem declaração), 11 em fonte externa permissiva e 38 sem fonte específica declarada no registro. |
 
 ### 0.5.1 What this does and does not change
 
@@ -172,7 +172,7 @@ governs publication:
 
 | Lesson | Concept source (where the idea came from) | Reuse basis (what we may do with it) |
 |--------|------------------------------------------|--------------------------------------|
-| `les_a1_false_cognates` | `leia` Ch2 + IT A7 | `cite_only` — original Tier A/B analysis replaces the source list |
+| `les_a1_false_cognates` | ~~`leia` Ch2 + IT A7~~ (histórico — reautoria clean-room de 2026-11-16) | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 5 (batch 5) — Fase C — original Tier A/B analysis replaces the source list |
 | `les_b2_it_postmortem` | S02 (CC-BY-4.0) | `adapt_with_attribution` |
 | `les_a1_present_simple` | ~~`apostila` §3~~ (histórico — reautoria clean-room de 2026-11-16) | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 4 (batch 4) — Fase B — grammar rules are unprotectable facts, and the *presentation* is now fully authored |
 
@@ -757,7 +757,7 @@ a pack citing S09 must not transitively cite the dead anchor.
 
 ## 5. THE 13 DEFERRED LESSONS, REPOINTED (e lições reautoradas correlatas)
 
-Historicamente, cada lição abaixo moveu de `deferred_no_source` para um sourcing externo. A coluna **Coverage** preserva a avaliação honesta original; a coluna **Estado atual (2026-11-16)** reflete o `curriculum-graph-spec.md` §4.3/§4.4.5 após os Lotes 1 e 2 e as Onda 2 — Lote 2 (batch 2), Lote 3 (batch 3) — Fase A e Lote 4 (batch 4) — Fase B.
+Historicamente, cada lição abaixo moveu de `deferred_no_source` para um sourcing externo. A coluna **Coverage** preserva a avaliação honesta original; a coluna **Estado atual (2026-11-16)** reflete o `curriculum-graph-spec.md` §4.3/§4.4.5 após os Lotes 1 e 2 e as Onda 2 — Lote 2 (batch 2), Lote 3 (batch 3) — Fase A, Lote 4 (batch 4) — Fase B e Lote 5 (batch 5) — Fase C.
 
 | # | Lesson | Primary source(s) | Coverage (original) | Estado atual (2026-11-16) | Authoring consequence / nota |
 |---|--------|-------------------|---------------------|---------------------------|-----------------------------|
@@ -814,7 +814,17 @@ Historicamente, cada lição abaixo moveu de `deferred_no_source` para um sourci
 | 31 | `les_a1_present_simple` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 4 (batch 4) — Fase B) | Antes `cite_only` (basico 2L2); reautoria integral. |
 | 32 | `les_a1_present_simple_questions` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 4 (batch 4) — Fase B) | Antes `cite_only` (basico 3ª); reautoria integral. |
 
-**Resumo (estado atual):** 7 lições permanecem `sourced_external`, 25 estão `reauthored_authored_material` (5 Lote 1 + 5 Lote 2 Onda 2 + 5 Onda 2 — Lote 2 (batch 2) + 5 Onda 2 — Lote 3 (batch 3) — Fase A + 5 Onda 2 — Lote 4 (batch 4) — Fase B), 0 `sourced_external_thin`, 0 `blocked_no_adequate_source`. O conjunto documentado aqui corresponde exatamente aos nós marcados como externamente relacionados/reautorados no `curriculum-graph-spec.md` §4.3.
+**Lições reautoradas adicionadas na Onda 2 — Lote 5 (batch 5) — Fase C (fora do conjunto original dos 13):**
+
+| # | Lesson | Primary source(s) | Coverage | Estado atual (2026-11-16) | Nota |
+|---|--------|-------------------|----------|---------------------------|------|
+| 33 | `les_a1_have_has` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 5 (batch 5) — Fase C) | Antes `cite_only` (IT A3); reautoria integral. |
+| 34 | `les_a1_there_is_are` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 5 (batch 5) — Fase C) | Antes `cite_only` (IT A6); reautoria integral. |
+| 35 | `les_a1_reading_skimming` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 5 (batch 5) — Fase C) | Antes `cite_only` (leia Ch2 + IT A2); reautoria integral. |
+| 36 | `les_a1_false_cognates` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 5 (batch 5) — Fase C) | Antes `cite_only` (leia Ch2 + IT A7); reautoria integral — a lista de falsos cognatos foi reconstruída como análise contrastiva original. |
+| 37 | `les_a2_phone_calls` | — (clean-room) | n/a | `reauthored_authored_material` (Onda 2 — Lote 5 (batch 5) — Fase C) | Antes `cite_only` (frases Ch6); reautoria integral. |
+
+**Resumo (estado atual):** 7 lições permanecem `sourced_external`, 30 estão `reauthored_authored_material` (5 Lote 1 + 5 Lote 2 Onda 2 + 5 Onda 2 — Lote 2 (batch 2) + 5 Onda 2 — Lote 3 (batch 3) — Fase A + 5 Onda 2 — Lote 4 (batch 4) — Fase B + 5 Onda 2 — Lote 5 (batch 5) — Fase C), 0 `sourced_external_thin`, 0 `blocked_no_adequate_source`. O conjunto documentado aqui corresponde exatamente aos nós marcados como externamente relacionados/reautorados no `curriculum-graph-spec.md` §4.3.
 
 ### 5.1 The vocabulary debt this repays
 

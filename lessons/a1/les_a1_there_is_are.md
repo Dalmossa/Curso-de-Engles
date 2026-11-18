@@ -3,112 +3,128 @@
 **Lesson ID:** `les_a1_there_is_are`
 **Module:** `mod_a1_comm_basic`
 **CEFR:** A1
-**Reuse basis:** `cite_only`
-**Source:** `docs/Ingles-Tecnico-Para-Informatica.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US).
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: tour pela nova sala de reunião
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **there is** | há / existe | *singular* |
-| **there are** | há / existem | *plural* |
-| **there is a** | há um/uma | *singular com artigo* |
-| **there are some** | há alguns/algumas | *plural com some* |
-| **is there...?** | há...? | *pergunta singular* |
-| **are there...?** | há...? | *pergunta plural* |
-| **Yes, there is** | sim, há | *resposta afirmativa singular* |
-| **No, there isn't** | não, não há | *resposta negativa singular* |
-| **Yes, there are** | sim, há | *resposta afirmativa plural* |
-| **No, there aren't** | não, não há | *resposta negativa plural* |
-| **some** | alguns/algumas | *quantidade não especificada* |
-| **any** | nenhum/nenhuma | *perguntas e negativas* |
-| **room** | quarto / sala | *espaço* |
-| **people** | pessoas | *indivíduos* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**There is** a book on the table. **There are** some books on the shelf."
+> **Mika (backend dev):** "Look at the new meeting room. There is a big screen on the wall."
 >
-> "**Is there** a bathroom? — **Yes, there is**. / **No, there isn't**."
+> **Rafa (QA):** "Nice. Are there enough chairs for the whole team?"
 >
-> "**Are there** any people? — **Yes, there are**. / **No, there aren't**."
+> **Mika:** "Yes, there are eight chairs, and there is a whiteboard next to the door."
 >
-> "**There is** a cat. **There are** two dogs. **There is** some water. **There are** some apples."
+> **Rafa:** "Is there a conference phone in the room?"
+>
+> **Mika:** "No, there isn't. But there is a webcam on the screen for calls."
+>
+> **Rafa:** "Then there are no excuses for missing standup."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **there is** | há, existe | Usado para uma coisa só: *there is a screen*. |
+| **there is a** | há um, há uma | Substantivo contável no singular sempre pede artigo: *there is a chair*. |
+| **there are** | há, existem | Usado para mais de uma coisa: *there are eight chairs*. |
+| **there's** | há (contração) | Forma curta de *there is*, comum na fala e em mensagens. |
+| **Is there...?** | Existe...? | Pergunta sobre uma coisa: *Is there a kitchen?* |
+| **Are there...?** | Existem...? | Pergunta sobre várias coisas: *Are there free chairs?* |
+| **Yes, there is / No, there isn't** | Sim, há / Não, não há | Respostas curtas no singular. |
+| **Yes, there are / No, there aren't** | Sim, há / Não, não há | Respostas curtas no plural. |
+| **some** | alguns, algumas | Em frases afirmativas: *there is some coffee*. |
+| **any** | algum(a), nenhum(a) | Em perguntas e negativas: *Is there any milk?* |
+| **whiteboard** | quadro branco | Superfície para escrever com marcadores. |
+| **screen** | tela | Monitor ou projetor na parede. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "Have a screen on the wall." | "There is a screen on the wall." | pt-BR usa "ter" para existir; en-US usa *there is / there are* para existência e reserva *have / has* para posse. |
+| "There is eight chairs." | "There are eight chairs." | A concordância segue o sujeito: plural pede *are*, singular pede *is*. |
+| "There is chair in the room." / "There is screen." | "There is a chair in the room." / "There is a screen." | Substantivo contável no singular não pode aparecer sozinho; precisa de *a/an*. |
+| "There are informations." | "There is information." | Palavras incontáveis como *information* ficam no singular com *there is*, sem -s. |
+| "Is there some coffee?" (pergunta neutra) | "Is there any coffee?" | *Some* aparece em ofertas e pedidos; em perguntas neutras usa-se *any*. |
+| "Dere is a bug in the backlog." | "There is a bug in the backlog." | O som de *there* é /ð/, com a língua entre os dentes; não é /d/. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**There is** is used for:
-| Slot | Value |
-|------|-------|
-| A | Plural nouns |
-| B | **Singular nouns** |
-| C | All nouns |
-| D | No nouns |
+### Exercício 1 — Reconhecimento (concordância)
+
+Qual frase descreve a sala corretamente?
+
+| Opção | Frase |
+|---|---|
+| A | "There is eight chairs around the table." |
+| B | **"There are eight chairs around the table."** |
+| C | "There are a big screen on the wall." |
+| D | "Have a whiteboard next to the door." |
+
 **Key:** B
-**br_pt_form:** "there is / substantivos singulares"
+**Chave:** B — *eight chairs* é plural e pede *there are*; *a big screen* é singular contável e pede *there is a*; existência em um lugar usa *there is / there are*, não *have*.
 
-### Item 2 — Vocabulary (Matching)
-Match the form to its use:
-| Form | Use |
-|------|-----|
-| **There is** | a. Singular |
-| **There are** | b. Plural |
-| **Is there...?** | c. Question singular |
-| **Are there...?** | d. Question plural |
-**Key:** There is→a, There are→b, Is there...?→c, Are there...?→d
-**br_pt_form:** "há (singular)", "há (plural)", "há...? (singular)", "há...? (plural)"
+### Exercício 2 — Transformação L1 → L2
 
-### Item 3 — Grammar: There is/are (fill-in-blank)
-Complete with **there is/there are**:
-"______ a book. ______ some books. ______ a cat. ______ two dogs."
-**Key:** There is / There are / There is / There are
-**br_pt_form:** "Há um livro / Há alguns livros / Há um gato / Há dois cães"
+Escreva as ideias em inglês natural:
+
+| Português (ideia) | Resposta esperada |
+|---|---|
+| "Existe uma tela na parede." | "There is a screen on the wall." |
+| "Há uma cozinha por perto?" | "Is there a kitchen nearby?" |
+| "Existem dois quadros brancos na sala." | "There are two whiteboards in the room." |
+
+**Key:** 1) There is a screen on the wall; 2) Is there a kitchen nearby?; 3) There are two whiteboards in the room.
+**Chave:** 1) There is a screen on the wall; 2) Is there a kitchen nearby?; 3) There are two whiteboards in the room.
+
+### Exercício 3 — Complete com is / are / Is / any / some
+
+1. "There ____ a webcam on the screen." → **is**
+2. "____ there free coffee in the kitchen?" → **Is**
+3. "There isn't ____ milk, but there is ____ coffee." → **any**, **some**
+
+**Key:** 1) is; 2) Is; 3) any / some.
+**Chave:** 1) is; 2) Is; 3) any / some.
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Speaking: Room Description (individual)
-**Describe your room** using there is/there are.
+### 5 sentenças-alvo (leia em voz corrida)
 
-**Example:**
-> "**There is** a bed. **There is** a desk. **There are** some books. **There are** two windows. **There is** a computer. **There are** some posters."
+There is a big screen in the meeting room. There are eight chairs around the table. Is there a webcam on the screen? Yes, there is. There are two whiteboards, and there is free coffee in the kitchen.
 
-**Create your own description** with 6 sentences.
+### Foco articulatório para falantes de pt-BR
+
+- **/ð/ em *there***: posicione a ponta da língua entre os dentes e vibre as cordas; evite o /d/ de "dere".
+- **Ligação *there is***: na fala corrida soa como /ðerəz/ — uma sílaba só, sem pausa entre as palavras.
+- **Contraste final *is* / *are***: mantenha o /s/ de *is* audível; em *are*, use a forma reduzida /ər/ sem forçar o /r/ forte do pt-BR.
+- **Entonação de pergunta**: em *Is there...? / Are there...?*, suba levemente o tom no final; declarações com *there is / there are* terminam com tom descendente.
+
+### Prompt de produção (oral ou escrita)
+
+Descreva o seu ambiente de trabalho (escritório, sala de reunião ou home office) em **5 a 6 frases**: use *there is / there are* para o que existe no espaço, inclua **uma pergunta** com *Is there...?* ou *Are there...?* e responda com *Yes, there is / No, there isn't*. Exemplos de apoio: *screen, chairs, whiteboard, kitchen, coffee, webcam, bug backlog*.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Any** is used in:
-| Slot | Value |
-|------|-------|
-| A | Affirmative sentences |
-| B | **Questions and negative sentences** |
-| C | All sentences |
-| D | No sentences |
-**Key:** B
-**br_pt_form:** "any / perguntas e frases negativas"
+1. **Gramática (L1):** Qual é a pergunta correta para saber se há café?  
+   A) "There is free coffee?"  B) **"Is there free coffee in the kitchen?"**  C) "Is there are free coffee?"  D) "Have free coffee in the kitchen?"  
+   **Key:** B
+   **Chave:** B
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **there is/are**:
-| Slot | Value |
-|------|-------|
-| A | **There is** some books. |
-| B | **There are** some books. |
-| C | **There is** a books. |
-| D | **There are** a book. |
-**Key:** B
-**br_pt_form:** "Há alguns livros."
+2. **Gramática (L1):** Complete: "____ two whiteboards in the room."  
+   A) "There is"  B) "There"  C) **"There are"**  D) "Have"  
+   **Key:** C
+   **Chave:** C
 
 ---
 
@@ -117,50 +133,33 @@ Choose the correct **there is/are**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a1_there_is_are",
   "cefr_level": "A1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (there is/are explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/Ingles-Tecnico-Para-Informatica.md (CETAM, all rights reserved) - scoping of there is/are"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - grammar terms are unprotectable linguistic knowledge; definitions authored"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material; no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
       "grammar.there_is_are"
     ],
     "vocabulary": [
-      "vocab.there.is",
-      "vocab.there.are",
-      "vocab.there.is_a",
-      "vocab.there.are_some",
-      "vocab.there.is_there",
-      "vocab.there.are_there",
-      "vocab.there.yes_there_is",
-      "vocab.there.no_there_isnt",
-      "vocab.there.yes_there_are",
-      "vocab.there.no_there_arent",
-      "vocab.there.some",
-      "vocab.there.any",
-      "vocab.there.room",
-      "vocab.there.people"
+      "vocab.office_environment",
+      "vocab.quantifiers_some_any"
     ],
     "listening": [
-      "listening.there_context"
+      "listening.room_description"
     ],
     "pronunciation": [
-      "pronunciation.there_is_are"
+      "pronunciation.th_voiced_there"
     ],
     "speaking": [
       "speaking.room_description"
