@@ -1112,6 +1112,8 @@ def legacy_packs_ratchet() -> None:
                       f"dotted ids do not satisfy §1.2's prefix↔namespace rule. [10]/[12]/[13] and "
                       f"[11c]/[11d]/[11e] DO cover them. Outstanding migration — "
                       f"post-lesson-practice-spec.md §12")
+# Canonical Lote 6 packs declare item_id as a plain YAML 1.2 scalar (a backtick is not a
+# valid plain scalar); legacy packs wrap it in backticks. Check [9] accepts both forms.
 # assessment-item-spec.md §1.2 — id prefix IS the primary skill namespace
 PREFIX_NS = {"grm": "grammar", "voc": "vocab", "rdg": "reading",
              "prn": "pronunciation", "lst": "listening", "coh": "coherence"}
@@ -1147,7 +1149,7 @@ def check_packs() -> None:
             # A multiple-choice item has a `| Slot | Value |` table; a production item
             # (pronunciation / minimal-pair) does not, and requires no key letter.
             if "| Slot | Value |" not in body:
-                mi = re.search(r"item_id:\s*`(\w+)`", body)
+                mi = re.search(r"item_id:\s*`?(\w+)`?", body)
                 if mi and mi.group(1) in seen_items:
                     fail("pack", f"{fn} ITEM {n} reuses item_id {mi.group(1)} from {seen_items[mi.group(1)]}")
                 elif mi:
@@ -1180,7 +1182,7 @@ def check_packs() -> None:
             # prefix->domain table but never stated, and `skill_ids` and `domain` are separate
             # fields in the schema. The id is the key the learner model files the observation
             # under, so it has to name the skill the observation updates.
-            mi = re.search(r"item_id:\s*`(\w+)`", body)
+            mi = re.search(r"item_id:\s*`?(\w+)`?", body)
             ms = re.search(r"^skill:\s*`([a-z]+)\.([\w.]+)`", body, re.M)
             if mi and ms:
                 pre = mi.group(1).split("_")[0]

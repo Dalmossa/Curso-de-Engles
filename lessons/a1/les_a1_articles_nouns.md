@@ -3,108 +3,129 @@
 **Lesson ID:** `les_a1_articles_nouns`
 **Module:** `mod_a1_grammar_start`
 **CEFR:** A1
-**Reuse basis:** `cite_only`
-**Source:** `docs/apostila-ingles-para-iniciantes-impresso.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: onboarding na revisão do guia de API
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **article** | artigo | *a, an, the* |
-| **a** | um/uma | *antes de som consoante* |
-| **an** | um/uma | *antes de som vogal* |
-| **the** | o/a/os/as | *definido, específico* |
-| **noun** | substantivo | *pessoa, lugar, coisa* |
-| **adjective** | adjetivo | *descreve o substantivo* |
-| **singular** | singular | *um* |
-| **plural** | plural | *mais de um* |
-| **countable** | contável | *pode contar (book/books)* |
-| **uncountable** | incontável | *não pode contar (water, information)* |
-| **consonant** | consoante | *b, c, d, f, g...* |
-| **vowel sound** | som de vogal | *a, e, i, o, u* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**Articles**: **a** book, **an** apple, **the** sun. **A** before consonant sound. **An** before vowel sound."
+> **Bia (nova desenvolvedora backend):** "Is this the API guide for the payments team?"
 >
-> "**Nouns**: **book** (singular), **books** (plural). **Uncountable**: water, information, advice."
+> **Caio (tech lead):** "Yes, it is. This is a draft, and there is an issue in an example."
 >
-> "**Adjectives**: **big** book, **red** car, **happy** child. Adjective comes **before** noun in English."
+> **Bia:** "I see the issue on page two. The example has a bad header."
+>
+> **Caio:** "Good catch. The header in the old guide is correct. Can you fix the example?"
+>
+> **Bia:** "Sure. We add a note and a short example with the right header."
+>
+> **Caio:** "Thanks. We send the new guide to the team after lunch."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **a / an** | um / uma | Use antes de um substantivo contável no singular quando o item ainda não é conhecido: **a draft**, **an issue**. |
+| **the** | o / a | Use quando o leitor já sabe de qual item se trata: **the issue**, **the header**. |
+| **singular countable noun** | substantivo contável no singular | Em inglês ele não fica sozinho: **a note**, **the guide**, mas nunca *note is short*. |
+| **plural -s** | plural (geralmente -s em pt-BR) | O plural é marcado no substantivo: **two notes**, **three examples**; *a notes* é impossível. |
+| **a short note** | uma nota curta | O adjetivo vem **antes** do substantivo em inglês, ao contrário da ordem do pt-BR. |
+| **a vs. an** | um vs. uma (pelo som) | A escolha é pelo **som**, não pela letra: **an issue** (/ɪ/), mas **a user** (/j/). |
+| **this / these** | este / estes | Demostrativos já vistos: **this draft** (perto), **these notes** (perto, plural). |
+| **Ø (sem artigo)** | sem artigo | Em afirmações gerais com plural, o artigo desaparece: **Notes are useful.** |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "I found **issue** in the guide." | "I found **an issue** in the guide." | Substantivo contável no singular não fica sozinho; o pt-BR dispensa o artigo com facilidade. |
+| "I found **a issue** on page two." | "I found **an issue** on page two." | *Issue* começa com o som /ɪ/; **an** precede sons vocálicos, **a** precede consoantes. |
+| "**An user** asked about the guide." | "**A user** asked about the guide." | A regra é pelo som: *user* começa com /j/, um som consonantal, embora comece com a letra *u*. |
+| "We add **a notes** to the guide." | "We add **a note**..." / "...**two notes**..." | **A** só acompanha o singular; depois de número, use o plural sem **a**. |
+| "We wrote **a note short**." | "We wrote **a short note**." | Em inglês o adjetivo antecede o substantivo; *nota curta* do pt-BR tem a ordem invertida. |
+| "I found an issue. **A issue** is on page two." | "I found an issue. **The issue** is on page two." | Na segunda menção do mesmo item, use **the**; o pt-BR tende a repetir *um* ou a omitir o artigo. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**An** is used before:
-| Slot | Value |
-|------|-------|
-| A | Consonant sounds |
-| B | **Vowel sounds (apple, egg, hour)** |
-| C | All words |
-| D | No words |
+### Exercício 1 — Reconhecimento (L1)
+
+Qual frase descreve corretamente o problema encontrado por Bia?
+
+| Opção | Frase |
+|---|---|
+| A | "I found a issue in the guide." |
+| B | **"I found an issue in the guide."** |
+| C | "I found a issues in the guide." |
+| D | "I found issue in the guide." |
+
 **Key:** B
-**br_pt_form:** "an / antes de som de vogal"
 
-### Item 2 — Vocabulary (Matching)
-Match the article to its use:
-| Article | Use |
-|---------|-----|
-| **A** | a. Before consonant sound |
-| **An** | b. Before vowel sound |
-| **The** | c. Specific/known noun |
-| **No article** | d. General plural/uncountable |
-**Key:** A→a, An→b, The→c, No article→d
-**br_pt_form:** "um/uma", "um/uma", "o/a", "sem artigo"
+*Issue* começa com som vocálico /ɪ/, então pede **an**; o substantivo singular precisa de artigo, e **a** não combina com o plural *issues*.
 
-### Item 3 — Grammar: A/An/The (fill-in-blank)
-Complete with **a / an / the / — (no article)**:
-"______ book. ______ apple. ______ sun. ______ water. ______ books. ______ information."
-**Key:** a / an / the / — / — / —
-**br_pt_form:** "um / uma / o / — / — / —"
+### Exercício 2 — Transformação L1 → L2
+
+Reescreva as intenções em inglês natural, cuidando de artigo, plural e ordem do adjetivo:
+
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Eu encontrei um erro no guia." | "I found a bug in the guide." |
+| "Eu escrevi uma nota curta." | "I wrote a short note." |
+| "O guia tem dois exemplos." | "The guide has two examples." |
+| "Estes exemplos são ruins." | "These examples are bad." |
+
+**Key:** ver tabela.
+
+*Bug* é singular contável e leva **a**; *short* vem antes de *note*; depois de *two*, o substantivo vai para o plural; *these* acompanha o plural e o adjetivo antecede o substantivo.
+
+### Exercício 3 — Contraste de forma: a / an / the / Ø
+
+Complete as lacunas com **a**, **an**, **the** ou **Ø** (sem artigo):
+
+1. "This is ___ draft. ___ draft is short."
+2. "I found ___ issue in the example."
+3. "We write ___ notes after ___ review."
+
+**Key:** 1) a / The; 2) an; 3) Ø / a.
+
+Na primeira menção de *draft*, use **a**; na segunda, **the**. *Issue* começa com som vocálico, então leva **an**. Em *we write notes*, o plural em afirmação geral não leva artigo, e *a review* é uma revisão qualquer, mencionada pela primeira vez.
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Speaking: Object Description (individual)
-**Describe 5 objects** using: article + adjective + noun.
+### 5 sentenças-alvo (leia em voz corrida)
 
-**Example:**
-> "**A big** book. **An expensive** watch. **The red** car. **A small** house. **An interesting** story."
+This is a draft of the API guide, and there is an issue on page two. The issue is in a header example, and the header is wrong. We add two short notes to the guide. These notes are useful because the guide is for new developers. I send a short answer to the team after the review.
 
-**Create your own 5 descriptions** with different articles and adjectives.
+### Foco articulatório para falantes de pt-BR
+
+- **/ð/ em *the***: ponta da língua entre os dentes, com voz; não troque por /d/ ("de"). Antes de consoante, *the* soa /ðə/; antes de vogal, /ði/.
+- **/ə/ em *a***: o artigo é fraco, quase um "a" curto e solto — nunca o /a/ forte do pt-BR.
+- **/ɪ/ em *issue***: vogal curta e relaxada, diferente do /i/ fechado de *these*; é esse som que exige **an**, não a letra *i*.
+- **Ligação em *an issue, an example***: o /n/ cola na vogal seguinte sem pausa; evite uma pausa glotal entre *an* e o substantivo.
+- **Plural em *notes* e *examples***: mantenha o /s/ e o /z/ finais. Em pt-BR a marca do plural costuma ficar no artigo; em inglês ela fica no substantivo.
+
+### Prompt de produção (oral ou escrita)
+
+Imagine que você explica o estado de um guia de API para uma pessoa que acabou de entrar no time. Produza **4 a 6 falas ou sentenças** em que você: usa **a/an** em pelo menos uma primeira menção, usa **the** em uma segunda menção, inclui **um substantivo no plural**, coloca **um adjetivo antes do substantivo** e usa **this/these** para apontar algo do material. Feche com uma ação concreta (enviar a nota, corrigir o exemplo, mandar a resposta). Se possível, mencione um detalhe do seu contexto (deploy, ticket, code review, documentação).
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Uncountable nouns**:
-| Slot | Value |
-|------|-------|
-| A | Have plural form |
-| B | **Do not have plural form (water, information)** |
-| C | Always use "a" |
-| D | Are always specific |
-**Key:** B
-**br_pt_form:** "substantivos incontáveis / sem plural"
+1. **Gramática (L1):** Qual frase está correta?  
+   A) "I found issue in the guide."  B) "I found a issue in the guide."  C) **"I found an issue in the guide."**  D) "I found an issues in the guide."  
+   **Key:** C
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **article**:
-| Slot | Value |
-|------|-------|
-| A | **a** apple |
-| B | **an** apple |
-| C | **the** apple |
-| D | **—** apple |
-**Key:** B
-**br_pt_form:** "uma maçã"
+2. **Gramática (L1):** Em "The issue is on page two", o que o artigo **the** sinaliza?  
+   A) Uma primeira menção.  B) **Um item já conhecido pelo leitor.**  C) Um substantivo no plural.  D) Uma pergunta.  
+   **Key:** B
 
 ---
 
@@ -113,65 +134,48 @@ Choose the correct **article**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a1_articles_nouns",
   "cefr_level": "A1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (articles/nouns/adjectives explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/apostila-ingles-para-iniciantes-impresso.md (no licence grant) - scoping of articles, nouns, adjectives"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - grammar terms are unprotectable linguistic knowledge; definitions authored"
-  },
-  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "skills_touched": ["grammar", "vocabulary", "listening", "reading", "pronunciation", "speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.articles_a_an_the"
+      "grammar.articles_definite",
+      "grammar.articles_indefinite",
+      "grammar.noun_plurals",
+      "grammar.demonstratives_number_agreement"
     ],
     "vocabulary": [
-      "vocab.articles.article",
-      "vocab.articles.a",
-      "vocab.articles.an",
-      "vocab.articles.the",
-      "vocab.articles.noun",
-      "vocab.articles.adjective",
-      "vocab.articles.singular",
-      "vocab.articles.plural",
-      "vocab.articles.countable",
-      "vocab.articles.uncountable",
-      "vocab.articles.consonant",
-      "vocab.articles.vowel_sound"
+      "vocab.countable_noun_phrases",
+      "vocab.adjectives_basic",
+      "vocab.demonstratives_near_far"
     ],
     "listening": [
-      "listening.articles_context"
+      "listening.article_reference_context"
+    ],
+    "reading": [
+      "reading.articles_guide_note",
+      "reading.article_reference"
     ],
     "pronunciation": [
-      "pronunciation.articles"
+      "pronunciation.article_dental_schwa"
     ],
     "speaking": [
-      "speaking.object_description"
+      "speaking.guide_review_report"
     ]
   },
   "prereq_lessons": [
-    "les_a1_alphabet_sounds",
-    "les_a1_greetings",
-    "les_a1_intro_dialogue",
-    "les_a1_daily_basics",
-    "les_a1_pronunciation_intro",
-    "les_a1_en_us_en_gb",
-    "les_a1_to_be_forms",
-    "les_a1_pronouns_subject_object",
-    "les_a1_pronouns_possessive",
-    "les_a1_pronouns_demonstrative",
-    "les_a1_wh_questions"
+    "les_a1_pronouns_demonstrative"
   ],
   "estimated_time_min": 15
 }

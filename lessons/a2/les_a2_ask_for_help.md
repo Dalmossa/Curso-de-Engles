@@ -3,116 +3,133 @@
 **Lesson ID:** `les_a2_ask_for_help`
 **Module:** `mod_a2_workplace_comm`
 **CEFR:** A2
-**Reuse basis:** `cite_only`
-**Source:** `docs/frases-ingles-trabalho.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: pedido de ajuda durante uma revisão de código
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **ask for help** | pedir ajuda | *solicitar assistência* |
-| **buy time** | ganhar tempo | *adiar resposta ou decisão* |
-| **I need help** | preciso de ajuda | *solicitação direta* |
-| **Can you help me?** | pode me ajudar? | *pedido educado* |
-| **I'm not sure** | não tenho certeza | *expressar dúvida* |
-| **Let me check** | deixe-me verificar | *pedir tempo para checar* |
-| **I'll get back to you** | eu retorno / te dou retorno | *prometer resposta posterior* |
-| **Give me a moment** | me dê um momento | *pedir tempo curto* |
-| **I don't know** | não sei | *admitir ignorância* |
-| **figure it out** | descobrir / resolver | *encontrar solução* |
-| **deadline** | prazo | *data limite* |
-| **urgent** | urgente | *prioridade alta* |
+> **Bia (backend developer, São Paulo):** "Hey, Milan. Could you take a look at the failing test on my branch? I'm stuck on the auth middleware."
+>
+> **Milan (platform engineer, remote):** "Sure. Can you send me the error and the commit hash? I'm in a review right now."
+>
+> **Bia:** "I can paste the stack trace here, but give me a minute — I want to check the log first."
+>
+> **Milan:** "No rush. Take your time. I'll be in the incident channel after the review."
+>
+> **Bia:** "Thanks. While you're free, what do you suggest we do with the token refresh?"
+>
+> **Milan:** "I'd start with the expiry check. If that looks fine, I'll jump on a call with you."
+>
+> **Bia:** "That would help a lot. I'll drop the log in the channel before the call."
 
-### Mini-texto (áudio: `deferred_render`)
+### Glossário contrastivo (pt-BR ↔ en-US)
 
-> A: **Can you help me** with this report?
-> B: Sure. What do you need?
-> A: **I'm not sure** how to format the table. **Let me check** the template.
-> B: OK. **I'll get back to you** in 10 minutes.
-> A: Thanks. The **deadline** is tomorrow, so it's **urgent**.
-> B: No problem. We'll **figure it out**.
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **Could you take a look at the test?** | Você pode dar uma olhada no teste? | *Take a look at* é o jeito natural de pedir uma revisão; *look* sozinho não recebe o objeto. |
+| **Can you send me the error?** | Você pode me enviar o erro? | O destinatário vem antes do objeto enviado; não diga *send to me the error*. |
+| **Give me a minute.** | Me dá um minuto. | Pedido curto para ganhar tempo; soa melhor que um literal *wait a little*. |
+| **No rush. / Take your time.** | Sem pressa. | Resposta fixa para tirar pressão de quem está ocupado. |
+| **I'll drop the log in the channel.** | Vou jogar o log no canal. | *I'll* marca a promessa de uma ação futura; em pt-BR o futuro costuma vir sem marca. |
+| **What do you suggest we do?** | O que você sugere que façamos? | Depois de *suggest*, a oração vem com o sujeito e o verbo base, sem *to*. |
+| **I'd start with the expiry check.** | Eu começaria pela verificação de expiração. | *I'd* é a forma contraída de *I would* e suaviza a sugestão. |
+| **That would help a lot.** | Isso ajudaria muito. | Resposta natural a uma oferta; equivale ao reconhecimento do favor. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "Can you look the bug for me?" | "Could you **take a look at** the bug for me?" | *Look* pede a preposição *at*; em pt-BR "olhar o bug" não precisa dela. |
+| "Can you send **to me** the stack trace?" | "Can you **send me** the stack trace?" | O pronome indireto vem antes do direto; a ordem do pt-BR não se transfere. |
+| "**Wait a little**, I'm checking." | "**Give me a minute**, I'm checking." | A expressão consolidada para pedir tempo é *give me a minute*, não o calque de "espera um pouco". |
+| "**Without hurry**, I'll check it." | "**No rush**. I'll check it." | *Without hurry* é tradução palavra por palavra; em inglês a resposta é *no rush* ou *take your time*. |
+| "What do you suggest **us to do**?" | "What do you suggest **we do**?" | *Suggest* não toma *us to*; a oração usa sujeito + forma base, sem *to*. |
+| "I **check** the log in the channel now." | "I **'ll check** the log in the channel now." | Promessa futura pede *will*; o presente simples não carrega esse compromisso. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Buy time** means:
-| Slot | Value |
-|------|-------|
-| A | Purchase a clock |
-| B | **Delay a response or decision** |
-| C | Work faster |
-| D | Cancel a meeting |
+### Exercício 1 — Reconhecimento (L1)
+
+Um colega está em uma revisão e você precisa do stack trace. Qual frase é o pedido educado e gramatical?
+
+| Opção | Frase |
+|---|---|
+| A | "Can you send to me the stack trace?" |
+| B | **"Could you send me the stack trace, please?"** |
+| C | "You can send me the stack trace?" |
+| D | "Could you to send me the stack trace, please?" |
+
 **Key:** B
-**br_pt_form:** "ganhar tempo / adiar resposta ou decisão"
+B mantém o pronome indireto antes do direto e usa o modal com o verbo base. A inverte a ordem dos objetos como em pt-BR, C depende só da entonação e D insere *to* depois de *could*.
 
-### Item 2 — Vocabulary (Matching)
-Match the phrase to its use:
-| Phrase | Use |
-|--------|-----|
-| **I need help** | a. Direct request |
-| **Let me check** | b. Buy time to verify |
-| **I'll get back to you** | c. Promise later response |
-| **Give me a moment** | d. Ask for a short pause |
-**Key:** I need help→a, Let me check→b, I'll get back to you→c, Give me a moment→d
-**br_pt_form:** "preciso de ajuda", "deixe-me verificar", "eu te dou retorno", "me dê um momento"
+### Exercício 2 — Transformação L1 → L2
 
-### Item 3 — Grammar: Modal verbs for requests (fill-in-blank)
-Complete with **can/could/would**:
-"______ you help me? ______ you give me a moment? ______ you check this?"
-**Key:** Can / Could / Would
-**br_pt_form:** "Pode / Poderia / Poderia"
+Reescreva as intenções em inglês natural:
 
----
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Você pode dar uma olhada no teste?" | "Could you take a look at the test?" |
+| "Me dá um minuto que eu confiro o log." | "Give me a minute while I check the log." |
+| "Sem pressa. Eu entro na call depois." | "No rush. I'll jump on the call later." |
+| "O que você sugere que façamos com o bug?" | "What do you suggest we do with the bug?" |
 
-## FASE 3 — Output Task [4 min]
+**Key:** ver tabela.
+*Take a look at* exige a preposição; *give me a minute* é o pedido de tempo; *no rush* traduz "sem pressa"; e *suggest we do* não leva *to*.
 
-### Speaking: Help Request Roleplay (pares)
-**Scenario**: You need help with a task. Your colleague is busy.
+### Exercício 3 — Contraste de forma: could, give, will, suggest
 
-**Create a dialogue** using:
-- Ask for help
-- Buy time (let me check, give me a moment)
-- Promise follow-up (I'll get back to you)
-- Express urgency (deadline, urgent)
+Complete as lacunas com **could**, **give**, **'ll (will)** ou **suggest**:
 
-**Example:**
-> A: "Can you help me with this presentation?"
-> B: "I'm busy right now. Give me 15 minutes."
-> A: "OK. The deadline is at 3 PM."
-> B: "I'll get back to you soon."
+1. "______ you take a look at the failing test when you're free?" → **Could**
+2. "I ______ drop the log in the channel right after the review." → **'ll / will**
+3. "______ me a minute — I need to check the token." → **Give**
+4. "What do you ______ we do with the refresh bug?" → **suggest**
+
+**Key:** 1) Could; 2) 'll / will; 3) Give; 4) suggest.
+*Could* suaviza o pedido, *will* sinaliza a promessa, *give* abre o pedido de tempo e *suggest* introduz a pergunta de opinião sem *to*.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**I'll get back to you** means:
-| Slot | Value |
-|------|-------|
-| A | I'll call you now |
-| B | **I'll respond later** |
-| C | I'll help you |
-| D | I'll check now |
-**Key:** B
-**br_pt_form:** "eu te dou retorno / respondo depois"
+### 5 sentenças-alvo (leia em voz corrida)
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **modal** for a polite request:
-| Slot | Value |
-|------|-------|
-| A | **Can** you help me? |
-| B | **Could** you help me? |
-| C | **Would** you help me? |
-| D | All of the above |
-**Key:** D
-**br_pt_form:** "Pode / Poderia / Poderia"
+Could you take a look at the failing test on my branch? Can you send me the stack trace and the commit hash? Give me a minute while I check the log. No rush — I'll drop the details in the incident channel after the review. What do you suggest we do with the token expiry bug?
+
+### Foco articulatório para falantes de pt-BR
+
+- **/h/ em *help, hash***: solte ar antes da vogal; no Rio de Janeiro o /h/ costuma desaparecer, e *hash* vira *ash*.
+- **/ð/ em *the, this, with***: ponta da língua entre os dentes e voz ligada; evite trocar por /d/ ("de", "dis").
+- **/v/ em *give, review***: lábio inferior encostado nos dentes de cima; não arredonde os lábios como em /w/.
+- **Entonação do pedido**: em *Could you take a look...?* mantenha o tom suave e levemente ascendente no fim, para não soar como ordem.
+- **Ritmo de *give me a minute***: *me* fica fraco e colado; não insera vogal extra entre *give* e *me*.
+
+### Prompt de produção (oral ou escrita)
+
+Imagine que um teste quebrou no seu branch e você precisa de ajuda de um colega em outro fuso. Crie um diálogo curto com **4 a 6 falas** em que você: (1) pede ajuda com **Could you...?**; (2) pede um dado específico com **Can you send me...?**; (3) ganha tempo com **Give me a minute** ou **No rush**; (4) promete uma próxima ação com **I'll drop / I'll take a look**; e (5) pergunta **What do you suggest we do?**. Se possível, inclua um detalhe do seu contexto (sprint, deploy, ticket, plantão).
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Gramática (L1):** Qual frase é um pedido educado natural?  
+   A) "Could you to send me the stack trace?"  B) **"Could you send me the stack trace?"**  C) "Could you sending me the stack trace?"  D) "You could send me the stack trace?"  
+   **Key:** B
+
+2. **Vocabulário (L1):** O colega diz "No rush." O que ele quer dizer?  
+   A) "Ele já enviou o log."  B) "Ele quer que você corra."  C) **"Ele não tem pressa."**  D) "Ele desligou a call."  
+   **Key:** C
+
+3. **Gramática (L1):** Qual frase está correta?  
+   A) **"What do you suggest we do?"**  B) "What do you suggest us to do?"  C) "What you suggest we do?"  D) "What do you suggest we to do?"  
+   **Key:** A
 
 ---
 
@@ -121,61 +138,52 @@ Choose the correct **modal** for a polite request:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a2_ask_for_help",
   "cefr_level": "A2",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (help request dialogue), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/frases-ingles-trabalho.md (BaixeLivros notice applies) - scoping of help-seeking and time-buying phrases"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - help-seeking terms are unprotectable professional conventions; definitions authored"
-  },
-  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "skills_touched": ["grammar", "vocabulary", "listening", "reading", "pronunciation", "speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.modals_requests"
+      "grammar.help_request_politeness",
+      "grammar.present_simple_regular"
     ],
     "vocabulary": [
-      "vocab.help.ask_for_help",
-      "vocab.help.buy_time",
-      "vocab.help.i_need_help",
-      "vocab.help.can_you_help_me",
-      "vocab.help.im_not_sure",
-      "vocab.help.let_me_check",
-      "vocab.help.ill_get_back_to_you",
-      "vocab.help.give_me_a_moment",
-      "vocab.help.i_dont_know",
-      "vocab.help.figure_it_out",
-      "vocab.help.deadline",
-      "vocab.help.urgent"
+      "vocab.buying_time_phrases",
+      "vocab.email_verbs"
     ],
     "listening": [
-      "listening.help_context"
+      "listening.help_request_context"
+    ],
+    "reading": [
+      "reading.help_request_context",
+      "reading.help_reply_context"
     ],
     "pronunciation": [
-      "pronunciation.help_phrases"
+      "pronunciation.help_h_dental"
     ],
     "speaking": [
       "speaking.help_roleplay"
     ]
   },
   "prereq_lessons": [
+    "les_a1_present_simple",
+    "les_a1_have_has",
     "les_a2_greetings_intro",
     "les_a2_small_talk",
     "les_a2_introducing_others",
     "les_a2_meeting_open",
     "les_a2_meeting_participate",
-    "les_a2_email_basics",
-    "les_a2_phone_calls"
+    "les_a2_email_basics"
   ],
   "estimated_time_min": 15
 }
