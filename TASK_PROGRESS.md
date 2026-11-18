@@ -520,7 +520,180 @@ Registros alterados no mesmo lote: `verify-integrity.py`, `_legacy_packs_baselin
 
 ---
 
-## Resumo consolidado — Onda 2 (Fases A–D, Lotes 3–6)
+## Unidade — Onda 2 — Lote 7 (batch 7), Fundação A2 (2026-11-18)
+
+- [x] 10 lições + 10 packs reautorados como `authored_material` (clean-room, 100% original): `mod_a2_workplace_tasks` (`les_a2_imperatives`, `les_a2_prepositions_basic`), `mod_a2_travel` (`les_a2_travel_vocab_core`, `les_a2_collocations`, `les_a2_stress_timing`, `les_a2_airport`, `les_a2_hotel_taxi`, `les_a2_restaurant_shopping`) e `mod_a2_skills_rw` (`les_a2_reading_strategy`, `les_a2_writing_svo`). Os 3 módulos e o CEFR A2 já existiam; nenhuma criação de infraestrutura de curriculum foi necessária. Packs legados v1 removidos do disco; no banco migrados **em-lugar** (mesmo id `_v1`, `schema_version` `legacy_v1`→`canonical`, `reuse_basis` `cite_only`→`authored_material`), sem deleção destrutiva.
+- [x] Catraca `_legacy_packs_baseline.json` 76 → **66**; placar **50/123** lições `authored_material`; packs **57 canônicos / 66 legados** (soma 123); censo `br_pt_form` **957 filled / 76 null-with-note / 54 null-not-applicable / 0 undocumented**; classes de fontes §0.5 **A45/B9/C0/D11/E58**.
+- [x] Backup preventivo em `/tmp/opencode/backup_pre_lote_50.sql` — **620.432 bytes**, formato custom (`-Fc`), **363 entradas** na TOC (`pg_restore --list`, exit 0). Credenciais via userinfo de `DATABASE_URL` para `PGPASSWORD` apenas no ambiente do subprocesso, usando `/tmp/opencode/db_ops.py` (`creds()`/`sql()`); `.env` nunca lido/impresso em log e nenhum segredo ecoado. Cópia integral no SSD externo em `/run/media/dalmo/Dados-Externo/backups-its-platform/backup_pre_lote_50.sql` — **620.432 bytes**, SHA-256 `529e6c2ea677be1dc82c82056ab0aecfdfc7d427ee115c358e3f3939a204866b` nos dois arquivos (`cmp`: idênticos). O SSD estava desmontado; montado via `udisksctl mount -b /dev/sda1` no ponto exigido. Nenhum comando destrutivo em `:5433`: apenas `pg_dump`, `pg_restore --list` e `SELECT`s.
+- [x] `npm run build` (tsc) executado antes do sync. `content:sync` executado 2×, idempotente: JSON idêntico nas duas execuções (SHA-256 `341ae255a0459a8afc13c5fb6fab7ac1782120d70114bcbf7e758f0cd3f19e8c`), `checkWidened` false/false em ambas. O `scope` observado foi **50/50** (não 40/40 como previsto no briefing): o script passou a listar 50 ids/paths com a inclusão destes 10, logo `lessonsUpserted` 50, `packsUpserted` 50, `itemsUpserted` 350, `optionsInserted` 1204 e `prereqEdgesInserted` 572. Nenhuma falha; divergência de escopo registrada, sem "correção" artificial.
+- [x] Gates executados na ordem exigida (tabela abaixo). `npm test` e `next build` **não** executados — adiados por decisão do usuário para o fechamento final da Onda 2.
+- [x] Pins de `api-spec.openapi.yaml` re-derivados com `git hash-object`: 1ª execução do `contract:gate` falhou nos 3 pins esperados; 2ª passou. `derived-at` atualizado para `2026-11-18`.
+- [x] Modelo: **todos os despachos do Lote 7 rodaram em `opencode/big-pickle` (modelo primário), sem nenhuma rotação**; unidades de banco, gates e registro também em `opencode/big-pickle`. Nenhum modelo `google/` pago usado.
+- [x] Pendências que dependem do usuário (última seção).
+
+### Arquivos do lote
+
+| Lesson ID | Lição | Pack canônico | Legado removido do disco |
+|---|---|---|---|
+| `les_a2_imperatives` | `lessons/a2/les_a2_imperatives.md` | `packs/a2/pack-les-a2-imperatives.md` | `packs/a2/pack_les_a2_imperatives_v1.md` |
+| `les_a2_prepositions_basic` | `lessons/a2/les_a2_prepositions_basic.md` | `packs/a2/pack-les-a2-prepositions-basic.md` | `packs/a2/pack_les_a2_prepositions_basic_v1.md` |
+| `les_a2_travel_vocab_core` | `lessons/a2/les_a2_travel_vocab_core.md` | `packs/a2/pack-les-a2-travel-vocab-core.md` | `packs/a2/pack_les_a2_travel_vocab_core_v1.md` |
+| `les_a2_collocations` | `lessons/a2/les_a2_collocations.md` | `packs/a2/pack-les-a2-collocations.md` | `packs/a2/pack_les_a2_collocations_v1.md` |
+| `les_a2_stress_timing` | `lessons/a2/les_a2_stress_timing.md` | `packs/a2/pack-les-a2-stress-timing.md` | `packs/a2/pack_les_a2_stress_timing_v1.md` |
+| `les_a2_airport` | `lessons/a2/les_a2_airport.md` | `packs/a2/pack-les-a2-airport.md` | `packs/a2/pack_les_a2_airport_v1.md` |
+| `les_a2_hotel_taxi` | `lessons/a2/les_a2_hotel_taxi.md` | `packs/a2/pack-les-a2-hotel-taxi.md` | `packs/a2/pack_les_a2_hotel_taxi_v1.md` |
+| `les_a2_restaurant_shopping` | `lessons/a2/les_a2_restaurant_shopping.md` | `packs/a2/pack-les-a2-restaurant-shopping.md` | `packs/a2/pack_les_a2_restaurant_shopping_v1.md` |
+| `les_a2_reading_strategy` | `lessons/a2/les_a2_reading_strategy.md` | `packs/a2/pack-les-a2-reading-strategy.md` | `packs/a2/pack_les_a2_reading_strategy_v1.md` |
+| `les_a2_writing_svo` | `lessons/a2/les_a2_writing_svo.md` | `packs/a2/pack-les-a2-writing-svo.md` | `packs/a2/pack_les_a2_writing_svo_v1.md` |
+
+Registros alterados no mesmo lote: `_legacy_packs_baseline.json`, `specs/curriculum-graph-spec.md`, `specs/assessment-item-spec.md`, `external-sources.md`, `docs/copyright-reauthoring-plan.md`; `TASK_PROGRESS.md` (esta seção) e `its-platform/docs/api-spec.openapi.yaml` (pins). `its-platform/scripts/sync-authored-content.mjs` foi estendido com os 10 ids/paths e permanece **unstaged** por decisão do usuário.
+
+### Queries de grammar-RAG por lição
+
+| Lesson ID | Query de grammar-reference |
+|---|---|
+| `les_a2_imperatives` | imperatives for instructions and procedures |
+| `les_a2_prepositions_basic` | prepositions of place and time |
+| `les_a2_travel_vocab_core` | core travel vocabulary |
+| `les_a2_collocations` | collocations and word partners |
+| `les_a2_stress_timing` | word stress and stress timing |
+| `les_a2_airport` | airport and immigration |
+| `les_a2_hotel_taxi` | hotel taxi and transport |
+| `les_a2_restaurant_shopping` | restaurant shopping and emergencies |
+| `les_a2_reading_strategy` | reading strategies skimming and scanning |
+| `les_a2_writing_svo` | SVO word order in English writing |
+
+### Desvios registrados
+
+- **Tooling:** `/tmp` foi limpo pelo `systemd-tmpfiles` no mesmo dia; `/tmp/opencode/db_ops.py` (`creds()`/`sql()`) e `/tmp/opencode/audit.py` tiveram de ser restaurados. O auditor foi corrigido **2×**: (1) anexos passaram a ser incluídos no `--global`, (2) tratamento de namespace pontilhado. Por isso o backup foi replicado no SSD externo — `/tmp` é volátil.
+- **Item reescrito:** o item 1 do pack de `les_a2_stress_timing` foi reescrito porque duas opções diferiam apenas pela caixa (`verify-integrity.py` [11e] reprova opção byte-idêntica ao gabarito; aqui a colisão era semântica, não sintática). Nenhum outro item do lote precisou de reescrita por esse motivo.
+- **Placar de fontes:** `external-sources.md` §0.5 teve o placar corrigido de **67→57** lições em base reutilizável/autoralmente limpa e `cite_only` de **57→66**; as 5 classes somam 123 (A45/B9/C0/D11/E58).
+- **Grammar-RAG:** em **3 lições** as consultas não trouxeram hits aproveitáveis; o conteúdo foi autorado do zero a partir de gramática geral e análise contrastiva, sem alegar fonte externa. Nenhuma afirmação de sourcing foi inventada para cobrir a lacuna.
+- **Escopo do sync:** briefing previa 40/40; o valor real foi 50/50 porque o script passou a cobrir as 50 lições autorais. Nenhuma linha do script foi removida para forçar o número do briefing.
+- **Divergência banco × disco (1 pack):** o banco tem 50 `authored_material` / 71 `cite_only` / 1 `adapt_requires_permission` / 1 `adapt_with_attribution`; o censo em disco, por **primeira declaração**, registra 50/72/0/1. A diferença é o pack `pack_les_a2_greetings_intro_v1`, classificado como `adapt_requires_permission` no banco e como `cite_only` na primeira declaração do registro. Registrada, **não corrigida** — nenhum dado foi alterado para equalizar as visões.
+- `domain:check` varre **30 arquivos de domínio** (escopo do checker, não do conteúdo autoral): 0 violações.
+
+### Resultado de cada gate
+
+| Gate | Exit | Resultado |
+|---|---|---|
+| `pg_dump -Fc` (pré-lote) | 0 | OK — 620.432 bytes, 363 entradas TOC |
+| `node --check its-platform/scripts/sync-authored-content.mjs` | 0 | OK (50 ids / 50 paths de lição / 50 paths de pack) |
+| `npm --prefix its-platform run build` (pré-sync) | 0 | OK (`tsc`) |
+| `npm --prefix its-platform run content:sync` (1ª) | 0 | OK — escopo 50/50, `checkWidened` false/false |
+| `npm --prefix its-platform run content:sync` (2ª) | 0 | OK — JSON idêntico ao da 1ª (mesmo SHA-256) |
+| `npm --prefix its-platform run typecheck` | 0 | OK |
+| `npm --prefix its-platform run lint` | 0 | OK (0 erros; 129 warnings pré-existentes) |
+| `npm --prefix its-platform run domain:check` | 0 | OK (30 arquivos, 0 violações) |
+| `npm --prefix its-platform run contract:gate` (1ª) | 1 | FALHOU nos 3 pins (esperado: `assessment-item-spec`, `curriculum-graph-spec`, `external-sources`) |
+| `npm --prefix its-platform run contract:gate` (2ª) | 0 | **OK** |
+| `python3 verify-integrity.py` | 0 | **PASS 14/14, 0 falhas, 0 avisos** (reexecutado após a edição do `TASK_PROGRESS.md`) |
+| `python3 prd-score.py` | 0 | **PASS — 90,4%** (limite 80,0%) |
+| `npm test` (backend) | — | Não executado — adiado para o fechamento final da Onda 2 por decisão do usuário |
+| `next build` (frontend) | — | Não executado — adiado para o fechamento final da Onda 2 por decisão do usuário |
+
+### SQL — antes → depois
+
+| Métrica | Antes | Depois |
+|---|---|---|
+| `lessons` `authored_material` | 40 | **50** |
+| `packs` `authored_material` | 40 | **50** |
+| packs canônicos | 47 | **57** |
+| packs `legacy_v1` | 76 | **66** |
+| total de packs | 123 | 123 |
+| total de lições | 123 | 123 |
+| packs `cite_only` | 81 | **71** |
+| packs `adapt_requires_permission` | 1 | 1 |
+| packs `adapt_with_attribution` | 1 | 1 |
+| `lesson_prerequisites` total | 1381 | **1380** (−1; 572 arestas regravadas no escopo de 50 lições) |
+| `items` total | 1141 | **1211** (+70; 350 upserts) |
+| `users` / `practice_attempts` / `listening_attempts` / `item_responses` | 1 / 0 / 0 / 0 | 1 / 0 / 0 / 0 (intactos; sync não toca dados de usuário) |
+
+- Os 50 ids de lição = os 40 anteriores + os 10 deste lote (conferido por `SELECT id FROM lessons WHERE reuse_basis='authored_material' ORDER BY id`; a coluna PK é `id`, não `lesson_id`).
+- Os 10 packs desta fase — `pack_les_a2_{imperatives,prepositions_basic,travel_vocab_core,collocations,stress_timing,airport,hotel_taxi,restaurant_shopping,reading_strategy,writing_svo}_v1` — estão todos `canonical` + `authored_material` (migrados em-lugar, mesmo id `_v1`, **sem deleção destrutiva**).
+- Legados `legacy_v1` remanescentes para os 10 ids: **0**.
+- A queda de 1 aresta no total global (1381→1380) resulta da reescrita das arestas das 50 lições do escopo a partir da declaração dos markdowns; o banco é fiel aos arquivos, sem perda por FK inexistente.
+
+### Arestas dos 10 ids (declaração dos markdowns = banco)
+
+| Lesson ID | Arestas (`lesson_id`) |
+|---|---:|
+| `les_a2_imperatives` | 18 |
+| `les_a2_prepositions_basic` | 18 |
+| `les_a2_travel_vocab_core` | 18 |
+| `les_a2_collocations` | 21 |
+| `les_a2_stress_timing` | 7 |
+| `les_a2_airport` | 21 |
+| `les_a2_hotel_taxi` | 22 |
+| `les_a2_restaurant_shopping` | 23 |
+| `les_a2_reading_strategy` | 28 |
+| `les_a2_writing_svo` | 28 |
+| **Total** | **204** |
+
+### Pins de contrato (`its-platform/docs/api-spec.openapi.yaml` → `x-contract-provenance.spec-blobs`)
+
+- `specs/assessment-item-spec.md`: `66711aca0b25056b49836da42741821f9eff2906` → **`679233aa93f18e5b463d636764ba6ba39f1138c8`**
+- `specs/curriculum-graph-spec.md`: `d5bd28df91baf1494d5982cf8078317c6bcc5909` → **`b01ab42d3e009bda0f3809dd6eaae63ff49906c7`**
+- `external-sources.md`: `f074828b48247269b7713d384602d06c26accb89` → **`8552383e226f47e1619d94b1a8ac490d2ea4a065`**
+- Outros 3 pins inalterados (`295e1b85…`, `9566fe60…`, `a8ae6bb6…`); `derived-at` atualizado de `2026-11-16` para `2026-11-18`. Nenhum schema OpenAPI alterado.
+
+### Modelo / fallback (política de rotação do repo)
+
+- [x] Todos os despachos do Lote 7 (autoria das 10 lições/packs, unidades de banco, gates e registro) rodaram em **`opencode/big-pickle`**, o modelo primário da política do usuário, **sem nenhuma rotação**. Nenhum modelo `google/` pago foi usado.
+- [x] As rotações históricas das fases anteriores (`step-5-preview`, `glm-5.3-flash`, `gpt-oss-20b`, `muse-glimmer-30b`, `minimax-m3.1-flash`) não se aplicam a este lote.
+
+### Commits desta unidade (ordem do mais recente para o mais antigo)
+
+1. `feat(content): reauthor wave 2 batch 7 (10 lessons, 50/123)` — 37 paths (10 lições + 10 packs canônicos + 10 legados deletados + `_legacy_packs_baseline.json`, `specs/curriculum-graph-spec.md`, `specs/assessment-item-spec.md`, `external-sources.md`, `docs/copyright-reauthoring-plan.md`, `TASK_PROGRESS.md` e `its-platform/docs/api-spec.openapi.yaml`), índice limpo após o commit (hash consultável em `git log -1`).
+
+### Pendências que dependem do usuário
+
+- (infra, unstaged) `its-platform/scripts/sync-authored-content.mjs` estendido com os 10 ids/paths **não** entrou no commit; decidir se comita como mudança de infra (como nas fases anteriores).
+- (testes) `npm test` (backend) e `next build` (frontend) adiados por decisão do usuário para o fechamento final da Onda 2; a fixture de `content-api.spec.ts` que espera `cite_only`/`legacy_v1` para `les_a1_alphabet_sounds`/`pack_les_a1_alphabet_sounds_v1` segue pendente (atribuída ao Lote 2).
+- (segurança frontend) Build do Next acusou advisory de vulnerabilidade da versão instalada; avaliar `next upgrade --agent=security` (não executado).
+- (DR) Sem backup periódico agendado do `its_platform`; dumps pontuais em `/tmp/opencode/backup_pre_fase_b.sql`, `/tmp/opencode/backup_pre_fase_c.sql`, `/tmp/opencode/backup_pre_lote_40.sql` e `/tmp/opencode/backup_pre_lote_50.sql`, este último com cópia integral em `/run/media/dalmo/Dados-Externo/backups-its-platform/`.
+- (documentação) Divergência de 1 pack entre banco (71 `cite_only` / 1 `adapt_requires_permission`) e registro em disco (72 / 0), relativa a `pack_les_a2_greetings_intro_v1`; não alterada neste lote.
+- (conteúdo, pré-existente) D5 permanece para as lições sem gabarito detectado no corpo.
+- (banco) `items` acumula itens legados por pack reautorado (banco legado preservado por design do sincronizador); decidir se futuramente vale uma limpeza orientada.
+
+---
+
+## Resumo consolidado — Onda 2 (Fases A–D, Lotes 3–7)
+
+**Fechamento da Onda 2 — Fundação A1/A2.** Estado final do repositório:
+
+- Placar de lições: **50/123 `authored_material`**; `cite_only` **66**; `adapt_with_attribution` **7**; `adapt_requires_permission` **0**; `sourced_external_thin` 0. O `adapt_requires_permission` **1** citado no briefing está entre os **packs** (`pack_les_a2_greetings_intro_v1`), não entre as lições.
+- Packs: **57 canônicos / 66 legados** (soma 123); `authored_material` **50**, `cite_only` **71**, `adapt_with_attribution` **1**, `adapt_requires_permission` **1**; catraca `_legacy_packs_baseline.json` em **66** (só pode cair). No registro em disco, por primeira declaração: 50/72/0/1 — divergência de 1 pack, preservada.
+- Censo `br_pt_form` (`assessment-item-spec.md` §2.2.1): **957 filled / 76 null-with-note / 54 null-not-applicable / 0 undocumented**.
+- Classes de fontes em `external-sources.md` §0.5: **A45/B9/C0/D11/E58**.
+
+### Cadeia de 35 lições reautoradas na Onda 2 (Lotes 3–7)
+
+1. **Fase A (Lote 3):** `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates`
+2. **Fase B (Lote 4):** `les_a1_food`, `les_a1_occupations`, `les_a1_regular_verbs_past`, `les_a1_present_simple`, `les_a1_present_simple_questions`
+3. **Fase C (Lote 5):** `les_a1_have_has`, `les_a1_there_is_are`, `les_a1_reading_skimming`, `les_a1_false_cognates`, `les_a2_phone_calls`
+4. **Fase D (Lote 6):** `les_a1_articles_nouns`, `les_a2_ask_for_help`, `les_a2_deadlines_tasks`, `les_a2_feedback_praise`, `les_a2_corporate_wrapup`, `les_a2_corpus_intro`, `les_a2_past_narrative`, `les_a2_future_will`, `les_a2_present_continuous`, `les_a2_modals_can_need`
+5. **Lote 7 (Fundação A2):** `mod_a2_workplace_tasks` / `mod_a2_travel` (instruções, preposições, vocabulário, colocações e pronúncia) — `les_a2_imperatives`, `les_a2_prepositions_basic`, `les_a2_travel_vocab_core`, `les_a2_collocations`, `les_a2_stress_timing`; `mod_a2_travel` / `mod_a2_skills_rw` (viagem, leitura e escrita) — `les_a2_airport`, `les_a2_hotel_taxi`, `les_a2_restaurant_shopping`, `les_a2_reading_strategy`, `les_a2_writing_svo`.
+
+### Placar consolidado dos gates
+
+| Gate | Resultado |
+|---|---|
+| backend `typecheck` | OK |
+| backend `lint` | OK (0 erros; 129 warnings pré-existentes) |
+| `contract:gate` | OK após re-derivação dos 3 pins (1ª falhou nos pins — comportamento esperado) |
+| backend `domain:check` | OK (30 arquivos, 0 violações) |
+| frontend `typecheck` | OK (Fase C) |
+| frontend `lint` | OK (Fase C) |
+| frontend `build` | OK (1ª tentativa da Fase B caiu no nudge de advisory do Next; retry OK); não reexecutado no Lote 6/7 (adiado) |
+| `verify-integrity.py` | **PASS — 14/14, 0 falhas, 0 warnings** (reexecutado após a edição do `TASK_PROGRESS.md` do Lote 7) |
+| `prd-score.py` | **PASS — 90,4%** |
+| `npm test` | Última execução registrada (Fase C): **670 passed / 13 failed / 691 total** — nenhuma falha atribuível aos lotes A/B/C; não reexecutado no Lote 6/7 (adiado por decisão do usuário) |
+
+### Modelos (política de rotação do repo)
+
+- Fases A/B/C: primário `nvidia/nemotron-3.5-super-vl-120b-a12b` sem cota; rotação usou, no authoring: `nvidia/stepfun-ai/step-5-preview`, `glm-5.3-flash`, `gpt-oss-20b`, `muse-glimmer-30b`, `minimax-m3.1-flash`; nas unidades de banco/gates/commit: `nvidia/stepfun-ai/step-5-preview`.
+- Lotes 6 e 7: **todos os despachos em `opencode/big-pickle`, sem rotação e sem modelos `google/` pagos**.
 
 **Fechamento da Onda 2 — Fundação A1/A2.** Estado final do repositório:
 

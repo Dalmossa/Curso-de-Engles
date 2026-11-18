@@ -186,24 +186,24 @@ This is the authoritative list of lesson IDs. Any spec (`content-map.md`, `diagn
 | `les_a2_future_will` | Future: Will & Going To | Original (clean-room, Onda 2 — Lote 6 (batch 6)) | future_will,future_going_to | present_simple_regular | ✅ **authored** · reauthored_authored_material |
 | `les_a2_present_continuous` | Present Continuous in Workflows | Original (clean-room, Onda 2 — Lote 6 (batch 6)) | present_continuous | present_simple_regular | ✅ **authored** · reauthored_authored_material |
 | `les_a2_modals_can_need` | Modals: Can, Need, Should | Original (clean-room, Onda 2 — Lote 6 (batch 6)) | modal_can_need | present_simple_regular | ✅ **authored** · reauthored_authored_material |
-| `les_a2_imperatives` | Imperatives: Instructions & Procedures | IT A4 | imperative | present_simple_regular | ✅ **authored** |
-| `les_a2_prepositions_basic` | Prepositions of Place & Time | IT A7 | prepositions_basic | present_simple_regular | ✅ **authored** |
+| `les_a2_imperatives` | Imperatives: Instructions & Procedures | Original (clean-room, Onda 2 — Lote 7 (batch 7)) | imperative | present_simple_regular | ✅ **authored** · reauthored_authored_material |
+| `les_a2_prepositions_basic` | Prepositions of Place & Time | Original (clean-room, Onda 2 — Lote 7 (batch 7)) | prepositions_basic | present_simple_regular | ✅ **authored** · reauthored_authored_material |
 
 **`mod_a2_travel`** (A2, General)
 | Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
 |-----------|-------|--------|------------|---------------------|--------|
-| `les_a2_travel_vocab_core` | Core Travel Vocabulary (20 items) | viagens Dia2 | travel_core |  | ✅ **authored** |
-| `les_a2_collocations` | Collocations: Word Partners | viagens Language/Culture | collocation_aula | present_simple_regular | ✅ **authored** |
-| `les_a2_stress_timing` | Stress-Timing & Word Stress | viagens Pronúncia | stress_timing |  | ✅ **authored** |
-| `les_a2_airport` | Airport & Immigration | viagens | travel_airport | travel_core | ✅ **authored** |
-| `les_a2_hotel_taxi` | Hotel, Taxi & Transport | viagens | travel_hotel | travel_core | ✅ **authored** |
-| `les_a2_restaurant_shopping` | Restaurant, Shopping & Emergencies | viagens | travel_core | travel_core | ✅ **authored** |
+| `les_a2_travel_vocab_core` | Core Travel Vocabulary (20 items) | Original (clean-room, Onda 2 — Lote 7 (batch 7)) | travel_core |  | ✅ **authored** · reauthored_authored_material |
+| `les_a2_collocations` | Collocations: Word Partners | Original (clean-room, Onda 2 — Lote 7 (batch 7)) | collocation_aula | present_simple_regular | ✅ **authored** · reauthored_authored_material |
+| `les_a2_stress_timing` | Stress-Timing & Word Stress | Original (clean-room, Onda 2 — Lote 7 (batch 7)) | stress_timing |  | ✅ **authored** · reauthored_authored_material |
+| `les_a2_airport` | Airport & Immigration | Original (clean-room, Onda 2 — Lote 7 (batch 7)) | travel_airport | travel_core | ✅ **authored** · reauthored_authored_material |
+| `les_a2_hotel_taxi` | Hotel, Taxi & Transport | Original (clean-room, Onda 2 — Lote 7 (batch 7)) | travel_hotel | travel_core | ✅ **authored** · reauthored_authored_material |
+| `les_a2_restaurant_shopping` | Restaurant, Shopping & Emergencies | Original (clean-room, Onda 2 — Lote 7 (batch 7)) | travel_core | travel_core | ✅ **authored** · reauthored_authored_material |
 
 **`mod_a2_skills_rw`** (A2→B1, General)
 | Lesson ID | Title | Source | New skills | Prerequisite skills | Status |
 |-----------|-------|--------|------------|---------------------|--------|
-| `les_a2_reading_strategy` | Reader's Toolkit: Skim, Scan, Context, Cognates | leia Ch2 | reading_skimming,reading_scanning,reading_context_inference,reading_cognates | present_simple_regular,reading_skimming | ✅ **authored** |
-| `les_a2_writing_svo` | Writer's Toolkit: SVO Order, Explicit Subject, Tense Consistency | leia Ch3 | svo_order,explicit_subject,tense_consistency | present_simple_regular,articles_definite,articles_indefinite,noun_plurals,adjectives_basic | ✅ **authored** |
+| `les_a2_reading_strategy` | Reader's Toolkit: Skim, Scan, Context, Cognates | Original (clean-room, Onda 2 — Lote 7 (batch 7)) | reading_skimming,reading_scanning,reading_context_inference,reading_cognates | present_simple_regular,reading_skimming | ✅ **authored** · reauthored_authored_material |
+| `les_a2_writing_svo` | Writer's Toolkit: SVO Order, Explicit Subject, Tense Consistency | Original (clean-room, Onda 2 — Lote 7 (batch 7)) | svo_order,explicit_subject,tense_consistency | present_simple_regular,articles_definite,articles_indefinite,noun_plurals,adjectives_basic | ✅ **authored** · reauthored_authored_material |
 | `les_a2_writing_bio` | Writing: Bio & Profile | leia Ch4 | writing_bio | svo_order,explicit_subject,tense_consistency | ✅ **authored** |
 | `les_a2_writing_messages` | Writing: Everyday Messages | leia Ch5 | writing_informal_message | svo_order,explicit_subject,tense_consistency | ✅ **authored** |
 | `les_a2_writing_past` | Writing: Narrating the Past | leia Ch6 | writing_past_narrative | past_simple_irregular,svo_order,explicit_subject,tense_consistency | ✅ **authored** |
@@ -427,7 +427,7 @@ was hiding the distinction that caused the original error:
 |--------|------:|---------|
 | `sourced_external` | **7** | licence permits adaptation **and** the source's discourse matches the lesson title (still pending full reautoria) |
 | `sourced_external_thin` | **0** | licence permits, but coverage is partial — none remain |
-| `reauthored_authored_material` | **40** | fully reauthored in clean-room as 100% original `authored_material` (Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2 Onda 2: `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`; Onda 2 — Lote 2 (batch 2): `les_a1_alphabet_sounds`, `les_a1_en_us_en_gb`, `les_a1_to_be_forms`, `les_a1_pronouns_subject_object`, `les_a1_pronouns_possessive`; Onda 2 — Lote 3 (batch 3) — Fase A: `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates`; Onda 2 — Lote 4 (batch 4) — Fase B: `les_a1_food`, `les_a1_occupations`, `les_a1_regular_verbs_past`, `les_a1_present_simple`, `les_a1_present_simple_questions`; Onda 2 — Lote 5 (batch 5) — Fase C: `les_a1_have_has`, `les_a1_there_is_are`, `les_a1_reading_skimming`, `les_a1_false_cognates`, `les_a2_phone_calls`; Onda 2 — Lote 6 (batch 6): `les_a1_articles_nouns`, `les_a2_ask_for_help`, `les_a2_deadlines_tasks`, `les_a2_feedback_praise`, `les_a2_corporate_wrapup`, `les_a2_corpus_intro`, `les_a2_past_narrative`, `les_a2_future_will`, `les_a2_present_continuous`, `les_a2_modals_can_need`) |
+| `reauthored_authored_material` | **50** | fully reauthored in clean-room as 100% original `authored_material` (Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2 Onda 2: `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`; Onda 2 — Lote 2 (batch 2): `les_a1_alphabet_sounds`, `les_a1_en_us_en_gb`, `les_a1_to_be_forms`, `les_a1_pronouns_subject_object`, `les_a1_pronouns_possessive`; Onda 2 — Lote 3 (batch 3) — Fase A: `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates`; Onda 2 — Lote 4 (batch 4) — Fase B: `les_a1_food`, `les_a1_occupations`, `les_a1_regular_verbs_past`, `les_a1_present_simple`, `les_a1_present_simple_questions`; Onda 2 — Lote 5 (batch 5) — Fase C: `les_a1_have_has`, `les_a1_there_is_are`, `les_a1_reading_skimming`, `les_a1_false_cognates`, `les_a2_phone_calls`; Onda 2 — Lote 6 (batch 6): `les_a1_articles_nouns`, `les_a2_ask_for_help`, `les_a2_deadlines_tasks`, `les_a2_feedback_praise`, `les_a2_corporate_wrapup`, `les_a2_corpus_intro`, `les_a2_past_narrative`, `les_a2_future_will`, `les_a2_present_continuous`, `les_a2_modals_can_need`; Onda 2 — Lote 7 (batch 7): `les_a2_imperatives`, `les_a2_prepositions_basic`, `les_a2_travel_vocab_core`, `les_a2_collocations`, `les_a2_stress_timing`, `les_a2_airport`, `les_a2_hotel_taxi`, `les_a2_restaurant_shopping`, `les_a2_reading_strategy`, `les_a2_writing_svo`) |
 | `blocked_no_adequate_source` | **0** | none |
 | `deferred_no_source` | **0** | retired |
 
@@ -670,7 +670,7 @@ If P(mastery_skill) declining 3+ consecutive sessions:
 | Lessons per module | 6, except `mod_a2_it_fundamentals` and `mod_b1_it_technical` (10 each) and `mod_b2_it_senior` (8) |
 | Lessons authored | **123** — every registry ID has a file declaring it |
 | Lessons blocked | **0** |
-| Practice packs authored | **123** — 47 in the `pack-les-*.md` schema, 76 in `pack_les_*_v1.md`; see `post-lesson-practice-spec.md` §12 |
+| Practice packs authored | **123** — 57 in the `pack-les-*.md` schema, 66 in `pack_les_*_v1.md`; see `post-lesson-practice-spec.md` §12 |
 | Source files mapped | 7 / 7 (100%) |
 | Source sections mapped | 87 / 87 (100%, 6 marked meta) |
 | Orphan lesson IDs across all specs | **0** |

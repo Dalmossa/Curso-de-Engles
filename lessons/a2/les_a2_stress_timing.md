@@ -3,114 +3,141 @@
 **Lesson ID:** `les_a2_stress_timing`
 **Module:** `mod_a2_travel`
 **CEFR:** A2
-**Reuse basis:** `cite_only`
-**Source:** `docs/Ingles para Viagens.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: ditando o horário do deploy para o cliente
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **stress** | acento / ênfase | *sílaba forte* |
-| **stressed syllable** | sílaba tônica | *sílaba com mais força* |
-| **unstressed syllable** | sílaba átona | *sílaba fraca* |
-| **word stress** | acento tônico | *ênfase na palavra* |
-| **sentence stress** | acento frasal | *ênfase na frase* |
-| **content word** | palavra de conteúdo | *substantivo, verbo, adjetivo* |
-| **function word** | palavra funcional | *preposição, artigo, conjunção* |
-| **rhythm** | ritmo | *padrão de acentos* |
-| **timing** | temporização | *duração das sílabas* |
-| **schwa** | schwa / vogal neutra | *som /ə/ em sílaba átona* |
-| **photograph** | fotografia | *exemplo de word stress* |
-| **photography** | fotografia (atividade) | *exemplo de word stress* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**Word stress**: '**pho**-to-graph' (stress on 1st). 'pho-**tog**-ra-phy' (stress on 2nd). 'pho-tog-**ra**-pher' (stress on 3rd)."
+> **Bia (backend developer, São Paulo):** "Let me keep a **RE**cord of the deploy time before the client call."
 >
-> "**Sentence stress**: '**Content words** are stressed. **Function words** are weak.' 'I **went** to the **store**.'"
+> **Rafa (SRE, remoto):** "Say it again slowly — did you say a **RE**cord or re**CORD** it?"
 >
-> "**Schwa**: 'a' in 'about' = /ə/. 'the' before consonant = /ðə/."
+> **Bia:** "A **RE**cord: the noun. I will re**CORD** the exact minute in the log."
 >
-> "**Rhythm**: English is stress-timed. Stressed syllables are longer."
+> **Rafa:** "Clear. The **PRE**sent build is fine, but we pre**SENT** the status at three."
+>
+> **Bia:** "Right. I will send a **PRE**view of the metrics first, then the full update."
+>
+> **Rafa:** "Good. Make the key words long and the small words quick — it carries better on a bad line."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **word stress** | estresse da palavra | A sílaba que recebe mais força dentro de uma palavra; mude-a e o ouvido nota. |
+| **stressed syllable** | sílaba tônica | É mais alta, mais longa e mais clara: **RE**-cord, re-**CORD**. |
+| **unstressed syllable** | sílaba átona | Fica curta e fraca; a vogal costuma virar /ə/. |
+| **schwa /ə/** | vogal neutra átona | O som do *e* fraco em *record* (substantivo): /ˈrekərd/. |
+| **stress-timed rhythm** | ritmo marcado pelo estresse | O inglês mantém o intervalo entre sílabas fortes quase constante; as fracas encolhem. |
+| **syllable-timed rhythm** | ritmo marcado pela sílaba | O pt-BR dá duração parecida a todas as sílabas; transferir isso soa "plano" em inglês. |
+| **content word** | palavra de conteúdo | Substantivos, verbos e adjetivos carregam o estresse: *deploy*, *send*, *stable*. |
+| **function word** | palavra de função | *to, the, a, of* costumam ser fracas: /tə/, /ðə/, /ə/, /əv/. |
+| **REcord (noun) / reCORD (verb)** | registro / gravar | Mesma grafia, tônica diferente — e o ouvido usa a tônica para escolher o sentido. |
+| **PREsent (noun/adjective) / preSENT (verb)** | presente / apresentar | Outro par clássico; a mudança da tônica acompanha a mudança de classe gramatical. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "We need a re**CORD** of the deploy." | "We need a **RE**cord of the deploy." | No substantivo, a força vai na primeira sílaba; a segunda reduz a /ə/. |
+| "Please **RE**cord the minute in the log." | "Please re**CORD** the minute in the log." | No verbo, a força vai na segunda sílaba; inverter o par troca o sinal que o ouvido espera. |
+| "We need a **RE**-**CORD** of the deploy." | "We need a **RE**cord of the deploy." | Dar força igual às duas sílabas é ritmo syllable-timed do pt-BR; em inglês a átona encolhe. |
+| "I need **to** send **the** report." (todas as palavras longas) | "I need t' send th' report." / "I need to send the report." (com *to* e *the* fracos) | Palavras de função são pronunciadas com /tə/ e /ðə/; marcá-las rouba o estresse das palavras de conteúdo. |
+| "PHO-TO-GRAPH" com três vogais cheias | "**PHO**-tə-graph" | A sílaba do meio perde a vogal para /ə/; o pt-BR mantém as três vogais distintas. |
+| "re-COR-de" com vogal extra no fim | "re**CORD**" | O pt-BR evita certas finais de cluster e insere uma vogal; em inglês o /d/ fecha a sílaba sem acréscimo. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Word stress** refers to:
-| Slot | Value |
-|------|-------|
-| A | The loudest syllable in a word |
-| B | **The syllable pronounced with more force** |
-| C | The first syllable always |
-| D | The last syllable always |
+### Exercício 1 — Reconhecimento (qual sílaba leva a força?)
+
+O tech lead dita uma entrada no changelog. Qual linha marca corretamente o substantivo e o verbo?
+
+| Opção | Frase |
+|---|---|
+| A | "We need a reCORD of the deploy; please REcord it." |
+| B | **"We need a REcord of the deploy; please reCORD it."** |
+| C | "We need a RE-CORD of the deploy; please reCORD it." |
+| D | "We need a REcord of the deploy; please RE-cord it." |
+
 **Key:** B
-**br_pt_form:** "word stress / sílaba pronunciada com mais força"
 
-### Item 2 — Vocabulary (Matching)
-Match the word to its stress pattern:
-| Word | Stress |
-|------|--------|
-| **Photograph** | a. PHO-to-graph |
-| **Photography** | b. pho-TOG-ra-phy |
-| **Photographer** | c. pho-TOG-ra-pher |
-| **Photographic** | d. pho-to-GRA-phic |
-**Key:** Photograph→a, Photography→b, Photographer→c, Photographic→d
-**br_pt_form:** "fotografia", "fotografia (atividade)", "fotógrafo", "fotográfico"
+O substantivo leva a força na primeira sílaba (**RE**cord) e o verbo na segunda (re**CORD**). A e D invertem o par; C dá força igual às duas sílabas do substantivo.
 
-### Item 3 — Grammar: Stress marking (fill-in-blank)
-Mark the **stressed syllable**:
-"**pho**-to-graph. pho-**tog**-ra-phy. pho-tog-**ra**-pher. pho-to-**gra**-phic."
-**Key:** PHO / TOG / RA / GRA
-**br_pt_form:** "PHO / TOG / RA / GRA"
+### Exercício 2 — Contraste substantivo ↔ verbo
 
----
+Escolha a pronúncia que combina com o sentido de cada frase:
 
-## FASE 3 — Output Task [4 min]
+| Frase | Forma correta |
+|---|---|
+| "Let's ______ the exact minute in the ticket." | re**CORD** |
+| "I saved the ______ in the ticket." | **RE**cord |
+| "Can you ______ the summary at three?" | pre**SENT** |
+| "The ______ build is stable." | **PRE**sent |
 
-### Speaking: Stress Practice (individual)
-**Practice word stress** with these travel words:
+**Key:** reCORD / REcord / preSENT / PREsent.
 
-1. **Airport** (AIR-port)
-2. **Hotel** (ho-TEL)
-3. **Ticket** (TI-cket)
-4. **Luggage** (LU-gage)
-5. **Passport** (PASS-port)
-6. **Reservation** (re-ser-VA-tion)
+A tônica muda junto com a classe gramatical: verbo carrega a última sílaba; substantivo e adjetivo carregam a primeira.
 
-**Say each word aloud**, emphasizing the stressed syllable.
+### Exercício 3 — Ritmo: palavras fortes e palavras fracas
+
+Leia em voz baixa e marque as palavras que ficam fracas nesta frase do plantão: "I need to send the report before the call."
+
+**Key:** fracas: *to* (/tə/) e *the* (/ðə/); fortes: **need**, **send**, **RE**port, **call**.
+
+*Need*, *send*, *report* e *call* são palavras de conteúdo e guardam sua duração; *to* e *the* reduzem para que o intervalo entre as sílabas fortes continue regular.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Schwa** is:
-| Slot | Value |
-|------|-------|
-| A | A stressed vowel |
-| B | **A neutral vowel sound /ə/ in unstressed syllables** |
-| C | A consonant |
-| D | A diphthong |
-**Key:** B
-**br_pt_form:** "schwa / som neutro /ə/ em sílabas átonas"
+### 5 sentenças-alvo (leia em voz corrida)
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **stress pattern**:
-| Slot | Value |
-|------|-------|
-| A | **PHO**-to-graph |
-| B | pho-**TOG**-ra-phy |
-| C | pho-tog-**RA**-pher |
-| D | All of the above |
-**Key:** D
-**br_pt_form:** "PHO / TOG / RA / todos corretos"
+I need a **RE**-cord of the deploy before we pre**SENT** the status to the client.
+Please re**CORD** the exact minute in the ticket and keep the line short.
+The **PHO**-to-graph of the rack is blurry, but the pho-**TOG**-ra-pher fixed the lighting.
+We re**VIEW** the metrics in a **MIN**-ute, then send the **SUM**-mary to the team.
+If the con**NEC**-tion drops, I will re**PEAT** the **KEY** words slowly.
+
+### Foco articulatório para falantes de pt-BR
+
+- **Contraste /ˈrekərd/ ↔ /rɪˈkɔːrd/**: no substantivo, a primeira sílaba é /ˈrek/ e a segunda encolhe para /ərd/; no verbo, a vogal do prefixo enfraquece para /rɪ/ e a força vai para /ˈkɔːrd/.
+- **Schwa /ə/ nas átonas**: em **PHO**-tə-graph e em **RE**-cord, a sílaba sem força usa a vogal neutra /ə/, não uma vogal cheia como em *pá* ou *ré* do pt-BR.
+- **Ritmo stress-timed**: conte o tempo entre as sílabas em negrito das cinco frases; elas devem chegar mais ou menos no mesmo compasso, com as sílabas fracas encolhendo entre uma e outra.
+- **Function words fracas**: *to* → /tə/, *the* → /ðə/, *a* → /ə/, *of* → /əv/. Não dê a elas a mesma duração de *deploy* ou *report*.
+- **Sem vogal epêntica**: em re**CORD** e pre**SENT**, o /d/ e o /t/ finais fecham a sílaba; não acrescente uma vogal ("re-COR-de", "pre-SEN-te").
+
+### Prompt de produção (oral ou escrita)
+
+Imagine que você está ditando o resumo de um deploy para um colega em outro país, em uma linha instável. Crie um diálogo curto com **4 a 6 falas** em que você: (1) usa pelo menos **dois** pares de substantivo/verbo com a tônica correta (*record*, *present*); (2) mantém pelo menos **três** palavras de função fracas (*to*, *the*, *a*, *of*); (3) inclui uma palavra de três sílabas com schwa na sílaba átona (*photograph*, *company*, *metrics*); (4) repete os dados importantes quando a conexão cai; e (5) escreve ao final, entre parênteses, quais sílabas você marcou como fortes.
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Pronúncia (L1):** Como soa o substantivo em "I need a record of the call"?
+   A) re**CORD**  B) **RE**cord  C) RE-CORD (as duas com força)  D) re-**CORD**-e
+   **Key:** B
+
+   No substantivo a força vai na primeira sílaba e a segunda reduz a /ə/.
+
+2. **Ritmo (L1):** Em "I need to send the report", o que acontece com *to* e *the*?  
+   A) Recebem a mesma força de *need* e *send*.  B) Desaparecem da frase.  C) Viram /tə/ e /ðə/, fracos e curtos.  D) Ganham uma sílaba extra.  
+   **Key:** C
+
+   São function words; a redução delas mantém o intervalo entre as sílabas tônicas regular.
+
+3. **Contraste (L1):** Qual sílaba é forte em *photographer*?  
+   A) **PHO**  B) to  C) **TOG**  D) grapher  
+   **Key:** C
+
+   Pho-**TOG**-ra-pher: a mudança de sufixo desloca a tônica em relação a **PHO**-to-graph.
 
 ---
 
@@ -119,48 +146,43 @@ Choose the correct **stress pattern**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a2_stress_timing",
   "cefr_level": "A2",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (stress/timing explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/Ingles para Viagens.md (no licence grant) - scoping of pronunciation and stress"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - pronunciation terms are unprotectable linguistic knowledge; definitions authored"
-  },
-  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "skills_touched": ["grammar", "vocabulary", "listening", "reading", "pronunciation", "speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
       "grammar.word_stress"
     ],
     "vocabulary": [
-      "vocab.stress.stress",
+      "vocab.stress_reduction",
       "vocab.stress.stressed_syllable",
       "vocab.stress.unstressed_syllable",
-      "vocab.stress.word_stress",
-      "vocab.stress.sentence_stress",
       "vocab.stress.content_word",
       "vocab.stress.function_word",
-      "vocab.stress.rhythm",
-      "vocab.stress.timing",
       "vocab.stress.schwa",
-      "vocab.stress.photograph",
-      "vocab.stress.photography"
+      "vocab.stress.rhythm"
     ],
     "listening": [
       "listening.stress_context"
     ],
+    "reading": [
+      "reading.stress_timing_context",
+      "reading.stress_shift_meaning"
+    ],
     "pronunciation": [
       "pronunciation.word_stress",
+      "pronunciation.stress_timing",
       "pronunciation.schwa"
     ],
     "speaking": [
@@ -170,24 +192,11 @@ Choose the correct **stress pattern**:
   "prereq_lessons": [
     "les_a2_greetings_intro",
     "les_a2_small_talk",
-    "les_a2_introducing_others",
-    "les_a2_meeting_open",
-    "les_a2_meeting_participate",
-    "les_a2_email_basics",
     "les_a2_phone_calls",
     "les_a2_ask_for_help",
-    "les_a2_deadlines_tasks",
-    "les_a2_feedback_praise",
-    "les_a2_corporate_wrapup",
-    "les_a2_corpus_intro",
-    "les_a2_past_narrative",
-    "les_a2_future_will",
+    "les_a2_email_basics",
     "les_a2_present_continuous",
-    "les_a2_modals_can_need",
-    "les_a2_imperatives",
-    "les_a2_prepositions_basic",
-    "les_a2_travel_vocab_core",
-    "les_a2_collocations"
+    "les_a2_travel_vocab_core"
   ],
   "estimated_time_min": 15
 }

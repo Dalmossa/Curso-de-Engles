@@ -8,7 +8,8 @@
 **Atualizado (Onda 2 — Lote 4 (batch 4) — Fase B, Fundação A1/A2):** 2026-11-16 — reautoria clean-room de 5 lições/packs A1 para `authored_material` (100% original).  
 **Atualizado (Onda 2 — Lote 5 (batch 5) — Fase C, Fundação A1/A2):** 2026-11-16 — reautoria clean-room de 4 lições A1 + 1 lição A2 para `authored_material` (100% original).  
 **Atualizado (Onda 2 — Lote 6 (batch 6), Fundação A1/A2):** 2026-11-18 — reautoria clean-room de 1 lição A1 + 9 lições A2 para `authored_material` (100% original).  
-**Escopo:** inventário original em modo leitura + atualizações dos Lotes 1 e 2 e das Onda 2 — Lote 2 (batch 2), Lote 3 (batch 3) — Fase A, Lote 4 (batch 4) — Fase B e Lote 5 (batch 5) — Fase C e Lote 6 (batch 6) registradas abaixo.  
+**Atualizado (Onda 2 — Lote 7 (batch 7), Fundação A2):** 2026-11-18 — reautoria clean-room de 10 lições A2 para `authored_material` (100% original).  
+**Escopo:** inventário original em modo leitura + atualizações dos Lotes 1 e 2 e das Onda 2 — Lote 2 (batch 2), Lote 3 (batch 3) — Fase A, Lote 4 (batch 4) — Fase B e Lote 5 (batch 5) — Fase C, Lote 6 (batch 6) e Lote 7 (batch 7) registradas abaixo.  
 **Fontes normativas lidas:** `AGENTS.md` (Licensing/Provenance), `PRD.md` (§2, §4, §7, RF-004, RF-008), `specs/curriculum-graph-spec.md` (§4.3–§4.4).  
 **Gate:** `python3 verify-integrity.py` deve permanecer `PASS 14/14`.
 
@@ -36,15 +37,15 @@
 
 ### 2.1 Inventário auditado (somente leitura)
 - Lições em `lessons/` (`.md`): **123** arquivos. Total do registro: **123** lições, todas com arquivo.
-- Packs em `packs/` (`.md`): **123** arquivos — **47 canônicos** (`pack-les-*.md`) + **76 legados v1** (`pack_les_*_v1.md`).
+- Packs em `packs/` (`.md`): **123** arquivos — **57 canônicos** (`pack-les-*.md`) + **66 legados v1** (`pack_les_*_v1.md`).
 - Nó do registro sem arquivo de lição: **0**.
 - Lições por nível/trilha: `A1|General`=24, `A2|General`=30, `A2|IT`=16, `B1|General`=18, `B1|IT`=9, `B1|Remediation`=5, `B2|General`=12, `B2|IT`=8.
 
 ### 2.2 Placar de proveniência das lições (estado atual × meta `authored_material`)
 | Categoria | Qtde (lições) | Situação frente à meta 100% `authored_material` |
 |---|---:|---|
-| **Já `authored_material` (liberadas)** | **40** | Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2 (Onda 2): `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`; Onda 2 — Lote 2 (batch 2): `les_a1_alphabet_sounds`, `les_a1_en_us_en_gb`, `les_a1_to_be_forms`, `les_a1_pronouns_subject_object`, `les_a1_pronouns_possessive`; Onda 2 — Lote 3 (batch 3) — Fase A: `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates`; Onda 2 — Lote 4 (batch 4) — Fase B: `les_a1_food`, `les_a1_occupations`, `les_a1_regular_verbs_past`, `les_a1_present_simple`, `les_a1_present_simple_questions`; Onda 2 — Lote 5 (batch 5) — Fase C: `les_a1_have_has`, `les_a1_there_is_are`, `les_a1_reading_skimming`, `les_a1_false_cognates`, `les_a2_phone_calls`; Onda 2 — Lote 6 (batch 6): `les_a1_articles_nouns`, `les_a2_ask_for_help`, `les_a2_deadlines_tasks`, `les_a2_feedback_praise`, `les_a2_corporate_wrapup`, `les_a2_corpus_intro`, `les_a2_past_narrative`, `les_a2_future_will`, `les_a2_present_continuous`, `les_a2_modals_can_need` |
-| **`cite_only` (pendentes de reautoria)** | **76** | Material original/citado por base, mas **não declarado `authored_material`**; requer revisão e reclassificação/reautoria conforme checklist |
+| **Já `authored_material` (liberadas)** | **50** | Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2 (Onda 2): `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`; Onda 2 — Lote 2 (batch 2): `les_a1_alphabet_sounds`, `les_a1_en_us_en_gb`, `les_a1_to_be_forms`, `les_a1_pronouns_subject_object`, `les_a1_pronouns_possessive`; Onda 2 — Lote 3 (batch 3) — Fase A: `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates`; Onda 2 — Lote 4 (batch 4) — Fase B: `les_a1_food`, `les_a1_occupations`, `les_a1_regular_verbs_past`, `les_a1_present_simple`, `les_a1_present_simple_questions`; Onda 2 — Lote 5 (batch 5) — Fase C: `les_a1_have_has`, `les_a1_there_is_are`, `les_a1_reading_skimming`, `les_a1_false_cognates`, `les_a2_phone_calls`; Onda 2 — Lote 6 (batch 6): `les_a1_articles_nouns`, `les_a2_ask_for_help`, `les_a2_deadlines_tasks`, `les_a2_feedback_praise`, `les_a2_corporate_wrapup`, `les_a2_corpus_intro`, `les_a2_past_narrative`, `les_a2_future_will`, `les_a2_present_continuous`, `les_a2_modals_can_need`; Onda 2 — Lote 7 (batch 7): `les_a2_imperatives`, `les_a2_prepositions_basic`, `les_a2_travel_vocab_core`, `les_a2_collocations`, `les_a2_stress_timing`, `les_a2_airport`, `les_a2_hotel_taxi`, `les_a2_restaurant_shopping`, `les_a2_reading_strategy`, `les_a2_writing_svo` |
+| **`cite_only` (pendentes de reautoria)** | **66** | Material original/citado por base, mas **não declarado `authored_material`**; requer revisão e reclassificação/reautoria conforme checklist |
 | **`adapt_with_attribution` (pendentes de reautoria)** | **7** | Adaptação de fonte permissiva com atribuição; **não 100% autoral** — requer reautoria integral para atingir `authored_material` |
 | **`adapt_requires_permission` (pendentes)** | **0** | Não publicável sem permissão; requer permissão ou reautoria integral |
 | **`blocked` / `blocked_no_adequate_source` (pendentes)** | **0** | — |
@@ -56,10 +57,11 @@
 | Dimensão | Valor |
 |---|---|
 | Total de packs `.md` | **123** |
-| Schema canônico (`pack-les-*.md`) | **47** |
-| Schema legado v1 (`pack_les_*_v1.md`) | **76** |
-| Packs com `reuse_basis` = `authored_material` | **40** |
-| Packs com `reuse_basis` = `cite_only` | **82** |
+| Schema canônico (`pack-les-*.md`) | **57** |
+| Schema legado v1 (`pack_les_*_v1.md`) | **66** |
+| Packs com `reuse_basis` = `authored_material` | **50** |
+| Packs com `reuse_basis` = `cite_only` | **72** |
+| Packs com `reuse_basis` = `adapt_with_attribution` | **0** |
 | Packs com `reuse_basis` = `adapt_requires_permission` | **1** |
 | Packs sem `reuse_basis` explícito | **0** |
 
@@ -95,9 +97,9 @@
 | `les_a1_time_dates` | A1 | General | `mod_a1_vocab_core` | — | `authored_material` | — | `lessons/a1/les_a1_time_dates.md` |
 | `les_a1_to_be_forms` | A1 | General | `mod_a1_grammar_start` | — | `authored_material` | — | `lessons/a1/les_a1_to_be_forms.md` |
 | `les_a1_wh_questions` | A1 | General | `mod_a1_grammar_start` | — | `authored_material` | — | `lessons/a1/les_a1_wh_questions.md` |
-| `les_a2_airport` | A2 | General | `mod_a2_travel` | — | `cite_only` | — | `lessons/a2/les_a2_airport.md` |
+| `les_a2_airport` | A2 | General | `mod_a2_travel` | — | `authored_material` | — | `lessons/a2/les_a2_airport.md` |
 | `les_a2_ask_for_help` | A2 | General | `mod_a2_workplace_comm` | — | `authored_material` | — | `lessons/a2/les_a2_ask_for_help.md` |
-| `les_a2_collocations` | A2 | General | `mod_a2_travel` | — | `cite_only` | — | `lessons/a2/les_a2_collocations.md` |
+| `les_a2_collocations` | A2 | General | `mod_a2_travel` | — | `authored_material` | — | `lessons/a2/les_a2_collocations.md` |
 | `les_a2_corporate_wrapup` | A2 | General | `mod_a2_workplace_comm` | — | `authored_material` | — | `lessons/a2/les_a2_corporate_wrapup.md` |
 | `les_a2_corpus_intro` | A2 | General | `mod_a2_workplace_comm` | — | `authored_material` | — | `lessons/a2/les_a2_corpus_intro.md` |
 | `les_a2_deadlines_tasks` | A2 | General | `mod_a2_workplace_comm` | — | `authored_material` | — | `lessons/a2/les_a2_deadlines_tasks.md` |
@@ -105,26 +107,26 @@
 | `les_a2_feedback_praise` | A2 | General | `mod_a2_workplace_comm` | — | `authored_material` | — | `lessons/a2/les_a2_feedback_praise.md` |
 | `les_a2_future_will` | A2 | General | `mod_a2_workplace_tasks` | — | `authored_material` | — | `lessons/a2/les_a2_future_will.md` |
 | `les_a2_greetings_intro` | A2 | General | `—` | — | `cite_only` — material original; `frases-ingles-trabalho.md` Ch2 e `apostila-ingles-para-iniciantes-impresso.md` §2.2 são *bibliografia*, não texto adaptado (ver `external-sources.md` §7.0) | — | `lessons/a2/lesson-15min-workplace-greetings.md` |
-| `les_a2_hotel_taxi` | A2 | General | `mod_a2_travel` | — | `cite_only` | — | `lessons/a2/les_a2_hotel_taxi.md` |
-| `les_a2_imperatives` | A2 | General | `mod_a2_workplace_tasks` | — | `cite_only` | — | `lessons/a2/les_a2_imperatives.md` |
+| `les_a2_hotel_taxi` | A2 | General | `mod_a2_travel` | — | `authored_material` | — | `lessons/a2/les_a2_hotel_taxi.md` |
+| `les_a2_imperatives` | A2 | General | `mod_a2_workplace_tasks` | — | `authored_material` | — | `lessons/a2/les_a2_imperatives.md` |
 | `les_a2_introducing_others` | A2 | General | `—` | — | `cite_only` — material original; `frases-ingles-trabalho.md` Ch2 e `apostila-ingles-para-iniciantes-impresso.md` §2.2 são *bibliografia* (`external-sources.md` §7.0) | — | `lessons/a2/les_a2_introducing_others.md` |
 | `les_a2_meeting_open` | A2 | General | `—` | — | `cite_only` — material original; `frases-ingles-trabalho.md` Ch4 é *bibliografia* (`external-sources.md` §7.0) | — | `lessons/a2/les_a2_meeting_open.md` |
 | `les_a2_meeting_participate` | A2 | General | `—` | — | `cite_only` — material original; `frases-ingles-trabalho.md` Ch4 é *bibliografia* (`external-sources.md` §7.0) | — | `lessons/a2/les_a2_meeting_participate.md` |
 | `les_a2_modals_can_need` | A2 | General | `mod_a2_workplace_tasks` | — | `authored_material` | — | `lessons/a2/les_a2_modals_can_need.md` |
 | `les_a2_past_narrative` | A2 | General | `mod_a2_workplace_tasks` | — | `authored_material` | — | `lessons/a2/les_a2_past_narrative.md` |
 | `les_a2_phone_calls` | A2 | General | `mod_a2_workplace_comm` | — | `authored_material` | — | `lessons/a2/les_a2_phone_calls.md` |
-| `les_a2_prepositions_basic` | A2 | General | `mod_a2_workplace_tasks` | — | `cite_only` | — | `lessons/a2/les_a2_prepositions_basic.md` |
+| `les_a2_prepositions_basic` | A2 | General | `mod_a2_workplace_tasks` | — | `authored_material` | — | `lessons/a2/les_a2_prepositions_basic.md` |
 | `les_a2_present_continuous` | A2 | General | `mod_a2_workplace_tasks` | — | `authored_material` | — | `lessons/a2/les_a2_present_continuous.md` |
-| `les_a2_reading_strategy` | A2 | General | `mod_a2_skills_rw` | — | `cite_only` | — | `lessons/a2/les_a2_reading_strategy.md` |
-| `les_a2_restaurant_shopping` | A2 | General | `mod_a2_travel` | — | `cite_only` | — | `lessons/a2/les_a2_restaurant_shopping.md` |
+| `les_a2_reading_strategy` | A2 | General | `mod_a2_skills_rw` | — | `authored_material` | — | `lessons/a2/les_a2_reading_strategy.md` |
+| `les_a2_restaurant_shopping` | A2 | General | `mod_a2_travel` | — | `authored_material` | — | `lessons/a2/les_a2_restaurant_shopping.md` |
 | `les_a2_small_talk` | A2 | General | `—` | — | `cite_only` — material original; `frases-ingles-trabalho.md` Ch3 é *bibliografia*, não texto adaptado (ver `external-sources.md` §7.0) | — | `lessons/a2/les_a2_small_talk.md` |
-| `les_a2_stress_timing` | A2 | General | `mod_a2_travel` | — | `cite_only` | — | `lessons/a2/les_a2_stress_timing.md` |
-| `les_a2_travel_vocab_core` | A2 | General | `mod_a2_travel` | — | `cite_only` | — | `lessons/a2/les_a2_travel_vocab_core.md` |
+| `les_a2_stress_timing` | A2 | General | `mod_a2_travel` | — | `authored_material` | — | `lessons/a2/les_a2_stress_timing.md` |
+| `les_a2_travel_vocab_core` | A2 | General | `mod_a2_travel` | — | `authored_material` | — | `lessons/a2/les_a2_travel_vocab_core.md` |
 | `les_a2_writing_bio` | A2 | General | `mod_a2_skills_rw` | — | `cite_only` | — | `lessons/a2/les_a2_writing_bio.md` |
 | `les_a2_writing_messages` | A2 | General | `mod_a2_skills_rw` | — | `cite_only` | — | `lessons/a2/les_a2_writing_messages.md` |
 | `les_a2_writing_past` | A2 | General | `mod_a2_skills_rw` | — | `cite_only` | — | `lessons/a2/les_a2_writing_past.md` |
 | `les_a2_writing_selfcheck` | A2 | General | `mod_a2_skills_rw` | — | `cite_only` | — | `lessons/a2/les_a2_writing_selfcheck.md` |
-| `les_a2_writing_svo` | A2 | General | `mod_a2_skills_rw` | — | `cite_only` | — | `lessons/a2/les_a2_writing_svo.md` |
+| `les_a2_writing_svo` | A2 | General | `mod_a2_skills_rw` | — | `authored_material` | — | `lessons/a2/les_a2_writing_svo.md` |
 | `les_a2_it_algorithms_basics` | A2 | IT | `mod_a2_it_fundamentals` | — | `cite_only` | — | `lessons/a2/les_a2_it_algorithms_basics.md` |
 | `les_a2_it_clean_code_basics` | A2 | IT | `mod_a2_it_fundamentals` | — | `cite_only` | — | `lessons/a2/les_a2_it_clean_code_basics.md` |
 | `les_a2_it_computer_parts` | A2 | IT | `mod_a2_it_fundamentals` | — | `cite_only` | — | `lessons/a2/les_a2_it_computer_parts.md` |
@@ -223,35 +225,35 @@
 | `pack_les_a1_time_dates_v1` | `les_a1_time_dates` | A1 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 3 (batch 3) — Fase A | `packs/a1/pack-les-a1-time-dates.md` |
 | `pack_les_a1_to_be_forms_v1` | `les_a1_to_be_forms` | A1 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 2 (batch 2) | `packs/a1/pack-les-a1-to-be-forms.md` |
 | `pack_les_a1_wh_questions_v1` | `les_a1_wh_questions` | A1 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 3 (batch 3) — Fase A | `packs/a1/pack-les-a1-wh-questions.md` |
-| `pack_les_a2_airport_v1` | `les_a2_airport` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_airport_v1.md` |
+| `pack_les_a2_airport_v1` | `les_a2_airport` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 7 (batch 7) | `packs/a2/pack-les-a2-airport.md` |
 | `pack_les_a2_ask_for_help_v1` | `les_a2_ask_for_help` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 6 (batch 6) | `packs/a2/pack-les-a2-ask-for-help.md` |
-| `pack_les_a2_collocations_v1` | `les_a2_collocations` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_collocations_v1.md` |
+| `pack_les_a2_collocations_v1` | `les_a2_collocations` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 7 (batch 7) | `packs/a2/pack-les-a2-collocations.md` |
 | `pack_les_a2_corporate_wrapup_v1` | `les_a2_corporate_wrapup` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 6 (batch 6) | `packs/a2/pack-les-a2-corporate-wrapup.md` |
 | `pack_les_a2_corpus_intro_v1` | `les_a2_corpus_intro` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 6 (batch 6) | `packs/a2/pack-les-a2-corpus-intro.md` |
 | `pack_les_a2_deadlines_tasks_v1` | `les_a2_deadlines_tasks` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 6 (batch 6) | `packs/a2/pack-les-a2-deadlines-tasks.md` |
 | `pack_les_a2_email_basics_v1` | `les_a2_email_basics` | A2 | General | canonical | cite_only | items `authored`. `frases-ingles-trabalho.md` Ch5 and `Dicionario-de-Siglas-e-Termos-Profissionais-em-Ingles.md` Ch10 are *bibliography only* (both **restricted**, `external-sources.md` §0.5 / §7.0). | `packs/a2/pack-les-a2-email-basics.md` |
 | `pack_les_a2_feedback_praise_v1` | `les_a2_feedback_praise` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 6 (batch 6) | `packs/a2/pack-les-a2-feedback-praise.md` |
 | `pack_les_a2_future_will_v1` | `les_a2_future_will` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 6 (batch 6) | `packs/a2/pack-les-a2-future-will.md` |
-| `pack_les_a2_hotel_taxi_v1` | `les_a2_hotel_taxi` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_hotel_taxi_v1.md` |
-| `pack_les_a2_imperatives_v1` | `les_a2_imperatives` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_imperatives_v1.md` |
+| `pack_les_a2_hotel_taxi_v1` | `les_a2_hotel_taxi` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 7 (batch 7) | `packs/a2/pack-les-a2-hotel-taxi.md` |
+| `pack_les_a2_imperatives_v1` | `les_a2_imperatives` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 7 (batch 7) | `packs/a2/pack-les-a2-imperatives.md` |
 | `pack_les_a2_introducing_others_v1` | `les_a2_introducing_others` | A2 | General | canonical | cite_only | items `authored`. `frases-ingles-trabalho.md` Ch2 and `apostila-ingles-para-iniciantes-impresso.md` §2.2 are *bibliography only* (restricted / unlicensed sources, `external-sources.md` §0.5 / §7.0). | `packs/a2/pack-les-a2-introducing-others.md` |
 | `pack_les_a2_meeting_open_v1` | `les_a2_meeting_open` | A2 | General | canonical | cite_only | items `authored`. `frases-ingles-trabalho.md` Ch4 is *bibliography only* (restricted source, `external-sources.md` §0.5 / §7.0). | `packs/a2/pack-les-a2-meeting-open.md` |
 | `pack_les_a2_meeting_participate_v1` | `les_a2_meeting_participate` | A2 | General | canonical | cite_only | items `authored`. `frases-ingles-trabalho.md` Ch4 is *bibliography only* (restricted source, `external-sources.md` §0.5 / §7.0). | `packs/a2/pack-les-a2-meeting-participate.md` |
 | `pack_les_a2_modals_can_need_v1` | `les_a2_modals_can_need` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 6 (batch 6) | `packs/a2/pack-les-a2-modals-can-need.md` |
 | `pack_les_a2_past_narrative_v1` | `les_a2_past_narrative` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 6 (batch 6) | `packs/a2/pack-les-a2-past-narrative.md` |
 | `pack_les_a2_phone_calls_v1` | `les_a2_phone_calls` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 5 (batch 5) — Fase C | `packs/a2/pack-les-a2-phone-calls.md` |
-| `pack_les_a2_prepositions_basic_v1` | `les_a2_prepositions_basic` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_prepositions_basic_v1.md` |
+| `pack_les_a2_prepositions_basic_v1` | `les_a2_prepositions_basic` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 7 (batch 7) | `packs/a2/pack-les-a2-prepositions-basic.md` |
 | `pack_les_a2_present_continuous_v1` | `les_a2_present_continuous` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 6 (batch 6) | `packs/a2/pack-les-a2-present-continuous.md` |
-| `pack_les_a2_reading_strategy_v1` | `les_a2_reading_strategy` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_reading_strategy_v1.md` |
-| `pack_les_a2_restaurant_shopping_v1` | `les_a2_restaurant_shopping` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_restaurant_shopping_v1.md` |
+| `pack_les_a2_reading_strategy_v1` | `les_a2_reading_strategy` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 7 (batch 7) | `packs/a2/pack-les-a2-reading-strategy.md` |
+| `pack_les_a2_restaurant_shopping_v1` | `les_a2_restaurant_shopping` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 7 (batch 7) | `packs/a2/pack-les-a2-restaurant-shopping.md` |
 | `pack_les_a2_small_talk_v1` | `les_a2_small_talk` | A2 | General | canonical | cite_only | items `authored` — no verbatim source text. `frases-ingles-trabalho.md` Ch3 is *bibliography only* (restricted source, `external-sources.md` §0.5 / §7.0). | `packs/a2/pack-les-a2-small-talk.md` |
-| `pack_les_a2_stress_timing_v1` | `les_a2_stress_timing` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_stress_timing_v1.md` |
-| `pack_les_a2_travel_vocab_core_v1` | `les_a2_travel_vocab_core` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_travel_vocab_core_v1.md` |
+| `pack_les_a2_stress_timing_v1` | `les_a2_stress_timing` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 7 (batch 7) | `packs/a2/pack-les-a2-stress-timing.md` |
+| `pack_les_a2_travel_vocab_core_v1` | `les_a2_travel_vocab_core` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 7 (batch 7) | `packs/a2/pack-les-a2-travel-vocab-core.md` |
 | `pack_les_a2_writing_bio_v1` | `les_a2_writing_bio` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_writing_bio_v1.md` |
 | `pack_les_a2_writing_messages_v1` | `les_a2_writing_messages` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_writing_messages_v1.md` |
 | `pack_les_a2_writing_past_v1` | `les_a2_writing_past` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_writing_past_v1.md` |
 | `pack_les_a2_writing_selfcheck_v1` | `les_a2_writing_selfcheck` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_writing_selfcheck_v1.md` |
-| `pack_les_a2_writing_svo_v1` | `les_a2_writing_svo` | A2 | General | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_writing_svo_v1.md` |
+| `pack_les_a2_writing_svo_v1` | `les_a2_writing_svo` | A2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 7 (batch 7) | `packs/a2/pack-les-a2-writing-svo.md` |
 | `pack_les_a2_it_algorithms_basics_v1` | `les_a2_it_algorithms_basics` | A2 | IT | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_it_algorithms_basics_v1.md` |
 | `pack_les_a2_it_clean_code_basics_v1` | `les_a2_it_clean_code_basics` | A2 | IT | legacy_v1 | cite_only | — | `packs/a2/pack_les_a2_it_clean_code_basics_v1.md` |
 | `pack_les_a2_it_computer_parts_v1` | `les_a2_it_computer_parts` | A2 | IT | legacy_v1 | `cite_only` — every item is original. `Ingles-Tecnico-Para-Informatica.md` (CETAM, ©) Aula 4 is cited as bibliography; no text, diagram, or activity from it is reproduced. | — | `packs/a2/pack_les_a2_it_computer_parts_v1.md` |
@@ -402,9 +404,9 @@ Objetivo de cada onda: reescrever integralmente o conteúdo didático/itens para
 | `les_a1_time_dates` | A1 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 3 (batch 3) — Fase A | Horas e datas — reautoria integral concluída | `lessons/a1/les_a1_time_dates.md` |
 | `les_a1_to_be_forms` | A1 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 2 (batch 2) | Verbo To Be: afirmativa/negativa/interrogativa — reautoria integral concluída | `lessons/a1/les_a1_to_be_forms.md` |
 | `les_a1_wh_questions` | A1 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 3 (batch 3) — Fase A | Interrogativas: WH-words + How+Advérbio — reautoria integral concluída | `lessons/a1/les_a1_wh_questions.md` |
-| `les_a2_airport` | A2 | General | `cite_only` | Vocabulário e situações de viagem A2 — reautoria integral | `lessons/a2/les_a2_airport.md` |
+| `les_a2_airport` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 7 (batch 7) | Aeroporto e imigração — trocas 100% autorais. — reautoria integral concluída. | `lessons/a2/les_a2_airport.md` |
 | `les_a2_ask_for_help` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 6 (batch 6) | Pedir ajuda e ganhar tempo no trabalho — apresentação 100% autoral. — reautoria integral concluída. | `lessons/a2/les_a2_ask_for_help.md` |
-| `les_a2_collocations` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_collocations.md` |
+| `les_a2_collocations` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 7 (batch 7) | Colocações em contexto de viagem — apresentação 100% autoral. — reautoria integral concluída. | `lessons/a2/les_a2_collocations.md` |
 | `les_a2_corporate_wrapup` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 6 (batch 6) | Encerramento de conversas e assinaturas — apresentação 100% autoral. — reautoria integral concluída. | `lessons/a2/les_a2_corporate_wrapup.md` |
 | `les_a2_corpus_intro` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 6 (batch 6) | Siglas e jargão corporativo — listas reconstruídas como análise contrastiva original; apresentação 100% autoral. — reautoria integral concluída. | `lessons/a2/les_a2_corpus_intro.md` |
 | `les_a2_deadlines_tasks` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 6 (batch 6) | Prazos, tarefas e follow-up — apresentação 100% autoral. — reautoria integral concluída. | `lessons/a2/les_a2_deadlines_tasks.md` |
@@ -412,26 +414,26 @@ Objetivo de cada onda: reescrever integralmente o conteúdo didático/itens para
 | `les_a2_feedback_praise` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 6 (batch 6) | Feedback, elogios e desculpas — apresentação 100% autoral. — reautoria integral concluída. | `lessons/a2/les_a2_feedback_praise.md` |
 | `les_a2_future_will` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 6 (batch 6) | Futuro com will e going to — regras gramaticais são fatos não protegidos; apresentação 100% autoral. — reautoria integral concluída. | `lessons/a2/les_a2_future_will.md` |
 | `les_a2_greetings_intro` | A2 | General | `cite_only` | Cumprimentos, apresentações e interação social básica — reautoria integral | `lessons/a2/lesson-15min-workplace-greetings.md` |
-| `les_a2_hotel_taxi` | A2 | General | `cite_only` | Vocabulário e situações de viagem A2 — reautoria integral | `lessons/a2/les_a2_hotel_taxi.md` |
-| `les_a2_imperatives` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_imperatives.md` |
+| `les_a2_hotel_taxi` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 7 (batch 7) | Hotel e transporte — trocas 100% autorais. — reautoria integral concluída. | `lessons/a2/les_a2_hotel_taxi.md` |
+| `les_a2_imperatives` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 7 (batch 7) | Imperativos para instruções e procedimentos — regras gramaticais são fatos não protegidos; apresentação 100% autoral. — reautoria integral concluída. | `lessons/a2/les_a2_imperatives.md` |
 | `les_a2_introducing_others` | A2 | General | `cite_only` | Cumprimentos, apresentações e interação social básica — reautoria integral | `lessons/a2/les_a2_introducing_others.md` |
 | `les_a2_meeting_open` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_meeting_open.md` |
 | `les_a2_meeting_participate` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_meeting_participate.md` |
 | `les_a2_modals_can_need` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 6 (batch 6) | Modais can, need e should — regras gramaticais são fatos não protegidos; apresentação 100% autoral. — reautoria integral concluída. | `lessons/a2/les_a2_modals_can_need.md` |
 | `les_a2_past_narrative` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 6 (batch 6) | Narração no passado em contexto profissional — apresentação 100% autoral. — reautoria integral concluída. | `lessons/a2/les_a2_past_narrative.md` |
 | `les_a2_phone_calls` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 5 (batch 5) — Fase C | Chamadas de telefone e vídeo: abrir, conduzir e encerrar ligações de trabalho — reautoria integral concluída. | `lessons/a2/les_a2_phone_calls.md` |
-| `les_a2_prepositions_basic` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_prepositions_basic.md` |
+| `les_a2_prepositions_basic` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 7 (batch 7) | Preposições de lugar e tempo — regras gramaticais são fatos não protegidos; apresentação 100% autoral. — reautoria integral concluída. | `lessons/a2/les_a2_prepositions_basic.md` |
 | `les_a2_present_continuous` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 6 (batch 6) | Present continuous em fluxos de trabalho — regras gramaticais são fatos não protegidos; apresentação 100% autoral. — reautoria integral concluída. | `lessons/a2/les_a2_present_continuous.md` |
-| `les_a2_reading_strategy` | A2 | General | `cite_only` | Leitura/escrita funcional A2 — reautoria integral | `lessons/a2/les_a2_reading_strategy.md` |
-| `les_a2_restaurant_shopping` | A2 | General | `cite_only` | Vocabulário e situações de viagem A2 — reautoria integral | `lessons/a2/les_a2_restaurant_shopping.md` |
+| `les_a2_reading_strategy` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 7 (batch 7) | Estratégias de leitura (skim, scan, contexto, cognatos) — apresentação 100% autoral. — reautoria integral concluída. | `lessons/a2/les_a2_reading_strategy.md` |
+| `les_a2_restaurant_shopping` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 7 (batch 7) | Restaurante, compras e emergências — trocas 100% autorais. — reautoria integral concluída. | `lessons/a2/les_a2_restaurant_shopping.md` |
 | `les_a2_small_talk` | A2 | General | `cite_only` | Cumprimentos, apresentações e interação social básica — reautoria integral | `lessons/a2/les_a2_small_talk.md` |
-| `les_a2_stress_timing` | A2 | General | `cite_only` | Fundação comunicativa/gramatical/vocabulário A1–A2 (contexto geral ou TI conforme trilha) — reautoria integral | `lessons/a2/les_a2_stress_timing.md` |
-| `les_a2_travel_vocab_core` | A2 | General | `cite_only` | Vocabulário e situações de viagem A2 — reautoria integral | `lessons/a2/les_a2_travel_vocab_core.md` |
+| `les_a2_stress_timing` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 7 (batch 7) | Stress-timing e word stress — modelo e exemplos de drill 100% autorais. — reautoria integral concluída. | `lessons/a2/les_a2_stress_timing.md` |
+| `les_a2_travel_vocab_core` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 7 (batch 7) | Vocabulário central de viagem — lista reconstruída como análise contrastiva original; apresentação 100% autoral. — reautoria integral concluída. | `lessons/a2/les_a2_travel_vocab_core.md` |
 | `les_a2_writing_bio` | A2 | General | `cite_only` | Leitura/escrita funcional A2 — reautoria integral | `lessons/a2/les_a2_writing_bio.md` |
 | `les_a2_writing_messages` | A2 | General | `cite_only` | Leitura/escrita funcional A2 — reautoria integral | `lessons/a2/les_a2_writing_messages.md` |
 | `les_a2_writing_past` | A2 | General | `cite_only` | Leitura/escrita funcional A2 — reautoria integral | `lessons/a2/les_a2_writing_past.md` |
 | `les_a2_writing_selfcheck` | A2 | General | `cite_only` | Leitura/escrita funcional A2 — reautoria integral | `lessons/a2/les_a2_writing_selfcheck.md` |
-| `les_a2_writing_svo` | A2 | General | `cite_only` | Leitura/escrita funcional A2 — reautoria integral | `lessons/a2/les_a2_writing_svo.md` |
+| `les_a2_writing_svo` | A2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 7 (batch 7) | Ordem SVO, sujeito explícito e consistência de tempo verbal — apresentação 100% autoral. — reautoria integral concluída. | `lessons/a2/les_a2_writing_svo.md` |
 | `les_a2_it_algorithms_basics` | A2 | IT | `cite_only` | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_algorithms_basics.md` |
 | `les_a2_it_clean_code_basics` | A2 | IT | `cite_only` | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_clean_code_basics.md` |
 | `les_a2_it_computer_parts` | A2 | IT | `cite_only` | Inglês instrumental para TI A2 (termos, comunicação, leitura técnica básica) — reautoria integral | `lessons/a2/les_a2_it_computer_parts.md` |
@@ -457,10 +459,11 @@ Objetivo de cada onda: reescrever integralmente o conteúdo didático/itens para
 
 - **Onda 2 — Lote 5 (batch 5) — Fase C, Fundação A1/A2 (2026-11-16):** migrados para canônico `authored_material` os packs de `les_a1_have_has`, `les_a1_there_is_are`, `les_a1_reading_skimming`, `les_a1_false_cognates`, `les_a2_phone_calls` (`packs/a1/pack-les-a1-have-has.md`, `packs/a1/pack-les-a1-there-is-are.md`, `packs/a1/pack-les-a1-reading-skimming.md`, `packs/a1/pack-les-a1-false-cognates.md`, `packs/a2/pack-les-a2-phone-calls.md`); legados v1 correspondentes removidos do disco (catraca `_legacy_packs_baseline.json` 91→**86**).
 - **Onda 2 — Lote 6 (batch 6), Fundação A1/A2 (2026-11-18):** migrados para canônico `authored_material` os packs de `les_a1_articles_nouns`, `les_a2_ask_for_help`, `les_a2_deadlines_tasks`, `les_a2_feedback_praise`, `les_a2_corporate_wrapup`, `les_a2_corpus_intro`, `les_a2_past_narrative`, `les_a2_future_will`, `les_a2_present_continuous`, `les_a2_modals_can_need` (`packs/a1/pack-les-a1-articles-nouns.md`, `packs/a2/pack-les-a2-ask-for-help.md`, `packs/a2/pack-les-a2-deadlines-tasks.md`, `packs/a2/pack-les-a2-feedback-praise.md`, `packs/a2/pack-les-a2-corporate-wrapup.md`, `packs/a2/pack-les-a2-corpus-intro.md`, `packs/a2/pack-les-a2-past-narrative.md`, `packs/a2/pack-les-a2-future-will.md`, `packs/a2/pack-les-a2-present-continuous.md`, `packs/a2/pack-les-a2-modals-can-need.md`); legados v1 correspondentes removidos do disco (catraca `_legacy_packs_baseline.json` 86→**76**).
+- **Onda 2 — Lote 7 (batch 7), Fundação A2 (2026-11-18):** migrados para canônico `authored_material` os packs de `les_a2_imperatives`, `les_a2_prepositions_basic`, `les_a2_travel_vocab_core`, `les_a2_collocations`, `les_a2_stress_timing`, `les_a2_airport`, `les_a2_hotel_taxi`, `les_a2_restaurant_shopping`, `les_a2_reading_strategy`, `les_a2_writing_svo` (`packs/a2/pack-les-a2-imperatives.md`, `packs/a2/pack-les-a2-prepositions-basic.md`, `packs/a2/pack-les-a2-travel-vocab-core.md`, `packs/a2/pack-les-a2-collocations.md`, `packs/a2/pack-les-a2-stress-timing.md`, `packs/a2/pack-les-a2-airport.md`, `packs/a2/pack-les-a2-hotel-taxi.md`, `packs/a2/pack-les-a2-restaurant-shopping.md`, `packs/a2/pack-les-a2-reading-strategy.md`, `packs/a2/pack-les-a2-writing-svo.md`); legados v1 correspondentes removidos do disco (catraca `_legacy_packs_baseline.json` 76→**66**).
 
 ### Onda 3 — Consolidação B1/B2 General + Remediação + Migração de Packs Legados
 
-**Escopo lições:** 35 lições B1/B2 General e remediação (não-IT). **Escopo packs:** migração integral dos **76 packs legados v1** remanescentes para schema canônico, com reautoria para `authored_material`.
+**Escopo lições:** 35 lições B1/B2 General e remediação (não-IT). **Escopo packs:** migração integral dos **66 packs legados v1** remanescentes para schema canônico, com reautoria para `authored_material`.
 
 | Lesson ID | CEFR | Trilha | Base atual | Habilidades/objetivo-alvo (reautoria) | Arquivo |
 |---|---|---|---|---|---|
@@ -525,16 +528,16 @@ Objetivo de cada onda: reescrever integralmente o conteúdo didático/itens para
 - ~~`packs/a1/pack_les_a1_time_dates_v1.md`~~ → `packs/a1/pack-les-a1-time-dates.md` (lesson `les_a1_time_dates`, canônico, `authored_material`, ✅ Onda 2 — Lote 3 (batch 3) — Fase A)
 - `packs/a1/pack_les_a1_to_be_forms_v1.md` → migrar para schema canônico; lesson `les_a1_to_be_forms`, base atual `cite_only`
 - ~~`packs/a1/pack_les_a1_wh_questions_v1.md`~~ → `packs/a1/pack-les-a1-wh-questions.md` (lesson `les_a1_wh_questions`, canônico, `authored_material`, ✅ Onda 2 — Lote 3 (batch 3) — Fase A)
-- `packs/a2/pack_les_a2_airport_v1.md` → migrar para schema canônico; lesson `les_a2_airport`, base atual `cite_only`
+- ~~~`packs/a2/pack_les_a2_airport_v1.md`~~ → `packs/a2/pack-les-a2-airport.md` (lesson `les_a2_airport`, canônico, `authored_material`, ✅ Onda 2 — Lote 7 (batch 7))
 - ~~~`packs/a2/pack_les_a2_ask_for_help_v1.md`~~ → `packs/a2/pack-les-a2-ask-for-help.md` (lesson `les_a2_ask_for_help`, canônico, `authored_material`, ✅ Onda 2 — Lote 6 (batch 6))
-- `packs/a2/pack_les_a2_collocations_v1.md` → migrar para schema canônico; lesson `les_a2_collocations`, base atual `cite_only`
+- ~~~`packs/a2/pack_les_a2_collocations_v1.md`~~ → `packs/a2/pack-les-a2-collocations.md` (lesson `les_a2_collocations`, canônico, `authored_material`, ✅ Onda 2 — Lote 7 (batch 7))
 - ~~~`packs/a2/pack_les_a2_corporate_wrapup_v1.md`~~ → `packs/a2/pack-les-a2-corporate-wrapup.md` (lesson `les_a2_corporate_wrapup`, canônico, `authored_material`, ✅ Onda 2 — Lote 6 (batch 6))
 - ~~~`packs/a2/pack_les_a2_corpus_intro_v1.md`~~ → `packs/a2/pack-les-a2-corpus-intro.md` (lesson `les_a2_corpus_intro`, canônico, `authored_material`, ✅ Onda 2 — Lote 6 (batch 6))
 - ~~~`packs/a2/pack_les_a2_deadlines_tasks_v1.md`~~ → `packs/a2/pack-les-a2-deadlines-tasks.md` (lesson `les_a2_deadlines_tasks`, canônico, `authored_material`, ✅ Onda 2 — Lote 6 (batch 6))
 - ~~~`packs/a2/pack_les_a2_feedback_praise_v1.md`~~ → `packs/a2/pack-les-a2-feedback-praise.md` (lesson `les_a2_feedback_praise`, canônico, `authored_material`, ✅ Onda 2 — Lote 6 (batch 6))
 - ~~~`packs/a2/pack_les_a2_future_will_v1.md`~~ → `packs/a2/pack-les-a2-future-will.md` (lesson `les_a2_future_will`, canônico, `authored_material`, ✅ Onda 2 — Lote 6 (batch 6))
-- `packs/a2/pack_les_a2_hotel_taxi_v1.md` → migrar para schema canônico; lesson `les_a2_hotel_taxi`, base atual `cite_only`
-- `packs/a2/pack_les_a2_imperatives_v1.md` → migrar para schema canônico; lesson `les_a2_imperatives`, base atual `cite_only`
+- ~~~`packs/a2/pack_les_a2_hotel_taxi_v1.md`~~ → `packs/a2/pack-les-a2-hotel-taxi.md` (lesson `les_a2_hotel_taxi`, canônico, `authored_material`, ✅ Onda 2 — Lote 7 (batch 7))
+- ~~~`packs/a2/pack_les_a2_imperatives_v1.md`~~ → `packs/a2/pack-les-a2-imperatives.md` (lesson `les_a2_imperatives`, canônico, `authored_material`, ✅ Onda 2 — Lote 7 (batch 7))
 - `packs/a2/pack_les_a2_it_algorithms_basics_v1.md` → migrar para schema canônico; lesson `les_a2_it_algorithms_basics`, base atual `cite_only`
 - `packs/a2/pack_les_a2_it_clean_code_basics_v1.md` → migrar para schema canônico; lesson `les_a2_it_clean_code_basics`, base atual `cite_only`
 - `packs/a2/pack_les_a2_it_computer_parts_v1.md` → migrar para schema canônico; lesson `les_a2_it_computer_parts`, base atual `cite_only`
@@ -553,17 +556,17 @@ Objetivo de cada onda: reescrever integralmente o conteúdo didático/itens para
 - ~~~`packs/a2/pack_les_a2_modals_can_need_v1.md`~~ → `packs/a2/pack-les-a2-modals-can-need.md` (lesson `les_a2_modals_can_need`, canônico, `authored_material`, ✅ Onda 2 — Lote 6 (batch 6))
 - ~~~`packs/a2/pack_les_a2_past_narrative_v1.md`~~ → `packs/a2/pack-les-a2-past-narrative.md` (lesson `les_a2_past_narrative`, canônico, `authored_material`, ✅ Onda 2 — Lote 6 (batch 6))
 - ~~`packs/a2/pack_les_a2_phone_calls_v1.md`~~ → `packs/a2/pack-les-a2-phone-calls.md` (lesson `les_a2_phone_calls`, canônico, `authored_material`, ✅ Onda 2 — Lote 5 (batch 5) — Fase C)
-- `packs/a2/pack_les_a2_prepositions_basic_v1.md` → migrar para schema canônico; lesson `les_a2_prepositions_basic`, base atual `cite_only`
+- ~~~`packs/a2/pack_les_a2_prepositions_basic_v1.md`~~ → `packs/a2/pack-les-a2-prepositions-basic.md` (lesson `les_a2_prepositions_basic`, canônico, `authored_material`, ✅ Onda 2 — Lote 7 (batch 7))
 - ~~~`packs/a2/pack_les_a2_present_continuous_v1.md`~~ → `packs/a2/pack-les-a2-present-continuous.md` (lesson `les_a2_present_continuous`, canônico, `authored_material`, ✅ Onda 2 — Lote 6 (batch 6))
-- `packs/a2/pack_les_a2_reading_strategy_v1.md` → migrar para schema canônico; lesson `les_a2_reading_strategy`, base atual `cite_only`
-- `packs/a2/pack_les_a2_restaurant_shopping_v1.md` → migrar para schema canônico; lesson `les_a2_restaurant_shopping`, base atual `cite_only`
-- `packs/a2/pack_les_a2_stress_timing_v1.md` → migrar para schema canônico; lesson `les_a2_stress_timing`, base atual `cite_only`
-- `packs/a2/pack_les_a2_travel_vocab_core_v1.md` → migrar para schema canônico; lesson `les_a2_travel_vocab_core`, base atual `cite_only`
+- ~~~`packs/a2/pack_les_a2_reading_strategy_v1.md`~~ → `packs/a2/pack-les-a2-reading-strategy.md` (lesson `les_a2_reading_strategy`, canônico, `authored_material`, ✅ Onda 2 — Lote 7 (batch 7))
+- ~~~`packs/a2/pack_les_a2_restaurant_shopping_v1.md`~~ → `packs/a2/pack-les-a2-restaurant-shopping.md` (lesson `les_a2_restaurant_shopping`, canônico, `authored_material`, ✅ Onda 2 — Lote 7 (batch 7))
+- ~~~`packs/a2/pack_les_a2_stress_timing_v1.md`~~ → `packs/a2/pack-les-a2-stress-timing.md` (lesson `les_a2_stress_timing`, canônico, `authored_material`, ✅ Onda 2 — Lote 7 (batch 7))
+- ~~~`packs/a2/pack_les_a2_travel_vocab_core_v1.md`~~ → `packs/a2/pack-les-a2-travel-vocab-core.md` (lesson `les_a2_travel_vocab_core`, canônico, `authored_material`, ✅ Onda 2 — Lote 7 (batch 7))
 - `packs/a2/pack_les_a2_writing_bio_v1.md` → migrar para schema canônico; lesson `les_a2_writing_bio`, base atual `cite_only`
 - `packs/a2/pack_les_a2_writing_messages_v1.md` → migrar para schema canônico; lesson `les_a2_writing_messages`, base atual `cite_only`
 - `packs/a2/pack_les_a2_writing_past_v1.md` → migrar para schema canônico; lesson `les_a2_writing_past`, base atual `cite_only`
 - `packs/a2/pack_les_a2_writing_selfcheck_v1.md` → migrar para schema canônico; lesson `les_a2_writing_selfcheck`, base atual `cite_only`
-- `packs/a2/pack_les_a2_writing_svo_v1.md` → migrar para schema canônico; lesson `les_a2_writing_svo`, base atual `cite_only`
+- ~~~`packs/a2/pack_les_a2_writing_svo_v1.md`~~ → `packs/a2/pack-les-a2-writing-svo.md` (lesson `les_a2_writing_svo`, canônico, `authored_material`, ✅ Onda 2 — Lote 7 (batch 7))
 - `packs/b1/pack_les_b1_conditionals_v1.md` → migrar para schema canônico; lesson `les_b1_conditionals`, base atual `cite_only`
 - `packs/b1/pack_les_b1_finance_business_v1.md` → migrar para schema canônico; lesson `les_b1_finance_business`, base atual `cite_only`
 - `packs/b1/pack_les_b1_hr_career_v1.md` → migrar para schema canônico; lesson `les_b1_hr_career`, base atual `cite_only`
@@ -741,3 +744,17 @@ Aplicar a **cada lição** (e ao pack correspondente) ao concluir a reautoria, g
 - **Placar pós-Onda 2 — Lote 6 (batch 6) (estado atual):** **40/123** lições `authored_material`, 0 bloqueadas, `cite_only` **76**, `adapt_with_attribution` **7**, `sourced_external_thin` 0; packs **47 canônicos / 76 legados** (123 no total). Registro desta entrega = este bloco da §6.
 
 > **NOTA DE NOMENCLATURA (padronização, sem reescrever o histórico):** o plano usa "Lote 2 (Onda 2)" para o lote anterior e "Onda 2 — Lote 2 (batch 2)" para o Lote 2; esta entrega é registrada como "**Onda 2 — Lote 6 (batch 6)**". Entradas antigas permanecem com sua nomenclatura original; a padronização vale apenas para novos registros.
+
+
+---
+
+## 6. Registro de Execução — Onda 2 — Lote 7 (batch 7), Fundação A2 (2026-11-18)
+
+- **Escopo entregue:** `les_a2_imperatives`, `les_a2_prepositions_basic`, `les_a2_travel_vocab_core`, `les_a2_collocations`, `les_a2_stress_timing`, `les_a2_airport`, `les_a2_hotel_taxi`, `les_a2_restaurant_shopping`, `les_a2_reading_strategy`, `les_a2_writing_svo` — 10 lições A2 (General), todas lições e packs 100% `authored_material` (clean-room). `les_a2_reading_strategy` (General) ≠ `les_a2_it_reading_strategy` (trilha IT, não incluído).
+- **Packs migrados para schema canônico:** `packs/a2/pack-les-a2-imperatives.md`, `packs/a2/pack-les-a2-prepositions-basic.md`, `packs/a2/pack-les-a2-travel-vocab-core.md`, `packs/a2/pack-les-a2-collocations.md`, `packs/a2/pack-les-a2-stress-timing.md`, `packs/a2/pack-les-a2-airport.md`, `packs/a2/pack-les-a2-hotel-taxi.md`, `packs/a2/pack-les-a2-restaurant-shopping.md`, `packs/a2/pack-les-a2-reading-strategy.md`, `packs/a2/pack-les-a2-writing-svo.md`. Legados v1 correspondentes (pack_les_a2_imperatives_v1.md, pack_les_a2_prepositions_basic_v1.md, pack_les_a2_travel_vocab_core_v1.md, pack_les_a2_collocations_v1.md, pack_les_a2_stress_timing_v1.md, pack_les_a2_airport_v1.md, pack_les_a2_hotel_taxi_v1.md, pack_les_a2_restaurant_shopping_v1.md, pack_les_a2_reading_strategy_v1.md, pack_les_a2_writing_svo_v1.md) removidos do disco; catraca `_legacy_packs_baseline.json` 76→**66** (a catraca só pode cair).
+- **Registros/gates atualizados nesta unidade:** `specs/curriculum-graph-spec.md` (§4.3 das 10 lições: `Source` → `Original (clean-room, Onda 2 — Lote 7 (batch 7))`, `Status` → `✅ **authored** · reauthored_authored_material`; §4.4.5 `reauthored_authored_material` 40→50; §13 packs 57 canônicos / 66 legados), `specs/assessment-item-spec.md` §2.2.1 (censo `br_pt_form` recomputado: **957 filled / 76 null-with-note / 54 null-not-applicable / 0 undocumented**), `external-sources.md` (§0.5: classes A45/B9/C0/D11/E58; placar 67/123; §5 lições 48–57), `_legacy_packs_baseline.json` (76→66), `docs/copyright-reauthoring-plan.md` (este bloco, §2.1–§2.3, §3, §4, §5 e backlog de migração).
+- **Validação:** ⚠️ `python3 verify-integrity.py` — 13/14 checks passam, **1 falha pré-existente e fora do escopo desta unidade de registros**: `[FAIL] pack: pack-les-a2-stress-timing.md ITEM 1 has duplicate options ['"we need a record of the deploy; please record it."'] — unscorable` (check [9], conteúdo do pack — não editado nesta unidade, por limite explícito de escopo). Todos os checks de registro passam, 0 warnings. `python3 prd-score.py` PASS — 90,4% ≥ 80%. Nenhum outro gate foi executado nesta unidade.
+- **Seed/carga DB (:5433):** fora do escopo desta unidade de registros — sincronização de conteúdo e re-derivação dos pins ficam a cargo da unidade de banco/gates.
+- **Placar pós-Onda 2 — Lote 7 (batch 7) (estado atual):** **50/123** lições `authored_material`, 0 bloqueadas, `cite_only` **66**, `adapt_with_attribution` **7**, `sourced_external_thin` 0; packs **57 canônicos / 66 legados** (123 no total). Registro desta entrega = este bloco da §6.
+
+> **NOTA DE NOMENCLATURA (padronização, sem reescrever o histórico):** esta entrega é registrada como "**Onda 2 — Lote 7 (batch 7)**"; entradas antigas permanecem com sua nomenclatura original.

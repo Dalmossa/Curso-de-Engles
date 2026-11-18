@@ -1,114 +1,152 @@
-# Lesson: Writer's Toolkit — SVO Order, Explicit Subject, Tense Consistency
+# Lesson: Writer's Toolkit: SVO Order, Explicit Subject, Tense Consistency
 
 **Lesson ID:** `les_a2_writing_svo`
 **Module:** `mod_a2_skills_rw`
 **CEFR:** A2
-**Reuse basis:** `cite_only`
-**Source:** `docs/leia-e-escreva-melhor-em-ingles.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: revisão da descrição de um pull request
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **SVO** | SVO | *Subject-Verb-Object* |
-| **subject** | sujeito | *quem pratica a ação* |
-| **verb** | verbo | *a ação* |
-| **object** | objeto | *quem recebe a ação* |
-| **explicit subject** | sujeito explícito | *sempre mencionar o sujeito* |
-| **tense consistency** | consistência verbal | *manter o mesmo tempo verbal* |
-| **present simple** | presente simples | *hábitos, fatos* |
-| **past simple** | passado simples | *ações concluídas* |
-| **future** | futuro | *ações futuras* |
-| **paragraph** | parágrafo | *bloco de texto* |
-| **coherence** | coerência | *fluxo lógico* |
-| **transition** | transição | *conector entre ideias* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**SVO order**: 'I (S) work (V) here (O).' 'She (S) likes (V) coffee (O).'"
+> **Rafa (backend developer, São Paulo):** "I updated the ticket and copied the error code from the deploy log."
 >
-> "**Explicit subject**: English always needs a subject. '**I** am happy.' (not '*Am happy*')"
+> **Marina (tech lead, remote):** "Thanks, Rafa. The first line of the PR description still says, 'Is necessary to update the config.'"
 >
-> "**Tense consistency**: 'I **went** to the store and **bought** milk.' (not '*I went to the store and buy milk*')"
+> **Rafa:** "That is what I would write in Portuguese: 'É necessário atualizar a config'. How do I say it in English?"
 >
-> "**Transitions**: '**First**, **then**, **after that**, **finally**.'"
+> **Marina:** "Put a subject in front of the verb: 'We need to update the config.' You can also make the thing the subject: 'The config needs an update.'"
+>
+> **Marina:** "Keep one time in the paragraph. If you begin with 'I updated', follow with 'I added', not 'I add'."
+>
+> **Rafa:** "So the note becomes: 'I updated the ticket, added the error code and attached the log.'"
+>
+> **Marina:** "Good. Mind the order too: 'I copied the error code' — subject, verb, object. Portuguese lets you move the parts; English writing does not."
+>
+> **Rafa:** "Understood. I will rewrite the description with a subject in every sentence."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **I updated the ticket.** | Eu atualizei o ticket. | Sujeito explícito antes do verbo; o pt-BR permite omitir *eu*. |
+| **We need to update the config.** | É necessário atualizar a config. | A impessoalidade do pt-BR vira *we need to* em inglês. |
+| **The config needs an update.** | A config precisa de uma atualização. | A coisa pode ser sujeito, mas o verbo ainda exige *-s*. |
+| **I copied the error code.** | Copiei o código de erro. | Ordem SVO: quem faz, o que faz, o que recebe a ação. |
+| **The service dropped two events.** | O serviço descartou dois eventos. | O sujeito vem antes do verbo mesmo quando o objeto é curto. |
+| **We reproduced the failure.** | Reproduzimos a falha. | *We* é obrigatório; em pt-BR a terminação já resolve. |
+| **I attached the log.** | Anexei o log. | O objeto direto vem depois do verbo, não antes dele. |
+| **I updated the ticket and added the log.** | Atualizei o ticket e adicionei o log. | Um tempo verbal sustenta as duas ações coordenadas. |
+| **She asked for one detail.** | Ela pediu um detalhe. | *Ask for* pede complemento com preposição; *ask* sozinho muda o sentido. |
+| **The reviewer reads every line.** | O revisor lê cada linha. | Hábito no presente: sujeito + verbo com *-s* na terceira pessoa. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "É necessário atualizar a config." → "Is necessary to update the config." | "We need to update the config." | Oração finita em inglês exige sujeito; *is* não tem sujeito aqui. |
+| "Copiei o log." → "Copied the log." | "I copied the log." | O sujeito não pode ser omitido só porque o pt-BR o dispensa. |
+| "O código de erro copiei no ticket." → "The error code I copied to the ticket." | "I copied the error code to the ticket." | Calque de ordem: o objeto não vai à frente do sujeito e do verbo. |
+| "Atualizei o ticket e adiciono o log." → "I updated the ticket and I add the log." | "I updated the ticket and added the log." | Coordenação no mesmo parágrafo pede o mesmo tempo verbal. |
+| "Discutimos sobre a correção." → "We discussed about the fix." | "We discussed the fix." | *Discuss* leva objeto direto; o *sobre* do pt-BR não vira *about*. |
+| "Muito importante esse bug em produção." → "Very important this bug in production." | "The bug is critical in production." | Adjetivo sozinho não forma oração: faltam sujeito e verbo. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**SVO** stands for:
-| Slot | Value |
-|------|-------|
-| A | Subject-Verb-Object |
-| B | **Subject-Verb-Object** |
-| C | Sentence-Verb-Object |
-| D | Subject-Verb-Order |
+### Exercício 1 — Sujeito explícito (L1)
+
+Você escreve a primeira linha da descrição de um pull request em inglês. Qual frase está correta?
+
+| Opção | Frase |
+|---|---|
+| A | "Is necessary to update the config." |
+| B | **"We need to update the config."** ✓ |
+| C | "Needs to update the config." |
+| D | "The config need an update." |
+
 **Key:** B
-**br_pt_form:** "Sujeito-Verbo-Objeto"
 
-### Item 2 — Vocabulary (Matching)
-Match the writing concept to its description:
-| Concept | Description |
-|---------|-------------|
-| **Explicit subject** | a. Always mention who |
-| **Tense consistency** | b. Keep same tense |
-| **Coherence** | c. Logical flow |
-| **Transition** | d. Connector between ideas |
-**Key:** Explicit subject→a, Tense consistency→b, Coherence→c, Transition→d
-**br_pt_form:** "sujeito explícito", "consistência verbal", "coerência", "transição"
+**Feedback:** *We need to update the config.* tem sujeito antes do verbo. A repete a impersonalidade do pt-BR sem sujeito, C deixa *needs* sem sujeito e D erra a concordância de *need* com *the config*.
 
-### Item 3 — Grammar: SVO order (fill-in-blank)
-Rewrite in **SVO order**:
-"coffee / she / likes → She likes coffee."
-"here / I / work → I work here."
-"English / they / study → They study English."
-**Key:** She likes coffee / I work here / They study English
-**br_pt_form:** "Ela gosta de café / Eu trabalho aqui / Eles estudam inglês"
+### Exercício 2 — Reordenação SVO (L1 → L2)
+
+Reescreva cada grupo na ordem **subject → verb → object**.
+
+1. "the log / I / attached"
+2. "the failure / we / reproduced"
+3. "the error code / the service / dropped"
+
+**Key:** I attached the log / We reproduced the failure / The service dropped the error code
+
+**Feedback:** Em cada linha o sujeito aparece primeiro, o verbo vem em seguida e o objeto direto por último. A ordem do pt-BR pode ser livre; a do inglês escrito é SVO.
+
+### Exercício 3 — Consistência de tempo (L1)
+
+Escolha o par de orações que mantém um único tempo verbal no parágrafo.
+
+| Opção | Frase |
+|---|---|
+| A | "I opened the ticket and I add the stack trace." |
+| B | **"I opened the ticket and added the stack trace."** ✓ |
+| C | "I open the ticket and added the stack trace." |
+| D | "I am opening the ticket and added the stack trace." |
+
+**Key:** B
+
+**Feedback:** *Opened* e *added* são passado simples na mesma narrativa. A e C misturam passado e presente; D mistura progressivo e passado.
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Writing: SVO Sentences (individual)
-**Write 6 sentences** in SVO order about your work.
+### 5 sentenças-alvo (leia em voz corrida)
 
-**Example:**
-> "I write code. She manages projects. We attend meetings. They review documents. He fixes bugs. I test features."
+I opened the ticket and copied the error code from the deploy log.
+The service dropped two events during the release.
+We reproduced the failure with the same request.
+I updated the report and emailed it to the reviewer.
+She asked for one more detail before the standup.
 
-**Create your own 6 SVO sentences** about your daily work.
+### Foco articulatório para falantes de pt-BR
+
+- **/-d/ em *opened, copied, updated, emailed***: o *-ed* regular soa /d/ depois de som sonoro; não acrescente uma sílaba extra.
+- **/-t/ em *dropped, reproduced, asked***: o *-ed* soa /t/ depois de consoante surda; não troque por /d/.
+- **/ð/ em *the***: língua entre os dentes com voz; evite a troca por /d/ ("de").
+- **/r/ em *report, reproduced, reviewer***: língua levemente recolhida, sem a fricção uvular do "r" do pt-BR.
+- **/v/ em *events***: dentes superiores encostados no lábio inferior com voz; não deslize para /w/.
+
+### Prompt de produção (escrita)
+
+Escreva um parágrafo de 4 a 6 frases para um bug report ou uma descrição de pull request sobre um problema real ou inventado do seu trabalho. Cumpra os requisitos:
+
+1. Comece cada frase com um sujeito explícito (*I*, *We*, *The service*, *The reviewer*).
+2. Use a ordem **SVO** na oração principal de cada frase.
+3. Mantenha um único tempo verbal na narrativa: se começar no passado, use o passado em todos os verbos da sequência.
+4. Inclua pelo menos um objeto direto por frase.
+5. Evite calques como "Is necessary to update..." e "Copied the log...".
+6. Cite um detalhe concreto do contexto (ticket, log, deploy, standup).
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Tense consistency** means:
-| Slot | Value |
-|------|-------|
-| A | Using different tenses randomly |
-| B | **Keeping the same tense throughout** |
-| C | Using only present tense |
-| D | Using only past tense |
-**Key:** B
-**br_pt_form:** "consistência verbal / manter o mesmo tempo verbal"
+1. **Gramática (L1):** Qual frase tem sujeito explícito?  
+   A) "Copied the error code to the ticket."  B) "Is necessary to update the config."  C) **"I copied the error code to the ticket."**  D) "Dropped two events during the release."  
+   **Key:** C
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **SVO order**:
-| Slot | Value |
-|------|-------|
-| A | **Coffee she likes.** |
-| B | **She likes coffee.** |
-| C | **Likes she coffee.** |
-| D | **She coffee likes.** |
-**Key:** B
-**br_pt_form:** "Ela gosta de café."
+2. **Gramática (L1):** Qual par mantém um único tempo verbal?  
+   A) "I updated the ticket and I add the log."  B) **"I updated the ticket and added the log."**  C) "I update the ticket and added the log."  D) "I am updating the ticket and added the log."  
+   **Key:** B
+
+3. **Ordem (L1):** Qual frase segue SVO?  
+   A) "The error code copied I."  B) "Copied I the error code."  C) "I the error code copied."  D) **"I copied the error code."**  
+   **Key:** D
 
 ---
 
@@ -117,54 +155,49 @@ Choose the correct **SVO order**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a2_writing_svo",
   "cefr_level": "A2",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (SVO explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/leia-e-escreva-melhor-em-ingles.md (BaixeLivros notice applies) - scoping of writing skills"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - writing terms are unprotectable linguistic concepts; definitions authored"
-  },
-  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "writing"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "reading", "writing"],
   "output_modalities": ["writing"],
   "skill_items": {
     "grammar": [
-      "grammar.svo_order"
+      "grammar.svo_order",
+      "grammar.explicit_subject",
+      "grammar.tense_consistency",
+      "grammar.present_simple_regular"
     ],
     "vocabulary": [
-      "vocab.writing.svo",
-      "vocab.writing.subject",
-      "vocab.writing.verb",
-      "vocab.writing.object",
-      "vocab.writing.explicit_subject",
-      "vocab.writing.tense_consistency",
-      "vocab.writing.present_simple",
-      "vocab.writing.past_simple",
-      "vocab.writing.future",
-      "vocab.writing.paragraph",
-      "vocab.writing.coherence",
-      "vocab.writing.transition"
+      "vocab.writing_svo_chunks",
+      "vocab.articles_nouns"
     ],
     "listening": [
       "listening.writing_context"
     ],
     "pronunciation": [
-      "pronunciation.writing"
+      "pronunciation.writing_svo_ed"
+    ],
+    "reading": [
+      "reading.writing_report",
+      "reading.writing_tense_keys"
     ],
     "writing": [
-      "writing.svo_sentences"
+      "writing.svo_paragraph"
     ]
   },
   "prereq_lessons": [
+    "les_a1_present_simple",
+    "les_a1_have_has",
+    "les_a1_articles_nouns",
     "les_a2_greetings_intro",
     "les_a2_small_talk",
     "les_a2_introducing_others",
