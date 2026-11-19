@@ -963,16 +963,78 @@ Registros alterados nesta unidade: `_legacy_packs_baseline.json`, `specs/curricu
 
 ---
 
-## Resumo consolidado — Onda 2 (Fases A–D, Lotes 3–10)
+## Unidade — Onda 2 — Lote 11 (batch 11), B1/B2 General (2026-11-19)
 
-**Onda 2 encerrada em 80/123 — Fundação A1/A2 + A2-IT/B1-IT/B1-Geral.** Estado final do repositório:
+- [x] 10 lições + 10 packs reautorados como `authored_material` (clean-room, 100% original): `mod_b1_grammar_consolidate` / `mod_b1_workplace_adv` (`les_b1_question_forms`, `les_b1_negotiation`, `les_b1_presentation_skills`, `les_b1_leadership_feedback`, `les_b1_finance_business`, `les_b1_hr_career`, `les_b1_sales_marketing`) e `mod_b2_professional` (`les_b2_register_nuance`, `les_b2_professional_email_advanced`, `les_b2_professional_review`). Os 3 módulos e os CEFR B1/B2 já existiam; nenhuma criação de infraestrutura de curriculum foi necessária. Packs legados v1 removidos do disco; os 10 packs canônicos seguem na tabela abaixo.
+- [x] Catraca `_legacy_packs_baseline.json` 36 → **26**; placar **90/123** lições `authored_material` (conteúdo em disco); `cite_only` **29**, `adapt_with_attribution` **4**; packs **97 canônicos / 26 legados** (soma 123); censo `br_pt_form` **1677 filled / 76 null-with-note / 94 null-not-applicable / 0 undocumented**; classes de fontes §0.5 **A17/B0/C0/D11/E95** (A+B+E=112; 97/123 em base reutilizável ou autoralmente limpa).
+- [x] As 7 linhas `sourced_external` do registro foram **preservadas** (gate [2] fixa essa contagem). As 10 linhas do Lote 11 tiveram `Source` → `Original (clean-room, Onda 2 — Lote 11)` e `Status` → `✅ **authored** · reauthored_authored_material`; as anotações de S-number nas demais linhas não foram apagadas.
+- [x] Gates executados nesta unidade de registros: apenas `python3 verify-integrity.py` e `python3 prd-score.py` (tabela abaixo). `npm test`, `next build`, `content:sync`, backup, commit e `contract:gate` **não** executados nesta unidade, por restrição explícita do briefing.
+- [x] Pins de `api-spec.openapi.yaml` re-derivados com `git hash-object` para os 3 specs alterados (`assessment-item-spec.md`, `curriculum-graph-spec.md`, `external-sources.md`); `derived-at` mantido em `2026-11-19`. Nenhum schema OpenAPI alterado.
+- [x] Modelo: **todos os despachos do Lote 11 rodaram em `opencode/big-pickle` (modelo primário), sem nenhuma rotação**; nenhum modelo `google/` pago usado.
+- [x] Pendências que dependem do usuário (última seção).
 
-- Placar de lições: **80/123 `authored_material`**; `cite_only` **39**; `adapt_with_attribution` **4**; `adapt_requires_permission` **0**; `sourced_external_thin` 0. O `adapt_requires_permission` **1** citado no briefing está entre os **packs** (`pack_les_a2_greetings_intro_v1`), não entre as lições.
-- Packs: **87 canônicos / 36 legados** (soma 123); `authored_material` **80**, `cite_only` **41**, `adapt_with_attribution` **1**, `adapt_requires_permission` **1**; catraca `_legacy_packs_baseline.json` em **36** (só pode cair). No registro em disco, por primeira declaração: 80/42/0/1 — divergência de 1 pack, preservada.
-- Censo `br_pt_form` (`assessment-item-spec.md` §2.2.1): **1497 filled / 76 null-with-note / 84 null-not-applicable / 0 undocumented**.
-- Classes de fontes em `external-sources.md` §0.5: **A26/B1/C0/D11/E85** (87/123 em base reutilizável ou autoralmente limpa).
+### Arquivos do lote
 
-### Cadeia de 65 lições reautoradas na Onda 2 (Lotes 3–10)
+| Lesson ID | Lição | Pack canônico | Legado removido do disco |
+|---|---|---|---|
+| `les_b1_question_forms` | `lessons/b1/les_b1_question_forms.md` | `packs/b1/pack-les-b1-question-forms.md` | `packs/b1/pack_les_b1_question_forms_v1.md` |
+| `les_b1_negotiation` | `lessons/b1/les_b1_negotiation.md` | `packs/b1/pack-les-b1-negotiation.md` | `packs/b1/pack_les_b1_negotiation_v1.md` |
+| `les_b1_presentation_skills` | `lessons/b1/les_b1_presentation_skills.md` | `packs/b1/pack-les-b1-presentation-skills.md` | `packs/b1/pack_les_b1_presentation_skills_v1.md` |
+| `les_b1_leadership_feedback` | `lessons/b1/les_b1_leadership_feedback.md` | `packs/b1/pack-les-b1-leadership-feedback.md` | `packs/b1/pack_les_b1_leadership_feedback_v1.md` |
+| `les_b1_finance_business` | `lessons/b1/les_b1_finance_business.md` | `packs/b1/pack-les-b1-finance-business.md` | `packs/b1/pack_les_b1_finance_business_v1.md` |
+| `les_b1_hr_career` | `lessons/b1/les_b1_hr_career.md` | `packs/b1/pack-les-b1-hr-career.md` | `packs/b1/pack_les_b1_hr_career_v1.md` |
+| `les_b1_sales_marketing` | `lessons/b1/les_b1_sales_marketing.md` | `packs/b1/pack-les-b1-sales-marketing.md` | `packs/b1/pack_les_b1_sales_marketing_v1.md` |
+| `les_b2_register_nuance` | `lessons/b2/les_b2_register_nuance.md` | `packs/b2/pack-les-b2-register-nuance.md` | `packs/b2/pack_les_b2_register_nuance_v1.md` |
+| `les_b2_professional_email_advanced` | `lessons/b2/les_b2_professional_email_advanced.md` | `packs/b2/pack-les-b2-professional-email-advanced.md` | `packs/b2/pack_les_b2_professional_email_advanced_v1.md` |
+| `les_b2_professional_review` | `lessons/b2/les_b2_professional_review.md` | `packs/b2/pack-les-b2-professional-review.md` | `packs/b2/pack_les_b2_professional_review_v1.md` |
+
+Registros alterados nesta unidade: `_legacy_packs_baseline.json`, `specs/curriculum-graph-spec.md`, `specs/assessment-item-spec.md`, `external-sources.md`, `docs/copyright-reauthoring-plan.md`, `TASK_PROGRESS.md` (esta seção) e `its-platform/docs/api-spec.openapi.yaml` (3 pins + `derived-at`). Os 30 arquivos de conteúdo (10 lições + 10 packs canônicos + 10 legados removidos) eram pré-existentes no `git status` baseline e **não** foram editados nesta unidade.
+
+### Desvios registrados
+
+- **Divergência banco × disco (1 pack):** `pack_les_a2_greetings_intro_v1` segue `adapt_requires_permission` no banco e `cite_only` no disco — **preservada**, sem correção nesta unidade.
+- **Nota operacional (subagent):** uma busca de colisão de `item_id` em `packs/` tocou 4 linhas de cabeçalho do pack legado de `les_b1_presentation_skills`; nenhum item foi lido ou reproduzido, e nenhuma outra linha de conteúdo foi alterada.
+- **Nota operacional (autorreferência):** uma autorreferência em `prereq_lessons` de `les_b2_professional_review` foi removida na unidade de conteúdo — **0 self-loops** no grafo.
+- **Marcador de sourcing:** as 7 linhas com S-number no registro continuam `sourced_external`; alterá-las faria D cair de 11 para 8 no gate [3b].
+- **Cobertura da §5:** 10 novas linhas de reautoria (85–94) foram adicionadas ao registro de reautoria de `external-sources.md §5`, exigidas pelo gate [6c].
+- **Escopo de gates:** somente os 2 scripts permitidos foram executados; nenhum comando de sync, backup, commit ou `contract:gate` foi disparado nesta unidade.
+
+### Resultado de cada gate
+
+| Gate | Exit | Resultado |
+|---|---|---|
+| `python3 verify-integrity.py` (1ª) | 0 | **PASS 14/14, 0 falhas, 0 warnings** |
+| `python3 prd-score.py` | 0 | **PASS — ≥ 80%** |
+
+### Pins de contrato (`its-platform/docs/api-spec.openapi.yaml` → `x-contract-provenance.spec-blobs`)
+
+- 3 pins re-derivados via `git hash-object` para os specs alterados (`assessment-item-spec.md`, `curriculum-graph-spec.md`, `external-sources.md`); `derived-at`: `2026-11-19`.
+- Outros 3 pins inalterados (`295e1b85…`, `9566fe60…`, `a8ae6bb6…`); nenhum schema OpenAPI alterado.
+
+### Commits desta unidade
+
+- Nenhum commit realizado — unidade de registros, por decisão do briefing.
+
+### Pendências que dependem do usuário
+
+- (infra, pré-existente) `its-platform/scripts/sync-authored-content.mjs` segue modificado no `git status` baseline; não foi alterado nesta unidade.
+- (banco) `content:sync` não executado nesta unidade — carga das 10 lições/packs em `:5433` fica a cargo da unidade de banco.
+- (documentação) Divergência de 1 pack entre banco e registro relativa a `pack_les_a2_greetings_intro_v1`; preservada.
+- (testes) `npm test` (backend) e `next build` (frontend) não executados nesta unidade — adiados para fechamento final.
+- (conteúdo, pré-existente) D5 permanece para as lições sem gabarito detectado no corpo.
+
+---
+
+## Resumo consolidado — Onda 2 (Fases A–D, Lotes 3–11)
+
+**Onda 2 encerrada em 90/123 — Fundação A1/A2 + A2-IT/B1-IT/B1-Geral + B1/B2-General.** Estado final do repositório:
+
+- Placar de lições: **90/123 `authored_material`**; `cite_only` **29**; `adapt_with_attribution` **4**; `adapt_requires_permission` **0**; `sourced_external_thin` 0. O `adapt_requires_permission` **1** citado no briefing está entre os **packs** (`pack_les_a2_greetings_intro_v1`), não entre as lições.
+- Packs: **97 canônicos / 26 legados** (soma 123); `authored_material` **90**, `cite_only` **32**, `adapt_with_attribution` **0**, `adapt_requires_permission` **1**; catraca `_legacy_packs_baseline.json` em **26** (só pode cair). No registro em disco, por primeira declaração: 90/32/0/1 — divergência de 1 pack, preservada.
+- Censo `br_pt_form` (`assessment-item-spec.md` §2.2.1): **1677 filled / 76 null-with-note / 94 null-not-applicable / 0 undocumented**.
+- Classes de fontes em `external-sources.md` §0.5: **A17/B0/C0/D11/E95** (97/123 em base reutilizável ou autoralmente limpa).
+
+### Cadeia de 75 lições reautoradas na Onda 2 (Lotes 3–11)
 
 1. **Fase A (Lote 3):** `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates`
 2. **Fase B (Lote 4):** `les_a1_food`, `les_a1_occupations`, `les_a1_regular_verbs_past`, `les_a1_present_simple`, `les_a1_present_simple_questions`
@@ -982,6 +1044,7 @@ Registros alterados nesta unidade: `_legacy_packs_baseline.json`, `specs/curricu
 6. **Lote 8 (Fundação A2 + B1-IT):** `mod_a2_skills_rw` (escrita) — `les_a2_writing_bio`, `les_a2_writing_messages`, `les_a2_writing_past`, `les_a2_writing_selfcheck`; `mod_a2_it_fundamentals` (IT) — `les_a2_it_roles_hierarchy`, `les_a2_it_reading_strategy`, `les_a2_it_computer_parts`, `les_a2_it_system_unit`, `les_a2_it_internet_history`, `les_a2_it_clean_code_basics`.
 7. **Lote 9 (Fundação A2-IT + B1-IT):** `mod_a2_it_fundamentals` / `mod_a2_it_communication` — `les_a2_it_testing_fundamentals`, `les_a2_it_typescript_basics`, `les_a2_it_algorithms_basics`, `les_a2_it_email_technical`, `les_a2_it_nontech_tech`, `les_a2_it_word_formation`, `les_a2_it_pr_tickets`; `mod_b1_it_technical` — `les_b1_it_acronyms_deep`, `les_b1_it_ddd_modeling`, `les_b1_it_bdd_specs`.
 8. **Lote 10 (A2-IT + B1-IT/B1-Geral — fechamento):** `mod_a2_it_communication` — `les_a2_it_incidents`; `mod_b1_it_technical` — `les_b1_it_debugging`, `les_b1_it_write_docs`, `les_b1_it_ux_collab`, `les_b1_it_devops_basics`; `mod_b1_grammar_consolidate` — `les_b1_tenses_review`, `les_b1_modals`, `les_b1_conditionals`, `les_b1_passive`, `les_b1_reported_speech`.
+9. **Lote 11 (B1/B2-General):** `mod_b1_grammar_consolidate` / `mod_b1_workplace_adv` — `les_b1_question_forms`, `les_b1_negotiation`, `les_b1_presentation_skills`, `les_b1_leadership_feedback`, `les_b1_finance_business`, `les_b1_hr_career`, `les_b1_sales_marketing`; `mod_b2_professional` — `les_b2_register_nuance`, `les_b2_professional_email_advanced`, `les_b2_professional_review`.
 
 ### Placar consolidado dos gates
 
@@ -993,12 +1056,12 @@ Registros alterados nesta unidade: `_legacy_packs_baseline.json`, `specs/curricu
 | backend `domain:check` | OK (30 arquivos, 0 violações) |
 | frontend `typecheck` | OK (Fase C) |
 | frontend `lint` | OK (Fase C) |
-| frontend `build` | OK (1ª tentativa da Fase B caiu no nudge de advisory do Next; retry OK); não reexecutado no Lote 6/7/8/9/10 (adiado) |
-| `content:sync` (2 execuções) | OK — escopo 70/70, JSON idêntico, `checkWidened` false/false (Lote 9); não executado no Lote 10 (fora do escopo da unidade de registros) |
-| `verify-integrity.py` | **PASS — 14/14, 0 falhas, 0 warnings** (reexecutado após a edição do `TASK_PROGRESS.md` do Lote 10) |
+| frontend `build` | OK (1ª tentativa da Fase B caiu no nudge de advisory do Next; retry OK); não reexecutado no Lote 6/7/8/9/10/11 (adiado) |
+| `content:sync` (2 execuções) | OK — escopo 70/70, JSON idêntico, `checkWidened` false/false (Lote 9); não executado no Lote 10/11 (fora do escopo da unidade de registros) |
+| `verify-integrity.py` | **PASS — 14/14, 0 falhas, 0 warnings** (reexecutado após a edição do `TASK_PROGRESS.md` do Lote 11) |
 | `prd-score.py` | **PASS — 90,4%** (limite 80,0%) |
 | `npm test` | Última execução registrada (Fase C): **670 passed / 13 failed / 691 total** — nenhuma falha atribuível aos lotes A/B/C; não reexecutado no Lote 6/7/8/9/10 (adiado por decisão do usuário) |
-| `next build` | Não executado no Lote 9/10 — adiado por decisão do usuário |
+| `next build` | Não executado no Lote 9/10/11 — adiado por decisão do usuário |
 
 ### Modelos (política de rotação do repo)
 

@@ -3,111 +3,150 @@
 **Lesson ID:** `les_b1_presentation_skills`
 **Module:** `mod_b1_workplace_adv`
 **CEFR:** B1
-**Reuse basis:** `cite_only`
-**Source:** `docs/Dicionario-de-Siglas-e-Termos-Profissionais-em-Ingles.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: pitch de cinco minutos sobre uma correção de latência, com Q&A ao fim
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **presentation** | apresentação | *exposição oral* |
-| **pitching** | pitching / apresentação de ideias | *apresentar proposta* |
-| **slide** | slide | *visual da apresentação* |
-| **audience** | público / audiência | *quem assiste* |
-| **hook** | gancho | *abertura que captura atenção* |
-| **agenda** | pauta / agenda | *tópicos a cobrir* |
-| **main point** | ponto principal | *ideia central* |
-| **supporting detail** | detalhe de apoio | *evidência* |
-| **conclusion** | conclusão | *fechamento* |
-| **Q&A** | perguntas e respostas | *sessão de dúvidas* |
-| **body language** | linguagem corporal | *postura, gestos* |
-| **eye contact** | contato visual | *olhar para o público* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**Hook**: 'Did you know 70% of projects fail?' **Agenda**: 'Today I'll cover 3 points.'"
+> **Marina (backend engineer, São Paulo):** "Morning, everyone. I'm Marina from payments. Here's the hook: last quarter our checkout took forty seconds to confirm. Today it takes four."
 >
-> "**Main point**: 'Our solution saves 20%.' **Supporting detail**: 'Here's the data.'"
+> **Chris (engineering manager, Austin):** "Nice. How much time do we have?"
 >
-> "**Conclusion**: 'To summarize...' **Q&A**: 'Any questions?' **Body language**: stand tall, make **eye contact**."
+> **Marina:** "Five minutes, then Q&A. I'll walk you through two things: what we changed and what it cost. I'll keep the pacing steady — one minute per slide."
+>
+> **Priya (data engineer, remote):** "Quick question before you start — is this already in production?"
+>
+> **Marina:** "Good question, Priya. I'll come back to it in part two; let me finish the setup first. The takeaway is that the fix is in staging."
+>
+> **Marina:** "So the pitch is simple: one cache on the read path, no schema change. That's the whole talk. Let's pause for questions — how did we measure the four seconds?"
+>
+> **Rafael (QA, São Paulo):** "How did you measure it?"
+>
+> **Marina:** "p95 over seven days, first in staging and then in production. Thanks for your time — happy to take one more question."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **signposting** | sinalização da estrutura da fala | Frases curtas que avisam "vou falar duas coisas"; em inglês, o sinal vem **antes** do conteúdo. |
+| **takeaway** | recado principal / o que levar | Use no fechamento: *The takeaway is that...*; não é "resumo da apresentação" inteira, é uma ideia só. |
+| **hook** | gancho de abertura | Uma frase com número, pergunta ou contraste que cria curiosidade; vem no primeiro minuto. |
+| **pitch** | argumento curto e persuasivo | Apresentação curta com problema + solução; não é sinônimo de palestra longa. |
+| **deck** | apresentação de slides | *Walk you through the deck* soa natural; *PowerPoint* é marca, não nome do objeto. |
+| **rehearsal** | ensaio | *I did a rehearsal* / *I rehearsed the talk*; evite *I made a rehearsal*. |
+| **Q&A** | perguntas e respostas | *Let's pause for Q&A*; sigla lida letra por letra, /kjuː ənd eɪ/. |
+| **pacing** | ritmo / distribuição de tempo | Trate como planejamento: *one minute per slide*, não apenas "falar devagar". |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "Vou apresentar sobre os resultados." → "I'll present about the results." | "I'll present the results." / "I'll talk about the results." | *Present* é transitivo: apresenta **algo**. Para o assunto, use *talk about*. |
+| "A plateia está grande." → "The plateia is big." | "The audience is large." | *Plateia* não existe em inglês; o público de uma fala é *the audience*. |
+| "Vou mostrar o PowerPoint." → "I'll show the PowerPoint." | "I'll walk you through the deck." | *PowerPoint* é marca; *deck* é o nome corrente do conjunto de slides. |
+| "Vou falar rápido." → "I'll speak fast." | "I'll keep it to five minutes." | *Pacing* é controle de tempo combinado com a plateia, não velocidade de fala. |
+| "Deixe eu explicar isso para vocês." → "Let me explain you this." | "Let me walk you through it." | *Explain* pede o conteúdo como objeto; a pessoa vem com *to*, ou use *walk you through*. |
+| "Em conclusão," → "In conclusion," | "The takeaway is..." / "To wrap up..." | *In conclusion* soa como redação acadêmica; em pitch, prefira o recado de uma linha. |
+| "Perguntas?" → "Questions?" | "Let's pause for questions." / "Any questions?" | O convite explícito dá permissão à plateia; uma palavra só soa abrupta. |
+| "Obrigado pela atenção." → "Thanks for your attention." | "Thanks for your time — happy to take questions." | Calque o fechamento no registro americano: agradeça o **tempo** e abra o Q&A. |
+| "Eu fiz um ensaio da fala." → "I made a rehearsal of the talk." | "I rehearsed the talk." / "I did a rehearsal." | *Rehearsal* combina com *do* ou com o verbo *rehearse*, nunca com *make*. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Hook** in a presentation is:
-| Slot | Value |
-|------|-------|
-| A | The conclusion |
-| B | **An opening that captures attention** |
-| C | A slide |
-| D | A question |
-**Key:** B
-**br_pt_form:** "hook / abertura que captura atenção"
+### Exercício 1 — Reconhecimento (signposting de abertura)
 
-### Item 2 — Vocabulary (Matching)
-Match the presentation part to its purpose:
-| Part | Purpose |
-|------|---------|
-| **Hook** | a. Capture attention |
-| **Agenda** | b. List topics |
-| **Main point** | c. Central idea |
-| **Q&A** | d. Answer questions |
-**Key:** Hook→a, Agenda→b, Main point→c, Q&A→d
-**br_pt_form:** "gancho", "pauta", "ponto principal", "perguntas e respostas"
+Qual linha é um signposting claro e gramatical para começar um pitch?
 
-### Item 3 — Grammar: Imperatives for presentation (fill-in-blank)
-Complete with **imperative**:
-"______ (start) with a hook. ______ (cover) 3 points. ______ (summarize) at the end. ______ (ask) for questions."
-**Key:** Start / Cover / Summarize / Ask
-**br_pt_form:** "Comece / Cubra / Resuma / Pergunte"
+| Opção | Frase |
+|---|---|
+| A | "I will to walk you through two things." |
+| B | **"Let me walk you through two things."** |
+| C | "Let me walking you through two things." |
+| D | "I am walk you through two things." |
 
----
+**Key:** B — *Let me* + verbo na forma base é o padrão para sinalizar a estrutura; em **A** há *to* depois de *will*, em **C** um gerúndio depois de *let me* e em **D** falta o *-ing* do present continuous.
 
-## FASE 3 — Output Task [4 min]
+### Exercício 2 — Transformação L1 → L2
 
-### Speaking: Mini Pitch (individual)
-**Deliver a 2-minute pitch** for a product or idea.
+Reescreva as intenções em inglês natural de um pitch:
 
-**Structure:**
-1. **Hook** (attention grabber)
-2. **Agenda** (what you'll cover)
-3. **Main point** (key idea)
-4. **Supporting detail** (evidence)
-5. **Conclusion** (summary)
-6. **Q&A** (invite questions)
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Vou apresentar sobre os resultados." | "I'll present the results." |
+| "Deixe eu explicar isso para vocês." | "Let me walk you through it." |
+| "O recado é que a correção já está no staging." | "The takeaway is that the fix is already in staging." |
+| "Obrigado pela atenção. Perguntas?" | "Thanks for your time — any questions?" |
+
+**Key:** ver tabela — cada linha troca a tradução literal por uma expressão fixa de apresentação (*present* transitive, *walk you through*, *the takeaway is*, *thanks for your time*).
+
+### Exercício 3 — Complete o pitch
+
+Preencha com **hook**, **pacing**, **deck**, **takeaway** ou **Q&A**:
+
+1. "Here's the ______: checkout went from forty seconds to four."
+2. "I'll keep the ______ steady — one minute per slide."
+3. "I'll walk you through three points in the ______."
+4. "The ______ is that the fix is already in staging."
+5. "Let's pause for ______ — how did you measure it?"
+
+**Key:** 1) hook; 2) pacing; 3) deck; 4) takeaway; 5) Q&A — note que o *hook* abre com dado concreto, o *takeaway* fecha com uma única ideia e o *Q&A* é o momento de virada, não um apêndice.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Eye contact** in a presentation means:
-| Slot | Value |
-|------|-------|
-| A | Looking at your notes |
-| B | **Looking at the audience** |
-| C | Looking at the slides |
-| D | Closing your eyes |
-**Key:** B
-**br_pt_form:** "eye contact / olhar para o público"
+### 5 sentenças-alvo (leia em voz corrida)
+Here's the hook: checkout confirmation went from forty seconds to four.
+I'll walk you through two things — what we changed and what it cost.
+I'll keep the pacing steady with one slide per minute.
+The takeaway is that the fix is already in staging.
+Let's pause for questions — how did you measure the four seconds?
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **imperative** for a presentation:
-| Slot | Value |
-|------|-------|
-| A | **To start** with a hook. |
-| B | **Start** with a hook. |
-| C | **Starting** with a hook. |
-| D | **Started** with a hook. |
-**Key:** B
-**br_pt_form:** "Comece com um gancho."
+### Foco articulatório para falantes de pt-BR
+
+- **/h/ em *hook***: solte ar sem fricção; não omita o /h/ inicial nem o troque por /k/.
+- **/θ/ em *three***: ponta da língua entre os dentes, sem voz; não diga "tree".
+- **/ð/ em *the, the fix***: mesmo lugar de /θ/, mas com voz; distinga as duas séries na mesma frase.
+- **/eɪ/ em *pacing***: vogal longa com deslize de /e/ para /ɪ/; evite a vogal curta do pt-BR.
+- **/ɪ/ em *pitch***: vogal curta e relaxada; não troque pelo /iː/ longo de *peace*.
+- **/r/ em *rehearsal, already***: língua recuada, sem tocar o céu da boca e sem vibrar como o "rr" do pt-BR.
+- **Pausa após o signposting**: marque meio segundo depois de *Let me walk you through two things* — sem pausa, o sinalizador perde a função.
+
+### Prompt de produção (oral ou escrita)
+
+Você tem cinco minutos para apresentar uma mudança pequena que você fez (um teste, um script, um índice, um cache). Escreva o roteiro do pitch — ou diga as mesmas frases em voz alta — com:
+
+1. um **hook** de uma frase contendo um número real ou um contraste;
+2. um **signposting** anunciando exatamente duas partes;
+3. uma frase de **pitch** com problema e solução em uma linha;
+4. um **takeaway** explícito iniciado por *The takeaway is...*;
+5. uma frase de **pacing** (*I'll keep it to five minutes* ou *I'll slow down*);
+6. um convite ao **Q&A** seguido de uma pergunta da plateia com *How*, *What*, *Why* ou *Which*.
+
+Inclua um detalhe real do seu contexto (ticket, serviço, métrica, deploy).
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Vocabulário (L1):** Em "The takeaway is that the fix is in staging", *takeaway* significa:  
+   A) o conjunto de slides  B) o ensaio  C) **a única ideia que a plateia deve levar**  D) a pergunta da plateia  
+   **Key:** C — *takeaway* é o recado principal; o conjunto de slides é o *deck*, o ensaio é o *rehearsal* e a pergunta faz parte do *Q&A*.
+
+2. **Gramática (L1):** Qual signposting está gramatical?  
+   A) "Let me to walk you through two things."  B) "Let me walking you through two things."  C) **"Let me walk you through two things."**  D) "I am walk you through two things."  
+   **Key:** C — depois de *let me* vem a forma base; **A** inserts *to*, **B** usa gerúndio e **D** mistura *be* com forma base.
+
+3. **Pacing (L1):** A apresentadora diz "I'll keep the pacing steady." O que ela quer dizer?  
+   A) Ela vai falar mais rápido.  B) **Ela vai dar um tempo fixo a cada parte.**  C) Ela vai cortar o Q&A.  D) Ela vai acrescentar slides.  
+   **Key:** B — *pacing* é distribuição de tempo; não é velocidade, cancelamento de perguntas nem aumento de *deck*.
 
 ---
 
@@ -116,91 +155,50 @@ Choose the correct **imperative** for a presentation:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_b1_presentation_skills",
   "cefr_level": "B1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (presentation explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/Dicionario-de-Siglas-e-Termos-Profissionais-em-Ingles.md (BaixeLivros notice applies) - scoping of presentation and pitching vocabulary"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - presentation terms are unprotectable professional concepts; definitions authored"
-  },
-  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "reading", "speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.imperatives_presentation"
+      "grammar.presentation_signposting",
+      "grammar.qa_wh_questions"
     ],
     "vocabulary": [
-      "vocab.presentation.presentation",
-      "vocab.presentation.pitching",
-      "vocab.presentation.slide",
-      "vocab.presentation.audience",
-      "vocab.presentation.hook",
-      "vocab.presentation.agenda",
-      "vocab.presentation.main_point",
-      "vocab.presentation.supporting_detail",
-      "vocab.presentation.conclusion",
-      "vocab.presentation.q_and_a",
-      "vocab.presentation.body_language",
-      "vocab.presentation.eye_contact"
+      "vocab.pitch_hook",
+      "vocab.pitch_takeaway",
+      "vocab.presentation_deck_rehearsal",
+      "vocab.presentation_pacing_qa"
     ],
     "listening": [
-      "listening.presentation_context"
+      "listening.pitch_dialogue"
     ],
     "pronunciation": [
-      "pronunciation.presentation"
+      "pronunciation.presentation_dental_fricatives",
+      "pronunciation.presentation_pitch_vowel"
+    ],
+    "reading": [
+      "reading.pitch_signposting",
+      "reading.pitch_takeaway"
     ],
     "speaking": [
-      "speaking.mini_pitch"
+      "speaking.pitch_delivery"
     ]
   },
   "prereq_lessons": [
-    "les_a2_greetings_intro",
-    "les_a2_small_talk",
-    "les_a2_introducing_others",
-    "les_a2_meeting_open",
-    "les_a2_meeting_participate",
-    "les_a2_email_basics",
-    "les_a2_phone_calls",
-    "les_a2_ask_for_help",
-    "les_a2_deadlines_tasks",
-    "les_a2_feedback_praise",
-    "les_a2_corporate_wrapup",
-    "les_a2_corpus_intro",
-    "les_a2_past_narrative",
-    "les_a2_future_will",
-    "les_a2_present_continuous",
-    "les_a2_modals_can_need",
-    "les_a2_imperatives",
-    "les_a2_prepositions_basic",
-    "les_a2_travel_vocab_core",
-    "les_a2_collocations",
-    "les_a2_stress_timing",
-    "les_a2_airport",
-    "les_a2_hotel_taxi",
-    "les_a2_restaurant_shopping",
-    "les_a2_reading_strategy",
-    "les_a2_writing_svo",
-    "les_a2_writing_bio",
-    "les_a2_writing_messages",
-    "les_a2_writing_past",
-    "les_a2_writing_selfcheck",
-    "les_b1_tenses_review",
-    "les_b1_modals",
-    "les_b1_conditionals",
-    "les_b1_passive",
     "les_b1_reported_speech",
     "les_b1_question_forms",
-    "les_b1_negotiation"
+    "les_b1_tenses_review"
   ],
   "estimated_time_min": 15
 }
