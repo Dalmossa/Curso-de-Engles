@@ -3,130 +3,154 @@
 **Lesson ID:** `les_b1_it_write_docs`
 **Module:** `mod_b1_it_technical`
 **CEFR:** B1
-**Reuse basis:** `adapt_with_attribution`
-**Source:** S01 (Google Style Guide, CC-BY-4.0), S10 (Google Testing, CC-BY-4.0), S16 (Kubernetes docs, CC-BY-4.0) — `sourced_external`
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: revisando um RFC de política de retentativas
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **documentation** | documentação | *conjunto de documentos técnicos* |
-| **RFC** | Request for Comments | *proposta de mudança/design* |
-| **design doc** | documento de design | *especificação técnica antes de implementar* |
-| **README** | README | *visão geral do projeto/repo* |
-| **changelog** | changelog / histórico de mudanças | *registro de versões* |
-| **migration guide** | guia de migração | *passos para atualizar versão* |
-| **deprecation** | depreciação | *aviso de remoção futura* |
-| **code sample** | exemplo de código | *trecho executável na doc* |
-| **diagram** | diagrama | *representação visual (arquitetura, fluxo)* |
-| **audience** | público-alvo | *quem vai ler (devs, ops, PMs)* |
-| **tone** | tom | *voz da documentação (imperativo, neutro)* |
-| **living document** | documento vivo | *atualizado continuamente* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> **Tech Writer:** "New **RFC** template: **Problem**, **Proposal**, **Alternatives**, **Trade-offs**, **Migration**, **Rollout**."
+> **Luiza (tech lead, São Paulo):** "We need an RFC for the payment retry policy. Keep the **problem** to two sentences — no solution yet."
 >
-> **Dev:** "Our **design doc** for `AuthService` split: **audience** = backend devs. **Tone** = imperative. **Code samples** must compile."
+> **Caio (backend developer, remoto):** "Should the proposal mention the idempotency key, or is that a separate **design doc**?"
 >
-> **Tech Writer:** "**README**: what, why, quickstart. **Changelog**: Keep a **living document**. **Deprecation** notice 2 versions before removal. **Migration guide** with before/after **code samples**."
+> **Luiza:** "Put it in the **proposal**. A design doc can go deeper later; the RFC needs the **trade-off** and the **rollout**."
 >
-> **Dev:** "Add **diagram** for auth flow. Link to **RFC** #442."
+> **Marina (platform engineer, Recife):** "The **runbook** is missing. If we ship this, on-call needs the rollback steps."
+>
+> **Caio:** "I'll add a **getting started** section and a **code sample**. The **audience** is backend devs, so skip the product overview."
+>
+> **Luiza:** "Good. Add a **deprecation note** for the old endpoint, link the **ADR** in the **table of contents**, and post comments by Friday."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **RFC** | proposta aberta a comentários | *Request for Comments*: um convite para revisar uma ideia; não é um relatório de bug. |
+| **design doc** | documento de design | Detalha **como** implementar; o RFC discute **por que** e com quais alternativas. |
+| **ADR** | registro de decisão de arquitetura | *Architecture Decision Record*: registra a decisão já tomada e o contexto dela. |
+| **runbook** | manual de operação | Passos que o plantão executa durante um incidente; imperativo e sem teoria. |
+| **getting started** | primeiros passos | Seção de um README para quem nunca rodou o projeto; use o imperativo. |
+| **table of contents** | índice / sumário | Em docs longas, lista as seções na ordem em que aparecem. |
+| **code sample** | exemplo de código | Deve compilar; trate cada trecho como código de produção. |
+| **deprecation note** | aviso de descontinuação | Avisa que algo será removido; use *deprecated*, nunca *depreciated*. |
+| **trade-off** | prós e contras de uma escolha | Apresente o que se ganha **e** o que se paga — uma coluna só não é trade-off. |
+| **rollout** | implantação gradual | Diga a ordem e o percentual: *five percent first, then one hundred percent*. |
+| **audience** | público-alvo | Escreva para quem lê: devs, operação ou produto mudam o vocabulário. |
+| **keep it concise** | mantenha conciso | Cortar adjetivos vagos é decisão de escrita, não falta de detalhe técnico. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "Vamos discutir sobre a proposta." → "Let's discuss about the proposal." | "Let's discuss the proposal." | *Discuss* é transitivo: não recebe *about*. |
+| "A API vai ser depreciada." → "The API will be depreciated." | "The API will be **deprecated**." | *Depreciated* é termo contábil (desvalorização); em software, a palavra é *deprecated*. |
+| "Nós decidimos usar Redis." → "We decided using Redis." | "We decided **to use** Redis." | *Decide* pede o infinitivo (*to* + verbo), não o gerúndio. |
+| "O RFC tem como objetivo propor chaves." | "This RFC **proposes** idempotency keys." | *This RFC proposes...* é direto; *has as objective* é calque do pt-BR. |
+| "A documentação deve ser escrita por nós." → "The doc must be written by us." | "**Write** the doc in an active voice." / "We will write the doc." | Voz passiva em excesso esconde o autor da ação; prefira o imperativo em instruções. |
+| "O time revisa os comentários hoje; o time revisou ontem." | "The team **reviews** comments today and **reviewed** them yesterday." | Tempo verbal precisa casar com o marcador de tempo (*today* / *yesterday*). |
+| "Segue em anexo o documento." → "Please find attached the doc." | "See the **linked** spec in the table of contents." | Em repositórios, o documento é *linked*, não anexado a um e-mail. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-An **RFC** (Request for Comments) is:
-| Slot | Value |
-|------|-------|
-| A | A bug report |
-| B | **A design proposal for review** |
-| C | A test plan |
-| D | A deployment script |
+### Exercício 1 — Reconhecimento (o problema do RFC)
+
+Qual linha apresenta o **problema** sem misturar a solução?
+
+| Opção | Linha |
+|---|---|
+| A | "We will add an idempotency key to stop duplicate charges." |
+| B | "Retries can charge a customer twice when the first response is lost." |
+| C | "The rollout starts at five percent of traffic on Tuesday." |
+| D | "The ADR records the decision made in the review." |
+
 **Key:** B
-**br_pt_form:** "proposta de design para revisão"
+A descreve a solução (*will add*), C descreve o *rollout* e D descreve o *ADR*. A seção de problema só nomeia o que acontece hoje: *retries can charge a customer twice*.
 
-### Item 2 — Vocabulary (Matching)
-Match the doc type to its purpose:
-| Doc Type | Purpose |
-|----------|---------|
-| **README** | a. Project overview + quickstart |
-| **Design doc** | b. Technical spec before coding |
-| **Changelog** | c. Version history |
-| **Migration guide** | d. Steps to upgrade |
-**Key:** README→a, Design doc→b, Changelog→c, Migration guide→d
-**br_pt_form:** "README", "documento de design", "changelog", "guia de migração"
+### Exercício 2 — Transformação L1 → L2
 
-### Item 3 — Grammar: Imperative for documentation (fill-in-blank)
-Complete with **imperative verbs**:
-"______ (install) the package. ______ (run) the tests. ______ (check) the logs. ______ (do not commit) secrets."
-**Key:** Install / Run / Check / Do not commit
-**br_pt_form:** "Instale", "Execute", "Verifique", "Não comite"
+Reescreva as intenções em inglês natural para um RFC de pagamentos:
 
----
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "O objetivo deste RFC é propor chaves de idempotência." | "This RFC proposes idempotency keys." |
+| "A API antiga será descontinuada na versão 3." | "The old API will be deprecated in version 3." |
+| "O time decidiu usar Redis para guardar as chaves." | "The team decided to use Redis to store the keys." |
+| "Antes de rodar, instale as dependências." | "Before running, install the dependencies." |
 
-## FASE 3 — Output Task [4 min]
+**Key:** ver tabela.
+Note as quatro decisões: *proposes* no presente para o documento, *will be deprecated* para a remoção futura, *decided to use* com infinitivo e *install* no imperativo para o leitor.
 
-### Writing: RFC Sketch (individual)
-**Scenario:** Write a **mini-RFC** (150 words) for: "Add idempotency keys to Payment API".
+### Exercício 3 — Complete a seção de mudanças
 
-**Structure:**
-```
-# RFC: Add Idempotency Keys to Payment API
+Preencha com `proposes`, `Install`, `will be deprecated`, `Do not commit` ou `reviews`:
 
-## Problem
-Duplicate charges when user retries.
+1. "This RFC ______ a retry limit for the payments endpoint."
+2. "______ the dependencies before you run the code sample."
+3. "The old endpoint ______ in version 3."
+4. "______ secrets in a code sample."
+5. "The tech lead ______ comments by Friday."
 
-## Proposal
-Add `Idempotency-Key` header. Store key + result for 24h.
-
-## Alternatives
-- Client-side dedup (rejected: unreliable)
-- DB unique constraint (rejected: race condition)
-
-## Trade-offs
-+ Prevents double charge
-- Extra storage, latency
-
-## Migration
-New header optional for 2 versions, then required.
-
-## Rollout
-Canary 5% → 100%.
-```
+**Key:** 1) proposes; 2) Install; 3) will be deprecated; 4) Do not commit; 5) reviews.
+O RFC *propõe* no presente, a remoção está no futuro, as instruções usam a forma base do verbo (*Install*, *Do not commit*) e *reviews* concorda com o sujeito singular *the tech lead*.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-A **changelog** records:
-| Slot | Value |
-|------|-------|
-| A | Future plans |
-| B | **Version history (added, changed, fixed, removed)** |
-| C | Design proposals |
-| C | Meeting notes |
-**Key:** B
-**br_pt_form:** "histórico de versões"
+### 5 sentenças-alvo (leia em voz corrida)
+This RFC proposes idempotency keys for the payments endpoint.
+Retries can charge a customer twice when the first response is lost.
+The team decided to use Redis to store each key for twenty-four hours.
+Install the dependencies and run the code sample before you review the trade-offs.
+The old endpoint will be deprecated in version 3; see the ADR and the runbook for rollback steps.
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **imperative** for documentation:
-| Slot | Value |
-|------|-------|
-| A | **Configure** the timeout in settings. |
-| B | **Configuring** the timeout in settings. |
-| C | **Configured** the timeout in settings. |
-| D | **Configures** the timeout in settings. |
-**Key:** A
-**br_pt_form:** "Configure o timeout nas configurações."
+### Foco articulatório para falantes de pt-BR
+
+- **/aɪ/ em *idempotency* /ˌaɪdəmˈpoʊtənsi/ e *twice* /twaɪs/**: o ditongo é o mesmo de *eye*; não reduza a primeira sílaba de *idempotency* a /i/.
+- **/ˈpoʊ/ com sílaba tônica em *idempotency***: a força está em *po*, não na abertura da palavra; evite o estresse inicial de "ídem".
+- **/eɪ/ em *deprecated* /dɪˈprekeɪtɪd/**: deslize de /e/ para /ɪ/ na penúltima sílaba; não pronuncie um /e/ puro.
+- **/z/ final em *keys* /kiːz/ e /s/ final em *steps* /steps/**: mantenha a sonoridade final sem acrescentar uma vogal ("keys-i", "steps-i").
+- **/ð/ em *the, this***: língua entre os dentes com voz; não troque por /d/ em *the trade-offs*.
+- **/k/ final em *runbook* /ˈrʌnbʊk/**: solte o ar sem inserir "e" no fim; a epêntese é comum em falantes de pt-BR.
+
+### Prompt de produção (escrita)
+
+Escreva um **mini-RFC de 120 a 150 palavras** para "Add idempotency keys to Payment API". Atenda a todos os requisitos:
+
+1. comece com o título `# RFC: Add Idempotency Keys to Payment API`;
+2. escreva um parágrafo de **problem** em até duas frases, sem nomear a solução;
+3. abra o **proposal** com *This RFC proposes...*;
+4. apresente um **trade-off** com um ganho e um custo;
+5. inclua uma linha de **rollout** com percentual e dia;
+6. inclua uma **deprecation note** com número de versão e a palavra *deprecated*;
+7. referencie o **runbook** e um **code sample** curto (ou descreva o que ele mostra) na **table of contents**.
+
+Inclua um detalhe real do seu contexto (endpoint, fila, config, incidente).
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Vocabulário (L1):** Em "The old endpoint will be deprecated in version 3", *deprecation note* significa:
+   A) um aviso de que algo será removido em uma versão futura  B) um relatório de erro de execução  C) um exemplo de código compilável  D) um registro de decisão de arquitetura
+   **Key:** A
+   Um *deprecation note* avisa a remoção futura; o relatório é um *bug report*, o exemplo é um *code sample* e a decisão vai no *ADR*.
+
+2. **Gramática (L1):** Qual linha dá uma instrução correta em um *getting started*?
+   A) "Installing the dependencies before you run the sample."  B) "To install the dependencies before you run the sample."  C) **"Install the dependencies before you run the sample."**  D) "Installed the dependencies before you run the sample."
+   **Key:** C
+   Instruções usam a forma base do verbo (*Install*); as alternativas A e B são fragmentos e D troca a instrução por um fato passado.
+
+3. **Registro e tempo verbal (L1):** Qual par de frases mantém o registro e o tempo coerentes em um RFC?
+   A) "This RFC is propose a retry limit. The team decided using Redis."  B) **"This RFC proposes a retry limit. The team decided to use Redis."**  C) "This RFC proposes a retry limit. The team decided using Redis."  D) "This RFC is proposing a retry limit. The team decide to use Redis."
+   **Key:** B
+   *Proposes* concorda com o sujeito *this RFC*, e *decided to use* traz o infinitivo exigido pelo verbo — as demais misturam formas verbais incompatíveis.
 
 ---
 
@@ -135,92 +159,52 @@ Choose the correct **imperative** for documentation:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_b1_it_write_docs",
   "cefr_level": "B1",
-  "provenance": {
-    "reuse_basis": "adapt_with_attribution",
-    "adapted_sources": [
-      {
-        "id": "S01",
-        "title": "Google Developer Documentation Style Guide",
-        "licence": "CC-BY-4.0",
-        "what_was_adapted": "documentation tone (imperative, concise), structure (overview, prerequisites, steps), code sample requirements, audience awareness",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      },
-      {
-        "id": "S10",
-        "title": "Google Testing Documentation",
-        "licence": "CC-BY-4.0",
-        "what_was_adapted": "documentation as living artifact, changelog practices, deprecation notices, migration guides",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      },
-      {
-        "id": "S16",
-        "title": "Kubernetes Documentation - Contributing",
-        "licence": "CC-BY-4.0",
-        "what_was_adapted": "RFC/KEP process, design doc template, documentation structure for technical projects",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      }
-    ],
-    "authored_material": "all exercises, the mini-text (Tech Writer/Dev dialogue), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task template",
-    "bibliography_only": [
-      "docs/Ingles-Tecnico-Para-Informatica.md (CETAM, all rights reserved) - scoping of technical documentation register"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - terminology adapted, not quoted; all sources CC-BY permissive"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "reading", "writing"],
   "output_modalities": ["writing", "speaking"],
   "skill_items": {
     "grammar": [
-      "grammar.imperative_documentation"
+      "grammar.docs_imperative_directive",
+      "grammar.docs_tense_consistency"
     ],
     "vocabulary": [
-      "vocab.docs.documentation",
-      "vocab.docs.rfc",
-      "vocab.docs.design_doc",
-      "vocab.docs.readme",
-      "vocab.docs.changelog",
-      "vocab.docs.migration_guide",
-      "vocab.docs.deprecation",
-      "vocab.docs.code_sample",
-      "vocab.docs.diagram",
-      "vocab.docs.audience",
-      "vocab.docs.tone",
-      "vocab.docs.living_document"
+      "vocab.docs_rfc_terms",
+      "vocab.docs_artifact_names"
     ],
     "listening": [
-      "listening.docs_context"
+      "listening.docs_review_context"
     ],
     "pronunciation": [
-      "pronunciation.technical_terms"
+      "pronunciation.docs_acronym_stress"
     ],
     "reading": [
-      "reading.technical_documentation"
+      "reading.docs_rfc_structure",
+      "reading.docs_runbook_detail"
     ],
     "writing": [
-      "writing.rfc",
-      "writing.design_doc",
-      "writing.documentation"
+      "writing.docs_rfc",
+      "writing.docs_formal_email",
+      "writing.docs_summary"
     ]
   },
   "prereq_lessons": [
-    "les_a2_it_terms_basics",
-    "les_a2_it_communication"
+    "les_a2_writing_svo",
+    "les_a1_reading_skimming",
+    "les_a2_reading_strategy",
+    "les_a2_it_reading_strategy",
+    "les_a2_it_terms_basics"
   ],
   "estimated_time_min": 15
 }
 ```
-
----
-
-## Fontes e Atribuição
-
-- **S01** Google Developer Documentation Style Guide, licensed under CC-BY-4.0. Adapted for documentation tone, structure, and code sample standards.
-- **S10** Google Testing Documentation, licensed under CC-BY-4.0. Adapted for living document practices and migration guides.
-- **S16** Kubernetes Documentation, licensed under CC-BY-4.0. Adapted for RFC/design doc process and technical documentation structure.

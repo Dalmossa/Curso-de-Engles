@@ -39,14 +39,14 @@ info:
   # before the pin is moved.
   x-contract-provenance:
     source-of-truth: Curso-de-Ingles/specs/*.md (+ external-sources.md)
-    derived-at: 2026-11-18
+    derived-at: 2026-11-19
     spec-blobs:
-      specs/assessment-item-spec.md: 409af1bdce7eb30d2273b4127c8217d87af4e72a
-      specs/curriculum-graph-spec.md: 62d7018e7a1c320480f6c0fb7960f0425b143e7f
+      specs/assessment-item-spec.md: 7cd4822fafbecc6c4ca6a5cbbc0e3524080b4640
+      specs/curriculum-graph-spec.md: 9a0eb9dec18acff5bc3fc44aea736b61203c0b9c
       specs/listening-corpus-spec.md: 295e1b8546d0bd1fc6852b363d35e93947535f2f
       specs/post-lesson-practice-spec.md: 9566fe6088035f5a8bd88ac754503c26c7dd9c59
       specs/stats-progress-evaluation-spec.md: a8ae6bb6812a2da4ef3380879e105a7184d86cc8
-      external-sources.md: c6e8f09a02a12a9292770d1bcf6401a1dc8bef5f
+      external-sources.md: 7974d3f6d879e866f776042bb14037e20b4e0a7d
 
 servers:
   # CONSTITUTION.md §4.4 — URL path versioning is mandatory: /api/v1.

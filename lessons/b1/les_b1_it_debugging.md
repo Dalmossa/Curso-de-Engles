@@ -3,113 +3,144 @@
 **Lesson ID:** `les_b1_it_debugging`
 **Module:** `mod_b1_it_technical`
 **CEFR:** B1
-**Reuse basis:** `adapt_with_attribution`
-**Source:** S09 (Google Cloud Debugging, CC-BY-4.0), S13 (MDN Console API, CC-BY-SA-2.5), S14 (MDN Error Handling, CC-BY-SA-2.5), S11 (Google Engineering Practices, CC-BY-3.0) — `sourced_external`
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: caçando um bug intermitente e escrevendo o relatório
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **debug** | depurar / debugar | *encontrar e corrigir bugs* |
-| **breakpoint** | ponto de parada | *pausa execução para inspecionar* |
-| **stack trace** | stack trace / rastro de pilha | *sequência de chamadas no erro* |
-| **root cause** | causa raiz | *origem fundamental do bug* |
-| **reproduce** | reproduzir | *fazer o bug acontecer de novo* |
-| **log** | log / registro | *saída de diagnóstico* |
-| **console** | console | *ferramenta de debug no browser/terminal* |
-| **exception** | exceção | *erro que interrompe fluxo normal* |
-| **error handling** | tratamento de erro | *código que lida com falhas* |
-| **try / catch** | tentar / capturar | *blocos para capturar exceções* |
-| **assert** | assert / afirmar | *verifica condição, falha se falsa* |
-| **hotfix** | hotfix | *correção urgente em produção* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> **Dev:** "Production **exception**: `NullPointerException` at `PaymentService:42`. **Stack trace** shows `user.getWallet()` returns null."
+> **Bia (backend developer, São Paulo):** "The checkout bug is back, but only when a coupon is applied. I can't reproduce it on my machine."
 >
-> **Lead:** "Can you **reproduce** locally? Add **log** before line 42. Use **breakpoint** to inspect `user` object."
+> **Rafael (tech lead, remote):** "Start with the log lines from 14:07. Add a breakpoint in the coupon lookup and send me the stack trace."
 >
-> **Dev:** "Reproduced. **Root cause**: wallet not initialized for guest users. **Error handling** missing — no **try/catch**, no **assert**."
+> **Bia:** "Got it. The stack trace points to `CouponService.GetDiscount`. The log shows an empty value for the coupon."
 >
-> **Lead:** "Fix: add **assert** `user.hasWallet()`. **Hotfix** deploy today. Add **test** for guest flow."
+> **Rafael:** "Bisect the last five commits. I think the regression came from the coupon change on Tuesday."
+>
+> **Bia:** "You're right. The root cause is an uninitialised discount object. We call it a flaky test because it only fails under load."
+>
+> **Rafael:** "Ship a workaround today and prepare the hotfix for tomorrow. Then add a regression test with clear steps to reproduce."
+>
+> **Bia:** "Agreed. I'll write the incident report with the expected behaviour, the actual behaviour and the cause of the failure."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **reproduce** | reproduzir | Em relatório, o título é *steps to reproduce*; *reproduce* é o verbo. |
+| **repro / reproduction** | repro / reprodução | *Repro* é gíria de time: diga *I found a repro*, com artigo, não *o repro*. |
+| **stack trace** | rastro de pilha / stack trace | Escreva separado: *stack trace*; *stacktrace* junto é erro gráfico comum. |
+| **breakpoint** | ponto de parada | Uma palavra só: *breakpoint*, não *break point*. |
+| **log line / log level** | linha de log / nível de log | *Log* é substantivo e verbo; *a log line* é uma única linha. |
+| **bisect** | bissecionar (commits) | Em Git, *git bisect*; diga *bisect the last five commits*, não *do a bisection of* them. |
+| **regression** | regressão | *A regression* conta como um evento novo: *the change caused a regression*. |
+| **flaky test** | teste intermitente | *Flaky* descreve o **teste**; para o bug, prefira *intermittent bug*. |
+| **root cause** | causa raiz | Diga *the root cause **of** the failure* — não *from the failure*. |
+| **workaround** | solução temporária / gambiarra | Substantivo junto: *a workaround*; o verbo é separado: *work around the issue*. |
+| **hotfix** | correção urgente | Escreva junto em texto de release: *hotfix*, não *hot fix*. |
+| **incident report** | relatório de incidente | *Report* é o documento; *reporting* é o ato de relatar. |
+| **steps to reproduce** | passos para reproduzir | Título fixo do relatório; *steps for reproduce* está errado. |
+| **that** (oração relativa) | que (oração relativa) | *The commit **that** introduced the bug* — use *that* para coisas; *what* não vem depois de substantivo. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "I can't reproduce the bug **in** my machine." | "I can't reproduce the bug **on** my machine." | Máquina é superfície de trabalho: use *on my machine*, não *in*. |
+| "The **stacktrace** points to the service." | "The **stack trace** points to the service." | O termo é escrito como duas palavras em texto técnico. |
+| "The root cause **from** the failure is clear." | "The root cause **of** the failure is clear." | *Cause* pede *of*; *reason* pede *for* (*the reason for the timeout*). |
+| "The commit **what** introduced the bug was reverted." | "The commit **that** introduced the bug was reverted." | Depois de um substantivo, a relativa usa *that/which*; *what* já contém o antecedente. |
+| "We made a **work around** for today." | "We shipped a **workaround** today." | No substantivo, escreva junto; *work around* é o verbo. |
+| "The bug is **flaky** only under load." | "The test is **flaky**; the bug is **intermittent**." | *Flaky* qualifica o teste, não o comportamento do sistema. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-A **stack trace** shows:
-| Slot | Value |
-|------|-------|
-| A | Memory usage over time |
-| B | **Sequence of function calls leading to error** |
-| C | CPU percentage |
-| D | Network latency |
+### Exercício 1 — Gramática: oração relativa com *that*
+
+Escolha a forma correta para a frase do incidente:
+
+| Opção | Frase |
+|---|---|
+| A | "The log line **what** recorded the failure was deleted." |
+| B | **"The log line **that** recorded the failure was deleted."** |
+| C | "The log line **who** recorded the failure was deleted." |
+| D | "The log line recorded the failure was deleted." |
+
 **Key:** B
-**br_pt_form:** "sequência de chamadas até o erro"
 
-### Item 2 — Vocabulary (Matching)
-Match the debugging action to the tool:
-| Action | Tool |
-|--------|------|
-| **Pause execution** | a. **Breakpoint** |
-| **Print variable value** | b. **Log / console.log** |
-| **Inspect call stack** | c. **Stack trace** |
-| **Verify assumption** | d. **Assert** |
-**Key:** Pause→a, Print→b, Inspect→c, Verify→d
-**br_pt_form:** "ponto de parada", "log", "stack trace", "assert"
+*That* liga *the log line* ao verbo *recorded*. *What* não pode vir depois de um substantivo, *who* serve para pessoas e, sem pronome relativo, a frase perde a ligação entre o nome e a ação.
 
-### Item 3 — Grammar: Past perfect for debugging narrative (fill-in-blank)
-Complete with **past perfect**:
-"By the time we **found** the bug, the user **had already reported** it twice. The wallet **had not been initialized** for guests."
-**Key:** had already reported / had not been initialized
-**br_pt_form:** "já tinha reportado", "não tinha sido inicializada"
+### Exercício 2 — Vocabulário: complete com o termo certo
+
+Complete cada frase com **breakpoint**, **stack trace** ou **workaround**:
+
+1. "Add a ______ at line 42 to inspect the coupon object."
+2. "The ______ shows the calls that led to the exception."
+3. "We enabled a ______ while the hotfix is under review."
+
+**Key:** 1) breakpoint; 2) stack trace; 3) workaround.
+
+O *breakpoint* pausa a execução, o *stack trace* mostra a sequência de chamadas até o erro e o *workaround* contorna o problema enquanto a correção definitiva não chega.
+
+### Exercício 3 — Transformação L1 → L2
+
+Reescreva as intenções em inglês natural:
+
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "A causa raiz da falha está no serviço de cupom." | "The root cause of the failure is in the coupon service." |
+| "O motivo do timeout ainda não está claro." | "The reason for the timeout is still unclear." |
+| "O commit que introduziu a regressão foi revertido." | "The commit that introduced the regression was reverted." |
+
+**Key:** ver tabela.
+
+*Cause* combina com *of* e *reason* com *for*. Na terceira frase, o pronome relativo depois de *the commit* é *that* — nunca *what*.
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Speaking: Debugging Session Roleplay (pares)
-**Student A (Dev):** Describe the bug you're investigating. Use: *debug, breakpoint, stack trace, root cause, reproduce, log, console, exception, error handling, try/catch, assert, hotfix*.
-**Student B (Lead):** Ask 3 diagnostic questions. Suggest next step.
+### 5 sentenças-alvo (leia em voz corrida)
+I can reproduce the bug only when a coupon is applied.
+The stack trace points to `CouponService.GetDiscount`.
+I set a breakpoint on the coupon lookup and read the log lines.
+The commit that introduced the regression was reverted yesterday.
+The root cause of the failure is an uninitialised discount object.
 
-**Bug scenarios:**
-1. Intermittent 500 on `/checkout` — only for users with coupon
-2. Memory leak in background worker — OOM after 6 hours
-3. Race condition: double charge when user clicks "Pay" twice
+### Foco articulatório para falantes de pt-BR
 
-**Example (Dev):** "Getting `TimeoutException` on `/checkout`. **Stack trace** points to `InventoryClient`. **Reproduced** with 50 concurrent requests. **Root cause**: no timeout configured. **Fix**: add 5s timeout + **try/catch** fallback."
+- **/ˌriːprəˈduːs/ em *reproduce***: a tônica cai na última sílaba (*re-pro-DUCE*); não puxe o acento para *RE-pro-duce*.
+- **/ˈstæk treɪs/ em *stack trace***: são duas palavras, com /s/ final em cada uma; não junte como *stacktrace* nem acrescente uma vogal ao final.
+- **/ˈbreɪkpɔɪnt/ em *breakpoint***: uma palavra só, com o ditongo /eɪ/ na primeira sílaba; evite a pausa de *break point*.
+- **/ðæt/ em *that* e /əv/ em *of***: em *that*, a ponta da língua encosta nos dentes de cima com voz; em *the root cause of the failure*, *of* fica fraco (/əv/).
+
+### Prompt de produção (oral ou escrita)
+
+Imagine que você está passando o diagnóstico de um bug para um colega em outro fuso. Escreva ou diga **4 a 6 falas** em que você:
+
+1. Descreve o bug com **reproduce** e uma condição (*only when…*).
+2. Diz onde procurou, usando **stack trace**, **breakpoint** ou **log lines**.
+3. Usa uma oração relativa com **that** (*the commit that introduced…*).
+4. Usa **the root cause of** ou **the reason for** e nomeia **workaround** ou **hotfix**.
+5. Termina com uma frase sobre os **steps to reproduce**.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Try / catch** is used for:
-| Slot | Value |
-|------|-------|
-| A | Looping over arrays |
-| B | **Error handling / catching exceptions** |
-| C | Defining variables |
-| D | Importing modules |
-**Key:** B
-**br_pt_form:** "tratamento de erro / capturar exceções"
+1. **Vocabulário (L1):** O colega diz "We'll ship a workaround today." O que ele quer dizer?
+   A) Vamos corrigir a causa raiz hoje.  B) Vamos entregar uma solução temporária hoje.  C) Vamos apagar os logs hoje.  D) Vamos revert o deploy hoje.
+   **Key:** B
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **past perfect**:
-| Slot | Value |
-|------|-------|
-| A | The bug **was fixed** before we **had deployed**. |
-| B | The bug **had been fixed** before we **deployed**. |
-| C | The bug **fixed** before we **had deployed**. |
-| D | The bug **has fixed** before we **deployed**. |
-**Key:** B
-**br_pt_form:** "O bug tinha sido corrigido antes de implantarmos."
+2. **Gramática (L1):** Qual frase está correta?
+   A) "The commit what introduced the bug was reverted."  B) "The commit that introduced the bug was reverted."  C) "The commit who introduced the bug was reverted."  D) "The commit introduced the bug was reverted."
+   **Key:** B
 
 ---
 
@@ -118,94 +149,59 @@ Choose the correct **past perfect**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_b1_it_debugging",
   "cefr_level": "B1",
-  "provenance": {
-    "reuse_basis": "adapt_with_attribution",
-    "adapted_sources": [
-      {
-        "id": "S09",
-        "title": "Google Cloud Debugging Documentation",
-        "licence": "CC-BY-4.0",
-        "what_was_adapted": "debugging workflow terminology (breakpoint, stack trace, reproduce, root cause, log, hotfix); adapted for B1 level",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      },
-      {
-        "id": "S13",
-        "title": "MDN Web Docs - Console API",
-        "licence": "CC-BY-SA-2.5",
-        "what_was_adapted": "console.log, console.error, debugging in browser context; terminology only",
-        "attribution_location": "section 'Fontes e Atribuição' below",
-        "share_alike_note": "Lesson material authored, not quoted; source cited as background per external-sources.md §7.2"
-      },
-      {
-        "id": "S14",
-        "title": "MDN Web Docs - Error Handling (try/catch, throw)",
-        "licence": "CC-BY-SA-2.5",
-        "what_was_adapted": "exception, try/catch, throw, error handling patterns; terminology only",
-        "attribution_location": "section 'Fontes e Atribuição' below",
-        "share_alike_note": "Lesson material authored, not quoted; source cited as background per external-sources.md §7.2"
-      },
-      {
-        "id": "S11",
-        "title": "Google Engineering Practices - Debugging",
-        "licence": "CC-BY-3.0",
-        "what_was_adapted": "debugging methodology (reproduce, isolate, root cause, fix, verify); process framing",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      }
-    ],
-    "authored_material": "all exercises, the mini-text (Dev/Lead dialogue), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/Ingles-Tecnico-Para-Informatica.md (CETAM, all rights reserved) - scoping of debugging register"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - terminology adapted, not quoted; CC-BY-SA sources managed per external-sources.md §7.2"
-  },
-  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "skills_touched": ["grammar", "vocabulary", "listening", "reading", "pronunciation", "speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.past_perfect_debugging"
+      "grammar.debugging_relative_clause_that",
+      "grammar.debugging_cause_of_reason_for",
+      "grammar.compound_head_agreement"
     ],
-    "vocabulary": [
-      "vocab.debug.debug",
-      "vocab.debug.breakpoint",
-      "vocab.debug.stack_trace",
-      "vocab.debug.root_cause",
-      "vocab.debug.reproduce",
-      "vocab.debug.log",
-      "vocab.debug.console",
-      "vocab.debug.exception",
-      "vocab.debug.error_handling",
-      "vocab.debug.try_catch",
-      "vocab.debug.assert",
-      "vocab.debug.hotfix"
+    "vocab": [
+      "vocab.it_computer_terms.debugging_report",
+      "vocab.debugging.reproduce",
+      "vocab.debugging.stack_trace",
+      "vocab.debugging.breakpoint",
+      "vocab.debugging.log_line",
+      "vocab.debugging.bisect",
+      "vocab.debugging.regression",
+      "vocab.debugging.flaky_test",
+      "vocab.debugging.root_cause",
+      "vocab.debugging.workaround",
+      "vocab.debugging.hotfix",
+      "vocab.gloss_pattern_that_is"
+    ],
+    "reading": [
+      "reading.debugging_incident_report_scan",
+      "reading.debugging_log_detail"
     ],
     "listening": [
-      "listening.debug_context"
+      "listening.debugging_handoff_context"
     ],
     "pronunciation": [
-      "pronunciation.technical_terms"
+      "pronunciation.debugging_term_stress"
+    ],
+    "speaking": [
+      "speaking.debugging_handoff"
     ]
   },
   "prereq_lessons": [
-    "les_a2_it_terms_basics",
-    "les_a2_it_communication"
+    "les_a1_reading_skimming",
+    "les_a2_it_reading_strategy",
+    "les_a2_it_terms_basics"
   ],
   "estimated_time_min": 15
 }
 ```
-
----
-
-## Fontes e Atribuição
-
-- **S09** Google Cloud Debugging Documentation, licensed under CC-BY-4.0. Adapted for debugging workflow vocabulary.
-- **S13** MDN Web Docs - Console API, licensed under CC-BY-SA-2.5. Referenced for browser debugging terminology.
-- **S14** MDN Web Docs - Error Handling, licensed under CC-BY-SA-2.5. Referenced for try/catch and exception terminology.
-- **S11** Google Engineering Practices - Debugging, licensed under CC-BY-3.0. Adapted for debugging methodology.

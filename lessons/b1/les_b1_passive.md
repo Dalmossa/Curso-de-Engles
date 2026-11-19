@@ -3,110 +3,145 @@
 **Lesson ID:** `les_b1_passive`
 **Module:** `mod_b1_grammar_consolidate`
 **CEFR:** B1
-**Reuse basis:** `cite_only`
-**Source:** `docs/Ingles-Tecnico-Para-Informatica.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: um stand-up que resume deploy, bug corrigido e processo
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **passive voice** | voz passiva | *sujeito recebe a ação* |
-| **active voice** | voz ativa | *sujeito pratica a ação* |
-| **be + past participle** | ser + particípio passado | *estrutura passiva* |
-| **by + agent** | por + agente | *quem pratica a ação* |
-| **is done** | é feito | *presente passivo* |
-| **was done** | foi feito | *passado passivo* |
-| **will be done** | será feito | *futuro passivo* |
-| **has been done** | tem sido feito | *presente perfeito passivo* |
-| **is being done** | está sendo feito | *presente contínuo passivo* |
-| **was being done** | estava sendo feito | *passado contínuo passivo* |
-| **agent** | agente | *quem pratica a ação* |
-| **focus** | foco | *ênfase* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**Active**: 'The developer **wrote** the code.' **Passive**: 'The code **was written** by the developer.'"
+> **Lia (backend developer, São Paulo):** "The release notes are still being written, and the deploy is scheduled for ten."
 >
-> "**Present passive**: 'The report **is written** every week.' **Past passive**: 'The report **was written** yesterday.' **Future passive**: 'The report **will be written** tomorrow.'"
+> **Rafa (tech lead, remote):** "Good. The login bug was fixed last night, and the patch was reviewed by Ana."
 >
-> "**Present perfect passive**: 'The report **has been written**.' **Present continuous passive**: 'The report **is being written**.'"
+> **Lia:** "The API docs have been updated — but the new endpoint is not described in section two yet."
+>
+> **Rafa:** "Was the rollback tested? I don't want that step to get skipped again."
+>
+> **Caio (QA, Recife):** "It was. The runbook was written before the release, and the steps are going to be shared right after this stand-up."
+>
+> **Lia:** "One more thing: the old token will be deprecated on Friday, so nothing gets broken by surprise."
+>
+> **Rafa:** "Great. Make sure the customer note is written in plain English — no jargon, no acronyms."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **be + past participle** | ser + particípio passado | A passiva não troca o sujeito: ele passa a receber a ação (*the bug was fixed*). |
+| **by + agent** | por + agente | Use *by* só quando o agente acrescenta informação; se todo mundo sabe quem fez, omita. |
+| **get + past participle** | get + particípio | Comum na fala (*it got fixed*), mas evite em status e runbooks: prefira *was fixed*. |
+| **is being written** | está sendo escrito | *be* + *being* + particípio marca uma ação em andamento agora. |
+| **has been updated** | foi / tem sido atualizado | O foco é o resultado presente, não o momento da atualização. |
+| **is going to be shared** | vai ser compartilhado | Futuro com *going to* também admite passiva: *be going to be* + particípio. |
+| **will be deprecated** | será descontinuado | Padrão em avisos de API; *deprecated* não significa "quebrado". |
+| **runbook** | runbook / manual operacional | Fica *runbook* em en-US; não traduza como *book of execution*. |
+| **plain English** | linguagem simples | Diga *written in plain English* para texto voltado ao cliente. |
+| **patient** | paciente / receptor da ação | Termo técnico opcional: é o sujeito da passiva, quem sofre a ação. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "O bug foi corrigido." → "The bug **got** fixed." em relatório | "The bug **was** fixed last night." | *Get* + particípio é conversacional; em status report use *be* + particípio. |
+| "Foi corrigido pela Ana." → "It was fixed by Ana." quando o time já sabe quem corrigiu | "It was fixed." | O agente é omissível quando é óbvio; *by* entra só se trouxer informação nova. |
+| "O código foi **write** pelo dev." → "The code was **wrote** by the dev." | "The code was **written** by the dev." | *Wrote* é o passado simples; depois de *be*, use o particípio *written*. |
+| "O deploy é **do** toda sexta." → "The deploy is do every Friday." | "The deploy is **done** every Friday." | Particípio irregular: *do → done*; a base *do* não forma passiva. |
+| "A API vai ser **deploy**." → "The API will deploy next week." | "The API will **be deployed** next week." | Futuro passivo exige *will + be + particípio*; sem *be*, a API vira agente. |
+| "Está sendo **review**." → "It is being review." | "It is being **reviewed**." | Contínuo passivo é *be + being + particípio*, nunca a base do verbo. |
+| "Foi enviado por mim." → "It was sent by me." quando você é o foco | "I sent it." | Se o agente é você e a frase fica pesada, a voz ativa soa mais natural. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Passive voice** focuses on:
-| Slot | Value |
-|------|-------|
-| A | The person doing the action |
-| B | **The action or the receiver** |
-| C | The time |
-| D | The place |
-**Key:** B
-**br_pt_form:** "voz passiva / a ação ou o receptor"
+### Exercício 1 — Reconhecimento (passiva em um status update)
 
-### Item 2 — Vocabulary (Matching)
-Match the passive form to its tense:
-| Form | Tense |
-|------|-------|
-| **Is done** | a. Present |
-| **Was done** | b. Past |
-| **Will be done** | c. Future |
-| **Has been done** | d. Present perfect |
-**Key:** Is done→a, Was done→b, Will be done→c, Has been done→d
-**br_pt_form:** "é feito", "foi feito", "será feito", "tem sido feito"
+Qual linha relata uma correção concluída com a passiva correta?
 
-### Item 3 — Grammar: Active to passive (fill-in-blank)
-Rewrite in **passive voice**:
-"The developer wrote the code. → The code ______ by the developer."
-"She will send the email. → The email ______ by her."
-"They have finished the project. → The project ______ by them."
-**Key:** was written / will be sent / has been finished
-**br_pt_form:** "foi escrito / será enviado / tem sido finalizado"
+| Opção | Status line |
+|---|---|
+| A | "The login bug was fix last night." |
+| B | **"The login bug was fixed last night."** |
+| C | "The login bug is fix last night." |
+| D | "The login bug was fixing last night." |
 
----
+**Key:** B — *was* + particípio *fixed* combina com o marcador de tempo passado; em **A** e **C** o verbo está na base, e em **D** o progressivo faz o bug virar agente da própria correção.
 
-## FASE 3 — Output Task [4 min]
+### Exercício 2 — Transformação L1 → L2
 
-### Speaking: Passive in Tech (individual)
-**Describe tech processes** using passive voice.
+Reescreva as intenções do stand-up em inglês natural:
 
-**Example:**
-> "The code **is written** by developers. The software **is tested** by QA. The bug **was fixed** yesterday. The feature **will be deployed** next week. The documentation **has been updated**."
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "O patch foi revisado pela Ana." | "The patch was reviewed by Ana." |
+| "Os documentos estão sendo atualizados." | "The docs are being updated." |
+| "A nova rota será implantada na sexta." | "The new endpoint will be deployed on Friday." |
+| "O rollback já foi testado." | "The rollback has already been tested." |
 
-**Create your own 6 passive sentences** about tech processes.
+**Key:** ver tabela — em cada linha o sujeito recebe a ação, então o verbo carrega *be* no tempo adequado mais o particípio; *by Ana* aparece só porque o nome do revisor acrescenta informação.
+
+### Exercício 3 — Complete com *be* + particípio
+
+Preencha com a forma correta. Atenção aos particípios irregulares e ao registro formal:
+
+1. "The bug ______ (fix) before the stand-up."
+2. "The runbook ______ (write) by Caio last week."
+3. "The docs ______ (update) right now."
+4. "The old token ______ (deprecate) on Friday."
+5. "The retry step must ______ (not / skip) in the runbook."
+
+**Key:** 1) was fixed; 2) was written; 3) are being updated; 4) will be deprecated; 5) not be skipped — *written* é o particípio irregular de *write*, e *get skipped* soaria informal demais para um runbook.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Agent** in passive voice is:
-| Slot | Value |
-|------|-------|
-| A | The receiver of the action |
-| B | **The person who does the action** |
-| C | The time |
-| D | The place |
-**Key:** B
-**br_pt_form:** "agente / a pessoa que pratica a ação"
+### 5 sentenças-alvo (leia em voz corrida)
+The login bug was fixed last night, and the patch was reviewed by Ana.
+The runbook was written by Caio before the deploy.
+The API docs are being updated right now, so the new endpoint is not in section two yet.
+The old token will be deprecated on Friday, and the rollback has already been tested.
+Make sure the customer note is written in plain English and is shared after the release.
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **passive form**:
-| Slot | Value |
-|------|-------|
-| A | The report **is write** every week. |
-| B | The report **is written** every week. |
-| C | The report **is writing** every week. |
-| D | The report **written** every week. |
-**Key:** B
-**br_pt_form:** "O relatório é escrito toda semana."
+### Foco articulatório para falantes de pt-BR
+
+- **/wəz/ em *was***: forma fraca em *was fixed*; não pronuncie com a vogal cheia de *was* isolado.
+- **/ð/ em *the, they***: ponta da língua entre os dentes com voz; evite trocar por /d/ em *the deploy*.
+- **/ˈrɪtn/ em *written***: vogal curta /ɪ/ e final /n/; não diga *writ-teen* com uma vogal extra.
+- **/eɪ/ em *deprecated* /ˈdeprəkeɪtɪd/**: o ditongo fica na penúltima sílaba; não o reduza a /e/.
+- **/t/ final em *not, yet, checked***: solte o ar sem acrescentar /i/ no fim (*not-e*).
+- **/z/ em *is, was, has***: som vozeado; em *the docs are being updated*, o *are* fica fraco.
+
+### Prompt de produção (oral ou escrita)
+
+Você precisa atualizar o canal do time em inglês sobre uma correção e o processo que mudou. Escreva ou digite **4 a 6 frases** em que você:
+
+1. usa pelo menos três passivas em tempos diferentes (*was fixed, is being updated, will be deprecated*);
+2. inclui um particípio irregular (*written, sent, built, done*);
+3. usa *by + agent* apenas quando o agente acrescenta informação, omitindo-o quando for óbvio;
+4. evita *get* + particípio — prefira *be* + particípio;
+5. menciona um processo real do seu contexto (deploy, bug, runbook, rollback);
+6. fecha com uma linha em *plain English* para quem não é da engenharia.
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Gramática (L1):** O que significa "The patch was reviewed by Ana"?  
+   A) O patch revisou a Ana.  B) **O patch foi revisado pela Ana.**  C) A Ana está revisando o patch.  D) O patch será revisado pela Ana.  
+   **Key:** B — *was reviewed* é passado, e *by Ana* nomeia quem revisou; em **A** os papéis invertem, em **C** o tempo muda para presente e em **D** para futuro.
+
+2. **Gramática (L1):** Qual linha descreve os documentos em atualização agora?  
+   A) "The docs is being updated."  B) "The docs are being update."  C) "The docs are being updated."  D) "The docs is updated now."  
+   **Key:** C — *docs* é plural, pede *are*, e o contínuo passivo exige o particípio *updated*; **A** erra a concordância, **B** usa a base e **D** troca o andamento por um estado.
+
+3. **Vocabulário (L1):** Complete: "The runbook was ______ by Caio."  
+   A) write  B) wrote  C) **written**  D) writing  
+   **Key:** C — *write → wrote → written*; depois de *was*, só o particípio *written* forma a passiva.
 
 ---
 
@@ -115,85 +150,56 @@ Choose the correct **passive form**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_b1_passive",
   "cefr_level": "B1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (passive voice explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/Ingles-Tecnico-Para-Informatica.md (CETAM, all rights reserved) - scoping of passive voice"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - grammar terms are unprotectable linguistic knowledge; definitions authored"
-  },
-  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "skills_touched": ["grammar", "vocabulary", "listening", "reading", "pronunciation", "speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.passive_voice"
+      "grammar.passive_be_participle",
+      "grammar.past_simple_regular"
     ],
     "vocabulary": [
-      "vocab.passive.passive_voice",
-      "vocab.passive.active_voice",
-      "vocab.passive.be_past_participle",
-      "vocab.passive.by_agent",
-      "vocab.passive.is_done",
-      "vocab.passive.was_done",
-      "vocab.passive.will_be_done",
-      "vocab.passive.has_been_done",
-      "vocab.passive.is_being_done",
-      "vocab.passive.was_being_done",
-      "vocab.passive.agent",
-      "vocab.passive.focus"
+      "vocab.passive.release_status",
+      "vocab.passive.agent_omission",
+      "vocab.passive.irregular_participles",
+      "vocab.prepositions_basic_by"
     ],
     "listening": [
-      "listening.passive_context"
+      "listening.passive_standup_context"
     ],
     "pronunciation": [
-      "pronunciation.passive"
+      "pronunciation.passive_weak_forms_participles"
+    ],
+    "reading": [
+      "reading.passive_status_detail",
+      "reading.passive_runbook_detail"
     ],
     "speaking": [
-      "speaking.passive_in_tech"
+      "speaking.passive_standup_update"
     ]
   },
   "prereq_lessons": [
-    "les_a2_greetings_intro",
-    "les_a2_small_talk",
-    "les_a2_introducing_others",
-    "les_a2_meeting_open",
-    "les_a2_meeting_participate",
-    "les_a2_email_basics",
-    "les_a2_phone_calls",
-    "les_a2_ask_for_help",
-    "les_a2_deadlines_tasks",
-    "les_a2_feedback_praise",
-    "les_a2_corporate_wrapup",
-    "les_a2_corpus_intro",
-    "les_a2_past_narrative",
+    "les_a1_present_simple",
+    "les_a1_have_has",
+    "les_a1_regular_verbs_past",
     "les_a2_future_will",
     "les_a2_present_continuous",
-    "les_a2_modals_can_need",
-    "les_a2_imperatives",
-    "les_a2_prepositions_basic",
-    "les_a2_travel_vocab_core",
-    "les_a2_collocations",
-    "les_a2_stress_timing",
-    "les_a2_airport",
-    "les_a2_hotel_taxi",
-    "les_a2_restaurant_shopping",
-    "les_a2_reading_strategy",
-    "les_a2_writing_svo",
-    "les_a2_writing_bio",
-    "les_a2_writing_messages",
-    "les_a2_writing_past",
-    "les_a2_writing_selfcheck",
     "les_b1_tenses_review",
+    "les_a2_past_narrative",
+    "les_a2_writing_svo",
+    "les_a2_reading_strategy",
+    "les_a2_prepositions_basic",
     "les_b1_modals",
     "les_b1_conditionals"
   ],
