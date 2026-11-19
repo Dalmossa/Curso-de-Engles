@@ -1,281 +1,192 @@
-# Lição de 15 Minutos: "Primeiras Impressões no Trabalho — Cumprimentos e Apresentações"
+# Lesson: Cumprimentos e Apresentações no Ambiente Profissional
 
-**Lesson ID:** `les_a2_greetings_intro`  
-**Reuse basis:** `cite_only` — material original; `frases-ingles-trabalho.md` Ch2 e `apostila-ingles-para-iniciantes-impresso.md` §2.2 são *bibliografia*, não texto adaptado (ver `external-sources.md` §7.0)  
-**Target:** Brasileiro, nível A2 (CEFR), perfil desenvolvedor/tech  
-**Princípio ITS:** Input i+1 → Guided Practice → Output Task → Formative Check  
-**Foco SLA:** Comprehensible Input, Affective Filter baixo, Communicative Language Teaching  
-**Pronúncia BR-PT alvo:** TH [ð/θ], H aspirado, R inicial, S+consoante  
-**Mastery Gate:** P(mastery) ≥ 0.85 AND CI₉₅ lower bound > 0.70 (per skill)
-
----
-
-## 📋 METADADOS DA LIÇÃO
-
-| Campo | Valor |
-|-------|-------|
-| **Lesson ID** | `les_a2_greetings_intro` |
-| **CEFR Level** | A2 (Can introduce self/others, basic greetings) |
-| **Bloom Level** | Remember → Understand → Apply |
-| **Skills (Tracking Domains)** | Grammar, Vocabulary, Listening, Pronunciation |
-| **Output Modalities** | Speaking, Writing |
-| **Vocabulary Load** | 12 lexical items (7 new, 5 review) |
-| **Grammar Points** | present_simple_be, demonstrative_this, wh_questions_how |
-| **Time Budget** | 15 min (Input 4 → Practice 5 → Output 4 → Check 2) |
-| **Spaced Review Tags** | `greetings`, `introductions`, `workplace`, `pronunciation-th` |
-| **Prereq Lessons** | `mod_a1_comm_basic` (or diagnostic placement) |
-| **Next Lessons (Unlocked)** | `les_a2_small_talk`, `les_a2_introducing_others` |
+**Lesson ID:** `les_a2_greetings_intro`
+**Module:** `mod_a2_workplace_intro`
+**CEFR:** A2
+**Reuse basis:** authored_material
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US). No external source text is reproduced or adapted; grammar reference material was consulted for general usage only.
+**Estimated time:** 15 min
 
 ---
 
-## 🎯 OBJETIVOS DE APRENDIZAGEM (Can-Do CEFR)
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-Ao final da lição, o aluno **consegue**:
-1. ✅ Cumprimentar colegas e clientes adequadamente (manhã/tarde/noite)
-2. ✅ Apresentar-se e apresentar um colega em contexto profissional
-3. ✅ Pronunciar corretamente: *th* (voiced/unvoiced), *h* aspirado, *r* inicial
-4. ✅ Identificar e evitar 3 erros típicos de brasileiros (falsos cognatos, vogal de apoio, sílaba tônica)
+### Cenário: o primeiro dia na squad de plataforma
 
----
-
-## 📥 FASE 1: INPUT COMPREENSÍVEL (i+1) — 4 min
-
-### 1.1 Mini-story com áudio (2 min)
-> **Contexto:** *Você chega para seu primeiro dia na nova empresa. É uma startup com time internacional. Sua chefe, Sarah, te apresenta ao time.*
-
-**Texto (nível i+1 — 90% compreensível):**
-> *Sarah: "Good morning, everyone! This is **Marco**. He's our new **backend developer**. Marco, this is **Priya** — she's our **DevOps engineer**. And this is **Ahmed**, our **frontend lead**.*
+> **Beatriz (tech lead):** "Good morning, team. Before we open the sprint board, I'd like you to meet Lucas, our new backend engineer."
 >
-> *Marco: "Hi, **nice to meet you all**. **How's it going**?"*
+> **Lucas:** "Good morning. Thanks for having me. Please call me Lucas."
 >
-> *Priya: "**Welcome to the team**, Marco! **How was your commute**?"*
+> **Rafael (QA engineer):** "Hi, Lucas. Nice to meet you. How's it going?"
 >
-> *Marco: "**Pretty good**, thanks. **Excited to be here**."*
+> **Lucas:** "Pretty well, thanks. The setup guide was clear, so I'm excited to start."
+>
+> **Beatriz:** "This is Priya, our DevOps lead. She owns the deployment pipeline."
+>
+> **Priya:** "Welcome to the team, Lucas. If the build fails, ping me in the channel."
+>
+> **Lucas:** "Will do. Good to meet you all."
 
-**Glossário rápido (apenas bloqueadores):**
-- *backend developer* = desenvolvedor backend
-- *DevOps engineer* = engenheiro DevOps
-- *frontend lead* = líder de frontend
-- *commute* = trajeto casa-trabalho
+### Glossário contrastivo (pt-BR ↔ en-US)
 
-### 1.2 Noticing guiado (2 min)
-**Pergunta do tutor (ITS):** *"O que você notou sobre como eles se cumprimentam?"*
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **Good morning** | bom dia | Saudação da manhã; neutra e segura com clientes. |
+| **Good afternoon** | boa tarde | Usada do meio-dia até o fim da tarde. |
+| **Good evening** | boa noite (ao chegar) | Saudação ao chegar à noite; não é despedida. |
+| **Hi / Hello** | oi / olá | **Hi** é informal; **Hello** é um pouco mais neutro. |
+| **How are you?** | como vai? | Fórmula de saudação; não exige um relatório detalhado. |
+| **How's it going?** | como vai? / tudo bem? | Versão informal, comum entre colegas de time. |
+| **Nice to meet you** | prazer em conhecer você | Diz-se no primeiro contato; depois use **Good to see you again**. |
+| **I'm ... / My name is ...** | eu sou / meu nome é | Formas de se apresentar; **I'm** soa mais natural. |
+| **This is Priya** | esta é a Priya | Para apresentar outra pessoa, use **This is**, não **She is**. |
+| **I'm excited to start** | estou animado para começar | **Excited** = animado, não "ansioso". |
+| **Actually** | na verdade | Não significa "atualmente"; use **currently** para isso. |
+| **I plan to ship today** | pretendo entregar hoje | **Pretend** significa "fingir", não "pretender". |
+| **Commute** | trajeto casa-trabalho | Substantivo e verbo; comum em conversa de escritório. |
+| **Ping me in the channel** | me chama no canal | Expressão comum no trabalho em tempo real; informal, entre colegas. |
 
-**Pontos para o aluno descobrir (não ensinar explicitamente ainda):**
-- *Good morning/afternoon/evening* → variação por horário
-- *This is [Name]* → apresentar terceiros (não "He is")
-- *Nice to meet you* vs *Nice to meet you all* (singular/plural)
-- *How's it going?* = informal *How are you?*
-- *Welcome to the team* = boas-vindas padrão
+### Armadilhas comuns (falantes de pt-BR)
 
----
-
-## 🛠 FASE 2: GUIDED PRACTICE — 5 min
-
-### 2.1 Pronúncia: Minimal Pairs BR-PT (2 min)
-| Par | Som Alvo | Dica BR-PT | Exemplo da Lição |
-|-----|----------|------------|------------------|
-| **think** [θɪŋk] vs **sink** [sɪŋk] | TH surdo [θ] | Língua entre dentes, sopre | *think, three, thanks* |
-| **the** [ðə] vs **de** [dʒi] | TH sonoro [ð] | Língua entre dentes, com voz | *the, this, that, they* |
-| **have** [hæv] vs **ave** | H aspirado [h] | "Rr" carioca forte | *have, how, hi, hello* |
-| **room** [ɹuːm] vs **rúm** | R inicial [ɹ] | "R" de "caro" (leve) | *room, ready, report* |
-| **start** [stɑːrt] vs **estart** | S+consoante | Sem "e" antes | *start, station, school* |
-
-**Drill rápido (ITS monitora via ASR):**
-1. Repete 3x: *think — this — have — room — start*
-2. Grava: *"Good morning, this is Marco"* → feedback imediato no TH e H
-
-### 2.2 Substitution Drill (2 min)
-**Frame:** *"Good [morning/afternoon/evening], everyone. This is [Name]. [He/She] is our [role]."*
-
-| Slot | Opções (aluno escolhe) |
-|------|------------------------|
-| Time | morning / afternoon / evening |
-| Name | (nome real do aluno) / *Ana* / *Carlos* |
-| Pronoun | He / She / They |
-| Role | backend developer / frontend developer / DevOps engineer / QA analyst / product manager |
-
-**Exemplo output esperado:**
-> *"Good afternoon, everyone. This is Ana. She is our frontend developer."*
-
-### 2.3 Controlled Dialogue Completion (1 min)
-**Complete com as frases do box:**
-```
-A: Good ________! ________ is ________. ________ our new ________.
-B: Hi, ________ to meet you. ________ was your commute?
-A: Pretty ________, thanks. ________ to be here.
-```
-**Box:** *morning / This / Marco / He's / backend developer / nice / How / good / Excited*
+| Forma tentadora (pt-BR → en-US) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "**Good night**, everyone" ao chegar às 20h | "**Good evening**, everyone" | **Good night** é despedida ou va-se dormir; a saudação noturna é **Good evening**. |
+| "How are you?" → "I have a bug, a deadline and a cold" | "**Fine, thanks. And you?**" | A pergunta funciona como saudação; uma resposta curta e educada é o esperado. |
+| "**She is** Priya, our DevOps lead" ao apresentar | "**This is** Priya, our DevOps lead" | Apresentações de terceiros usam **This is**, mesmo para pessoas. |
+| "I'm **anxious** to start" querendo dizer "animado" | "I'm **excited** to start" | **Anxious** = ansioso/preocupado; **excited** = animado. |
+| "**Actually** I work on the API" querendo dizer "atualmente" | "**Currently** I work on the API" | **Actually** = "na verdade"; o tempo presente é **currently**. |
+| "I **pretend** to ship today" | "I **plan** to ship today" | **Pretend** = fingir; "pretender" é **plan** ou **intend**. |
+| "Nice to **know** you" no primeiro encontro | "Nice to **meet** you" | **Meet** é o verbo da apresentação; **know** fala de conhecimento prévio. |
 
 ---
 
-## 🎭 FASE 3: OUTPUT TASK (Communicative) — 4 min
+## FASE 2 — Prática Guiada [5 min]
 
-### Tarefa: "Simulação de Stand-up Meeting" (Role-play assíncrono)
+### Exercício 1 — Reconhecimento de registro
 
-**Cenário:** *É 9h30. Você entra na call diária do time. Precisa:*
-1. Cumprimentar o time (horário apropriado)
-2. Apresentar-se (nome + role)
-3. Responder: *"How's it going?"* e *"How was your commute?"*
-4. Dizer: *"Excited to be here"* ou variação
+Você entra na sala às 9h para uma reunião com um cliente novo. Qual saudação é a mais adequada?
 
-**Rubrica de Sucesso (CEFR A2 Speaking):**
-| Critério | 0.5 pts | 1 pt | 1.5 pts |
-|----------|---------|------|---------|
-| **Adequação do cumprimento** | Bom dia/tarde/noite errado | Correto | Correto + natural |
-| **Apresentação (self + role)** | Incompleto | Nome + role | Nome + role + fluência |
-| **Respostas às perguntas** | Monossilábico | Frase completa | Frase + elaboração |
-| **Pronúncia (TH, H, R, S+cons)** | 3+ erros | 1-2 erros | 0 erros |
-| **Affective Filter** | Travado, hesita muito | Alguma hesitação | Confiante, ritmo natural |
+| Opção | Saudação |
+|---|---|
+| A | "Yo, what's up?" |
+| B | **"Good morning. Nice to meet you."** |
+| C | "Good night. Nice to know you." |
+| D | "How are you? I'm anxious to start." |
 
-**Mastery Decision (Probabilistic):**
-- P(mastery_skill) ≥ 0.85 AND CI₉₅_lower > 0.70 for ALL prerequisite skills → unlock next lessons
-- P(mastery_skill) < 0.60 OR CI₉₅_upper < 0.75 for ANY skill → mandatory review scheduled
-- Rubric score feeds BKT observation; final gate uses posterior mastery probability
+**Key:** B
+**Feedback:** Às 9h com um cliente, o registro neutro e profissional pede **Good morning**; **Nice to meet you** marca o primeiro contato. A é informal demais, C troca a saudação e o verbo, e D usa **anxious** com o sentido errado.
 
-**Entrega:** Gravação de áudio 30-45s → ITS analisa (ASR + LLM rubric) → BKT update → mastery decision
+### Exercício 2 — Apresentando outra pessoa
 
----
+Reescreva as intenções em inglês natural. Preste atenção no verbo de apresentação.
 
-## ✅ FASE 4: FORMATIVE CHECK — 2 min
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Ela é a Priya, nossa líder de DevOps." | "This is Priya, our DevOps lead." |
+| "Ele é o Rafa, nosso analista de QA." | "This is Rafael, our QA engineer." |
+| "Eu sou o Lucas, o novo dev de backend." | "I'm Lucas, the new backend engineer." |
+| "Prazer em conhecer você, Lucas." | "Nice to meet you, Lucas." |
 
-### 4.1 Quick Fire Quiz (60 seg)
-**Shadow CAT: 3-5 itens adaptativos (MFI at current θ)**
-- Items selected from IRT bank targeting lesson skills
-- Updates BKT + IRT θ simultaneously
-- No "test anxiety" — part of learning flow
+**Key:** This is Priya / This is Rafael / I'm Lucas / Nice to meet you
+**Feedback:** Para apresentar outra pessoa, use **This is**; para falar de si, use **I'm**; e no primeiro encontro a fórmula é **Nice to meet you**, não *Nice to know you*.
 
-**Exemplo de itens (pool calibrado):**
-1. *São 14h. Cumprimente o time:* (Grammar: time_greetings, b=-0.5)
-   - A) Good morning, everyone!
-   - B) **Good afternoon, everyone!** ✓
-   - C) Good evening, everyone!
+### Exercício 3 — Falsos cognatos e resposta de saudação
 
-2. *Apresente sua colega Ana (frontend dev):* (Grammar: demonstrative_this, b=0.2)
-   - A) She is Ana, our frontend developer.
-   - B) **This is Ana. She's our frontend developer.** ✓
-   - C) Here is Ana, frontend developer.
+Complete as lacunas com **excited**, **currently**, **plan**, **meet** ou uma resposta curta adequada.
 
-3. *Pronúncia: "The team" → som do TH:* (Pronunciation: th_voiced, b=-0.8)
-   - A) [t] (como "te")
-   - B) [d] (como "de") → **[ð] (língua entre dentes, voz)** ✓
-   - C) [f] (como "fe")
+1. "I'm ______ to join the platform team." → **excited**
+2. "I ______ work on the API, but I used to work on mobile." → **currently**
+3. "We ______ to ship the fix today." → **plan**
+4. "Nice to ______ you. — Nice to ______ you too." → **meet / meet**
+5. "How's it going? — ______" → "Pretty well, thanks."
 
-4. *Erro de brasileiro: "I am **excited to** be here" → correto?* (Vocab: false_cognate_excited, b=0.5)
-   - A) Sim
-   - B) **Não — "excited for" ou só "excited to be here"** ✓
-
-5. *Complete: "______ was your commute?"* (Grammar: wh_questions_how, b=-0.3)
-   - A) What
-   - B) **How** ✓
-   - C) Where
-
-### 4.2 Auto-avaliação Metacognitiva (30 seg)
-> *"Em uma escala 1-5: Quão confiante você se sente para fazer isso amanhã no trabalho real?"*
-> - 1-2 → ITS agenda revisão espaçada em 24h + prática extra
-> - 3 → Revisão em 3 dias
-> - 4-5 → Próxima lição desbloqueada
-
-### 4.3 Spaced Repetition Schedule (30 seg)
-**ITS agenda automaticamente:**
-| Item | Intervalo Inicial | Próxima Revisão |
-|------|-------------------|-----------------|
-| *Good morning/afternoon/evening* | 1 dia | +3d, +7d, +14d |
-| *This is [Name]. He's/She's our [role]* | 3 dias | +7d, +14d, +30d |
-| TH minimal pairs (think/the/this) | 1 dia | +2d, +5d, +12d |
-| H aspirado (have/hello/how) | 2 dias | +4d, +10d, +21d |
+**Key:** 1) excited; 2) currently; 3) plan; 4) meet / meet; 5) Pretty well, thanks.
+**Feedback:** **Excited** é "animado"; **currently** é "atualmente"; **plan** é "pretender"; **meet** é o verbo da apresentação; e **How's it going?** recebe uma resposta curta, sem detalhar problemas.
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
+
+### 5 sentenças-alvo (leia em voz corrida)
+
+Good morning, Beatriz; this is Lucas, our new backend engineer, and he joins the platform team today.
+Nice to meet you, Lucas, and welcome to the team.
+How's it going so far?
+Pretty well, thanks; the setup guide was clear.
+I'm excited to start, and I'm glad to be here.
+
+### Foco articulatório para falantes de pt-BR
+
+- **/ð/ em *this* e *the***: língua levemente entre os dentes, com voz; não troque por /d/ ("dis").
+- **/h/ aspirado em *How* e *Hi***: solte ar antes da vogal; em pt-BR esse som é fraco ou ausente.
+- **/r/ inicial em *really* e *Rafael***: língua recolhida, sem tocar o céu da boca; não use o *r* paulista.
+- **/θ/ em *thanks***: língua entre os dentes, sem voz; evite "tanks" ou "fanks".
+- **Ritmo de *Nice to meet you***: *to* fica fraco e rápido; a ênfase cai em *nice*, *meet* e *you*.
+
+### Prompt de produção (oral ou escrita)
+
+Crie um diálogo curto de **4 a 6 falas** para o primeiro dia de um colega novo na sua squad. Inclua: uma saudação adequada ao horário, uma apresentação sua com **I'm**, uma apresentação de outra pessoa com **This is**, a fórmula **Nice to meet you**, uma pergunta **How's it going?** com resposta curta, e pelo menos um dos contrastes **excited/currently/plan**. Depois grave a si mesmo dizendo as cinco sentenças-alvo em voz corrida.
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Shadowing:** ouça o modelo (quando o áudio estiver disponível) e repita cada fala do diálogo da FASE 1 imediatamente depois, mantendo o ritmo. Sem áudio, leia em voz alta duas vezes: a primeira marcando as pausas, a segunda sem parar.
+2. **Gramática (L1):** Como você apresenta um colega em uma reunião?
+   A) "He is Priya, our DevOps lead."  B) **"This is Priya, our DevOps lead."**  C) "She is Priya, our DevOps lead."  D) "It is Priya, our DevOps lead."
+   **Key:** B
+   **Feedback:** Apresentações de terceiros usam **This is**; as outras opções usam pronomes pessoais fora do padrão de apresentação.
+3. **Vocabulário (L1):** Qual frase usa **actually** corretamente?
+   A) "I actually work on the API." (querendo dizer *atualmente*)  B) "I'm actually to start."  C) **"Actually, I work on the API now."** (querendo dizer *na verdade*)  D) "I actually to ship today."
+   **Key:** C
+   **Feedback:** **Actually** significa "na verdade" e aparece antes da oração; para "atualmente", use **currently**.
+
+---
+
+**Listening input:** `deferred_render`
+**Pack ID:** `pack_les_a2_greetings_intro_v1`
+
+---
+
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a2_greetings_intro",
   "cefr_level": "A2",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "authored_material": "all input text, drills, rubric, error predictions",
-    "bibliography_only": [
-      "frases-ingles-trabalho.md Ch2",
-      "apostila-ingles-para-iniciantes-impresso.md 2.2"
-    ],
-    "listening_input": null,
-    "verbatim_reproduction": "none"
-  },
-  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation"],
-  "output_modalities": ["speaking"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR -> en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "module": "mod_a1_comm_basic",
+  "estimated_time_min": 15,
+  "skills_touched": ["grammar", "vocabulary", "reading", "listening", "pronunciation"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
-    "grammar": ["present_simple_be", "demonstrative_this", "wh_questions_how"],
-    "vocabulary": ["greetings_time", "roles_tech", "commute", "excited_to_be_here", "welcome_to_team"],
-    "listening": ["dialogue_comprehension_workplace_intro"],
-    "pronunciation": ["th_voiced", "th_unvoiced", "h_aspirated", "r_initial", "s_consonant_cluster"]
+    "grammar": [
+      "grammar.formal_informal_register",
+      "grammar.introduction_this_is"
+    ],
+    "coherence": [
+      "coherence.greeting_formula_vs_literal_question"
+    ],
+    "vocabulary": [
+      "vocab.greetings_time_of_day",
+      "vocab.false_cognates_greetings"
+    ],
+    "reading": [
+      "reading.introduction_details",
+      "reading.greeting_reply_match"
+    ],
+    "listening": [
+      "listening.workplace_intro_dialogue"
+    ],
+    "pronunciation": [
+      "pronunciation.th_h_greetings"
+    ]
   },
-  "vocabulary_items": [
-    "good morning", "good afternoon", "good evening",
-    "this is", "nice to meet you", "welcome to the team",
-    "how's it going", "commute", "excited to be here",
-    "backend developer", "frontend developer", "DevOps engineer"
-  ],
-  "grammar_points": ["present_simple_be", "wh_questions_how", "demonstrative_this"],
-  "pronunciation_tags": ["th_unvoiced", "th_voiced", "h_aspirated", "r_initial", "s_consonant_cluster"],
-  "error_predictions_br_pt": [
-    "good morning → all day",
-    "he is → this is (apresentação)",
-    "think → tink/sink",
-    "the → de/ze",
-    "have → ave",
-    "room → hroom",
-    "start → estart",
-    "excited to → ansioso para (false friend)"
-  ],
-  "mastery_gate": {
-    "type": "probabilistic",
-    "threshold": 0.85,
-    "ci_lower_bound": 0.70,
-    "required_skills": ["present_simple_be", "demonstrative_this", "wh_questions_how", "greetings_time", "th_voiced", "th_unvoiced", "h_aspirated"]
-  },
-  "spaced_review_schedule": "FSRS-4.5",
-  "next_lesson_unlock": {
-    "les_a2_small_talk": {"requires": ["present_simple_be", "greetings_time", "wh_questions_how"]},
-    "les_a2_introducing_others": {"requires": ["present_simple_be", "demonstrative_this", "roles_tech"]}
-  }
+  "prereq_lessons": []
 }
 ```
-
----
-
-## 🔄 PRÓXIMOS PASSOS NO CURRICULUM GRAPH
-
-```
-les_a2_greetings_intro (A2) 
-    │
-    ├──► les_a2_small_talk (A2) — "Como vai? / Fim de semana / Café"
-    ├──► les_a2_meeting_open (A2→B1) — "Abrindo reunião / Pauta / Objetivos"
-    └──► les_a2_introducing_others (A2) — "Apresentar colegas / Stakeholders"
-```
-
----
-
-## 🎮 GAMIFICATION HOOKS
-
-| Conquista | Gatilho | XP |
-|-----------|---------|----|
-| **First Impression** | Completa lição com mastery | 50 |
-| **Pronunciation Pro** | 0 erros no TH/H/R no output | 30 |
-| **Early Bird** | Faz lição antes das 9h | 20 |
-| **Streak Keeper** | 7 dias consecutivos | 100 |
-
----
-
-## 📝 NOTAS PARA O DESENVOLVEDOR DO ITS
-
-1. **Content Source:** Frases 1-12 do `frases-ingles-trabalho.md` (Cap. 2: Cumprimentos e apresentações) + diálogos do `apostila-ingles-para-iniciantes-impresso.md` (2.2.1/2.2.2)
-2. **Adaptação i+1:** Se aluno é A1, simplifica para 8 frases + foco só em *Good morning/afternoon* + *My name is*. Se B1, adiciona *Good to see you again / Long time no see / How have you been?*
-3. **Affective Filter:** Começa com *"Ninguém vai rir de você"* (do livro) → reduz ansiedade
-4. **Error Correction:** Recast implícito no feedback ASR (*"Você disse 'tink' — tenta 'think' com a língua entre os dentes"*), não correção explícita interrompida
-5. **Interleaving:** Na próxima sessão, mistura 2 itens desta lição + 3 novos
-
----
-
-*Esta lição é um template executável. O ITS deve instanciar variáveis (nome do aluno, role real, horário real) e adaptar o input i+1 baseado no learner model persistente.*
