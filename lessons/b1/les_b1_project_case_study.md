@@ -3,112 +3,158 @@
 **Lesson ID:** `les_b1_project_case_study`
 **Module:** `mod_b1_fluency_project`
 **CEFR:** B1
-**Reuse basis:** `adapt_with_attribution`
-**Source:** S01 (Google Style Guide, CC-BY-4.0), S05 (Google Cloud Well-Architected, CC-BY-4.0), S10 (Google Testing, CC-BY-4.0) — `sourced_external`
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: a equipe ensaia a apresentação de um case study de checkout
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **case study** | estudo de caso | *análise detalhada de projeto real* |
-| **presentation** | apresentação | *exposição oral com slides* |
-| **background** | contexto / histórico | *situação inicial do projeto* |
-| **challenge** | desafio | *problema a resolver* |
-| **approach** | abordagem / solução | *como resolveu* |
-| **outcome** | resultado / desfecho | *o que foi alcançado* |
-| **metric** | métrica | *número que mede sucesso* |
-| **lesson learned** | lição aprendida | *insight para futuros projetos* |
-| **stakeholder** | parte interessada | *quem tem interesse no resultado* |
-| **timeline** | cronograma | *sequência temporal do projeto* |
-| **scope** | escopo | *o que está incluído/excluído* |
-| **trade-off** | troca / compensação | *ganha aqui, perde ali* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> **Presenter:** "**Background**: legacy monolith, 2yr old, 500k LOC. **Challenge**: deploy takes 2hr, 30% fail rate."
+> **Bia (tech lead, São Paulo):** "Let's keep it to six beats: context, challenge, intervention, outcome, recommendation, takeaway. No vendor pitch — just our numbers."
 >
-> "**Approach**: strangler fig — extract **services** incrementally. **Scope**: payments first. **Timeline**: 6 months, 3 sprints per service."
+> **Rafa (backend engineer, São Paulo):** "Context first: at Aurora Pay, checkout confirmation took thirty-eight seconds at p95 last March."
 >
-> "**Outcome**: deploy 5min, fail rate <1%. **Metric**: MTTR 45min → 5min. **Lesson learned**: invest in **contract tests** early. **Trade-off**: short-term velocity for long-term autonomy."
+> **Lena (product manager, remote):** "The challenge was the fraud check inside the request path — the customer saw a spinner the whole time."
 >
-> "**Stakeholders**: engineering, product, ops — aligned via **RFC** process."
+> **Rafa:** "Our intervention was to queue the check and return a pending state with an idempotency key."
+>
+> **Bia:** "Then the outcome: p95 confirmation fell to six seconds, and 'stuck payment' tickets dropped by a third."
+>
+> **Lena:** "Name the metric in that line and save the recommendation for the last slide."
+>
+> **Bia:** "Agreed. I recommend that the check stay asynchronous and that we add a timeout budget. The takeaway is simple: measure the customer wait, not only the service."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **case study** | estudo de caso | *Study of case* não existe: o composto em inglês é *case study*. |
+| **context** | contexto | Abre a apresentação com a situação inicial; não use o cognato *contexto*. |
+| **challenge** | desafio / problema central | Nomeia o obstáculo que a equipe precisou resolver; não é sinônimo automático de *difficulty*. |
+| **intervention** | intervenção / mudança feita | É a ação entre o desafio e o desfecho; não confunda com *intercession*. |
+| **outcome** | desfecho / resultado observado | Prefira *outcome* para o efeito medido; *result* é mais genérico. |
+| **metric** | métrica | É o número acompanhado; *metrica* não é grafia do inglês. |
+| **recommendation** | recomendação | Grafia com **mm**: *recommendation*, não *recomendation*. |
+| **takeaway** | recado principal | Escreva junto: *takeaway* é substantivo; *take away* é o verbo "levar embora". |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "Estudo de caso" → "study of case" | "case study" | O composto inglês inverte a ordem da tradução literal. |
+| "O contexto era..." → "The contexto was..." | "The context was..." | *Contexto* é palavra portuguesa; em inglês, use *context*. |
+| "A intervenção que fizemos" → "The intervention that we did" | "The intervention we made" / "Our intervention was to queue the check" | *Intervention* combina com *make* ou com *be to*; *do an intervention* soa como termo médico. |
+| "Caiu de 38 para 6" → "dropped 38 to 6" | "dropped **from** 38 **to** 6" | Sem *from*, o leitor não sabe qual era o ponto de partida. |
+| "Recomendação" → "recomendation" | "recommendation" | A grafia inglesa tem *mm* na primeira sílaba. |
+| "O recado é..." → "The take away is..." | "The takeaway is..." | Como substantivo, *takeaway* é uma palavra só. |
+| "Colocamos a checagem na fila" → "We put the check in queue" | "We queued the check" / "We moved the check to a queue" | *Queue* pede artigo ou uso verbal; *in queue* é calque de "na fila". |
+| "Medimos o tempo do serviço" → "We measured the time of service" | "We measured the customer wait" | Em case study, o tempo que importa é o vivido pelo cliente. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-A **case study** presentation focuses on:
-| Slot | Value |
-|------|-------|
-| A | Future plans only |
-| B | **Real project: background, challenge, approach, outcome** |
-| C | Team bios |
-| D | Technology stack only |
+### Exercício 1 — Reconhecimento (linha de outcome com métrica)
+
+Qual linha apresenta o **outcome** com uma métrica clara?
+
+| Opção | Linha |
+|---|---|
+| A | "The fraud check ran inside the request path." |
+| B | **"p95 confirmation fell from 38 to 6 seconds, and stuck-payment tickets dropped by a third."** |
+| C | "We queued the check and returned a pending state." |
+| D | "I recommend that we add a timeout budget." |
+
 **Key:** B
-**br_pt_form:** "estudo de caso real: contexto, desafio, abordagem, resultado"
 
-### Item 2 — Vocabulary (Matching)
-Match the section to its content:
-| Section | Content |
-|---------|---------|
-| **Background** | a. What was achieved (metrics) |
-| **Challenge** | b. Problem to solve |
-| **Approach** | c. How you solved it |
-| **Outcome** | d. Context before project |
-**Key:** Background→d, Challenge→b, Approach→c, Outcome→a
-**br_pt_form:** "contexto", "desafio", "abordagem", "resultado"
+A descreve o desafio, C descreve a intervenção e D é a recomendação; só B traz o desfecho com número e comparação.
 
-### Item 3 — Grammar: Past simple + present perfect for results (fill-in-blank)
-Complete with **past simple** or **present perfect**:
-"We ______ (complete) the migration last month. Since then, deploy time ______ (drop) from 2hr to 5min. The team ______ (learn) to write contract tests."
-**Key:** completed / has dropped / has learned
-**br_pt_form:** "completou", "caiu", "aprendeu"
+### Exercício 2 — Transformação L1 → L2
+
+Reescreva as intenções em inglês natural de um case study:
+
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "O contexto era um checkout lento." | "The context was a slow checkout." |
+| "O desafio era uma checagem de fraude dentro do request." | "The challenge was a fraud check inside the request path." |
+| "A intervenção foi colocar a checagem na fila." | "Our intervention was to queue the check." |
+| "O desfecho foi seis segundos no p95." | "The outcome was six seconds at p95." |
+| "Recomendo que a checagem seja assíncrona." | "I recommend that the check be asynchronous." |
+
+**Key:** ver tabela
+
+Cada linha troca o calque por uma expressão fixa do gênero (*context, challenge, intervention, outcome*) e mantém o subjunctive mandativo depois de *recommend that*.
+
+### Exercício 3 — Complete o roteiro do case study
+
+Preencha com **context, challenge, intervention, outcome** ou a forma verbal adequada:
+
+1. "Here's the ______: confirmation took thirty-eight seconds at p95."
+2. "The ______ was the fraud check in the request path."
+3. "Our ______ was to queue the check and return a pending state."
+4. "The ______ was six seconds at p95."
+5. "I recommend that the check ______ (be) asynchronous."
+
+**Key:** 1) context; 2) challenge; 3) intervention; 4) outcome; 5) be
+
+Em 5, *recommend that* pede a forma base (*be*), não *is* — o mesmo padrão de *suggest that* e *it is essential that*.
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Speaking: Mini Case Study (individual)
-**Scenario:** Present a 2-minute case study for a project you worked on (real or fictional). Structure:
+### 5 sentenças-alvo (leia em voz corrida)
 
-1. **Background** (30s): context, legacy state
-2. **Challenge** (30s): problem, pain points
-3. **Approach** (30s): solution, scope, timeline
-4. **Outcome** (30s): metrics, lessons, trade-offs
+At Aurora Pay, checkout confirmation took thirty-eight seconds at p95 last March.
+The challenge was a synchronous fraud check inside the request path.
+Our intervention was to queue the check and return a pending state with an idempotency key.
+The outcome was six seconds at p95, with "stuck payment" tickets down by a third.
+I recommend that the check stay asynchronous; the takeaway is to measure the customer wait.
 
-**Use vocabulary:** *background, challenge, approach, outcome, metric, lesson learned, stakeholder, timeline, scope, trade-off*.
+### Foco articulatório para falantes de pt-BR
+
+- **/θ/ em *thirty-eight* e *path***: ponta da língua entre os dentes, sem voz; não diga "tirty" nem "sirty".
+- **/ð/ em *the, the request***: mesmo lugar de /θ/, mas com voz; alterne as duas séries sem substituir por /d/.
+- **/eɪ/ em *payment* e *takeaway***: deslize de /e/ para /ɪ/; não reduza a uma vogal pura do pt-BR.
+- **/iː/ em *key* e *keep***: vogal longa e tensa; evite o /ɪ/ curto de *kid*.
+- **/ə/ em *synchronous* e *recommendation***: schwa na sílaba átona; dar vogal cheia a cada sílaba quebra o ritmo.
+- **/k/ final em *check***: solte o ar sem inserir "e" (*check-e*); o pt-BR tende à epêntese final.
+- **Pausa de meio segundo após cada rótulo** (*The challenge was...*, *Our intervention was...*): a pausa é o que dá tempo de processar a estrutura em seis partes.
+
+### Prompt de produção (oral ou escrita)
+
+Apresente um case study fictício ou real de 60 a 90 segundos sobre uma mudança pequena em um sistema (índice, cache, fila, teste, script). Escreva o roteiro — ou diga as mesmas frases em voz alta — com:
+
+1. um **context** de uma frase contendo um número;
+2. um **challenge** que nomeie o gargalo, sem slogan;
+3. uma **intervention** que descreva a mudança efetiva;
+4. um **outcome** com métrica antes/depois no padrão *from X to Y*;
+5. uma **recommendation** com *I recommend that ... be ...*;
+6. um **takeaway** iniciado por *The takeaway is...*.
+
+Inclua um detalhe verificável do seu contexto (ticket, serviço, fila, deploy ou janela de medição) e mantenha um ritmo constante: um rótulo, uma frase, uma pausa curta.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Lesson learned** in a case study is:
-| Slot | Value |
-|------|-------|
-| A | A complaint |
-| B | **Insight for future projects** |
-| C | A bug report |
-| D | A feature request |
-**Key:** B
-**br_pt_form:** "lição aprendida / insight para futuros projetos"
+1. **Vocabulário (L1):** Em "Our intervention was to queue the check", *intervention* significa:
+   A) a métrica  B) a mudança que a equipe fez  C) o problema original  D) o slide final
+   **Key:** B
+   A métrica é o número observado, o problema é o *challenge* e o encerramento é o *takeaway*.
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct tense for a result since completion:
-| Slot | Value |
-|------|-------|
-| A | Deploy time **dropped** 90% since launch. |
-| B | Deploy time **has dropped** 90% since launch. |
-| C | Deploy time **drops** 90% since launch. |
-| D | Deploy time **dropping** 90% since launch. |
-**Key:** B
-**br_pt_form:** "O tempo de deploy caiu 90% desde o lançamento."
+2. **Gramática (L1):** Qual linha compara a métrica corretamente?
+   A) "Confirmation dropped 38 to 6 seconds."  B) "Confirmation dropped from 38 to 6 seconds."  C) "Confirmation dropped of 38 to 6 seconds."  D) "Confirmation dropped until 38 to 6 seconds."
+   **Key:** B
+   A perde o *from*, C replica a preposição do pt-BR e D usa *until* com um par de valores.
+
+3. **Estrutura (L1):** A frase "The takeaway is to measure the customer wait" tem a função de:
+   A) abrir o contexto  B) descrever a intervenção  C) apresentar a métrica  D) fechar com o recado principal
+   **Key:** D
+   O *takeaway* não introduz o caso nem repete o número: ele resume a lição que a plateia deve levar.
 
 ---
 
@@ -117,75 +163,60 @@ Choose the correct tense for a result since completion:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_b1_project_case_study",
   "cefr_level": "B1",
-  "provenance": {
-    "reuse_basis": "adapt_with_attribution",
-    "adapted_sources": [
-      {
-        "id": "S01",
-        "title": "Google Developer Documentation Style Guide",
-        "licence": "CC-BY-4.0",
-        "what_was_adapted": "presentation structure, metric-driven narrative, technical storytelling",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      },
-      {
-        "id": "S05",
-        "title": "Google Cloud Well-Architected Framework",
-        "licence": "CC-BY-4.0",
-        "what_was_adapted": "case study format: background, challenge, approach, outcome, metrics",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      },
-      {
-        "id": "S10",
-        "title": "Google Testing Documentation",
-        "licence": "CC-BY-4.0",
-        "what_was_adapted": "lessons learned format, trade-off documentation",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      }
-    ],
-    "authored_material": "all exercises, the mini-text (presenter script), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/Ingles-Tecnico-Para-Informatica.md (CETAM, all rights reserved) - scoping of case study presentation register"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - terminology adapted, not quoted; all sources CC-BY permissive"
-  },
-  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "reading", "speaking", "writing"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.past_present_perfect_results"
+      "grammar.case_study_metric_from_to",
+      "grammar.case_study_mandative_recommendation"
     ],
     "vocabulary": [
-      "vocab.project.case_study",
-      "vocab.project.background",
-      "vocab.project.challenge",
-      "vocab.project.approach",
-      "vocab.project.outcome",
-      "vocab.project.metric",
-      "vocab.project.lesson_learned",
-      "vocab.project.stakeholder",
-      "vocab.project.timeline",
-      "vocab.project.scope",
-      "vocab.project.trade_off"
+      "vocab.case_study.context",
+      "vocab.case_study.challenge",
+      "vocab.case_study.intervention",
+      "vocab.case_study.outcome",
+      "vocab.case_study.metric",
+      "vocab.case_study.recommendation",
+      "vocab.case_study.takeaway"
     ],
     "listening": [
-      "listening.project_context"
+      "listening.case_study_prep_dialogue"
     ],
     "pronunciation": [
-      "pronunciation.technical_terms"
+      "pronunciation.case_study_dental_fricatives",
+      "pronunciation.case_study_vowel_glides"
+    ],
+    "reading": [
+      "reading.case_study_section_map",
+      "reading.case_study_metric_scan"
+    ],
+    "speaking": [
+      "speaking.case_study_delivery",
+      "fluency_pace"
+    ],
+    "writing": [
+      "writing_formal_email",
+      "writing.case_study_recommendation"
     ]
   },
   "prereq_lessons": [
-    "les_a2_it_terms_basics",
-    "les_a2_it_communication",
-    "les_b1_it_technical"
+    "les_b2_professional_email_advanced",
+    "les_b2_professional_summary",
+    "les_a2_it_typescript_basics",
+    "les_a2_it_algorithms_basics",
+    "les_a2_it_terms_basics"
   ],
   "estimated_time_min": 15
 }
@@ -193,8 +224,6 @@ Choose the correct tense for a result since completion:
 
 ---
 
-## Fontes e Atribuição
+## Nota de autoria
 
-- **S01** Google Developer Documentation Style Guide, licensed under CC-BY-4.0. Adapted for presentation structure and technical storytelling.
-- **S05** Google Cloud Well-Architected Framework, licensed under CC-BY-4.0. Adapted for case study format and metrics-driven narrative.
-- **S10** Google Testing Documentation, licensed under CC-BY-4.0. Adapted for lessons learned and trade-off documentation.
+O case study da Aurora Pay é fictício e foi escrito para esta lição; nenhum livro de negócios, artigo ou material de terceiros foi reproduzido ou adaptado. A consulta ao grammar-rag usou o tópico `case study presentation structure problem solution recommendation` com `--top-k 2`: o resultado [1] sobre subjunctive mandativo (*suggest that* / *it is essential that*) fundamentou o padrão *I recommend that the check be...* no exercício 3 e na FASE 3; o resultado [2] sobre orações de particípio perfeito (*Having seen...*) foi descartado por registro inadequado para uma apresentação de 15 minutos. Todo o restante é autoral, em pt-BR → en-US.

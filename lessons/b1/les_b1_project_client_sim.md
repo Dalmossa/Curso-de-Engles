@@ -3,112 +3,151 @@
 **Lesson ID:** `les_b1_project_client_sim`
 **Module:** `mod_b1_fluency_project`
 **CEFR:** B1
-**Reuse basis:** `cite_only`
-**Source:** `docs/frases-ingles-trabalho.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: reunião de escopo com a Norte Varejo (cliente fictício)
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **client simulation** | simulação de cliente | *roleplay de reunião com cliente* |
-| **requirements gathering** | levantamento de requisitos | *descobrir o que o cliente precisa* |
-| **scope creep** | escopo crescente / descontrole de escopo | *mudanças não controladas no escopo* |
-| **deliverable** | entregável | *artefato tangível a entregar* |
-| **timeline** | cronograma | *datas e marcos do projeto* |
-| **budget** | orçamento | *custo estimado/aprovado* |
-| **stakeholder** | parte interessada | *quem tem interesse no projeto* |
-| **sign-off** | aprovação formal | *assinatura/aceite oficial* |
-| **change request** | solicitação de mudança | *pedido formal de alteração* |
-| **milestone** | marco / marco importante | *ponto de verificação no cronograma* |
-| **risk** | risco | *evento incerto que afeta projeto* |
-| **mitigation** | mitigação | *ação para reduzir risco* |
+> **Camila (delivery lead, Vega Software, São Paulo):** "Thanks for joining, Helena. Let's start on time — forty minutes. First the requirements, then the scope, then the timeline."
+>
+> **Helena (operations lead, Norte Varejo, Recife):** "Good. We need an order dashboard for 120 stores. The main requirement is a daily sales view by region."
+>
+> **Camila:** "Understood. Is that view a must-have for kickoff, or can it come in phase two?"
+>
+> **Helena:** "It's a must-have. One stakeholder also asked for a mobile app — could we add it to this phase?"
+>
+> **Camila:** "I'd keep it out of scope for now. It's a new deliverable: we'd need two more weeks."
+>
+> **Helena:** "Fine. Let's sign off on the scope today and put the app in the follow-up note as phase two."
+>
+> **Camila:** "Agreed. I'll send the milestones by Friday. We've been waiting for the regional data since Monday — that's the risk I want to flag."
 
-### Mini-texto (áudio: `deferred_render`)
+### Glossário contrastivo (pt-BR ↔ en-US)
 
-> **Client:** "We need the dashboard by Q3. **Budget**: $50k. **Timeline**: 3 months."
->
-> **PM:** "**Requirements gathering** first — 2 weeks. **Deliverables**: wireframes, API spec, working demo. **Milestones**: design sign-off week 3, beta week 8, launch week 12."
->
-> **Client:** "Can we add mobile app?"
->
-> **PM:** "That's **scope creep** — new **change request**. Impacts **budget** +$20k, **timeline** +1 month. **Risk**: delayed launch. **Mitigation**: phase 2 after launch."
->
-> **Client:** "OK, phase 1 only. **Sign-off** on scope by Friday."
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **scope** | escopo | *Out of scope* diz o que não entra; *scope creep* é mudança não controlada. Não diga *out of the scope* sem necessidade. |
+| **requirement** | requisito | *A must-have requirement* é o que trava o kickoff; *nice-to-have* é o que pode esperar. |
+| **deliverable** | entregável | Artefato tangível (wireframe, API spec, demo), não uma data. *Deliverable* não é "entrega" em logística. |
+| **milestone** | marco | Ponto de verificação no cronograma (*design sign-off, week three*); não confunda com *deliverable*. |
+| **kickoff** | início oficial do projeto | Substantivo junto: *the kickoff*. Verbo separado: *kick off the project*. |
+| **follow-up** | acompanhamento; mensagem posterior | *Send a follow-up note* (substantivo); *follow up on the action item* (verbo). |
+| **sign-off** | aceite formal | Substantivo hifenizado: *get sign-off from Helena*. Verbo: *sign off on the scope*. |
+| **stakeholder** | parte interessada | Pessoa ou área com interesse no projeto; não é o mesmo que *client* (o cliente é um stakeholder). |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "Vamos discutir sobre o escopo." → "Let's discuss about the scope." | "Let's discuss the scope." | *Discuss* é transitivo em inglês; o *about* é transferência do pt-BR "discutir sobre". |
+| "Precisamos de mais duas semanas." → "We need more two weeks." | "We need two more weeks." | O numeral vem antes de *more*: *two more weeks*, *one more milestone*. |
+| "O aceite do design" → "the signoff of design" | "design sign-off" / "sign off on the design" | O substantivo é hifenizado; o verbo pede a preposição *on*. |
+| "Estamos esperando os dados desde segunda." → "We are waiting the data since Monday." | "We've been waiting for the data since Monday." | *Wait* pede *for*; *since* combina com o presente perfeito para um estado que continua. |
+| "Por três meses" → "since three months" | "for three months" | *For* mede um período; *since* marca o ponto de partida (*since Monday*). |
+| "Vamos fazer o kick off." → "Let's make the kick off." | "Let's start the kickoff." / "Let's kick off the project." | *Kickoff* é substantivo e *kick off* é verbo; *make* não combina com nenhum dos dois. |
+| "milestone" pronunciado como "mil-estone" | /ˈmaɪlstoʊn/ | Começa com /aɪ/ de *my* e termina em /oʊ/ de *stone*; não é *mill*. |
+| "Podemos adicionar...?" → "Can we to add...?" | "Could we add...?" | Depois de um modal vem o verbo na base; *could* suaviza o pedido ao cliente. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Scope creep** means:
-| Slot | Value |
-|------|-------|
-| A | Controlled scope expansion |
-| B | **Uncontrolled changes expanding project scope** |
-| C | Reducing features |
-| D | Budget increase only |
-**Key:** B
-**br_pt_form:** "escopo crescente / descontrole de escopo"
+### Exercício 1 — Reconhecimento (abertura de reunião com cliente)
 
-### Item 2 — Vocabulary (Matching)
-Match the project term to its definition:
-| Term | Definition |
-|------|------------|
-| **Deliverable** | a. Tangible output |
-| **Milestone** | b. Key checkpoint date |
-| **Change request** | c. Formal alteration request |
-| **Risk** | d. Uncertain event with impact |
-**Key:** Deliverable→a, Milestone→b, Change request→c, Risk→d
-**br_pt_form:** "entregável", "marco", "solicitação de mudança", "risco"
+Qual abertura é natural e gramatical para uma reunião de requisitos?
 
-### Item 3 — Grammar: First conditional for project risks (fill-in-blank)
-Complete with **first conditional** (if + present, will + verb):
-"If the client ______ (request) new features, the timeline ______ (extend). If we ______ (not define) scope, the budget ______ (increase)."
-**Key:** requests / will extend / don't define / will increase
-**br_pt_form:** "solicitar / vai estender / não definirmos / vai aumentar"
+| Opção | Frase |
+|---|---|
+| A | "Let's discuss about the scope first." |
+| B | **"Let's start on time: requirements, scope, then the timeline."** |
+| C | "Could we to add the app to phase two?" |
+| D | "We starting the kickoff now." |
+
+**Key:** B — o *signposting* anuncia a ordem da reunião antes do conteúdo; em **A** o *about* sobra depois de *discuss*, em **C** há *to* depois de *could* e em **D** falta o auxiliar do presente contínuo.
+
+### Exercício 2 — Transformação L1 → L2
+
+Reescreva as intenções em inglês natural de uma reunião com cliente:
+
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Vamos discutir o escopo primeiro." | "Let's discuss the scope first." |
+| "Podemos incluir a entrega na fase dois?" | "Could we put the deliverable in phase two?" |
+| "Precisamos de mais duas semanas." | "We need two more weeks." |
+| "Vou enviar o acompanhamento com o aceite na sexta." | "I'll send the follow-up with the sign-off on Friday." |
+
+**Key:** ver tabela — cada linha troca a tradução literal por uma expressão fixa de reunião (*discuss* transitivo, *could + base verb*, *two more weeks*, *follow-up* + *sign-off*), mantendo o pedido educado.
+
+### Exercício 3 — Complete o vocabulário da reunião
+
+Preencha com **kickoff**, **stakeholder**, **deliverable**, **scope**, **milestone**, **follow-up**, **sign-off** ou **requirement**:
+
+1. "The daily sales view is a must-have for ______."
+2. "One more ______ asked for a mobile app."
+3. "The app is a new ______, so it needs two more weeks."
+4. "Could we keep it out of the ______ for phase one?"
+5. "Design approval in week three is our first ______."
+6. "I'll send the ______ note with the decision on Friday."
+7. "We need written ______ before we start the estimate."
+8. "The main ______ is a daily sales view by region."
+
+**Key:** 1) kickoff; 2) stakeholder; 3) deliverable; 4) scope; 5) milestone; 6) follow-up; 7) sign-off; 8) requirement — note que *milestone* é uma data de verificação, enquanto *deliverable* é o artefato entregue nessa data.
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Speaking: Client Meeting Simulation (pares)
-**Student A (PM):** Lead client meeting. Use: *requirements gathering, scope creep, deliverable, timeline, budget, stakeholder, sign-off, change request, milestone, risk, mitigation*.
-**Student B (Client):** Ask for changes. Push for extras.
-**PM:** Manage **scope creep** with **change request** process. Confirm **sign-off**.
+### 5 sentenças-alvo (leia em voz corrida)
+Let's start on time: requirements, scope, then the timeline.
+The main requirement is a daily sales view by region.
+A mobile app would be a new deliverable, so we need two more weeks.
+Let's sign off on the scope today and send the milestones by Friday.
+We've been waiting for the regional data since Monday, so that is the risk I want to flag.
 
-**Script:**
-> **PM:** "Agenda: **requirements gathering**, **timeline**, **budget**. **Deliverables**: wireframes week 2, API spec week 4, beta week 8. **Milestone 1**: design **sign-off** week 3. **Risk**: scope changes. **Mitigation**: **change request** process."
+### Foco articulatório para falantes de pt-BR
+
+- **/ð/ em *the, the timeline***: ponta da língua entre os dentes com voz; não troque por /d/ (*de timeline*).
+- **/θ/ em *three***: mesmo lugar de /ð/, mas sem voz; não diga "tree" ao falar *three deliverables*.
+- **/oʊ/ em *scope***: vogal longa com deslize de /o/ para /ʊ/; evite a vogal curta do pt-BR em *scópe*.
+- **/aɪ/ em *milestones***: começa como *my* (/ˈmaɪlstoʊnz/); não pronuncie "mil-estone".
+- **/f/ em *Friday, follow-up***: lábio inferior nos dentes de cima; não arredonde os lábios como em /v/.
+- **/k/ em *kickoff***: solte o ar sem inserir "e" no final da primeira sílaba (*kick-e-off*).
+- **Pausa após o signposting**: marque meio segundo depois de *requirements, scope, then the timeline* — a pausa avisa o cliente de que vem a próxima parte.
+
+### Prompt de produção (oral ou escrita)
+
+Você é o lead de entrega de uma empresa de software brasileira e abre uma reunião de escopo com um cliente. Escreva o roteiro da reunião — ou diga as mesmas frases em voz alta — com:
+
+1. uma abertura com **start on time** e um **signposting** anunciando exatamente três partes;
+2. o **main requirement** do cliente em uma frase;
+3. um pedido suave com **could we...?** sobre um item extra;
+4. uma consequência explícita usando **two more weeks** e a palavra **deliverable**;
+5. um **sign-off** pedido ao cliente com *sign off on...*;
+6. um **follow-up note** com prazo (*by Friday*) e pelo menos um **milestone**;
+7. uma frase com **for** ou **since** para o prazo e um risco nomeado.
+
+Inclua um detalhe real do seu contexto (sistema, quantidade de usuários, integração, data).
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Sign-off** means:
-| Slot | Value |
-|------|-------|
-| A | Signing a contract |
-| B | **Formal approval / acceptance** |
-| C | Ending a meeting |
-| D | Firing someone |
-**Key:** B
-**br_pt_form:** "aprovação formal / aceite"
+1. **Vocabulário (L1):** Em "The app is a new deliverable", *deliverable* significa:  
+   A) o marco do cronograma  B) a parte interessada  C) **o artefato que será entregue**  D) o aceite formal  
+   **Key:** C — *deliverable* é o entregável; o marco é *milestone*, a pessoa é *stakeholder* e o aceite é *sign-off*.
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **first conditional**:
-| Slot | Value |
-|------|-------|
-| A | If scope changes, timeline **will extend**. |
-| B | If scope changes, timeline **extends**. |
-| C | If scope changes, timeline **extending**. |
-| D | If scope changes, timeline **extended**. |
-**Key:** A
-**br_pt_form:** "Se o escopo mudar, o cronograma vai estender."
+2. **Gramática (L1):** Qual frase está correta ao pedir uma inclusão ao cliente?  
+   A) "Can we to add the app to the scope?"  B) "We can add the app to the scope?"  C) **"Could we add the app to the scope?"**  D) "Could we adding the app to the scope?"  
+   **Key:** C — *could* + verbo base soa educado; **A** insere *to*, **B** usa ordem de afirmação e **D** troca a base por um particípio.
+
+3. **Tempo verbal (L1):** "We've been waiting for the data since Monday." O que a frase diz?  
+   A) A espera terminou na segunda.  B) **A espera começou na segunda e continua.**  C) Os dados chegaram na segunda.  D) A espera vai começar na sexta.  
+   **Key:** B — *since* marca o início e o presente perfeito contínuo mostra que a espera ainda está aberta.
 
 ---
 
@@ -117,54 +156,58 @@ Choose the correct **first conditional**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_b1_project_client_sim",
   "cefr_level": "B1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (PM/Client dialogue), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/frases-ingles-trabalho.md (BaixeLivros notice applies) - scoping of client meeting vocabulary and project management phrases"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - project management terms are unprotectable professional concepts; definitions authored"
-  },
-  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "reading", "speaking", "writing"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.first_conditional_risks"
+      "grammar.scope_hedging_modals",
+      "grammar.first_conditional_scope_risk"
     ],
     "vocabulary": [
-      "vocab.project.client_simulation",
-      "vocab.project.requirements_gathering",
-      "vocab.project.scope_creep",
-      "vocab.project.deliverable",
-      "vocab.project.timeline",
-      "vocab.project.budget",
-      "vocab.project.stakeholder",
-      "vocab.project.sign_off",
-      "vocab.project.change_request",
-      "vocab.project.milestone",
-      "vocab.project.risk",
-      "vocab.project.mitigation"
+      "vocab.project_meeting_scope",
+      "vocab.project_meeting_requirement",
+      "vocab.project_meeting_deliverable",
+      "vocab.project_meeting_milestone",
+      "vocab.project_meeting_kickoff",
+      "vocab.project_meeting_follow_up",
+      "vocab.project_meeting_sign_off",
+      "vocab.project_meeting_stakeholder"
     ],
     "listening": [
-      "listening.project_client_context"
+      "listening.project_client_meeting"
     ],
     "pronunciation": [
-      "pronunciation.technical_terms"
+      "pronunciation.project_meeting_dental_fricatives",
+      "pronunciation.project_meeting_milestone_diphthong"
+    ],
+    "reading": [
+      "reading.project_client_meeting_dialogue",
+      "reading.project_scope_email"
+    ],
+    "speaking": [
+      "speaking.client_meeting_simulation"
+    ],
+    "writing": [
+      "writing.client_scope_followup"
     ]
   },
   "prereq_lessons": [
-    "les_a2_it_terms_basics",
-    "les_a2_it_communication",
-    "les_b1_it_technical"
+    "les_a2_meeting_open",
+    "les_b1_negotiation",
+    "les_b1_presentation_skills",
+    "les_a2_it_terms_basics"
   ],
   "estimated_time_min": 15
 }

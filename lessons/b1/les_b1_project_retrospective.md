@@ -3,115 +3,148 @@
 **Lesson ID:** `les_b1_project_retrospective`
 **Module:** `mod_b1_fluency_project`
 **CEFR:** B1
-**Reuse basis:** `cite_only`
-**Source:** `docs/frases-ingles-trabalho.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: retrospectiva de sprint 14 em um time remoto de fintech
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **retrospective** | retrospectiva | *reunião de melhoria contínua* |
-| **post-mortem** | postmortem | *análise sem culpa após incidente* |
-| **what went well** | o que foi bem | *sucessos a manter* |
-| **what didn't go well** | o que não foi bem | *problemas a melhorar* |
-| **action item** | item de ação | *tarefa concreta com dono e prazo* |
-| **blameless** | sem culpar | *foco no sistema, não na pessoa* |
-| **root cause** | causa raiz | *origem fundamental* |
-| **follow-up** | acompanhamento | *verificar se ação foi feita* |
-| **sprint** | sprint | *iteração de 1–2 semanas* |
-| **improvement** | melhoria | *mudança positiva incremental* |
-| **facilitator** | facilitador | *quem conduz a reunião* |
-| **psychological safety** | segurança psicológica | *ambiente para falar abertamente* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> **Facilitator:** "**Retrospective** — 3 columns: **What went well**, **What didn't go well**, **Action items**."
+> **Ana (tech lead, São Paulo):** "Let's keep this to fifteen minutes. Three questions: what went well, what should we improve, and who owns each action item."
 >
-> **Team:** "**Went well**: CI pipeline stable. **Didn't go well**: flaky tests in `AuthService`. **Action**: @dev fix flaky tests by Friday."
+> **Rafael (backend developer, São Paulo):** "What went well was the payment retry — it passed the load test on the first run."
 >
-> **Facilitator:** "**Post-mortem** for SEV-2: **blameless**. **Root cause**: missing index. **Action**: add index, review all queries. **Follow-up** in 2 weeks."
+> **Luiza (QA, Recife):** "I agree. But it seems the handoff to QA was late. We had one day for regression instead of three."
 >
-> **Team:** "**Psychological safety** — we own mistakes, fix system."
+> **Tom (frontend developer, remoto):** "Maybe the estimate was optimistic. The API contract changed on Wednesday, and that was a blocker for my screen."
+>
+> **Ana:** "Good. What could we have done differently? Let's name the risk before we propose the fix."
+>
+> **Luiza:** "We could freeze the contract on Tuesday. It might be worth adding a short blocker review before the handoff."
+>
+> **Rafael:** "I'll own that action item. I'll add the checklist by Friday and flag any contract change in the stand-up."
+>
+> **Ana:** "Then we have one action item with an owner and a date. Thanks — I'll write the summary."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **retrospective** | retrospectiva | Reunião para aprender com o sprint, não para distribuir culpa. Use *a retrospective*; *a retro* é a forma curta corrente em times de software. |
+| **went well** | correu bem | *What went well?* pede o que funcionou. Vá ao passado: *went*, não *goes*. |
+| **improve** | melhorar | *What should we improve?* cobra uma mudança concreta; *improve* é transitivo aqui. |
+| **action item** | item de ação | Tarefa com dono **e** prazo. *Action item for the team* não nomeia responsável. |
+| **blocker** | bloqueio | Algo que parou o trabalho de fato: *that was a blocker for my screen*. |
+| **hedging** | ressalva / suavização | Estratégia de falar sem acusar: *maybe*, *it seems*, *we could*. |
+| **maybe** | talvez | Atenua uma hipótese: *Maybe the estimate was optimistic.* Não carrega a correção sozinho. |
+| **it seems** | parece que | Apresenta uma leitura dos fatos: *It seems the handoff was late.* |
+| **we could** | nós poderíamos | Sugere mudança sem impor: *We could freeze the contract on Tuesday.* Mais suave que *we must*. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "O que correu bem?" → "What was gone well?" | "**What went well?**" | *Go* é irregular: passado é *went*; não existe *was gone* com esse sentido. |
+| "O que pode melhorar?" → "What can improve?" | "**What should we improve?**" | A pergunta pede uma sugestão do time, com dono da mudança. |
+| "Poderia ser melhor." → "It could be better." | "**We could improve the handoff.**" / "**It might be worth reviewing the handoff.**" | *It could be better* soa como crítica vaga; nomeie o processo e ofereça uma ação. |
+| "Foi um bloqueio." → "It was a block." | "**It was a blocker for my screen.**" | Em times de software, *blocker* é o substantivo corrente; *block* soa como verbismo. |
+| "Item de ação para o time." → "Action item for the team." | "**Action item: Rafael — add the checklist by Friday.**" | Sem nome e sem data, a tarefa não é verificável na próxima retro. |
+| "Talvez o prazo é otimista." → "Maybe the estimate is optimistic." | "**Maybe the estimate was optimistic.**" | O sprint já terminou; mantenha o passado na análise do que aconteceu. |
+| "Parece que a entrega atrasou." → "It seems that the delivery delayed." | "**It seems the handoff slipped.**" | *Slip* descreve um prazo que escorregou; *that* é opcional depois de *it seems*. |
+| "Quem é o dono da tarefa?" → "Who does own the action item?" | "**Who owns the action item?**" | Com *who* como sujeito, não há *do/does*; *does own* só soa como ênfase. |
+| "Nós devemos mudar o processo." → "We must change the process." | "**We could change the process.**" | *Must* soa como ordem; em retrospectiva, *could* convida o time a decidir. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-A **retrospective** focuses on:
-| Slot | Value |
-|------|-------|
-| A | Blaming individuals |
-| B | **Continuous improvement: what went well, what didn't, actions** |
-| C | Only technical debt |
-| D | Sprint planning |
-**Key:** B
-**br_pt_form:** "melhoria contínua: o que foi bem, o que não foi, ações"
+### Exercício 1 — Reconhecimento (o que é um action item?)
 
-### Item 2 — Vocabulary (Matching)
-Match the term to its context:
-| Term | Context |
-|------|---------|
-| **Retrospective** | a. End of sprint, team improvement |
-| **Post-mortem** | b. After incident, blameless analysis |
-| **Action item** | c. Concrete task with owner/deadline |
-| **Blameless** | d. Focus on system, not person |
-**Key:** Retrospective→a, Post-mortem→b, Action item→c, Blameless→d
-**br_pt_form:** "retrospectiva", "postmortem", "item de ação", "sem culpar"
+Na fala de Rafael, qual linha é um action item completo — com dono e prazo?
 
-### Item 3 — Grammar: Imperative for action items (fill-in-blank)
-Write **imperative** action items:
-"______ (fix) flaky tests in AuthService. ______ (add) index to orders table. ______ (schedule) follow-up meeting."
-**Key:** Fix / Add / Schedule
-**br_pt_form:** "Corrija", "Adicione", "Agende"
+| Opção | Frase |
+|---|---|
+| A | "We should improve the handoff." |
+| B | "Action item: Rafael — add the checklist by Friday." |
+| C | "The handoff to QA was late." |
+| D | "Maybe the estimate was optimistic." |
 
----
+**Key:** B — um *action item* nomeia quem faz e quando; em **A** há só uma sugestão, em **C** um achado e em **D** uma hipótese com ressalva.
 
-## FASE 3 — Output Task [4 min]
+### Exercício 2 — Transformação L1 → L2 (hedging em retrospectiva)
 
-### Speaking: Retrospective Roleplay (grupo de 3–4)
-**Roles:** Facilitator, Dev 1, Dev 2, (Dev 3)
-**Facilitator:** Runs 15-min retro. Three rounds: **Went well**, **Didn't go well**, **Actions**.
-**Each person:** Contributes 1 item per round.
-**Facilitator:** Ensures **blameless** tone. Assigns **action items** with owner + deadline.
+Reescreva as intenções em inglês natural, mantendo a ressalva sem perder o conteúdo:
 
-**Example:**
-> **Facilitator:** "What went well?"
-> **Dev 1:** "Code review turnaround < 2hr."
-> **Facilitator:** "What didn't go well?"
-> **Dev 2:** "Flaky tests block CI."
-> **Facilitator:** "Action: @Dev2 fix flaky tests by Friday. Follow-up next retro."
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "O handoff atrasou." | "It seems the handoff slipped." |
+| "O prazo foi otimista." | "Maybe the estimate was optimistic." |
+| "Dá para revisar o checklist antes do handoff." | "We could review the checklist before the handoff." |
+| "Vale a pena adicionar uma revisão de bloqueio." | "It might be worth adding a blocker review." |
+| "Quem cuida disso?" | "Who owns the action item?" |
+
+**Key:** ver tabela — *it seems*, *maybe*, *we could* e *it might be worth* suavizam a crítica, mas o problema continua nomeado; *who owns* não pede *does*.
+
+### Exercício 3 — Complete a análise do sprint
+
+Preencha com **went**, **improve**, **owns**, **changed** ou **seems**:
+
+1. "What ______ well? — The payment retry test."
+2. "What should we ______? — The handoff to QA."
+3. "Who ______ the action item? — Rafael."
+4. "The API contract ______ on Wednesday and blocked the frontend screen."
+5. "It ______ that we had one day for regression instead of three."
+
+**Key:** 1) went; 2) improve; 3) owns; 4) changed; 5) seems — fatos do sprint encerrado ficam no passado; a leitura atual do time usa *seems* e *owns*.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Blameless post-mortem** means:
-| Slot | Value |
-|------|-------|
-| A | No report written |
-| B | **Focus on system fixes, not human error** |
-| C | Skip the analysis |
-| D | Blame the on-call |
-**Key:** B
-**br_pt_form:** "postmortem sem culpar / foco no sistema"
+### 5 sentenças-alvo (leia em voz corrida)
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **imperative** for an action item:
-| Slot | Value |
-|------|-------|
-| A | **Investigate** the flaky tests. |
-| B | **Investigating** the flaky tests. |
-| C | **Investigated** the flaky tests. |
-| D | **Investigates** the flaky tests. |
-**Key:** A
-**br_pt_form:** "Investigue os testes instáveis."
+What went well was the payment retry test.
+It seems the handoff to QA slipped by one day.
+Maybe the estimate was optimistic because the API contract changed on Wednesday.
+We could freeze the contract earlier, and it might be worth adding a blocker review.
+Action item: Rafael will add the checklist by Friday and flag any contract change.
+
+### Foco articulatório para falantes de pt-BR
+
+- **/w/ em *went, well, worth***: lábios arredondados e soltos; não troque por /v/ como em *vert*.
+- **/eɪ/ em *maybe***: ditongo de /e/ para /ɪ/ na primeira sílaba; não reduza a um /e/ puro.
+- **/iː/ em *seems, freeze***: vogal longa e tensa; evite encurtar para /ɪ/ como em *sit*.
+- **/θ/ em *worth***: ponta da língua entre os dentes, sem voz; não diga *worts*.
+- **/ð/ em *the, the handoff***: mesma posição de /θ/, mas com voz; distinga as duas fricativas.
+- **/dʒ/ em *change***: africado; comece com /d/ e solte em /ʒ/, sem substituir pelo /ʒ/ inicial do português.
+
+### Prompt de produção (oral ou escrita)
+
+Você abre a retrospectiva de um sprint que acabou de terminar. Escreva um parágrafo curto (ou diga as mesmas frases em voz alta) com:
+
+1. um item de **what went well** no passado;
+2. um ponto de **what to improve** com pelo menos uma forma de *hedging* (*maybe*, *it seems*, *we could*, *it might be worth*);
+3. um **blocker** com a causa que o originou;
+4. uma pergunta com pronome interrogativo (*what* ou *who*);
+5. um **action item** com dono e prazo explícitos;
+6. consistência de tempo: passado para fatos do sprint, presente para a leitura atual do time.
+
+Inclua um detalhe real do seu contexto (sprint, ticket, deploy, fila, teste).
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Vocabulário (L1):** No comentário "It seems the handoff slipped.", o que aconteceu?  
+   A) O handoff terminou antes do previsto.  B) **O handoff atrasou.**  C) O handoff foi cancelado.  D) O handoff correu perfeito.  
+   **Key:** B — *slip* aqui é perda de prazo; *it seems* mostra que Luiza apresenta uma leitura dos fatos, não uma acusação.
+
+2. **Gramática (L1):** Qual linha suaviza a crítica sem abandonar o problema?  
+   A) "You delayed the handoff."  B) "The handoff is late."  C) **"It seems the handoff slipped; we could freeze the contract earlier."**  D) "We must fix the handoff now."  
+   **Key:** C — *it seems* + *we could* mantêm o achado e abrem a discussão; **A** acusa, **B** apenas constata e **D** impõe.
 
 ---
 
@@ -120,54 +153,52 @@ Choose the correct **imperative** for an action item:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_b1_project_retrospective",
   "cefr_level": "B1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (Facilitator/Team dialogue), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/frases-ingles-trabalho.md (BaixeLivros notice applies) - scoping of retrospective/post-mortem vocabulary and phrases"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - retrospective terms are unprotectable process concepts; definitions authored"
-  },
-  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "reading", "speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.imperative_action_items"
+      "grammar.retrospective_hedging",
+      "grammar.retrospective_tense_consistency",
+      "grammar.retrospective_interrogatives"
     ],
     "vocabulary": [
-      "vocab.retro.retrospective",
-      "vocab.retro.post_mortem",
-      "vocab.retro.went_well",
-      "vocab.retro.didnt_go_well",
-      "vocab.retro.action_item",
-      "vocab.retro.blameless",
-      "vocab.retro.root_cause",
-      "vocab.retro.follow_up",
-      "vocab.retro.sprint",
-      "vocab.retro.improvement",
-      "vocab.retro.facilitator",
-      "vocab.retro.psychological_safety"
+      "vocab.retrospective_meeting_vocab",
+      "vocab.retrospective_hedging",
+      "vocab.retrospective_action_item",
+      "vocab.retrospective_blocker"
     ],
     "listening": [
-      "listening.retro_context"
+      "listening.retrospective_dialogue"
     ],
     "pronunciation": [
-      "pronunciation.technical_terms"
+      "pronunciation.retrospective_dentals_diphthongs"
+    ],
+    "reading": [
+      "reading.retrospective_summary",
+      "reading.retrospective_blocker"
+    ],
+    "speaking": [
+      "speaking.retrospective_talk"
     ]
   },
   "prereq_lessons": [
-    "les_a2_it_terms_basics",
-    "les_a2_it_communication",
-    "les_b1_it_technical"
+    "les_a2_meeting_open",
+    "les_b1_question_forms",
+    "les_b1_tenses_review",
+    "les_b1_negotiation",
+    "les_a2_it_terms_basics"
   ],
   "estimated_time_min": 15
 }

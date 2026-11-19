@@ -3,112 +3,144 @@
 **Lesson ID:** `les_b2_ielts_writing`
 **Module:** `mod_b2_cert_prep`
 **CEFR:** B2
-**Reuse basis:** `cite_only`
-**Source:** `docs/leia-e-escreva-melhor-em-ingles.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: quatro engenheiros planejam a escrita acadêmica
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **IELTS** | IELTS | *International English Language Testing System* |
-| **academic writing** | escrita acadêmica | *estilo formal para exames e universidades* |
-| **Task 1** | Tarefa 1 | *descrever gráfico/diagrama (150 palavras)* |
-| **Task 2** | Tarefa 2 | *ensaio argumentativo (250 palavras)* |
-| **band score** | pontuação (band) | *escala 0-9 do IELTS* |
-| **task achievement** | realização da tarefa | *responde ao prompt completamente* |
-| **coherence and cohesion** | coerência e coesão | *organização e conexão de ideias* |
-| **lexical resource** | recurso lexical | *variedade e precisão de vocabulário* |
-| **grammatical range** | variedade gramatical | *diversidade de estruturas* |
-| **accuracy** | precisão | *correção gramatical* |
-| **paraphrase** | parafrasear | *reescrever sem copiar* |
-| **data interpretation** | interpretação de dados | *analisar gráficos e tendências* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> **Instructor:** "**IELTS Academic Writing**: **Task 1** (20 min, 150 words) describe graph. **Task 2** (40 min, 250 words) essay."
+> **Marina (backend developer, São Paulo):** "Let's keep this plan simple: one data overview, then two details. No memorised sentences."
 >
-> "**Band score** criteria: **Task Achievement**, **Coherence and Cohesion**, **Lexical Resource**, **Grammatical Range and Accuracy**."
+> **Caio (data engineer, Recife):** "Agreed. Task response comes first — did we answer every part of the question?"
 >
-> "**Task 1**: **paraphrase** prompt, overview + details. **Data interpretation**: trends, comparisons. **Task 2**: **thesis**, **body**, **conclusion**."
+> **Marina:** "Then coherence and cohesion: does the order make sense, and can the reader see the links?"
+>
+> **Beatriz (QA engineer, Lisbon):** "Lexical resource is not about rare words. It is about precise words used accurately."
+>
+> **Caio:** "And grammatical range: mix a short sentence with a longer one, but keep both accurate."
+>
+> **Beatriz:** "For the essay, write one thesis in the introduction and one conclusion that returns to it — without new information."
+>
+> **Marina:** "So we plan before we write: stance, two claims, one link back. That is the whole routine for today."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **task response** | resposta à tarefa | Mede se você cobriu **todas** as partes pedidas; escrever muito, mas fora do pedido, não ajuda. |
+| **coherence** | coerência | A lógica das ideias: a ordem dos parágrafos e a progressão do argumento fazem sentido. |
+| **cohesion** | coesão | As ligações visíveis entre frases: *however*, *this figure*, *the former*, referências e paralelismo. |
+| **lexical resource** | recurso lexical | Vocabulário preciso e natural dentro do contexto; palavras raras e mal colocadas derrubam a nota. |
+| **grammatical range** | variedade gramatical | Diversidade de estruturas (simples, composta, passiva, subordinada) com **accuracy**. |
+| **thesis** | tese | Uma frase que anuncia sua posição central; não é o título nem uma pergunta. |
+| **data overview** | visão geral dos dados | Uma ou duas frases com a tendência principal, **antes** dos números individuais. |
+| **conclusion** | conclusão | Fechamento que retoma a tese com outras palavras, sem introduzir dado novo. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "Escrevi 300 palavras, então respondi tudo." → long text with no direct answer | "The overview names the main trend and the two details answer the comparison." | *Task response* mede cobertura do pedido, não volume de texto. |
+| "Coerência e coesão são a mesma coisa." → using connectors for everything | "The order is logical (**coherence**); *however* and *this figure* make the link visible (**cohesion**)." | Coesão é a costura; coerência é o plano. Conector demais não conserta ordem ilógica. |
+| "Usei palavras difíceis." → "utilizei uma gama lexical sofisticada" | "The figure **rose sharply**; the second series **changed little**." | Precisão e collocation valem mais que sinônimos raros em *lexical resource*. |
+| "Variei gramática com frases longas." → several clauses in one sentence | "Loans rose steadily. The steepest gain came after 2021." | *Grammatical range* premia variedade **com accuracy**; uma frase longa demais pode errar. |
+| "A overview é a lista de todos os números." → "In 2019 it was 120, in 2020 it was 140..." | "Overall, loans rose across the period, with the sharpest gain after 2021." | O *data overview* resume a tendência; os números vêm depois, como detalhes. |
+| "Conclusão: repito a introdução." → "In conclusion, laptops were lent and the number went up." | "In conclusion, the pattern supports continuing the loan programme." | A *conclusion* retoma o julgamento com outras palavras — não copia nem acrescenta dado. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Task Achievement** in IELTS measures:
-| Slot | Value |
-|------|-------|
-| A | Handwriting |
-| B | **How completely you answer the prompt** |
-| C | Vocabulary size |
-| D | Speed |
-**Key:** B
-**br_pt_form:** "realização da tarefa / responde ao prompt completamente"
+### Exercício 1 — Reconhecimento (critério avaliado)
 
-### Item 2 — Vocabulary (Matching)
-Match the IELTS criterion to its focus:
-| Criterion | Focus |
-|-----------|-------|
-| **Coherence and Cohesion** | a. Organization and linking |
-| **Lexical Resource** | b. Vocabulary variety/precision |
-| **Grammatical Range** | c. Sentence structure diversity |
-| **Accuracy** | d. Correctness |
-**Key:** Coherence and Cohesion→a, Lexical Resource→b, Grammatical Range→c, Accuracy→d
-**br_pt_form:** "coerência e coesão", "recurso lexical", "varied gramatical", "precisão"
+Qual critério pergunta se você cobriu **todas** as partes do pedido, e não apenas escreveu bastante?
 
-### Item 3 — Grammar: Passive for academic writing (fill-in-blank)
-Rewrite in **passive voice** (academic style):
-"Researchers ______ (conduct) the study. The results ______ (publish) in 2023. The data ______ (analyze) using SPSS."
-**Key:** conducted / were published / was analyzed
-**br_pt_form:** "foi conduzido", "foram publicados", "foi analisado"
+| Opção | Critério |
+|---|---|
+| A | grammatical range |
+| B | **task response** |
+| C | lexical resource |
+| D | cohesion |
 
----
+**Key:** B — *task response* é completude da resposta; em **A** a pergunta é sobre estruturas, em **C** sobre vocabulário e em **D** sobre as ligações entre frases.
 
-## FASE 3 — Output Task [4 min]
+### Exercício 2 — Transformação L1 → L2
 
-### Writing: IELTS Task 1 Description (individual)
-**Describe this data (100 words):**
+Reescreva as intenções em inglês acadêmico natural:
 
-> "Sales of electric vehicles (in thousands): 2019: 50, 2020: 80, 2021: 120, 2022: 200, 2023: 350."
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "No geral, os empréstimos subiram no período." | "Overall, loans rose across the period." |
+| "O maior aumento veio depois de 2021." | "The steepest increase came after 2021." |
+| "Isso mostra uma tendência, não um pico isolado." | "This shows a trend, not a single annual spike." |
+| "Por fim, a conclusão retoma a tese sem novo dado." | "In conclusion, the pattern supports the thesis without adding a new figure." |
 
-**Structure:**
-1. **Paraphrase** prompt
-2. **Overview** (main trend)
-3. **Details** (specific data points)
+**Key:** ver tabela — cada linha troca o relato solto por um movimento de escrita acadêmica: *overall* (overview), *steepest increase* (detalhe), *trend vs spike* (interpretação) e *in conclusion* (fechamento).
 
-**Use:** *IELTS, academic writing, Task 1, band score, task achievement, coherence and cohesion, lexical resource, grammatical range, accuracy, paraphrase, data interpretation*.
+### Exercício 3 — Complete os conectores e referências
+
+Preencha com **Overall**, **By contrast**, **This figure**, **In conclusion** ou **However**:
+
+1. "______, loans rose across the five years; the details follow."
+2. "The first series climbed steadily. ______, the second series changed little."
+3. "______ reached 300 in 2023, up from 120 in 2019."
+4. "The rise was sharp after 2021. ______, it began earlier."
+5. "______, the pattern supports continuing the programme."
+
+**Key:** 1) Overall; 2) By contrast; 3) This figure; 4) However; 5) In conclusion — *overall* abre a visão geral, *by contrast* compara, *this figure* retoma um número, *however* corrige e *in conclusion* fecha.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Lexical resource** in IELTS measures:
-| Slot | Value |
-|------|-------|
-| A | Only grammar |
-| B | **Vocabulary variety and precision** |
-| C | Only spelling |
-| D | Only punctuation |
-**Key:** B
-**br_pt_form:** "recurso lexical / variedade e precisão de vocabulário"
+### 5 sentenças-alvo (leia em voz corrida)
+This sample chart shows a steady rise in library laptop loans from 2019 to 2023.
+Overall, the main trend is upward, and the steepest increase came after the new policy.
+A data overview should name the largest change before listing individual figures.
+Cohesion comes from clear referencing, not from stacking connectors in every sentence.
+The conclusion restates the thesis without adding a new argument or a fresh statistic.
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **passive** for academic writing:
-| Slot | Value |
-|------|-------|
-| A | Scientists **conducted** the experiment. |
-| B | The experiment **was conducted** by scientists. |
-| C | The experiment **is conducting** by scientists. |
-| D | The experiment **conducted** by scientists. |
-**Key:** B
-**br_pt_form:** "O experimento foi conduzido por cientistas."
+### Foco articulatório para falantes de pt-BR
+
+- **/ð/ em *this, the***: ponta da língua entre os dentes **com voz**; não troque por /d/ ("dis", "de").
+- **/θ/ em *thesis***: mesmo lugar, **sem voz**; não diga "tesis" nem "sesis".
+- **/eɪ/ em *data, figures***: ditongo de /e/ para /ɪ/; não reduza a /æ/ nem a um /e/ puro.
+- **/aɪ/ em *rise, policy***: ditongo completo; evite uma vogal final adicionada ("polísi").
+- **/iː/ em *steepest, clean***: vogal longa e tensa; não a encurte como o /ɪ/ de *this*.
+- **/ʒ/ em *conclusion, decision***: como o /ʒ/ de *measure*; não use /s/ nem /dʒ/.
+- **/əʊ/ em *overall, cohesion***: deslize de /ə/ para /ʊ/; não pronuncie "overál".
+
+### Prompt de produção (oral ou escrita)
+
+Escreva uma resposta curta de 120–150 palavras (ou diga as mesmas ideias em voz alta) sobre este cenário **fictício e autoral**: uma biblioteca comunitária emprestou 120, 140, 190, 250 e 300 notebooks nos anos de 2019 a 2023. Você deve:
+
+1. parafrasear o cenário com suas próprias palavras, sem copiar a pergunta;
+2. incluir uma **data overview** com a tendência principal antes dos números;
+3. dar **dois detalhes** com comparação explícita (por exemplo, *steadily* × *sharply*);
+4. usar pelo menos **dois dispositivos de coesão** (*overall*, *by contrast*, *this figure*, *however*);
+5. fechar com uma **conclusion** que retome a ideia central sem acrescentar dado novo;
+6. variar a estrutura das frases — pelo menos uma frase curta e uma composta — mantendo **accuracy**;
+7. usar vocabulário **preciso** em vez de sinônimos raros.
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Vocabulário (L1):** "Loans rose across the period. **Overall**, the programme should continue." A palavra *Overall* sinaliza:
+   A) um detalhe isolado  B) **a visão geral antes dos detalhes**  C) um contra-argumento  D) uma conclusão com dado novo
+   **Key:** B
+
+2. **Gramática (L1):** Qual linha é uma **data overview** correta?
+   A) "In 2019 it was 120 and in 2020 it was 140."  B) "The chart is about laptops and years."  C) "Laptops were lent by the library in 2023."  D) **"Overall, loans rose steadily, with the steepest gain after 2021."**
+   **Key:** D
+
+3. **Coesão (L1):** Qual opção cria coesão por **referência**, e não apenas por conector?
+   A) "However"  B) "Furthermore"  C) **"This figure"**  D) "In conclusion"
+   **Key:** C
 
 ---
 
@@ -117,64 +149,55 @@ Choose the correct **passive** for academic writing:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_b2_ielts_writing",
   "cefr_level": "B2",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (Instructor explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/leia-e-escreva-melhor-em-ingles.md (BaixeLivros notice applies) - scoping of academic writing and IELTS preparation"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - IELTS terms are unprotectable test concepts; definitions authored"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "reading", "writing"],
-  "output_modalities": ["writing"],
+  "output_modalities": ["writing", "speaking"],
   "skill_items": {
     "grammar": [
-      "grammar.passive_academic"
+      "grammar.academic_overview",
+      "grammar.sentence_range_accuracy"
     ],
     "vocabulary": [
-      "vocab.ielts.ielts",
-      "vocab.ielts.academic_writing",
-      "vocab.ielts.task_1",
-      "vocab.ielts.task_2",
-      "vocab.ielts.band_score",
-      "vocab.ielts.task_achievement",
-      "vocab.ielts.coherence_cohesion",
-      "vocab.ielts.lexical_resource",
-      "vocab.ielts.grammatical_range",
-      "vocab.ielts.accuracy",
-      "vocab.ielts.paraphrase",
-      "vocab.ielts.data_interpretation"
+      "vocab.academic_writing_criteria",
+      "vocab.data_trend_precision",
+      "vocab.academic_conclusion"
     ],
     "listening": [
-      "listening.ielts_context"
+      "listening.academic_writing_planning"
     ],
     "pronunciation": [
-      "pronunciation.technical_terms"
+      "pronunciation.academic_criteria_diphthongs"
     ],
     "reading": [
-      "reading.ielts_prompt"
+      "reading.data_overview",
+      "reading.argument_conclusion"
     ],
     "writing": [
-      "writing.ielts_task1",
-      "writing.ielts_task2"
+      "writing_formal_email",
+      "writing_argumentative"
     ]
   },
   "prereq_lessons": [
-    "les_a2_it_terms_basics",
-    "les_a2_it_communication",
-    "les_b1_it_technical",
-    "les_b1_fluency_project",
-    "les_b2_professional"
+    "les_b2_professional_email_advanced",
+    "les_b2_professional_argument",
+    "les_b2_register_nuance",
+    "les_a2_it_terms_basics"
   ],
   "estimated_time_min": 15
 }
 ```
+
+Nota de rastreabilidade: §4.3 registra `writing_formal_email` e `writing_argumentative` como skills novas **e** como skills de pré-requisito desta lição (auto-loop estrutural); o auto-loop foi removido do JSON. As lições reais de §4.3 que introduzem essas skills são `les_b2_professional_email_advanced`, `les_b2_professional_argument` e `les_b2_register_nuance`, todas incluídas, e nenhuma delas é a própria lição. `les_a2_it_terms_basics` veio do JSON original e foi confirmado em §4.3. Os quatro ids restantes do JSON original (`les_a2_it_communication`, `les_b1_it_technical`, `les_b1_fluency_project`, `les_b2_professional`) são nomes de módulo e não constam como lição em §4.3, portanto foram removidos.
+
+Nota de clean-room: query registrada ao grammar-rag — `--topic "IELTS academic writing task response cohesion lexical resource" --top-k 2`. Os dois resultados retornados foram capas/front matter de gramáticas e listas de collocation proprietárias, sem conteúdo aproveitável e sem autorização de reprodução; nada foi usado. Todo o material acima é autoral, escrito em pt-BR → en-US. Nenhum prompt, item, amostra ou gabarito oficial de IELTS foi reproduzido.

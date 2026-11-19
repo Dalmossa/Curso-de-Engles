@@ -41,12 +41,12 @@ info:
     source-of-truth: Curso-de-Ingles/specs/*.md (+ external-sources.md)
     derived-at: 2026-11-19
     spec-blobs:
-      specs/assessment-item-spec.md: a910938fb62015b42bc1abe0204984951bf9ac4c
-      specs/curriculum-graph-spec.md: 98625cff137f87b325dba3026ba07ede0ded776e
+      specs/assessment-item-spec.md: d8e94b929fbd57054eaae78f37abc7cefc75af2d
+      specs/curriculum-graph-spec.md: 9651f50738db97852b2e54ea9bb429d7bf8501ca
       specs/listening-corpus-spec.md: 295e1b8546d0bd1fc6852b363d35e93947535f2f
       specs/post-lesson-practice-spec.md: 9566fe6088035f5a8bd88ac754503c26c7dd9c59
       specs/stats-progress-evaluation-spec.md: a8ae6bb6812a2da4ef3380879e105a7184d86cc8
-      external-sources.md: c18c9dd9a88df87360879d4367663521f7787609
+      external-sources.md: e0e37faa5d24724c15c3840414c371959a705be2
 
 servers:
   # CONSTITUTION.md §4.4 — URL path versioning is mandatory: /api/v1.
