@@ -1,123 +1,143 @@
-# Lesson: The History of the Internet — Relative Clauses, Plurals, and There + to be
+# Lesson: Internet History & Relative Clauses
 
 **Lesson ID:** `les_a2_it_internet_history`
 **Module:** `mod_a2_it_fundamentals`
 **CEFR:** A2
-**Reuse basis:** `cite_only`
-**Source:** `Ingles-Tecnico-Para-Informatica.md` Aula 6 "The history of the internet" (©CETAM, restricted — bibliography only)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
-> **Why this lesson is `cite_only`.** © CETAM, no redistribution grant. Read for scope only: timeline + relative clauses + there is/are. No text/activity reproduced. See `external-sources.md` §0.5 / §7.0.
+---
+
+## FASE 1 — Input Contextualizado (i+1) [4 min]
+
+### Cenário: uma nova contratada pergunta ao mentor no canal do time
+
+> **Bia (new hire, São Paulo):** "I keep hearing ARPANET, TCP/IP, the Web and cloud. Are they four names for the same thing?"
+>
+> **Caio (platform engineer):** "No. Think of layers. ARPANET was an early network that linked four universities in 1969."
+>
+> **Bia:** "What does *network* mean here?"
+>
+> **Caio:** "It is a set of computers which share rules to exchange data. We call those rules protocols."
+>
+> **Bia:** "And the browser?"
+>
+> **Caio:** "A browser is a program that opens pages on the Web. Tim Berners-Lee was the researcher who proposed the Web at CERN."
+>
+> **Bia:** "So the team whose service I call may be on another continent, and my app can run in the cloud."
+>
+> **Caio:** "Exactly. The cloud is infrastructure that someone else operates, so we rent it instead of buying the servers."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **packet switching** | comutação de pacotes | *A method that breaks data into packets.* Não diga *packet switch* para o método. |
+| **protocol** | protocolo | *Rules that devices follow.* Em inglês, não use a palavra portuguesa *protocolo*. |
+| **browser** | navegador | *A program that opens Web pages.* Diga *browser*, nunca *navegador* em en-US. |
+| **the Web (WWW)** | a Web | *A system of pages that runs on the Internet.* A Web não é sinônimo de Internet. |
+| **in the cloud** | na nuvem | *Servers you rent from another operator.* Use **in**, não *on cloud*. |
+| **whose** | cujo / de quem | *The team whose service I call.* Marca posse; não serve para sujeito ou objeto. |
+| **to rent** | alugar / contratar sob demanda | *We rent servers instead of buying them.* Prefira *rent* a *alugue* em inglês. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "the browser that I use it" | "the browser **that I use**" | O pronome relativo já representa o objeto; repetir *it* deixa a frase duplicada. |
+| "the researcher which proposed the Web" | "the researcher **who/that** proposed the Web" | Para pessoas, use *who* (ou *that*); *which* é para coisas. |
+| "the server which IP is..." | "the server **whose** IP is..." | Posse pede *whose*: *the server whose IP changed*. |
+| "on cloud" | "**in the cloud**" | A expressão fixa é *in the cloud*; não existe *on cloud*. |
+| "the Internet and the Web are the same" | "The Web **runs on** the Internet." | A Internet é a rede; a Web é um sistema de páginas que usa essa rede. |
+| "ARPANET was a network who linked..." | "ARPANET was a network **that/which** linked..." | Redes são coisas; *who* fica só para pessoas. |
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Timeline (5 sentences)
+### Exercício 1 — Complete com o pronome relativo correto
 
-1. **ARPANET** was the first network **that** connected four computers in 1969.
-2. **Vint Cerf and Bob Kahn** were the two researchers **who** developed the TCP/IP protocols.
-3. **TCP/IP** became the standard **that** allowed different networks to connect to each other.
-4. **The World Wide Web (WWW)** was created by **Tim Berners-Lee**, the scientist **who** invented HTTP and HTML in 1989–1991.
-5. **The Internet** is the global network **that** links billions of devices today.
+"The engineer ______ laptop hosted the first demo explained the setup."
 
-### Grammar focus
-
-| Relative | Refers to | Example |
-|----------|-----------|---------|
-| **who**  | people    | *people who use the internet* |
-| **that** | things    | *a network that connects computers* |
-
-### Mini-text (authored)
-
-> **Maya:** "I thought the internet and the Web were the same thing."
-> **Lucas:** "No. ARPANET was the network **that** came first, in 1969. TCP/IP is the set of rules **that** lets different networks talk. The Web is a system **that** runs **on** the Internet. Tim Berners-Lee was the person **who** created it."
-> **Maya:** "So, without TCP/IP, there would be no way to connect networks?"
-> **Lucas:** "Exactly. And even today, there are many services **that** run on the internet — email, messaging, video calls."
-
----
-
-## FASE 2 — Guided Practice [5 min]
-
-### Item 1 — who vs that (MCQ)
-"Tim Berners-Lee is the person ______ invented the World Wide Web."
-| Slot | Value |
-|------|-------|
-| A | that |
-| B | **who** |
-| C | which |
+| Opção | Pronome |
+|---|---|
+| A | who |
+| B | which |
+| C | whose |
 | D | what |
-**Key:** B
-**br_pt_form:** "Tim Berners-Lee é a pessoa **que** inventou a World Wide Web."
 
-### Item 2 — there is / there are (MCQ)
-"______ many people who use the internet every day."
-| Slot | Value |
-|------|-------|
-| A | There is |
-| B | **There are** |
-| C | There was |
-| D | There has |
-**Key:** B
-**br_pt_form:** "Há muitas pessoas que usam a internet todos os dias."
+**Key:** C
 
-### Item 3 — relative clause (MCQ)
-"ARPANET was a network ______ connected four computers in 1969."
-| Slot | Value |
-|------|-------|
-| A | who |
-| B | **that** |
-| C | where |
-| D | when |
-**Key:** B
-**br_pt_form:** "ARPANET foi uma rede **que** conectava quatro computadores em 1969."
+O laptop pertence ao engenheiro: posse em oração relativa pede *whose*. *Who* e *which* não marcam posse, e *what* não funciona como pronome relativo depois de um nome.
 
-### Item 4 — Plurals (MCQ)
-"There are billions of ______ connected to the internet."
-| Slot | Value |
-|------|-------|
-| A | device |
-| B | **devices** |
-| C | devicess |
-| D | deviceses |
-**Key:** B
-**br_pt_form:** "Há bilhões de dispositivos conectados à internet."
+### Exercício 2 — Correção de erro
+
+Reescreva sem o elemento duplicado: "The browser which Tim Berners-Lee created it ran on early computers."
+
+**Key:** The browser which Tim Berners-Lee created ran on early computers.
+
+O *which* já retoma *browser* na função de objeto de *created*; manter *it* cria um objeto duplo. Também é correto: *The browser that Tim Berners-Lee created ran on early computers.*
+
+### Exercício 3 — who / which / that / whose em definições técnicas
+
+Complete as três definições:
+
+1. "A browser is a program ______ opens pages." 
+2. "Vint Cerf and Bob Kahn are the researchers ______ developed TCP/IP." 
+3. "The company ______ servers we rent is in Oregon."
+
+**Key:** 1) that / which; 2) who / that; 3) whose.
+
+Em (1) o sujeito é uma coisa, então *that* ou *which*; em (2) o sujeito são pessoas, então *who* ou *that*; em (3) há posse (*servers of the company*), então apenas *whose*.
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Speaking: Explain the timeline [60 seconds]
+### 5 sentenças-alvo (leia em voz corrida)
 
-Use at least three relative clauses (*who/that*). Must explain Internet vs WWW, mention one person (*who*) and one network/protocol (*that*), use **there is/are** correctly.
+ARPANET was a network that linked four universities in 1969.
+TCP/IP is the set of rules which lets different networks exchange data.
+Tim Berners-Lee was the researcher who proposed the Web at CERN.
+The company whose servers we rent is in Oregon.
+A browser is a program that opens pages, and the Web runs on the Internet.
 
-**Success rubric:** correct who/that, correct there is/are agreement, correct plurals (*devices, networks, protocols*), clear explanation.
+### Foco articulatório para falantes de pt-BR
+
+- **/θ/ em *through, Ethernet***: ponta da língua entre os dentes, sem voz; evite trocar por /t/ (*trough*) ou por /s/.
+- **/ð/ em *the, this, that, they***: mesma posição da língua, agora com voz; não comece com /d/ nem com /z/.
+- **/w/ em *Web, which, was***: lábios arredondados; contraste com /v/ em *server*, em que o lábio inferior toca os dentes de cima.
+- **/h/ em *who, whose***: solte ar antes da vogal /uː/; não acrescente /w/ nem omita o /h/.
+
+### Prompt de produção (oral ou escrita)
+
+Em 60–90 segundos (ou 4–6 linhas), explique a um colega novo o que é TCP/IP, a Web ou a cloud. Seu texto precisa cumprir estes requisitos:
+
+1. Uma definição com *a/an + noun + that/which ...*.
+2. Uma pessoa citada com *who* (por exemplo, Tim Berners-Lee ou Vint Cerf).
+3. Uma relação de posse com *whose* (por exemplo, *the team whose service I call*).
+4. Uma frase deixando claro que a Web roda sobre a Internet, que não são a mesma coisa.
+5. Pelo menos três termos do glossário (*packet switching, protocol, browser, cloud, rent*).
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — relative clause (MCQ)
-"TCP/IP is the set of rules ______ allows different networks to connect."
-| Slot | Value |
-|------|-------|
-| A | who |
-| B | **that** |
-| C | where |
-| D | when |
-**Key:** B
-**br_pt_form:** "TCP/IP é o conjunto de regras **que** permite que diferentes redes se conectem."
+1. **Gramática (L1):** Qual frase define *browser* corretamente?  
+   A) "A browser which it opens pages."  B) "A browser that opens pages."  C) "A browser who opens pages."  D) "A browser whose opens pages."  
+   **Key:** B  
+   *That* substitui *a program* e já funciona como sujeito de *opens*; as outras opções duplicam o sujeito, usam *who* para coisa ou deixam *whose* sem um nome possuído.
 
-### Item 2 — there is/are (past) (MCQ)
-"______ a network that connects four universities in 1969."
-| Slot | Value |
-|------|-------|
-| A | **There was** |
-| B | There are |
-| C | There were |
-| D | There is |
-**Key:** A
-**br_pt_form:** "Havia uma rede que conectava quatro universidades em 1969."
+2. **Gramática (L1):** Qual frase usa *whose* corretamente?  
+   A) "The engineer who laptop wrote the code."  B) "The engineer which laptop wrote the code."  C) "The engineer whose laptop wrote the code."  D) "The engineer what laptop wrote the code."  
+   **Key:** C  
+   *Whose laptop* mostra que o laptop pertence ao engenheiro; nenhuma das outras opções marca posse.
+
+3. **Vocabulário (L1):** Qual frase usa a expressão natural para infraestrutura alugada?  
+   A) "Our API runs on cloud."  B) "Our API runs in cloud."  C) "Our API runs in the cloud."  D) "Our API runs at the cloud."  
+   **Key:** C  
+   A expressão fixa é *in the cloud*, com artigo definido; as demais omitem ou trocam o artigo e a preposição.
 
 ---
 
@@ -126,27 +146,51 @@ Use at least three relative clauses (*who/that*). Must explain Internet vs WWW, 
 
 ---
 
+## Dados para o Learner Model (Pedagogical Memory)
+
 ```json
 {
   "lesson_id": "les_a2_it_internet_history",
   "cefr_level": "A2",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "timeline, table, dialogue, items, rubric",
-    "bibliography_only": [
-      "Ingles-Tecnico-Para-Informatica.md (CETAM 2010) Aula 6 - scoping only"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked",
-    "verbatim_reproduction": "none"
-  },
-  "skills_touched": ["grammar", "vocabulary", "listening", "speaking", "reading"],
-  "output_modalities": ["speaking"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "reading", "speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
-    "grammar": ["grammar.relative_who_that", "grammar.there_is_there_are", "grammar.regular_plural_devices"]
+    "grammar": [
+      "grammar.relative_defining_who_which_that",
+      "grammar.relative_possessive_whose",
+      "grammar.present_simple_regular"
+    ],
+    "vocabulary": [
+      "vocab.it_internet_terms",
+      "vocab.skimming_keywords"
+    ],
+    "listening": [
+      "listening.internet_explanation_deferred"
+    ],
+    "reading": [
+      "reading.internet_timeline_detail",
+      "reading.relative_definition_gist"
+    ],
+    "pronunciation": [
+      "pronunciation.relative_dental_fricatives"
+    ],
+    "speaking": [
+      "speaking.explain_tech_term_relative"
+    ]
   },
-  "prereq_lessons": ["les_a2_it_terms_basics"],
+  "prereq_lessons": [
+    "les_a1_regular_verbs_past",
+    "les_a1_present_simple",
+    "les_a1_have_has",
+    "les_a1_reading_skimming",
+    "les_a2_it_terms_basics"
+  ],
   "estimated_time_min": 15
 }
 ```

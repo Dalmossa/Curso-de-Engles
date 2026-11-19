@@ -3,118 +3,151 @@
 **Lesson ID:** `les_a2_writing_messages`
 **Module:** `mod_a2_skills_rw`
 **CEFR:** A2
-**Reuse basis:** `cite_only`
-**Source:** `docs/leia-e-escreva-melhor-em-ingles.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: thread de chat antes do deploy
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **message** | mensagem | *comunicação curta* |
-| **text** | texto / mensagem | *comunicação escrita* |
-| **email** | e-mail | *correspondência eletrônica* |
-| **chat** | chat / conversa | *mensagem instantânea* |
-| **reply** | responder | *retornar mensagem* |
-| **forward** | encaminhar | *enviar a outro* |
-| **subject** | assunto | *título do e-mail* |
-| **greeting** | saudação | *abertura* |
-| **closing** | encerramento | *despedida* |
-| **signature** | assinatura | *nome e contato* |
-| **attachment** | anexo | *arquivo anexado* |
-| **inbox** | caixa de entrada | *recebidas* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**Email structure**: **Subject** → **Greeting** → **Body** → **Closing** → **Signature**."
+> **Marina (tech lead, remoto):** "Hi Rafa, the deploy is at 15:00. Can you check staging before then?"
 >
-> "**Message**: 'Hi John, Can we meet at 3? Thanks, Ana.'"
+> **Rafa (backend developer, São Paulo):** "Sure. I'll check it now and post a short note here."
 >
-> "**Reply**: 'Re: Meeting — Sure, 3 works for me.'"
+> **Rafa:** "Update: staging is green. I found one warning in the worker log."
 >
-> "**Forward**: 'Fwd: Project update — Please review.'"
+> **Marina:** "Thanks. Short version — is it blocking?"
+>
+> **Rafa:** "No, it isn't. I'm writing a note for the duty engineer so the on-call team has the context."
+>
+> **Marina:** "Good. Keep it short: what happened, what you did, what is next."
+>
+> **Rafa:** "Got it. I'll post the note here and send a short email to Ana."
+>
+> **Marina:** "Perfect. You don't need to write a long email — a short note is fine."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **Hi Rafa,** | Oi, Rafa, | Abertura padrão de chat e e-mail curto entre colegas; *Dear Rafa* soa mais formal. |
+| **Hi team, / Hi all,** | Oi, pessoal, | Abertura para o grupo; evite *Hello everyone* em thread informal de trabalho. |
+| **Quick update: staging is green.** | Atualização rápida: o staging está verde. | Rótulo + informação: o leitor entende o ponto antes de ler o resto. |
+| **I'll check it now.** | Vou checar agora. | Contração de *I will*: natural em chat; na escrita formal, use *I will*. |
+| **Could you update the ticket?** | Você pode atualizar o ticket? | Pedido educado; *Can you...?* é mais direto, *Could you...?* mais gentil. |
+| **I need you to send the log.** | Preciso que você envie o log. | Depois de *need* + pessoa, use *to* antes do verbo: *need someone to do*. |
+| **No need to reply.** | Não precisa responder. | Fecho curto quando a mensagem é informativa; evite *not need reply*. |
+| **Thanks, / Thanks in advance,** | Obrigado, / Desde já, obrigado, | Fecho de mensagem curta; *Thanks in advance* pede uma ação futura. |
+| **Best regards,** | Atenciosamente, | Fecho de e-mail mais formal; em chat, *Thanks,* já basta. |
+| **I've attached the details.** | Anexei os detalhes. | *Attach* leva o objeto direto; não diga *attach in the attachment*. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "Preciso que você envie o log." → "I need that you send the log." | "I need you to send the log." | *Need* + pessoa pede *to* antes do verbo; *that* soa tradução direta. |
+| "Favor me enviar o recado." → "Please me send the note." | "Please send me the note." | Em inglês, o pronome objeto vem depois do verbo, não antes dele. |
+| "Atenciosamente," em chat → "Attentively," | "Thanks," | *Attentively* não é fecho de e-mail em en-US; reserve *Best regards* para registro formal. |
+| "Sem mais," → "Without more," | "Thanks," / "No need to reply." | Fechos do pt-BR não se traduzem palavra por palavra. |
+| "Estou enviando em anexo." → "I am sending in the attachment." | "I'm attaching the file." / "I've attached the file." | *Attach* já carrega a ideia de anexo; não repita *in the attachment*. |
+| "Oi, pessoal" em e-mail de cliente → "Hi, everyone," | "Dear team," / "Hi team," | Registro importa: com cliente externo, prefira abertura mais neutra. |
+| "Não precisa responder." → "You don't need answer." | "You don't need to answer." / "No need to reply." | Depois de *need* na forma negativa, o verbo leva *to*; a versão curta é mais natural. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Subject** in an email is:
-| Slot | Value |
-|------|-------|
-| A | The greeting |
-| B | **The topic/title** |
-| C | The closing |
-| D | The signature |
+### Exercício 1 — Registro e abertura (L1)
+
+Você envia uma mensagem rápida no chat do time antes de um deploy. Qual linha combina com o registro informal?
+
+| Opção | Frase |
+|---|---|
+| A | "Dear Marina, I am writing to inform you that staging is green." |
+| B | **"Hi Marina, staging is green. I'll check the worker log now."** ✓ |
+| C | "Hi Marina, I am writing to inform you that staging is green." |
+| D | "Dear team, please be advised that staging is green." |
+
 **Key:** B
-**br_pt_form:** "assunto / tópico/título"
 
-### Item 2 — Vocabulary (Matching)
-Match the message part to its function:
-| Part | Function |
-|------|----------|
-| **Greeting** | a. Opening |
-| **Body** | b. Main content |
-| **Closing** | c. Farewell |
-| **Signature** | d. Name and contact |
-**Key:** Greeting→a, Body→b, Closing→c, Signature→d
-**br_pt_form:** "saudação", "corpo", "encerramento", "assinatura"
+**Feedback:** *Hi Marina* + contração *I'll* combinam com chat de trabalho. A e D usam registro de e-mail formal; C mistura abertura informal com fórmula formal (*I am writing to inform you*).
 
-### Item 3 — Grammar: Imperatives for messages (fill-in-blank)
-Complete with **imperative**:
-"______ (reply) to the email. ______ (forward) the message. ______ (check) the attachment. ______ (write) a clear subject."
-**Key:** Reply / Forward / Check / Write
-**br_pt_form:** "Responda / Encaminhe / Verifique / Escreva"
+### Exercício 2 — Pedido educado e contração (L1 → L2)
+
+Complete as três linhas com a forma natural em en-US:
+
+1. "______ (I will) check the log and post a note here."
+2. "______ (You could) update the ticket before 15:00?"
+3. "The note is informational — ______ (não precisa responder)."
+
+**Key:** 1) I'll; 2) Could you; 3) No need to reply.
+
+**Feedback:** Em chat, *I'll* soa natural; o pedido gentil inverte sujeito e modal (*Could you...?*); e o fecho curto para mensagem informativa é *No need to reply*.
+
+### Exercício 3 — Reescrita de intenções (L1 → L2)
+
+Reescreva cada intenção do pt-BR para um e-mail curto ou recado em en-US:
+
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Preciso que você envie o log." | "I need you to send the log." |
+| "Favor me enviar o recado." | "Please send me the note." |
+| "Oi, pessoal," | "Hi team," |
+| "Atenciosamente," | "Best regards," |
+
+**Key:** ver tabela.
+
+**Feedback:** *Need you to send*, *send me* (pronome depois do verbo), *Hi team* e *Best regards* cobrem as quatro intenções sem calcar a sintaxe do pt-BR.
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Writing: Email Structure (individual)
-**Write a short email** with all parts:
+### 5 sentenças-alvo (leia em voz corrida)
 
-```
-Subject: Meeting Tomorrow
+Hi Rafa, quick update: staging is green.
+I'll check the worker log and send you a short note.
+Could you update the ticket before the deploy at 15:00?
+You don't need to write a long email — a short note is fine.
+Thanks for the heads-up, and see you at the standup.
 
-Hi John,
+### Foco articulatório para falantes de pt-BR
 
-Can we meet at 3 PM tomorrow?
+- **/θ/ em *thanks***: ponta da língua entre os dentes, sem voz; não troque por /t/ nem por /f/.
+- **/ð/ em *the***: mesma posição, agora com voz; evite o /d/ do pt-BR ("de").
+- **/h/ em *hi, heads-up***: solte ar antes da vogal; não omita o som no início da palavra.
+- **/r/ em *Rafa, green***: língua levemente recolhida, sem a fricção do "r" forte do pt-BR.
+- **Entonação do pedido**: em *Could you update the ticket...?*, suba levemente o tom no final para soar gentil.
 
-Thanks,
-Ana
-```
+### Prompt de produção (escrita)
 
-**Create your own email** with subject, greeting, body, closing, and signature.
+Escreva três mensagens curtas sobre uma situação real ou inventada do seu trabalho: (1) um update no chat do time, (2) um e-mail curto para um colega e (3) um recado para o plantão. Cumpra os requisitos:
+
+1. Abra o chat e o e-mail com *Hi + nome*; use *Hi team* para o grupo.
+2. Escolha o registro: contrações (*I'll, don't*) no chat; forma completa (*I will*) no e-mail mais formal.
+3. Inclua um pedido educado com *Could you...?* e uma contração em pelo menos uma mensagem.
+4. Feche com *Thanks,* ou *No need to reply.* quando fizer sentido; use *Best regards,* no e-mail formal.
+5. Mantenha no máximo quatro frases por mensagem, com sujeito explícito e ordem SVO.
+6. Cite um detalhe concreto (deploy, ticket, log, standup) em cada mensagem.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Reply** means:
-| Slot | Value |
-|------|-------|
-| A | Delete |
-| B | **Respond** |
-| C | Forward |
-| D | Ignore |
-**Key:** B
-**br_pt_form:** "responder"
+1. **Registro (L1):** Qual fecho combina com uma mensagem curta de chat para um colega?  
+   A) "Attentively,"  B) **"Thanks,"**  C) "Without more,"  D) "To whom it may concern,"  
+   **Key:** B
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **imperative** for a message:
-| Slot | Value |
-|------|-------|
-| A | **To reply** to the email. |
-| B | **Reply** to the email. |
-| C | **Replying** to the email. |
-| D | **Replied** to the email. |
-**Key:** B
-**br_pt_form:** "Responda ao e-mail."
+2. **Gramática (L1):** Qual linha está correta?  
+   A) "I need that you send the log."  B) "Please me send the note."  C) **"Could you update the ticket before 15:00?"**  D) "You don't need answer."  
+   **Key:** C
+
+3. **Leitura (L1):** O que significa "No need to reply"?  
+   A) **"Não é preciso responder."**  B) "Responda com urgência."  C) "A mensagem foi apagada."  D) "Você não pode responder."  
+   **Key:** A
 
 ---
 
@@ -123,81 +156,50 @@ Choose the correct **imperative** for a message:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a2_writing_messages",
   "cefr_level": "A2",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (message writing explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/leia-e-escreva-melhor-em-ingles.md (BaixeLivros notice applies) - scoping of everyday message writing"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - message writing terms are unprotectable communication concepts; definitions authored"
-  },
-  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "writing"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "reading", "writing"],
   "output_modalities": ["writing"],
   "skill_items": {
     "grammar": [
-      "grammar.imperatives_messages"
+      "grammar.writing_message_register",
+      "grammar.contractions_messages",
+      "grammar.polite_requests_writing",
+      "grammar.svo_order"
     ],
     "vocabulary": [
-      "vocab.messages.message",
-      "vocab.messages.text",
-      "vocab.messages.email",
-      "vocab.messages.chat",
-      "vocab.messages.reply",
-      "vocab.messages.forward",
-      "vocab.messages.subject",
-      "vocab.messages.greeting",
-      "vocab.messages.closing",
-      "vocab.messages.signature",
-      "vocab.messages.attachment",
-      "vocab.messages.inbox"
+      "vocab.messages_openers",
+      "vocab.messages_closers",
+      "vocab.messages_chunks",
+      "vocab.writing_svo_chunks"
     ],
     "listening": [
       "listening.messages_context"
     ],
     "pronunciation": [
-      "pronunciation.messages"
+      "pronunciation.messages_thanks_headsup"
+    ],
+    "reading": [
+      "reading.message_thread",
+      "reading.message_note"
     ],
     "writing": [
-      "writing.email_structure"
+      "writing.informal_message",
+      "writing.short_email"
     ]
   },
   "prereq_lessons": [
-    "les_a2_greetings_intro",
-    "les_a2_small_talk",
-    "les_a2_introducing_others",
-    "les_a2_meeting_open",
-    "les_a2_meeting_participate",
-    "les_a2_email_basics",
-    "les_a2_phone_calls",
-    "les_a2_ask_for_help",
-    "les_a2_deadlines_tasks",
-    "les_a2_feedback_praise",
-    "les_a2_corporate_wrapup",
-    "les_a2_corpus_intro",
-    "les_a2_past_narrative",
-    "les_a2_future_will",
-    "les_a2_present_continuous",
-    "les_a2_modals_can_need",
-    "les_a2_imperatives",
-    "les_a2_prepositions_basic",
-    "les_a2_travel_vocab_core",
-    "les_a2_collocations",
-    "les_a2_stress_timing",
-    "les_a2_airport",
-    "les_a2_hotel_taxi",
-    "les_a2_restaurant_shopping",
-    "les_a2_reading_strategy",
-    "les_a2_writing_svo",
-    "les_a2_writing_bio"
+    "les_a2_writing_svo"
   ],
   "estimated_time_min": 15
 }

@@ -1,244 +1,197 @@
-# Lesson: Inside the System Unit — prepositions of place, and the parts that touch each other
+# Lesson: System Unit & Hardware Vocabulary
 
 **Lesson ID:** `les_a2_it_system_unit`
 **Module:** `mod_a2_it_fundamentals`
 **CEFR:** A2
-**Reuse basis:** `cite_only`
-**Source:** `Ingles-Tecnico-Para-Informatica.md` Aula 5.1 "System unit" (©CETAM, restricted — bibliography only)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
-> **Why this lesson is `cite_only`.** © CETAM, no redistribution grant. Read for scope only: that
-> describing the inside of a case is a **spatial** task, and that the learner's real problem is
-> prepositions of place plus the noun-modifier order (*RAM slot*, *power supply unit*), not the parts
-> themselves. No text, figure, caption, or activity from Aula 5 is reproduced. See
-> `external-sources.md` §0.5 / §7.0.
->
-> **Boundary with `les_a2_it_computer_parts`.** That lesson asks *what kind of thing* a part is
-> (category, countability). This one asks *where it is* inside the case (position, preposition).
+> **Boundary with `les_a2_it_computer_parts`.** That lesson owns the *category* question — what kind of thing a part is. This lesson owns the **position question** — where the part sits inside the case. The same noun can answer both: *a drive bay* is a kind of part; *in the lower drive bay* is its position. Every definition, example and task below is authored from scratch; no source text is reproduced or adapted.
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input contextualizado (i+1) [4 min]
 
-### The parts of a case, by position
+### Cenário: descrevendo o gabinete para quem vai montar
 
-| English | PT-BR | Where it sits | Preposition that is idiomatic |
-|---------|-------|---------------|--------------------------------|
-| **motherboard** | placa-mãe | the flat board everything mounts to | *on* the motherboard |
-| **CPU** (processor) | processador | socketed **on** the motherboard | *in* the CPU socket |
-| **RAM** (memory module) | módulo de memória | slots **on** the motherboard | *in* a RAM slot |
-| **GPU** (graphics card) | placa de vídeo | **in** a PCIe slot | *in* the top slot |
-| **power supply unit (PSU)** | fonte | bottom or top-back, screwed to the case | *at* the back, *in* the case |
-| **storage drive** | disco | **in** a drive bay / caddy | *in* the bay |
-| **cooling fan / heatsink** | ventoinha / dissipador | **on** the CPU, or on the case wall | *on top of* the CPU |
-
-### The one rule that generates all of it
-
-> **English uses `on` for contact by attachment, and `in` for a container or a slot.**
-> *The sticker **is on** the case. The drive **is in** the bay. The CPU **is in** the socket.*
-
-Compare Portuguese, which uses *em* for all four and forces the learner to guess from the noun.
-English makes you choose, and the choice is systematic:
-
-- **`on` = surface contact, no depth.** *on the motherboard*, *on top of the CPU*, *on the desk*
-- **`in` = inside a bounded space.** *in the case*, *in the bay*, *in the socket*, *in the box*
-
-### Mini-text (authored)
-
-> **Bianca (new support engineer):** "The customer swapped the drive himself. Now the machine
-> beeps three times and shows nothing."
+> **Lívia (support engineer, Curitiba):** "I am at the bench with the customer's tower. The side cover is off. Where does the card go?"
 >
-> **Omar (senior):** "Three beeps on a desktop is POST. The **RAM** is not being detected."
+> **Rafael (hardware technician, remote):** "The card that handles graphics goes in the top expansion slot. Push it in until the bracket sits flat at the back."
 >
-> **Bianca:** "But he says the **RAM** is the same one that was already in the machine."
+> **Lívia:** "OK. And the storage drive?"
 >
-> **Omar:** "Then it moved. The **module** goes **in** the slot, flat, until the clip clicks. If it
-> is half-seated, the board does not see it. Ask him to push both ends until he hears the click —
-> once per side, not once in the middle."
+> **Rafael:** "It sits in the lower drive bay, at the front. The status LED is on the front panel, next to the power button."
 >
-> **Bianca:** "And if it still beeps?"
+> **Lívia:** "The vents at the back look blocked by a cable."
 >
-> **Omar:** "Move the **module** to a different **slot**. Two slots, one working — that tells you
-> the **module** is fine and the **slot** is dead. Never open the case for that; it is a
-> motherboard **slot**, and those are not user-serviceable."
+> **Rafael:** "Then move that cable along the motherboard tray. Keep the rear ports clear, and check that the power supply is still at the back, under the vents."
+>
+> **Lívia:** "Got it. The machine posts, and the fan spins. I will send a photo of the tray."
 
-> **What the dialogue teaches.** The same noun (*RAM*) takes a **container** preposition (*in the
-> slot*) and a **surface** preposition (*on the motherboard*), and the two are not interchangeable:
-> being *in* the slot and *on* the board are the same fact, and English lets you say either. A
-> learner who says *"the RAM is in the motherboard"* has picked the wrong one — a motherboard is a
-> surface, not a container.
+> **O que o diálogo ensina.** A pergunta não é "o que é isto?", mas "onde fica?". O inglês escolhe a preposição pelo tipo de espaço: **on** para contato com uma superfície (*on the front panel*, *on the tray*), **in** para um compartimento ou encaixe (*in the bay*, *in the slot*), **at** para uma posição identificada no conjunto (*at the back*, *at the front*). O padrão *the ... that ...* (*the card that handles graphics*) identifica uma peça pela função sem usar *what*.
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **system unit / case / tower** | gabinete / torre | *Case* é o invólucro; *tower* é um gabinete em pé. Não use *cabinet* para computador. |
+| **chassis** | chassis | Termo técnico para a estrutura interna; soa mais formal que *case*. |
+| **motherboard tray** | bandeja da placa-mãe | Superfície onde a placa é fixada: use **on** the tray. |
+| **drive bay** | baia / compartimento de disco | Espaço com profundidade: use **in** the bay. |
+| **expansion slot** | slot de expansão | Encaixe: use **in** the top slot, não *on the slot*. |
+| **front panel** | painel frontal | Superfície: **on** the front panel. |
+| **power button / status LED** | botão de energia / LED de status | *LED* é soletrado em inglês técnico: /ˌel iː ˈdiː/. |
+| **vents** | aberturas de ventilação | Sempre no plural quando se fala das grelhas: *the vents at the back*. |
+| **rear ports** | portas traseiras | Localizador: *at the back of the case*. |
+| **cable management** | organização de cabos | Também é o nome da prática de passar cabos pela bandeja. |
+| **power supply unit (PSU)** | fonte de alimentação | Tradução funcional, nunca *power source*. |
+| **bracket that holds the card** | suporte que segura a placa | *That* identifica a peça pela função; evite *the card what holds*. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "O LED está **no** painel." → *the LED is **in** the panel* | *the LED is **on** the front panel* | *Em* virou *in*, mas painel é superfície: contato = **on**. |
+| "O disco está **na** baia." → *the drive is **on** the bay* | *the drive is **in** the bay* | Baia é compartimento com profundidade: **in**. |
+| "Atrás do gabinete" → *behind the case* | *at the back of the case* | *Behind* significa atrás de algo visto por trás; para posição no equipamento use *at the back*. |
+| "A ventoinha **do** processador" → *the fan **of** processor* | *the CPU fan / the fan on the CPU* | Modificador vem antes do núcleo, e *CPU* não leva artigo aqui. |
+| "A fonte" → *the source* | *the power supply (unit) / the PSU* | *Source* é origem/fonte de dados, não o componente de alimentação. |
+| "O suporte **que** segura a placa" → *the bracket what holds the card* | *the bracket **that** holds the card* | Depois de um substantivo, use *that*; *what* não é pronome relativo. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**The power supply unit is usually screwed ______ the back of the case.**
-| Slot | Value |
-|------|-------|
-| A | in |
-| B | on |
-| C | **at** |
-| D | to inside |
-**Key:** C
-**br_pt_form:** "a fonte fica **atrás** do gabinete" — *at the back of*, a position, not a contact
+### Exercício 1 — Escolha contextual (superfície vs. compartimento)
 
-### Item 2 — Grammar: `on` vs `in` (MCQ)
-Choose the correct preposition: "The **cooling fan** is mounted ______ the CPU."
-| Slot | Value |
-|------|-------|
-| A | in |
-| B | **on** |
-| C | at |
-| D | by |
-**Key:** B
-**br_pt_form:** "o dissipador é montado **sobre** o processador"
+O técnico descreve o gabinete. Qual frase está correta?
 
-> **Interference note.** PT speakers default to *in* because Portuguese *em* covers both, and because
-> *"the fan is inside the computer"* was literally true a moment ago. The test is not "is it in the
-> case?" — it is "is there a surface it is touching?" Fan on CPU = surface contact = **on**.
+| Opção | Frase |
+|---|---|
+| A | "The status LED is in the front panel." |
+| B | "The status LED is at the front panel." |
+| C | **"The status LED is on the front panel."** |
+| D | "The status LED is into the front panel." |
 
-### Item 3 — Grammar: `in` for a slot (MCQ)
-"The memory module goes ______ the slot."
-| Slot | Value |
-|------|-------|
-| A | on |
-| B | at |
-| C | **in** |
-| D | to |
-**Key:** C
-**br_pt_form:** "o módulo de memória vai **na** ranhura"
+**Key:** C — *front panel* é superfície, então o contato pede **on**; *in* exige um compartimento e *at* marca um ponto, não uma superfície montada.
 
-### Item 4 — Vocabulary (MCQ)
-Omar's "three beeps on a desktop is POST" — **POST** here is:
-| Slot | Value |
-|------|-------|
-| A | A postal delivery of the machine |
-| B | **The power-on self-test — the firmware check before the OS loads** |
-| C | A support ticket code |
-| D | A type of RAM |
-**Key:** B
-**br_pt_form:** "Power-On Self-Test — o teste automático da placa antes do sistema operacional subir"
+### Exercício 2 — Complete as preposições
 
-> **Why this item is in the lesson, not in a glossary.** The word is opaque *and* load-bearing: it is
-> the difference between "the machine is broken" and "the machine is telling me which part to
-> check." A learner who does not know it can only escalate.
+Preencha com **on**, **in** ou **at**:
+
+1. "The card sits ______ the top expansion slot."
+2. "The storage drive is ______ the lower bay, and the LED is ______ the front panel."
+3. "The rear ports are ______ the back of the case."
+
+**Key:** 1) in; 2) in / on; 3) at — encaixe e baia levam *in*, superfície leva *on*, e a posição identificada no conjunto leva *at*.
+
+### Exercício 3 — Transformação L1 → L2
+
+Reescreva as intenções em inglês natural, mantendo a ideia de posição:
+
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "A fonte fica atrás do gabinete." | "The power supply is at the back of the case." |
+| "A placa vai no slot de cima." | "The card goes in the top expansion slot." |
+| "O suporte que segura a placa fica na lateral." | "The bracket that holds the card is on the side." |
+
+**Key:** ver tabela — repare em *at the back of*, *in the slot*, *on the side* e no relativo *that holds the card*, nunca *what holds*.
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de produção (output e pronúncia) [4 min]
 
-### Output: "Locate the part" — written then spoken [2 min write + 2 min speak]
+### 5 sentenças-alvo (leia em voz corrida)
 
-**Setup.** You are writing a self-service article for a support portal. A customer must be able to
-open their case and find the part without a photo.
+The drive sits in the lower bay at the front of the case.
+The card that handles graphics goes in the top expansion slot.
+The power supply is at the back, under the vents.
+The status LED is on the front panel, next to the power button.
+We route the cables along the motherboard tray so air can move.
 
-**Your task:** choose **three** parts from the table and write one instruction each, in this shape:
+### Foco articulatório para falantes de pt-BR
 
-> **[Part]** is **[preposition phrase]**. To check it, **[one action]**.
+- **/v/ em *vents, drive, cover***: Encoste o lábio inferior nos dentes superiores e mantenha a voz; não substitua por /w/ arredondado.
+- **/θ/ em *thermal, three***: ponta da língua entre os dentes, sem voz; evite /t/ ou /f/.
+- **/ð/ em *the, that, other***: mesma posição de /θ/, com voz; não comece com /d/.
+- **/l/ em *LED, slot, cable***: *LED* é soletrado — /ˌel iː ˈdiː/; não diga */liːd/*.
+- **Ritmo em *at the back of the case***: as palavras funcionais (*the, of*) ficam fracas e rápidas; o destino é *back*.
 
-Then read your three instructions aloud to your partner. Your partner must draw the position on a
-sketch of a case — if they put the fan inside the CPU, your preposition is wrong.
+### Prompt de produção (oral ou escrita)
 
-**Worked example (given, do not copy):**
-> The **storage drive** is **in the drive bay at the front of the case**. To check it, listen for
-> the click when you push the caddy in.
+Escreva de **4 a 6 frases** de um bilhete de montagem para um colega que nunca abriu aquele gabinete. Seu bilhete deve:
 
-**Your three must include:**
-1. One part with **`on`** (surface contact)
-2. One part with **`in`** (slot or container)
-3. One part with **`at`** or **`under`** (a position that is neither contact nor container)
-
-**Success rubric:**
-- Correct preposition for all three, chosen by the rule and not by Portuguese *em*
-- `the` present on all singular parts (*the* drive, *the* fan, *the* PSU) and absent on plurals
-- Noun modifiers in English order: *CPU fan*, not *fan CPU*; *power supply unit*, not *unit supply power*
-- One action verb per instruction, in the **imperative** or with *to* + base: *listen for*, *push until*, *check that*
-- No article before a plural part: *the screws are loose*, never *the screws is loose*
-
-**L1 interference to pre-empt:** the most common error here is *in* for everything, from *"the fan
-is in the CPU"*. The second is modifier inversion, from Portuguese *"ventoinha CPU"* — English
-requires the head noun last.
+1. nomear **três** peças do glossário;
+2. usar **on**, **in** e **at** pelo menos uma vez cada, com a peça correspondente;
+3. incluir **uma** oração com *the ... that ...* para identificar uma peça pela função;
+4. terminar com uma ação de verificação no imperativo (*Check that...*, *Keep ... clear*, *Push ... in*).
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / verificação rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Heatsink** is:
-| Slot | Value |
-|------|-------|
-| A | The metal part that draws heat away from the CPU |
-| B | The case fan that blows air into the front |
-| C | A thermal sensor |
-| D | The metal backplate of the case |
-**Key:** A
-**br_pt_form:** "dissipador de calor"
+1. **Vocabulário (L1):** O colega diz *"The card goes in the top expansion slot."* O que ele quer dizer?
+   A) A placa vai sobre a bandeja. B) A placa encaixa no slot superior. C) A placa fica atrás da fonte. D) A placa é removida do painel.
+   **Key:** B — *expansion slot* é encaixe e *top* identifica o slot superior.
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct preposition: "There is a sticker ______ the side of the case."
-| Slot | Value |
-|------|-------|
-| A | in |
-| B | at |
-| C | **on** |
-| D | into |
-**Key:** C
-**br_pt_form:** "há um adesivo na lateral do gabinete"
+2. **Gramática (L1):** Qual frase descreve corretamente a posição da fonte?
+   A) "The power supply is in the back of the case." B) "The power supply is on the back of the case." C) "The power supply is at the back of the case." D) "The power supply is into the back of the case."
+   **Key:** C — *at the back of* é o localizador padrão para a parte traseira do equipamento.
 
 ---
 
-**Listening input:** `deferred_render` — the FASE 1 dialogue is authored prose, not a clip.
+**Listening input:** `deferred_render`
 **Pack ID:** `pack_les_a2_it_system_unit_v1`
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a2_it_system_unit",
   "cefr_level": "A2",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "the seven-row position table, the on/in/at rule and its two worked comparisons, the Bianca/Omar dialogue, all 6 practice items, the worked self-service example, the write-then-speak task and rubric, the 2 Shadow CAT items",
-    "bibliography_only": [
-      "Ingles-Tecnico-Para-Informatica.md (CETAM 2010, (c) Centro de Educacao Tecnologica do Amazonas, no redistribution grant) Aula 5.1 - scoping only: that describing the inside of a case is a spatial task whose real obstacle is prepositions of place and noun-modifier order. No text, figure, caption, or activity reproduced."
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no clip rendered; the FASE 1 input is authored prose served as text",
-    "verbatim_reproduction": "none - component names are unprotectable technical facts and the dialogue, rule statement, and exercises are original"
-  },
-  "skills_touched": ["vocabulary", "grammar", "writing", "speaking", "listening", "pronunciation"],
-  "output_modalities": ["writing", "speaking"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "skills_touched": ["grammar", "vocabulary", "reading", "pronunciation", "speaking", "writing"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.preposition_on_surface",
-      "grammar.preposition_in_container",
-      "grammar.noun_modifier_order",
-      "grammar.article_agreement_singular_plural"
+      "grammar.prepositions_of_place_system_unit",
+      "grammar.noun_modifier_order_system_unit",
+      "grammar.relative_that_function",
+      "grammar.present_simple_regular"
     ],
     "vocab": [
-      "vocab.hardware.motherboard",
-      "vocab.hardware.cpu_socket",
-      "vocab.hardware.ram_slot",
-      "vocab.hardware.psu",
-      "vocab.hardware.drive_bay",
-      "vocab.hardware.heatsink",
-      "vocab.hardware.post"
+      "vocab.hardware_system_unit_bay",
+      "vocab.hardware_system_unit_panel",
+      "vocab.hardware_system_unit_ports",
+      "vocab.hardware_system_unit_psu",
+      "vocab.it_part_categories"
     ],
     "reading": [
-      "reading.support_article_parsing"
-    ],
-    "listening": [
-      "listening.fault_symptom_to_component"
+      "reading.hardware_position_note",
+      "reading.hardware_assembly_note"
     ],
     "pronunciation": [
-      "pronunciation.component_names_syllable_stress"
+      "pronunciation.hardware_vents_fricatives",
+      "pronunciation.led_letters"
+    ],
+    "speaking": [
+      "speaking.hardware_position_briefing"
     ]
   },
   "prereq_lessons": [
+    "les_a1_present_simple",
+    "les_a1_have_has",
+    "les_a1_regular_verbs_past",
+    "les_a1_there_is_are",
+    "les_a1_reading_skimming",
     "les_a2_it_computer_parts"
   ],
   "estimated_time_min": 15

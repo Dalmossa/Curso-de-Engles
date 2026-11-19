@@ -1,186 +1,156 @@
-# Lesson: Reading Technical Texts — five moves, not "read it twice"
+# Lesson: Reading Technical Texts
 
 **Lesson ID:** `les_a2_it_reading_strategy`
 **Module:** `mod_a2_it_fundamentals`
 **CEFR:** A2
-**Reuse basis:** `cite_only`
-**Source:** `Ingles-Tecnico-Para-Informatica.md` Aula 2.1 "Clues for reading of texts" / 2.2 "Reading strategy" (©CETAM, restricted — bibliography only)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
-> **Why this lesson is `cite_only`.** The CETAM course book is © Centro de Educação Tecnológica do
-> Amazonas and grants no redistribution right. It was read to decide the *scope* — that A2 technical
-> reading is about hunting for structure rather than decoding every word, and that "clues" means
-> non-linguistic signals first. No text, table, or activity from Aula 2 is reproduced. The five
-> moves below are standard skimming practice and are written from scratch. See `external-sources.md`
-> §0.5 / §7.0.
+---
+
+## FASE 1 — Input Contextualizado (i+1) [4 min]
+
+### Cenário: triar documentação antes de um deploy
+
+> **Bia (backend developer, Recife):** "The release is at 18:00. I have the API docs, one issue and the changelog open. Where do I start?"
+>
+> **Rafael (tech lead, São Paulo):** "Skim each one first. Read the title, the headings and the first line. Do not read every word."
+>
+> **Bia:** "The docs have a section called 'Rate limits'. That gives me the structure. The changelog says 'deprecated'."
+>
+> **Rafael:** "Good. Now scan for the datum you need: the new limit, the effective date and the rollback step. Scan for, not read."
+>
+> **Bia:** "It says the legacy endpoint still answers requests until 30 June. I can infer 'legacy' from the next sentence: old, but still live."
+>
+> **Rafael:** "Right. And 'currently' means 'atualmente' — not 'actually'. One false cognate in an issue can change the whole decision."
+>
+> **Bia:** "So: skim for structure, scan for the number, infer from context, check cognates. I'll post a three-line summary in the issue."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **skim** | dar uma lida para capturing a ideia geral | Observe títulos, cabeçalhos e a primeira linha. Não é "ler tudo depressa". |
+| **scan for** | procurar um dado específico | Use *scan for the date / the command / the limit*; a preposição *for* é parte da expressão. |
+| **heading** | título de seção | Em docs e READMEs, os headings mostram a estrutura antes de qualquer leitura detalhada. |
+| **issue** | issue / tarefa registrada | Em inglês técnico, *issue* é o registro no rastreador; não traduza por "problema" por padrão. |
+| **changelog** | registro de mudanças | Texto curto por versão; *release notes* é o nome comum quando acompanha um deploy. |
+| **deprecated** | obsoleto, em desuso | Ainda funciona, mas será removido. Confirme sempre pela frase seguinte. |
+| **legacy** | legado, antigo | Descreve o sistema antigo que ainda está em uso; não quer dizer "desligado". |
+| **currently** | atualmente | Palavra natural em status updates: *Currently the endpoint is stable.* |
+| **actually** | de fato, na verdade | Falso cognato de "atualmente": usá-lo para tempo presente troca o sentido do texto. |
+| **support** | suporte / dar suporte | Cognato verdadeiro: *Our docs say support.* Vale checar pelo contexto, como sempre. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "Vou ler tudo rapidinho." → "I will read everything fast." | "I'll **skim** the API docs." | *Skimming* é uma estratégia com objetivo definido, não só velocidade. |
+| "Vou procurar o comando." → "I will look the command quickly." | "I'll **scan for** the rollback command." | *Scan for* é a coligação natural para busca dirigida de um dado. |
+| "Atualmente o endpoint está ativo." → "Actually the endpoint is active." | "**Currently** the endpoint is active." | *Actually* significa "de fato": falso cognato clássico em status updates. |
+| "Eu deduzi do contexto." → "I deduced of the context." | "I **inferred it from context**." | O verbo é *infer from*; *deduce of* não existe em inglês. |
+| "Eventualmente vai cair." → "Eventually it will fall" (com sentido de "talvez") | "**Maybe** it will fail." / "It will **eventually** fail." | *Eventually* quer dizer "com o tempo"; para "talvez", use *maybe*. |
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### The target text (authored, 150 words)
+### Exercício 1 — Skim ou scan? (reconhecimento)
 
-> **Rotating a database replica without downtime**
->
-> Most teams run one primary and two replicas. Reads are cheap, so replicas take them. Writes go to
-> the primary, and the primary streams its change log to the replicas. **A replica falls behind
-> whenever it cannot apply a change as fast as the primary writes it.** Replication lag is the gap
-> between the two positions in the log.
->
-> **If a read must not be stale, send it to the primary.** This costs write capacity, and at scale
-> it is the wrong default.
->
-> **If a read may be up to 200 ms old, a replica is correct and far cheaper.** Most product
-> features do not notice the difference. Billing, permissions, and anything with a rate limit based
-> on fresh counts do notice.
->
-> **Failover** means promoting a replica to primary. It is fast, and it is not free: in-flight
-> writes on the old primary are lost unless the replica acknowledged them.
+> "Release 2.4.0 — Login is faster. Password reset is simpler. The old /v1/session endpoint is deprecated. New clients must use /v2/session from 30 June. Rollback: deploy --rollback 2.3.9."
 
-### The five moves (this is the lesson)
+Você tem dez segundos antes do deploy. Qual instrução pede a **ideia geral** do changelog?
 
-| Move | What you look at | Seconds | What you get |
-|------|------------------|--------:|--------------|
-| 1. **Title + first line** | what is this about | 5 | the topic |
-| 2. **Bolded or signposted lines** | the author's claims | 20 | the argument's spine |
-| 3. **Numbers and units** | 200 ms, two, one | 15 | the scale |
-| 4. **The last paragraph** | the conclusion or a warning | 15 | the direction |
-| 5. **Only then**, re-read what you flagged | the detail | the rest | the detail |
+| Opção | Frase |
+|---|---|
+| A | "Scan the changelog for the rollback command." |
+| B | "**Skim the changelog for the main change.**" |
+| C | "Check every word of the changelog." |
+| D | "Infer the meaning of deprecated." |
 
-> **Why this order is the lesson.** A PT-PT speaker's instinct is to read linearly from the first
-> word, because Portuguese expository prose is heavily front-loaded — the thesis comes early and the
-> rest is support. English technical writing **front-loads the topic but buries the caveat**, because
-> the caveat is the thing most likely to be wrong. Reading linearly in English means you reach the
-> qualification ("in-flight writes are lost") *after* you have already decided the feature is safe.
-> Move 4 exists specifically to catch that sentence.
+**Key:** B
+
+Explicação: *skimming* busca a ideia geral — login mais rápido e reset mais simples. A é *scanning* (um dado específico), C é leitura integral e D é inferência, não skimming.
+
+### Exercício 2 — Inferência por contexto
+
+A documentação diz: "The legacy endpoint is **deprecated**. It still answers requests, but new clients should use /v2/orders. We will remove it after the migration." O que **deprecated** significa nesse trecho?
+
+| Opção | Frase |
+|---|---|
+| A | "Fast and newly released." |
+| B | "**Still available, but planned for removal.**" |
+| C | "Removed from service this morning." |
+| D | "Written in another programming language." |
+
+**Key:** B
+
+Explicação: *still answers requests* + *we will remove it after the migration* resolvem a palavra: disponível agora, mas em desuso. C contradiz o texto; A e D inventam informação que o trecho não dá.
+
+### Exercício 3 — Cognatos em um status update (correção)
+
+Corrija a frase escrita por um desenvolvedor brasileiro: "Actually the API is stable; eventually we will add the new endpoint." A intenção em pt-BR é: "Atualmente a API está estável; talvez a gente adicione o novo endpoint."
+
+| Intenção em pt-BR | Palavra correta em en-US |
+|---|---|
+| "atualmente" | **currently** |
+| "talvez" | **maybe** |
+| "com o tempo" | eventually |
+| "de fato" | actually |
+
+**Key:** "Currently the API is stable; maybe we will add the new endpoint."
+
+Explicação: *actually* não traduz "atualmente" e *eventually* não traduz "talvez". *Support* / "suporte" é cognato verdadeiro; *actually* / "atualmente" é falso cognato — a escolha errada muda o status que o time lê.
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Item 1 — Vocabulary (MCQ)
-*"Replication lag is the gap between the two positions in the log."* Here **lag** means:
-| Slot | Value |
-|------|-------|
-| A | A scheduled delay before a planned maintenance window |
-| B | **The distance between how far the primary has written and how far a replica has applied** |
-| C | A network cable that is too short |
-| D | A rule that says how long logs are kept |
-**Key:** B
-**br_pt_form:** "atraso de replicação"
+### 5 sentenças-alvo (leia em voz corrida)
+I skim the API docs for the main sections before a release.
+I scan the changelog for the breaking change and the date.
+The next sentence helps me infer what "deprecated" means.
+"Currently" means "atualmente"; "actually" means "de fato".
+Our README says "support", a true cognate, but "eventually" is not "maybe".
 
-### Item 2 — Vocabulary (MCQ)
-*"Failover means promoting a replica to primary."* **Promote** means:
-| Slot | Value |
-|------|-------|
-| A | To advertise the promotion publicly |
-| B | To raise something to a new, higher role |
-| C | To remove a server from the cluster |
-| D | To apply a database migration |
-**Key:** B
-**br_pt_form:** "promover / elevar a um cargo superior"
+### Foco articulatório para falantes de pt-BR
 
-### Item 3 — Reading inference (MCQ) — the item that tests the lesson
-You applied only moves 1–4, in 15 seconds. Which sentences did you capture?
-| Slot | Value |
-|------|-------|
-| A | The first sentence and the word "Failover" |
-| B | The bolded claim, the 200 ms threshold, and the in-flight-write warning |
-| C | The definition of the change log |
-| D | The whole text, because A2 texts are short |
-**Key:** B
-**br_pt_form:** "a afirmação em negrito, o limite de 200 ms e o aviso sobre escritas em trânsito"
+- **/sk/ em *skim, scan***: mantenha /s/ e /k/ colados, sem vogal inicial. O pt-BR tende a produzir "esquim" e "escã".
+- **/s/ em *scan, section***: comece com /s/ limpo, sem acréscimo de /e/ diante de consoante.
+- **/ð/ em *the, the next***: ponta da língua entre os dentes, com voz; evite substituir por /d/.
+- **/æ/ em *scan, actually***: abra a boca mais do que no /a/ do pt-BR; não realize como "scanne".
 
-### Item 4 — Vocabulary (MCQ)
-The last paragraph says in-flight writes "are lost **unless** the replica acknowledged them."
-**Unless** here means:
-| Slot | Value |
-|------|-------|
-| A | Even if |
-| B | **Except when** |
-| C | Because of |
-| D | In spite of |
-**Key:** B
-**br_pt_form:** "a menos que / exceto quando"
+### Prompt de produção (oral ou escrita)
 
-> **Interference note.** PT speakers often read *unless* as "even if", because Portuguese *a menos que*
-> and English *unless* are both subtractive but the negative scope sits differently. The
-> disambiguating pair: *unless it acked* = se não acknowledged, writes survive; *even if it acked* =
-> mesmo tendo acknowledged, writes are lost. One word, opposite meanings.
+Você tem 60 segundos antes de um deploy. Escreva um parágrafo curto (4–6 sentenças) em en-US sobre a leitura da documentação de uma API. No seu texto:
+
+1. Use **skim** com um objetivo de estrutura (seções, título, ideia geral).
+2. Use **scan for** com um dado específico (data, limite ou comando).
+3. Use **infer from context** para explicar uma palavra desconhecida, como *deprecated* ou *legacy*.
+4. Use **currently** ou **actually** com o sentido correto e explique a escolha em pt-BR ao final.
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Reading + Speaking: "The 30-second read" [2 min read + 2 min report]
+### Verificação 1 — Leitura (L1)
 
-Here is a second authored text, 190 words:
+Em "The endpoint is deprecated. New clients should use /v2/orders.", qual frase mostra o sentido de *deprecated*?  
+A) O endpoint foi removido ontem. B) O endpoint é mais rápido que /v2. C) O endpoint ainda funciona, mas será substituído. D) O endpoint aceita apenas novos clientes.  
+**Key:** C  
+Explicação: *should use /v2* indica substituição; a inferência vem da recomendação, não de uma palavra isolada.
 
-> **Why we moved from cron to a queue**
->
-> Our nightly report ran from a cron job on one application server. It was scheduled, it ran, and
-> for two years nobody looked at whether it finished. **Cron tells you when a job starts. It cannot
-> tell you when a job did not start at all.** A deploy that took the server down at 02:00 silently
-> skipped the report, and the only signal was a Slack message from someone who noticed the numbers
-> had not moved.
->
-> A queue separates *when work is scheduled* from *when work runs*. The scheduler enqueues at 02:00
-> regardless of application health. The worker picks it up when it comes back. A run that fails
-> retries with backoff, and a run that has failed eleven times goes to a dead-letter queue that
-> pages a human. **The guarantee changed from "usually" to "at-least-once, and you will be told when
-> it is not."**
->
-> We now also have duplicates, which cron never had. A worker that dies after enqueuing but before
-> acknowledging will run the report twice. For a read-only report that is harmless. For anything
-> that charges a card, it is a real bug, and idempotency is the property that makes it survivable.
+### Verificação 2 — Vocabulário (L1)
 
-**Task:** Apply the five moves. Then report to your team, in 60 seconds:
-1. What is this text about? (move 1)
-2. What are the author's two claims? (move 2)
-3. What is the number or threshold, and what does it govern? (move 3)
-4. What is the warning in the final paragraph — and what is the word that signals it? (move 4)
-5. Which sentence would you still need to re-read before you trusted the text? (move 5)
-
-**Success rubric:**
-- Move 1 stated as a topic, not a summary of the first sentence
-- Move 2 separates the two claims (*"cron cannot detect a skip"* / *"at-least-once, and you are told when it is not"*) rather than paraphrasing one
-- Move 3 names *eleven* retries and connects it to the dead-letter queue
-- Move 4 identifies the idempotency paragraph as the caveat and names the signal word (*however*, *for anything that charges a card*)
-- Move 5 names a real sentence — acceptable answers: the idempotency clause, the backoff clause, or the cron sentence about the deploy
-
-**L1 interference to pre-empt:** the final warning is signposted by *"For anything that charges a
-card, it is a real bug"* — a PT speaker who read linearly will report the queue guarantee as the
-conclusion and stop. The rubric marks that as move 3, not move 4.
+Em um relatório de deploy, *legacy endpoint* significa:  
+A) Um endpoint recém-criado. B) Um endpoint sem autenticação. C) Um endpoint antigo ainda em uso. D) Um endpoint que só aceita testes.  
+**Key:** C  
+Explicação: *legacy* descreve o sistema antigo que continua ativo; o próprio trecho diz que ele *still answers requests*.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
-
-### Item 1 — Vocabulary (L1, adaptive)
-In technical writing, a **caveat** is:
-| Slot | Value |
-|------|-------|
-| A | The section with the references |
-| B | **A qualification or warning that limits the main claim** |
-| C | A list of the tools used |
-| D | The author's job title |
-**Key:** B
-**br_pt_form:** "ressalva"
-
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct conditional: "In-flight writes are lost ______ the replica acknowledged them."
-| Slot | Value |
-|------|-------|
-| A | because |
-| B | **unless** |
-| C | although |
-| D | so that |
-**Key:** B
-**br_pt_form:** "a menos que"
-
----
-
-**Listening input:** `deferred_render` — no clip exists; both texts are served on the page.
+**Listening input:** `deferred_render`
 **Pack ID:** `pack_les_a2_it_reading_strategy_v1`
 
 ---
@@ -191,43 +161,38 @@ Choose the correct conditional: "In-flight writes are lost ______ the replica ac
 {
   "lesson_id": "les_a2_it_reading_strategy",
   "cefr_level": "A2",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "both expository texts, the five-move table and its justification paragraph, the interference note, all 6 practice items, the 5-part report rubric, the 2 Shadow CAT items",
-    "bibliography_only": [
-      "Ingles-Tecnico-Para-Informatica.md (CETAM 2010, (c) Centro de Educacao Tecnologica do Amazonas, no redistribution grant) Aula 2.1-2.2 - scoping only: that A2 technical reading is structure-hunting rather than full decoding, and that 'clues' means non-linguistic signals first. No text, table, or activity reproduced."
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no clip rendered; both input texts are authored and served as text",
-    "verbatim_reproduction": "none - the five moves are standard skimming practice and the two technical texts were written for this lesson"
-  },
-  "skills_touched": ["reading", "vocabulary", "grammar", "listening", "speaking"],
-  "output_modalities": ["speaking"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "skills_touched": ["grammar", "vocab", "reading", "pronunciation", "listening"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.unless_subtractive"
+      "grammar.it_reading_imperatives",
+      "grammar.present_simple_regular"
     ],
     "vocab": [
-      "vocab.reading.lag",
-      "vocab.reading.promote",
-      "vocab.reading.caveat",
-      "vocab.reading.five_moves",
-      "vocab.reading.at_least_once",
-      "vocab.reading.idempotency"
+      "vocab.it_reading_cognates",
+      "vocab.it_core_terms"
     ],
     "reading": [
-      "reading.skimming.claim_extraction",
-      "reading.skimming.caveat_identification"
-    ],
-    "listening": [
-      "listening.structure_following"
+      "reading.it_skimming_structure",
+      "reading.it_scan_datum"
     ],
     "pronunciation": [
-      "pronunciation.caveat_stress"
+      "pronunciation.it_reading_s_cluster"
+    ],
+    "listening": [
+      "listening.it_reading_briefing"
     ]
   },
   "prereq_lessons": [
+    "les_a1_present_simple",
+    "les_a1_have_has",
+    "les_a1_reading_skimming",
     "les_a2_it_terms_basics"
   ],
   "estimated_time_min": 15
