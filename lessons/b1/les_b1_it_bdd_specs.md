@@ -1,192 +1,193 @@
-# Lesson: BDD Specifications — Given-When-Then, Acceptance Criteria, Scenario Writing
+# Lesson: BDD Specifications: Given-When-Then, Acceptance Criteria, Scenario Writing
 
 **Lesson ID:** `les_b1_it_bdd_specs`
 **Module:** `mod_b1_it_technical`
 **CEFR:** B1
-**Reuse basis:** `cite_only`
-**Source:** `docs/bdd-in-action.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: escrevendo critérios de aceite antes da entrega
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **behavior-driven development (BDD)** | desenvolvimento orientado a comportamento | *colaboração dev/QA/business via exemplos* |
-| **given-when-then** | dado-quando-então | *formato de cenário executável* |
-| **scenario** | cenário | *exemplo concreto de comportamento* |
-| **acceptance criteria** | critérios de aceitação | *condições para considerar pronto* |
-| **feature file** | arquivo de feature | *arquivo `.feature` com cenários* |
-| **step definition** | definição de passo | *código que executa um passo* |
-| **example mapping** | mapeamento de exemplos | *workshop para descobrir regras* |
-| **living documentation** | documentação viva | *specs que são testes executáveis* |
-| **ubiquitous language** | linguagem ubíqua | *vocabulário compartilhado (DDD + BDD)* |
-| **rule** | regra | *generalização de exemplos* |
-| **example** | exemplo | *caso concreto que ilustra regra* |
-| **question** | pergunta | *incerteza a resolver no workshop* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> **PO:** "Feature: **Refund**. **Rule**: full refund within 30 days. **Example**: order #123, day 15 → full refund. **Question**: day 31?"
+> **Marina (product owner, São Paulo):** "Let's write the acceptance criteria for the password-reset story before we hand it to QA."
 >
-> **QA:** "**Scenario**: request refund on day 15. **Given** order placed 15 days ago. **When** customer requests refund. **Then** full amount returned."
+> **Caio (QA engineer, Recife):** "Good. What has to be true before the user clicks anything?"
 >
-> **Dev:** "**Scenario**: request refund on day 31. **Given** order placed 31 days ago. **When** customer requests refund. **Then** partial refund per policy."
+> **Marina:** "The reset link must be valid and no older than thirty minutes."
 >
-> **PO:** "**Acceptance criteria** covered. **Living documentation** = executable specs."
+> **Bia (backend developer, remote):** "Then we can write: **Given** a valid reset link, **When** the user submits a new password, **Then** the login page opens."
+>
+> **Caio:** "I would add a second scenario: the link has expired, so the page shows a clear error."
+>
+> **Marina:** "Let's put both scenarios in one **feature file** and agree on the words *valid link* and *expired link*."
+>
+> **Bia:** "Agreed. The feature file becomes our **living documentation**: QA and dev read the same examples."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **acceptance criteria** | critérios de aceite | Use sempre o plural quando a história tem várias condições; *an acceptance criterion* é uma condição só. |
+| **scenario** | cenário | Um exemplo concreto de comportamento — não é uma descrição genérica do sistema. |
+| **feature file** | arquivo de feature | O arquivo `.feature` guarda cenários; diga *feature file*, não *feature archive*. |
+| **given / when / then** | dado / quando / então | As três palavras introduzem pré-condição, ação e resultado observável, nessa ordem. |
+| **rule** | regra | A generalização que os exemplos ilustram; escreva *Rule:* antes dos cenários quando ajudar. |
+| **step definition** | definição de passo | É o código que executa um passo; não confunda com o texto do cenário. |
+| **example** | exemplo | Um caso específico com dados concretos, como "link com 15 minutos". |
+| **edge case** | caso-limite | Situação fora do caminho normal, como um link expirado; BDD deve nomeá-la. |
+| **living documentation** | documentação viva | Especificação executável que acompanha o código; não é um PDF parado. |
+| **observable outcome** | resultado observável | O que dá para verificar na tela ou na resposta da API, sem abrir o código. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "The system **return** a receipt." | "The system **returns** a receipt." | *System* é sujeito de 3ª pessoa do singular; o presente simples leva *-s*. |
+| "The customer **have** a valid token." | "The customer **has** a valid token." | Em um passo *Given*, o estado atual usa presente simples com *has*. |
+| "We write the **acceptance criterion** for the whole story." | "We write the **acceptance criteria** for the whole story." | Várias condições pedem o plural; o singular serve para uma condição isolada. |
+| "Let's discuss **about** the scenario." | "Let's discuss the scenario." | *Discuss* é transitório em inglês: não precisa de *about*. |
+| "The **feature archive** has two scenarios." | "The **feature file** has two scenarios." | O termo do ferramental é *feature file*. |
+| "A scenario describes **anything that might happen**." | "A scenario describes **one concrete example**." | Cenário útil é específico e verificável, não uma lista de possibilidades. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Given-When-Then** describes:
-| Slot | Value |
-|------|-------|
-| A | Database schema |
-| B | **A concrete scenario with preconditions, action, and outcome** |
-| C | API endpoint |
-| D | Test data setup only |
+### Exercício 1 — Gramática: presente simples nos passos
+
+Complete com a forma correta dos verbos entre parênteses:
+
+"**Given** the customer ______ (have) a valid order. **When** the customer ______ (send) the request. **Then** the system ______ (show) a receipt."
+
+| Opção | Resposta |
+|---|---|
+| A | have / send / show |
+| B | **has / sends / shows** |
+| C | is having / is sending / is showing |
+| D | has / send / showed |
+
 **Key:** B
-**br_pt_form:** "cenário concreto com pré-condição, ação e resultado"
 
-### Item 2 — Vocabulary (Matching)
-Match the BDD artifact to its purpose:
-| Artifact | Purpose |
-|----------|---------|
-| **Feature file** | a. Executable scenarios in Gherkin |
-| **Step definition** | b. Code that runs a step |
-| **Example mapping** | c. Workshop to find rules/examples |
-| **Living documentation** | d. Specs that are tests |
-**Key:** Feature file→a, Step definition→b, Example mapping→c, Living documentation→d
-**br_pt_form:** "arquivo de feature", "definição de passo", "mapeamento de exemplos", "documentação viva"
+*The customer* e *the system* são sujeitos de 3ª pessoa do singular, então os três verbos recebem *-s* no presente simples. A opção A ignora a concordância, C troca um estado estável por ações temporárias e D mistura tempos.
 
-### Item 3 — Grammar: Present simple for scenario steps (fill-in-blank)
-Write steps in **present simple**:
-"**Given** the customer ______ (have) a valid order. **When** the customer ______ (request) a refund. **Then** the system ______ (return) the full amount."
-**Key:** has / requests / returns
-**br_pt_form:** "tem", "solicita", "retorna"
+### Exercício 2 — Vocabulário: qual é o artefato?
 
----
+| Opção | Frase |
+|---|---|
+| A | A step definition. |
+| B | **Acceptance criteria.** |
+| C | A sprint review. |
+| D | A database index. |
 
-## FASE 3 — Output Task [4 min]
-
-### Writing: Feature File (individual)
-**Scenario:** Write a `.feature` file for: "Customer applies discount code at checkout".
-
-```
-Feature: Apply discount code
-
-  Rule: Discount code reduces order total if valid and not expired.
-
-  Example: Valid code "SAVE10" on $100 order → $90 total.
-  Example: Expired code "OLD20" → error message.
-
-  Scenario: Valid discount code applied
-    Given the customer has a $100 order
-    And a valid discount code "SAVE10" exists
-    When the customer applies the code
-    Then the order total becomes $90
-    And the code is marked as used
-
-  Scenario: Expired discount code rejected
-    Given the customer has a $100 order
-    And an expired discount code "OLD20" exists
-    When the customer applies the code
-    Then an error "Code expired" is shown
-    And the order total remains $100
-```
-
----
-
-## FASE 4 — Shadow CAT [2 min]
-
-### Item 1 — Vocabulary (L1, adaptive)
-**Living documentation** in BDD means:
-| Slot | Value |
-|------|-------|
-| A | Printed manual |
-| B | **Executable specifications that stay in sync with code** |
-| C | Wiki pages |
-| D | Meeting notes |
 **Key:** B
-**br_pt_form:** "documentação viva / specs executáveis"
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **present simple** for a Given step:
-| Slot | Value |
-|------|-------|
-| A | Given the user **has** an account. |
-| B | Given the user **have** an account. |
-| C | Given the user **having** an account. |
-| D | Given the user **had** an account. |
-**Key:** A
-**br_pt_form:** "Dado que o usuário tem uma conta."
+A pergunta pedia "condições que definem quando a história está pronta" — isso é *acceptance criteria*. *Step definition* é código de execução, *sprint review* é reunião e *database index* é estrutura de consulta.
+
+### Exercício 3 — Reescrita L1 → L2
+
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Nós escrevemos os critérios de aceite antes do sprint." | "We write the acceptance criteria before the sprint." |
+| "O cenário mostra um exemplo concreto de comportamento." | "The scenario shows a concrete example of behavior." |
+
+**Key:** ver tabela.
+
+Nas duas frases, o presente simples descreve uma prática habitual do time. Note também o plural *acceptance criteria* e o artigo em *a concrete example of behavior*.
 
 ---
 
-**Listening input:** `deferred_render`
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
+
+### 5 sentenças-alvo (leia em voz corrida)
+
+We write acceptance criteria before the sprint starts.
+Given a valid token, the request is accepted.
+When the customer submits the form, the API returns 201.
+Then the order appears in the dashboard.
+A good scenario names one rule and one observable outcome.
+
+### Foco articulatório para falantes de pt-BR
+
+- **/ð/ em *then* e *the***: ponta da língua entre os dentes com voz; evite trocar por /d/ (*den*).
+- **/ˈɡɪvən/ em *given***: a primeira vogal é /ɪ/, curta, e não /iː/; diga *GIV-en* com a tônica na primeira sílaba.
+- **/tʃ/ em *feature* /ˈfiːtʃər/**: prepare *t* + *ʃ* sem virar /ʃ/ simples; a palavra tem duas sílabas, não três.
+- **/rɪˈtɜːrn/ em *returns***: a tônica cai na segunda sílaba, ao contrário do pt-BR "RETorna".
+
+### Prompt de produção (oral ou escrita)
+
+Escreva ou diga um mini *feature file* para a história "user logs in with a wrong password". Seu texto deve:
+
+1. Começar com `Feature:` e conter exatamente um `Scenario:`.
+2. Usar um passo `Given`, um `When` e um `Then`, nessa ordem.
+3. Empregar presente simples com *-s* em pelo menos dois passos.
+4. Terminar com um resultado observável, por exemplo uma mensagem de erro na tela.
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Vocabulário (L1):** Em um *feature file*, o que é um *scenario*?
+   A) Um arquivo de deploy.  B) **Um exemplo concreto de comportamento.**  C) Uma migração de banco.  D) Um convite de reunião.
+   **Key:** B
+
+2. **Gramática (L1):** Qual passo *Given* está correto?
+   A) "Given the user have a valid token."  B) "Given the user having a valid token."  C) "Given the user has a valid token."  D) "Given the user had a valid token."
+   **Key:** C
+
+---
+
+**Listening input:** `deferred_render` — o diálogo da FASE 1 é texto autoral, não um clipe renderizado.
 **Pack ID:** `pack_les_b1_it_bdd_specs_v1`
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_b1_it_bdd_specs",
   "cefr_level": "B1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (PO/QA/Dev dialogue), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task template",
-    "bibliography_only": [
-      "docs/bdd-in-action.md (Manning, all rights reserved) - used for term selection and Gherkin structure; all definitions and examples authored"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - BDD terms are unprotectable methodology concepts; Gherkin syntax is public domain"
-  },
-  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "reading", "writing"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "skills_touched": ["grammar", "vocabulary", "listening", "reading", "pronunciation", "writing"],
   "output_modalities": ["writing", "speaking"],
   "skill_items": {
     "grammar": [
-      "grammar.present_simple_scenarios"
+      "grammar.bdd_given_when_then_tense",
+      "grammar.bdd_present_simple_third_person"
     ],
-    "vocabulary": [
-      "vocab.bdd.behavior_driven_development",
-      "vocab.bdd.given_when_then",
-      "vocab.bdd.scenario",
-      "vocab.bdd.acceptance_criteria",
-      "vocab.bdd.feature_file",
-      "vocab.bdd.step_definition",
-      "vocab.bdd.example_mapping",
-      "vocab.bdd.living_documentation",
-      "vocab.bdd.ubiquitous_language",
-      "vocab.bdd.rule",
-      "vocab.bdd.example",
-      "vocab.bdd.question"
-    ],
-    "listening": [
-      "listening.bdd_context"
-    ],
-    "pronunciation": [
-      "pronunciation.technical_terms"
+    "vocab": [
+      "vocab.it_computer_terms.bdd_specs",
+      "vocab.it_computer_terms.feature_artifacts",
+      "vocab.it_computer_terms.acceptance_criteria"
     ],
     "reading": [
-      "reading.feature_file"
+      "reading.bdd_scenario_structure",
+      "reading.bdd_criteria_detail"
+    ],
+    "listening": [
+      "listening.bdd_spec_workshop"
+    ],
+    "pronunciation": [
+      "pronunciation.bdd_given_when_then_stress"
     ],
     "writing": [
-      "writing.feature_file",
-      "writing.bdd_scenario"
+      "writing.bdd_feature_file",
+      "writing.bdd_acceptance_criteria"
     ]
   },
   "prereq_lessons": [
     "les_a2_it_terms_basics",
-    "les_a2_it_communication"
+    "les_a1_reading_skimming",
+    "les_a2_it_reading_strategy"
   ],
   "estimated_time_min": 15
 }

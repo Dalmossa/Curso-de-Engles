@@ -1,151 +1,195 @@
-# Lesson: Testing Fundamentals — Unit Tests, Mocks, TDD Cycle
+# Lesson: Testing Fundamentals: Unit Tests, Mocks, TDD Cycle
 
 **Lesson ID:** `les_a2_it_testing_fundamentals`
 **Module:** `mod_a2_it_fundamentals`
 **CEFR:** A2
-**Reuse basis:** `cite_only`
-**Source:** `docs/tdd.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: um pedido de teste na revisão de código
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **unit test** | teste unitário | *testa uma função/classe isolada* |
-| **integration test** | teste de integração | *testa múltiplos componentes juntos* |
-| **mock** | mock / simulado | *objeto falso que substitui dependência real* |
-| **stub** | stub / substituto | *retorna valores pré-definidos* |
-| **fixture** | fixture / cenário | *estado inicial conhecido para o teste* |
-| **TDD** | TDD | *Test-Driven Development: red → green → refactor* |
-| **assert** | afirmar / verificar | *verifica se resultado é o esperado* |
-| **test double** | dublê de teste | *termo genérico para mock/stub/fake* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> **Dev:** "We write a **unit test** before the code. That's **TDD** — **red** (test fails), **green** (make it pass), **refactor**."
+> **Bia (backend developer, Curitiba):** "Hi Rui. I added a function that turns cents into a price string. Can you review it?"
 >
-> **QA:** "What about the database?"
+> **Rui (reviewer, remote):** "Sure. Where is the test?"
 >
-> **Dev:** "We use a **mock** for the DB. The test runs fast and doesn't need a real connection. A **stub** returns fixed data. The **fixture** sets up the user object. Then we **assert** the result."
+> **Bia:** "I haven't written one yet. I ran the app and the output looked fine."
+>
+> **Rui:** "Please add a **unit test** first. Keep it small: one function, one expected result."
+>
+> **Bia:** "The function reads a settings file. Do we call the real file in the test?"
+>
+> **Rui:** "No. Use a **mock** for the settings reader. It returns fixed values, so the suite stays fast. Then **assert** the string."
+>
+> **Bia:** "Got it. I write the test, watch it fail, then write the code — **red, green, refactor**."
+>
+> **Rui:** "Exactly. Send the pull request when the suite is green."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **unit test** | teste unitário | Diga *a unit test*: *unit* começa com o som /j/, então o artigo é *a*. |
+| **mock** | mock, objeto simulado | *Mock* serve como substantivo e verbo: *we mock the reader*. |
+| **stub** | stub, substituto fixo | Um *stub* só devolve valores combinados; ele não verifica chamadas. |
+| **assert** / **assertion** | afirmar / asserção | *Assert* é o verbo; *assertion* é a verificação escrita no teste. |
+| **test suite** | suíte de testes | Diga *run the suite*, não *run the tests suite*. |
+| **coverage** | cobertura | É incontável: *coverage is 78%*, sem artigo antes. |
+| **TDD cycle** | ciclo TDD | *Red, green, refactor* são os três passos do ciclo. |
+| **fixture** | fixture, cenário inicial | É o estado conhecido antes de o teste começar. |
+| **code review** | revisão de código | Diga *in the code review*, não *in the revision of code*. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "The unit test **fail** without the function." | "The unit test **fails** without the function." | Sujeito singular de 3ª pessoa leva *-s* no presente simples. |
+| "We need a unit test **to** this function." | "We need a unit test **for** this function." | *Test for* indica o alvo do teste; *to* não liga esses nomes. |
+| "We make the test **to pass**." | "We make the test **pass**." | Depois de *make* + objeto, use o infinitivo sem *to*. |
+| "We have **80% of coverage**." | "We have **80% coverage**." | *Coverage* é incontável; o número vem direto antes dele. |
+| "Let's **mock up** the settings reader." | "Let's **mock** the settings reader." | *Mock up* é criar uma maquete; *mock* é substituir a dependência no teste. |
+| "The result **is equals** to the string." | "The result **is equal to** the string." | *Equal* é adjetivo; *equals* é verbo e não aceita *is* antes. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-What is a **mock** in testing?
-| Slot | Value |
-|------|-------|
-| A | A real database connection |
-| B | **A fake object that replaces a real dependency** |
-| C | A test that runs in production |
-| D | A bug report template |
+### Exercício 1 — Gramática: presente simples no ciclo de testes
+
+Escolha a forma correta: "The unit test ______ (fail) until we add the function."
+
+| Opção | Frase |
+|---|---|
+| A | "fail" |
+| B | **"fails"** |
+| C | "is fail" |
+| D | "failing" |
+
 **Key:** B
-**br_pt_form:** "mock / simulado"
 
-### Item 2 — Vocabulary (Matching)
-Match the TDD phase to its description:
-| Phase | Description |
-|-------|-------------|
-| **Red** | a. Write the minimum code to pass |
-| **Green** | b. Clean up the code |
-| **Refactor** | c. Write a failing test |
-**Key:** Red→c, Green→a, Refactor→b
-**br_pt_form:** "vermelho", "verde", "refatorar"
+O sujeito *the unit test* é singular de 3ª pessoa, então o verbo leva *-s*: *fails*. A forma *fail* serve para plurais e para *I/you*; *is fail* mistura auxiliar com verbo nu; *failing* não forma uma frase completa sem *be*.
 
-### Item 3 — Grammar: Present Simple for habits (fill-in-blank)
-Complete with **present simple**:
-"We ______ (write) a test first. The test ______ (fail). We ______ (make) it pass. Then we ______ (refactor)."
-**Key:** write / fails / make / refactor
-**br_pt_form:** "escrevemos", "falha", "fazemos passar", "refatoramos"
+### Exercício 2 — Vocabulário: o substituto da dependência
 
----
+Uma função lê um arquivo de configuração. Qual termo nomeia o objeto que a substitui no teste e devolve valores fixos?
 
-## FASE 3 — Output Task [4 min]
+| Opção | Frase |
+|---|---|
+| A | "Coverage." |
+| B | "A fixture." |
+| C | "A code review." |
+| D | **"A mock."** |
 
-### Speaking: TDD Roleplay (pares)
-**Student A (Dev):** Explain the **TDD cycle** to a new team member. Use: *unit test, mock, stub, fixture, assert, red, green, refactor*.
-**Student B (New Dev):** Ask: "Why test first?" and "What is a mock for?"
+**Key:** D
 
-**Expected output (Dev):** "We write a **unit test** first — **red**. It fails because code doesn't exist. We write code — **green**. It passes. We **refactor** — clean up. For the DB, we use a **mock**. A **fixture** sets up test data. We **assert** the result."
+O *mock* substitui a dependência real para que o teste não abra o arquivo. *Coverage* mede a parte do código exercitada, *fixture* prepara o estado inicial e *code review* é uma revisão feita por pessoas.
 
----
+### Exercício 3 — Transformação L1 → L2
 
-## FASE 4 — Shadow CAT [2 min]
+Reescreva as intenções em inglês natural:
 
-### Item 1 — Vocabulary (L1, adaptive)
-Which comes **first** in TDD?
-| Slot | Value |
-|------|-------|
-| A | Write the production code |
-| B | **Write a failing test** |
-| C | Refactor the code |
-| D | Deploy to staging |
-**Key:** B
-**br_pt_form:** "Escreva um teste que falhe"
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Escrevemos o teste primeiro." | "We write the test first." |
+| "O teste falha até o código existir." | "The test fails until the code exists." |
+| "Depois fazemos o teste passar e refatoramos." | "Then we make the test pass and refactor." |
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct form for a habitual action:
-| Slot | Value |
-|------|-------|
-| A | We **write** tests first. |
-| B | We **writing** tests first. |
-| C | We **writes** tests first. |
-| D | We **wrote** tests first. |
-**Key:** A
-**br_pt_form:** "Escrevemos testes primeiro."
+**Key:** ver tabela.
+
+*Write*, *fails*, *make* e *refactor* estão no presente simples porque descrevem a rotina do time. Em *make the test pass*, o verbo depois de *make* fica sem *to*.
 
 ---
 
-**Listening input:** `deferred_render`
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
+
+### 5 sentenças-alvo (leia em voz corrida)
+
+We write a unit test before the production code.
+The test fails first, so we call this step red.
+We use a mock for the settings reader and keep the suite fast.
+Then we assert the result and the test turns green.
+After the review, we refactor the code and run the full suite again.
+
+### Foco articulatório para falantes de pt-BR
+
+- **/ˈjuːnɪt/ em *unit***: comece com /juː/, como em *you*; dizer /uːnɪt/ soa como *oonit*.
+- **/mɑːk/ em *mock***: vogal curta e aberta, sem deslizar para /moʊk/; *mock* rima com *rock*.
+- **/əˈsɜːrt/ em *assert***: a primeira sílaba é um schwa /ə/ e a tônica é a segunda; evite um *a* aberto no início.
+- **/ˈkʌvərɪdʒ/ em *coverage***: use /ʌ/ como em *cup* na primeira sílaba, não /uː/.
+- **/v/ em *value***: lábio inferior encostado nos dentes de cima; não troque por /w/.
+
+### Prompt de produção (oral ou escrita)
+
+Imagine que você está explicando o fluxo de testes para um colega que entrou agora no time. Escreva ou diga um texto curto de **4 a 6 falas** em que você:
+
+1. Descreve os três passos **red → green → refactor** usando o presente simples.
+2. Usa **unit test**, **mock** e **assert** pelo menos uma vez cada.
+3. Diz qual dependência o mock substitui e por que o teste fica rápido.
+4. Termina com uma frase sobre **coverage** ou sobre o **code review**.
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Vocabulário (L1):** O revisor diz "Use a mock for the settings reader." O que ele quer dizer?
+   A) Use a leitora de configuração de verdade.  B) Use um substituto para a leitura de configuração.  C) Aumente a cobertura do código.  D) Refatore a função de preço.
+   **Key:** B
+
+2. **Gramática (L1):** Qual frase está correta?
+   A) "We make the test to pass."  B) "We make the test pass."  C) "We makes the test pass."  D) "We are make the test pass."
+   **Key:** B
+
+---
+
+**Listening input:** `deferred_render` — o diálogo da FASE 1 é texto autoral, não um clipe renderizado.
 **Pack ID:** `pack_les_a2_it_testing_fundamentals_v1`
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a2_it_testing_fundamentals",
   "cefr_level": "A2",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text, the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table",
-    "bibliography_only": [
-      "docs/tdd.md (Bookman, all rights reserved) - scoping of TDD vocabulary, red-green-refactor cycle, test doubles"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - all content authored; vocabulary terms are unprotectable facts about the language"
-  },
-  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation"],
-  "output_modalities": ["speaking"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "skills_touched": ["grammar", "vocabulary", "listening", "reading", "pronunciation", "speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.present_simple_habits"
+      "grammar.testing_present_simple_habits",
+      "grammar.testing_article_with_terms"
     ],
-    "vocabulary": [
-      "vocab.testing.unit_test",
-      "vocab.testing.integration_test",
-      "vocab.testing.mock",
-      "vocab.testing.stub",
-      "vocab.testing.fixture",
-      "vocab.testing.tdd_cycle",
-      "vocab.testing.assert"
+    "vocab": [
+      "vocab.testing.core_terms",
+      "vocab.testing.label_scan",
+      "vocab.it_computer_terms_testing_glossary"
+    ],
+    "reading": [
+      "reading.testing_review_detail",
+      "reading.testing_run_detail"
     ],
     "listening": [
-      "listening.testing_context"
+      "listening.testing_review_context"
     ],
     "pronunciation": [
-      "pronunciation.technical_terms"
+      "pronunciation.testing_term_stress"
+    ],
+    "speaking": [
+      "speaking.testing_tdd_explanation"
     ]
   },
   "prereq_lessons": [
+    "les_a1_reading_skimming",
     "les_a2_it_terms_basics"
   ],
   "estimated_time_min": 15

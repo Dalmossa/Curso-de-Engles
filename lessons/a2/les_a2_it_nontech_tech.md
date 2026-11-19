@@ -3,109 +3,154 @@
 **Lesson ID:** `les_a2_it_nontech_tech`
 **Module:** `mod_a2_it_communication`
 **CEFR:** A2
-**Reuse basis:** `cite_only`
-**Source:** `docs/Dicionario-de-Siglas-e-Termos-Profissionais-em-Ingles.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: explicando um atraso de release para o time comercial
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **explain like I'm 5** | explique como se eu tivesse 5 anos | *simplificação extrema* |
-| **analogy** | analogia | *comparação para explicar conceito técnico* |
-| **jargon** | jargão / termo técnico | *vocabulário especializado* |
-| **layperson** | leigo | *pessoa sem formação técnica* |
-| **high level** | alto nível / visão geral | *sem detalhes de implementação* |
-| **drill down** | aprofundar / detalhar | *ir do geral para o específico* |
-| **business impact** | impacto no negócio | *efeito em receita, clientes, prazo* |
-| **trade-off** | troca / compensação | *ganha aqui, perde ali* |
-| **scope** | escopo | *o que está incluído / excluído* |
-| **stakeholder** | parte interessada | *quem é afetado pela decisão* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> **PM:** "Can you **explain like I'm 5** why the migration takes two weeks?"
+> **Bia (backend developer, São Paulo):** "Hi Carla, the release moves from Friday to Monday. I can explain it in plain language."
 >
-> **Dev:** "Sure. **Analogy**: our database is a library. We're moving every book to a new building **high level** — new shelves, new catalog. **Jargon**: we rewrite the **schema**, rebuild **indexes**, verify **constraints**. **Business impact**: zero downtime, but read-only for 4 hours Saturday. **Trade-off**: speed vs. safety. **Scope**: users table only this sprint. **Stakeholders**: sales, support, infra."
+> **Carla (sales lead):** "Thanks. Will the customer demo still work on Friday?"
+>
+> **Bia:** "Yes. Think of the release like a restaurant: we move the tables before the guests arrive. The app keeps running."
+>
+> **Carla:** "So you change the kitchen overnight, but the dining room stays open?"
+>
+> **Bia:** "Exactly. The backup is our spare kitchen — if one dish fails, we go back to the old one."
+>
+> **Carla:** "And the phishing email our client got? Do we need a new password?"
+>
+> **Bia:** "That is a separate fix. We will update the shared password on Monday. No jargon: one action for the team."
+>
+> **Carla:** "Got it. I will tell sales: demo works Friday, full update Monday."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **in plain language** | em linguagem simples | Diga *explain it in plain language*; *easy words* não é a forma natural. |
+| **analogy** | analogia | Use *an analogy*: uma comparação que explica o conceito sem detalhes técnicos. |
+| **jargon** | jargão, termo técnico | *Jargon* é incontável: diga *a lot of jargon*, não *many jargons*. |
+| **bug** | bug, falha | Em inglês, leva artigo: *a small bug*. A pronúncia é /bʌɡ/, com /g/ final. |
+| **deploy** | deploy, publicação | Como verbo: *we deploy on Monday*; como substantivo: *the deploy is on Monday*. |
+| **backup** | backup, cópia de segurança | *Backup* é substantivo; *back up* é o verbo: *we back up the files*. |
+| **phishing** | phishing, golpe de e-mail | Escreva *a phishing email*: o golpe é o e-mail, não a pessoa. |
+| **password** | senha | *Update the password* é a ação natural; *change the password* também funciona. |
+| **update** | atualização, atualizar | *Update* é o verbo e o substantivo; *actualize* não existe em inglês. |
+| **Wi-Fi** | Wi-Fi | Escreva com as duas iniciais maiúsculas: *the Wi-Fi is down*. |
+| **release** | release, lançamento | *The release moves to Monday* — fale da data, não do ato de "fazer release". |
+| **demo** | demonstração | *The demo still works* soa mais natural que *the demonstration still works* em reunião. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "Explique com palavras fáceis." → "Explain with easy words." | "Explain it **in plain language**." | *In plain language* é a expressão fixa para simplificar sem condescendência. |
+| "É só um bug pequeno." → "It is just small bug." | "It is just **a small bug**." | Substantivo contável singular exige artigo: *a small bug*. |
+| "Vamos fazer deploy sexta." → "We will make a deploy on Friday." | "We will **deploy on Friday**." | *Deploy* funciona como verbo; *make a deploy* soa pesado e indireto. |
+| "Nós fazemos backup dos arquivos." → "We do backup of the files." | "We **back up the files**." | *Back up* é o verbo; *backup* sozinho é o substantivo. |
+| "O cliente recebeu um phishing." → "The client got a phishing." | "The client got **a phishing email**." | *Phishing* precisa do substantivo que o acompanha: *email*, *message*, *link*. |
+| "Precisamos atualizar a senha." → "We need to actualize the password." | "We need to **update the password**." | *Actualize* é falso cognato; o verbo inglês é *update*. |
+| "O Wi-Fi caiu." → "The Wi-Fi falled." | "The Wi-Fi **went down**." | *Fall* é intransitivo e o passado é *fell*; para rede, use *go down*. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Explain like I'm 5** means:
-| Slot | Value |
-|------|-------|
-| A | Use maximum technical jargon |
-| B | **Simplify to the extreme, no jargon** |
-| C | Explain to a child |
-| D | Write documentation for 5-year-olds |
+### Exercício 1 — Gramática: palavra de pergunta + infinitivo
+
+Você quer dar os passos do backup para Carla. Complete a frase:
+
+> "I can show you ______ to back up the file before the deploy."
+
+| Opção | Frase |
+|---|---|
+| A | "I can show you what to back up the file." |
+| B | **"I can show you how to back up the file."** |
+| C | "I can show you how back up the file." |
+| D | "I can show you how to backing up the file." |
+
 **Key:** B
-**br_pt_form:** "explique como se eu tivesse 5 anos"
 
-### Item 2 — Vocabulary (Matching)
-Match the term to when you'd use it:
-| Term | Situation |
-|------|-----------|
-| **high level** | a. "We're migrating the database." |
-| **drill down** | b. "The index rebuild uses B-tree..." |
-| **business impact** | c. "Revenue drops 20% if delayed." |
-| **trade-off** | c. "Faster but less safe." |
-**Key:** high level→a, drill down→b, business impact→c, trade-off→d
-**br_pt_form:** "alto nível", "aprofundar", "impacto no negócio", "troca"
+*How to back up* apresenta o método: "como fazer o backup". Em **A**, *what* perguntaria qual arquivo, mas ele já está nomeado; em **C** falta o *to* depois da palavra de pergunta; em **D**, depois de *to* o verbo fica na forma base (*back up*), nunca no *-ing*.
 
-### Item 3 — Grammar: Modal verbs for recommendation (fill-in-blank)
-Complete with **should / shouldn't / must / mustn't**:
-"You ______ use jargon with stakeholders. You ______ give a high-level summary first. You ______ drill down if they ask. You ______ promise dates without engineering input."
-**Key:** shouldn't / should / should / mustn't
-**br_pt_form:** "não deve", "deve", "deve", "não deve"
+### Exercício 2 — Vocabulário: traduzindo jargão para linguagem simples
+
+Um colega diz: "We will roll out the schema migration on Saturday." Qual versão usa linguagem simples e mantém o sentido?
+
+| Opção | Frase |
+|---|---|
+| A | "We will move the data into its new format on Saturday." |
+| B | "We will fix a small bug on Saturday." |
+| C | "We will send a phishing email on Saturday." |
+| D | "We will back up the Wi-Fi on Saturday." |
+
+**Key:** A
+
+*Move the data into its new format* explica a mudança sem o jargão *schema migration*. As outras opções trocam o assunto por um bug, um e-mail de phishing ou um backup de Wi-Fi — nenhuma fala da mudança de formato dos dados.
+
+### Exercício 3 — Transformação L1 → L2
+
+Reescreva as intenções em inglês natural:
+
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Eu te mostro como fazer o backup antes do deploy." | "I can show you how to back up the file before the deploy." |
+| "Não sei o que clicar primeiro." | "I don't know what to click first." |
+| "Explique em linguagem simples, por favor." | "Please explain it in plain language." |
+
+**Key:** ver tabela.
+
+Nas duas primeiras frases, a palavra de pergunta vem antes do infinitivo (*how to back up*, *what to click*). Na terceira, *in plain language* é a forma fixa — não *with easy words*.
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Speaking: Translation Exercise (pares)
-**Student A (Dev):** Explain **one** technical concept to a non-technical PM. Use: *explain like I'm 5, analogy, high level, business impact, trade-off, scope, stakeholder*.
-**Student B (PM):** Ask 2 clarifying questions. Summarize back in your own words.
+### 5 sentenças-alvo (leia em voz corrida)
+Let me explain this in plain language.
+I can show you how to back up the file before the deploy.
+I don't know what to click first.
+This is just a small bug, not a problem with your data.
+We will update the password on Monday, and the demo still works on Friday.
 
-**Concepts to choose from:**
-- Database migration
-- API rate limiting
-- CI/CD pipeline
-- Microservices vs monolith
-- Technical debt
+### Foco articulatório para falantes de pt-BR
 
-**Example (Dev):** "**High level**: we're splitting the big app into small services. **Analogy**: like replacing one big kitchen with food trucks — each does one thing well. **Business impact**: faster features, but **trade-off**: more complexity to operate. **Scope**: payments service first."
+- **/dɪˈplɔɪ/ em *deploy***: a tônica cai na segunda sílaba (*de-PLOY*); não diga *DE-ploy* com acento na primeira.
+- **/ˈpæsˌwɜːrd/ em *password***: tônica na primeira sílaba; a segunda sílaba é fraca, sem vogal cheia.
+- **/f/ em *phishing***: o *ph* soa /f/, igual a *photo*; nunca comece com /p/ como em *pishing*.
+- **/b/ em *backup* e *bug***: lábios fechados e soltos com voz; não substitua por /v/ como em *vacuum*.
+- **/ð/ em *the* e *this***: ponta da língua entre os dentes com voz; evite /d/ (*dis*).
+
+### Prompt de produção (oral ou escrita)
+
+Imagine que você precisa avisar o time comercial sobre uma mudança técnica. Escreva ou diga um texto curto de **4 a 6 falas** em que você:
+
+1. Começa com *in plain language* e usa **pelo menos uma analogia** do cotidiano (cozinha, biblioteca, transporte).
+2. Usa **uma construção com palavra de pergunta + infinitivo** (*how to…*, *what to…*, *when to…*).
+3. Nomeia **pelo menos três** termos do glossário (*bug*, *deploy*, *backup*, *password*, *update*, *demo*).
+4. Termina com uma ação concreta e uma data (*We will update the password on Monday*).
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Jargon** is:
-| Slot | Value |
-|------|-------|
-| A | Simple everyday language |
-| B | **Specialized technical vocabulary** |
-| C | A programming language |
-| D | A type of bug |
-**Key:** B
-**br_pt_form:** "jargão técnico"
+1. **Vocabulário (L1):** O colega diz "The client got a phishing email." O que ele quer dizer?
+   A) O cliente recebeu um elogio por e-mail.  B) O cliente recebeu um e-mail golpe.  C) O cliente enviou um backup.  D) O cliente atualizou a senha.
+   **Key:** B
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct modal for strong recommendation:
-| Slot | Value |
-|------|-------|
-| A | You **can** avoid jargon with stakeholders. |
-| B | You **should** avoid jargon with stakeholders. |
-| C | You **might** avoid jargon with stakeholders. |
-| D | You **could** avoid jargon with stakeholders. |
-**Key:** B
-**br_pt_form:** "Você deve evitar jargão com stakeholders."
+2. **Gramática (L1):** Qual frase está correta para explicar os passos?
+   A) "I can show you what to back up the file."  B) "I can show you how back up the file."  C) "I can show you how to back up the file."  D) "I can show you how to backing up the file."
+   **Key:** C
+
+3. **Vocabulário (L1):** "The Wi-Fi went down" significa:
+   A) O Wi-Fi ficou mais rápido.  B) O Wi-Fi caiu.  C) O Wi-Fi foi instalado.  D) O Wi-Fi mudou de senha.
+   **Key:** B
 
 ---
 
@@ -114,49 +159,46 @@ Choose the correct modal for strong recommendation:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_a2_it_nontech_tech",
   "cefr_level": "A2",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (PM/Dev dialogue), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/Dicionario-de-Siglas-e-Termos-Profissionais-em-Ingles.md (BaixeLivros notice applies) - scoping of business/technical bridge vocabulary"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - all content authored; vocabulary terms are unprotectable facts about professional communication"
-  },
-  "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "skills_touched": ["grammar", "vocabulary", "listening", "reading", "pronunciation", "speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.modals_recommendation"
+      "grammar.nontech_wh_infinitive",
+      "grammar.nontech_wh_questions"
     ],
-    "vocabulary": [
-      "vocab.nontech.explain_like_5",
-      "vocab.nontech.analogy",
-      "vocab.nontech.jargon",
-      "vocab.nontech.layperson",
-      "vocab.nontech.high_level",
-      "vocab.nontech.drill_down",
-      "vocab.nontech.business_impact",
-      "vocab.nontech.trade_off",
-      "vocab.nontech.scope",
-      "vocab.nontech.stakeholder"
+    "vocab": [
+      "vocab.nontech.plain_language_terms",
+      "vocab.nontech.status_board_scan"
+    ],
+    "reading": [
+      "reading.nontech.release_delay",
+      "reading.nontech.update_notice"
     ],
     "listening": [
-      "listening.nontech_context"
+      "listening.nontech_explanation_context"
     ],
     "pronunciation": [
-      "pronunciation.technical_terms"
+      "pronunciation.nontech_deploy_password_stress"
+    ],
+    "speaking": [
+      "speaking.nontech_plain_language_explanation"
     ]
   },
   "prereq_lessons": [
+    "les_a1_reading_skimming",
+    "les_a2_reading_strategy",
     "les_a2_it_terms_basics"
   ],
   "estimated_time_min": 15
