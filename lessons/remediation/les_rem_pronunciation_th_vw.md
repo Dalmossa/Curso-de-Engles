@@ -3,111 +3,160 @@
 **Lesson ID:** `les_rem_pronunciation_th_vw`
 **Module:** `mod_b1_fluency_project`
 **CEFR:** B1
-**Reuse basis:** `cite_only`
-**Source:** `docs/frases-ingles-trabalho.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
+**Remediation trigger:** pronunciation θ < -1.5
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: revisão de código com fone e microfone
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **minimal pair** | par mínimo | *par de palavras que diferem em 1 som* |
-| **TH (voiceless)** | TH surdo | *think, three, thank* |
-| **TH (voiced)** | TH sonoro | *this, that, mother* |
-| **V sound** | som do V | *very, voice, love* |
-| **W sound** | som do W | *we, water, work* |
-| **tongue** | língua | *órgão da fala* |
-| **teeth** | dentes | *usados no TH* |
-| **lip** | lábio | *usado no V/W* |
-| **vibration** | vibração | *som sonoro* |
-| **practice** | prática | *repetir para melhorar* |
-| **discrimination** | discriminação | *distinguir sons* |
-| **remediation** | remediação | *corrigir dificuldade* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**TH (voiceless)**: put **tongue** between **teeth**. *think, three, thank*. No **vibration**."
+> **Rafa (backend developer):** "Three things failed in the build, and I think the third one is the voice check."
 >
-> "**TH (voiced)**: same position, with **vibration**. *this, that, mother*."
+> **Bia (frontend developer):** "Wait, did you say *three* or *free*? Our log filter treats those tags differently."
 >
-> "**V/W**: use **lip**. *very, voice, love* (V). *we, water, work* (W)."
+> **Rafa:** "Three. I also left the *vest* by the server, not the *west* rack. The labels look the same on a bad connection."
 >
-> "**Minimal pairs**: *think/sink, three/free, very/berry, vest/west, vine/wine*."
+> **Bia:** "Got it. This thread is thin, but the vendor note is very clear. Let me read it back so you can hear the contrast."
+>
+> **Rafa:** "Thanks. Whatever the verdict, we ship the fix before the next review."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **minimal pair** | par mínimo | Duas formas que diferem por um único som; a troca muda o sentido. |
+| **voiceless TH** /θ/ | TH surdo | Língua encostada na borda dos dentes, sem vibração: *think, three, thank*. |
+| **voiced TH** /ð/ | TH sonoro | Mesma posição, com vibração: *this, that, mother*. |
+| **voiced V** /v/ | V sonoro | Lábio inferior na borda do lábio superior, com vibração: *very, voice, love*. |
+| **W** /w/ | W (sem contato) | Lábios arredondados e soltos, sem tocar os dentes: *we, word, west*. |
+| **tongue** | língua | O contato que falta quando *think* soa como *sink*. |
+| **teeth** | dentes | Referência visual para posicionar a língua no TH. |
+| **lip** | lábio | Referência visual para separar V de W. |
+| **vibration** | vibração | O que distingue *very* de *berry* e *this* de *dis*. |
+| **discrimination** | discriminação auditiva | Ouvir a diferença antes de tentar produzi-la. |
+
+### Armadilhas típicas da interferência BR-PT (TH / V-W)
+
+| Armadilha do falante de pt-BR | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "I **sink** we should merge." | "I **think** we should merge." | /θ/ passa entre a língua e os dentes; /s/ fica atrás deles. |
+| "We have **free** retries left." | "We have **three** retries left." | Trocar /θ/ por /f/ transforma o número em "livre". |
+| "**Tank** you for the review." | "**Thank** you for the review." | O mesmo /θ/ surdo abre a palavra; /t/ fecha a passagem de ar. |
+| "**Dis** endpoint returns 404." | "**This** endpoint returns 404." | /ð/ é sonoro e interdental; /d/ é uma oclusiva atrás dos dentes. |
+| "The log is **berry** noisy." | "The log is **very** noisy." | /v/ exige contato lábio-dental e vibração; /b/ fecha os lábios. |
+| "Deploy to the **vest** cluster." | "Deploy to the **west** cluster." | /w/ arredonda os lábios sem tocá-los nos dentes. |
+| "The label reads **wine**, not vine." | "The label reads **vine**, not wine." | Sem vibração e com lábios arredondados, *vine* vira *wine*. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**TH (voiceless)** is produced with:
-| Slot | Value |
-|------|-------|
-| A | Lips only |
-| B | **Tongue between teeth, no vibration** |
-| C | Nose only |
-| D | Throat only |
+### Exercício 1 — Reconhecimento do TH surdo (L1)
+
+Um colega fala sobre uma contagem de retries. Qual frase reproduz o som /θ/ pretendido?
+
+| Opção | Frase |
+|---|---|
+| A | "I sink the retry count is wrong." |
+| B | **"I think the retry count is wrong."** |
+| C | "I fink the retry count is wrong." |
+| D | "I tink the retry count is wrong." |
+
 **Key:** B
-**br_pt_form:** "TH surdo / língua entre dentes, sem vibração"
+**Feedback:** A troca /θ/ por /s/, C troca por /f/ e D troca por /t/; apenas *think* coloca a língua na borda dos dentes sem vibrar e sem bloquear o ar.
 
-### Item 2 — Vocabulary (Matching)
-Match the sound to its description:
-| Sound | Description |
-|-------|-------------|
-| **TH (voiceless)** | a. Tongue between teeth, no vibration |
-| **TH (voiced)** | b. Tongue between teeth, with vibration |
-| **V** | c. Lip, with vibration |
-| **W** | d. Lip, no vibration |
-**Key:** TH (voiceless)→a, TH (voiced)→b, V→c, W→d
-**br_pt_form:** "TH surdo", "TH sonoro", "V", "W"
+### Exercício 2 — Contraste do TH sonoro (L1 → L2)
 
-### Item 3 — Grammar: Articles with sounds (fill-in-blank)
-Complete with **a / an**:
-"______ TH sound. ______ V sound. ______ W sound. ______ minimal pair."
-**Key:** a / a / a / a
-**br_pt_form:** "um / um / um / um"
+Escolha a versão natural para a intenção "esta confirmação veio do time de dados".
 
----
+| Opção | Frase |
+|---|---|
+| A | "Dis confirmation came from the data team." |
+| B | "This confirmation came from the data team." |
+| C | "Tis confirmation came from the data team." |
+| D | "Zis confirmation came from the data team." |
 
-## FASE 3 — Output Task [4 min]
-
-### Speaking: Minimal Pair Practice (individual)
-**Practice these minimal pairs** (listen and repeat):
-
-1. **TH**: think/sink, three/free, thank/tank
-2. **V/W**: very/berry, vest/west, vine/wine
-3. **TH (voiced)**: this/dis, that/dat, mother/mudder
-
-**Record yourself** and compare with the audio.
-
----
-
-## FASE 4 — Shadow CAT [2 min]
-
-### Item 1 — Vocabulary (L1, adaptive)
-**V sound** is produced with:
-| Slot | Value |
-|------|-------|
-| A | Tongue between teeth |
-| B | **Lip, with vibration** |
-| C | Nose only |
-| D | Throat only |
 **Key:** B
-**br_pt_form:** "V / lábio, com vibração"
+**Feedback:** A usa /d/, C usa /t/ e D usa /z/, todos atrás dos dentes; *this* começa com /ð/, o TH sonoro interdental.
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **article** before a sound:
-| Slot | Value |
-|------|-------|
-| A | **a** TH sound |
-| B | **an** TH sound |
-| C | **a** V sound |
-| D | **a** W sound |
-**Key:** A
-**br_pt_form:** "um som de TH"
+### Exercício 3 — Pares mínimos V/W (preenchimento)
+
+Escolha entre *very/berry*, *west/vest* e *vine/wine* para completar cada frase:
+
+1. "The build is ______ slow today." → **very**
+2. "Ship the image to the ______ cluster." → **west**
+3. "The label reads ______, not wine." → **vine**
+
+**Key:** 1) very; 2) west; 3) vine.
+**Feedback:** *very* e *vine* exigem vibração lábio-dental; *west* exige lábios arredondados e sem contato com os dentes.
+
+### Exercício 4 — Artigo antes do nome de um som
+
+Complete com **a** ou **an**, lembrando que o artigo obedece ao som inicial e não à letra:
+
+1. "______ TH sound." → **a**
+2. "______ V sound." → **a**
+3. "______ W sound." → **a**
+4. "______ hour-long review." → **an**
+
+**Key:** 1) a; 2) a; 3) a; 4) an.
+**Feedback:** /θ/, /v/ e /w/ são sons consonantes, então pedem *a*; em *hour* o **h** é mudo e o som inicial é vocálico, então pede *an*.
+
+---
+
+## FASE 3 — Output Task: contraste em voz alta [4 min]
+
+### 5 sentenças-alvo (leia em voz corrida, uma por linha)
+
+I think the thin wire is near the west window, not the vest by the server.
+Three reviewers thanked Vera for the very clear voice note on the word tests.
+This Thursday we will review the weather data with the wide dataset together.
+Did the wine test fail because the vine label used a very thin font?
+Whatever the verdict, we will ship the fix before the third review!
+
+### Foco articulatório para falantes de pt-BR
+
+- **/θ/ surdo em *think, three, thank, thin, third*:** encoste a ponta da língua na borda dos dentes e deixe o ar passar sem vibrar; nunca substitua por /s/, /f/ ou /t/.
+- **/ð/ sonoro em *this, the, weather, together*:** mesma posição do /θ/, mas com vibração; a língua continua visível entre os dentes.
+- **/v/ em *Vera, very, voice, verdict, vine*:** apoie o lábio inferior nos dentes superiores e mantenha a vibração; cuidado para não virar /b/ nem /w/.
+- **/w/ em *west, window, word, wide, whatever*:** arredonde os lábios sem encostá-los nos dentes e solte o ar de imediato.
+- **Ritmo:** mantenha as palavras de conteúdo (*THINK, WEST, VEST, VERY*) mais longas e as funções (*the, is, for*) curtas, para que o par mínimo fique audível.
+
+### Prompt de produção (oral)
+
+Grave um áudio de 30 a 45 segundos para um colega: descreva um bug usando pelo menos duas palavras com /θ/, uma com /ð/, duas com /v/ e duas com /w/, e inclua um dos pares *think/sink*, *three/free*, *very/berry*, *west/vest* ou *vine/wine*. Depois ouça a própria gravação e marque qual par ficou mais próximo do modelo.
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Discriminação (L1):** qual palavra começa com /θ/ surdo?
+
+| Opção | Palavra |
+|---|---|
+| A | "sink" |
+| B | **"think"** ✓ |
+| C | "fink" |
+| D | "zink" |
+
+**Key:** B
+**Feedback:** A, C e D usam /s/, /f/ e /z/; apenas *think* tem o TH surdo interdental.
+
+2. **Produção (L1):** qual frase separa corretamente /w/ de /v/?
+
+| Opção | Frase |
+|---|---|
+| A | "The berry strict rule is in the vest cluster." |
+| B | "The very strict rule is in the vest cluster." |
+| C | "The very strict rule is in the west cluster." |
+| D | "The berry strict rule is in the west cluster." |
+
+**Key:** C
+**Feedback:** A e D trocam /v/ por /b/ em *very*; B e A trocam /w/ por /v/ em *west*; somente C mantém *very* com vibração lábio-dental e *west* com lábios arredondados.
 
 ---
 
@@ -116,23 +165,19 @@ Choose the correct **article** before a sound:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_rem_pronunciation_th_vw",
   "cefr_level": "B1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (TH/V/W explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/frases-ingles-trabalho.md (BaixeLivros notice applies) - scoping of pronunciation practice"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - pronunciation terms are unprotectable linguistic knowledge; definitions authored"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "trigger": "pronunciation θ < -1.5",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation"],
   "output_modalities": ["speaking"],
   "skill_items": {

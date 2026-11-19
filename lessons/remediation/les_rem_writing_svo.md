@@ -3,110 +3,144 @@
 **Lesson ID:** `les_rem_writing_svo`
 **Module:** `mod_b1_fluency_project`
 **CEFR:** B1
-**Reuse basis:** `cite_only`
-**Source:** `docs/leia-e-escreva-melhor-em-ingles.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
+**Trigger:** `writing mastery < 0.60`
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: comentário de pull request às 17h
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **SVO** | SVO | *Subject-Verb-Object* |
-| **subject** | sujeito | *quem pratica a ação* |
-| **verb** | verbo | *a ação* |
-| **object** | objeto | *quem recebe a ação* |
-| **explicit subject** | sujeito explícito | *sempre mencionar o sujeito* |
-| **word order** | ordem das palavras | *sequência na frase* |
-| **sentence** | frase | *unidade de sentido* |
-| **clause** | oração | *parte da frase* |
-| **fragment** | fragmento | *frase incompleta* |
-| **run-on** | frase corrida | *frase sem pontuação* |
-| **remediation** | remediação | *corrigir dificuldade* |
-| **mastery** | domínio | *controle da habilidade* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**SVO order**: '**I** (S) **work** (V) **here** (O).' '**She** (S) **likes** (V) **coffee** (O).'"
+> **Rafa (backend):** "I review the pull request before the stand-up."
 >
-> "**Explicit subject**: English always needs a subject. '**I** am happy.' (not '*Am happy*')"
+> **Bia (frontend):** "I usually check the layout first. She reviews the copy later."
 >
-> "**Fragment/Run-on**: 'Because I was tired.' (fragment) 'I was tired I went home.' (run-on)"
+> **Rafa:** "It is clear now. There are two issues in the summary."
+>
+> **Bia:** "Good. We ship the fix tomorrow. I always write the release notes in SVO order."
+
+Repare no que acontece em cada fala: o sujeito aparece antes do verbo, o verbo vem antes do objeto, o advérbio de frequência fica junto do verbo e frases como *It is clear* e *There are two issues* começam com um sujeito expletivo.
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| English (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **SVO** | SVO | *Subject–Verb–Object*; a ordem padrão da escrita neutra em inglês. |
+| **subject** | sujeito | Quem pratica a ação; em inglês, precisa aparecer explicitamente. |
+| **verb** | verbo | A ação ou o estado; vem logo depois do sujeito. |
+| **object** | objeto | Quem recebe a ação; vem depois do verbo. |
+| **explicit subject** | sujeito explícito | Mesmo quando o contexto deixa claro quem age, o inglês exige um sujeito. |
+| **word order** | ordem das palavras | Em inglês, mudar a ordem muda a gramática; em pt-BR há mais liberdade. |
+| **adverb of frequency** | advérbio de frequência | *always, usually, often* ficam antes do verbo principal. |
+| **expletive it** | *it* expletivo | Ocupa o lugar do sujeito em *It is clear*; não retoma um objeto. |
+| **expletive there** | *there* expletivo | Abre *There are two issues*; o verbo concorda com o nome que vem depois. |
+| **fragment** | fragmento | Uma parte de frase que não fecha o pensamento sozinha. |
+| **run-on** | frase corrida | Duas frases completas coladas sem pontuação ou conectivo. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "**Work here**." (*trabalho aqui*, sujeito omitido) | "**I work here.**" | O pt-BR permite omitir o sujeito; o inglês exige **I**, **we**, **they** etc. mesmo quando óbvio. |
+| "**Coffee she likes.**" (topicalização do pt-BR) | "**She likes coffee.**" | Na escrita neutra de B1, o objeto vem **depois** do verbo; a ordem SVO é o padrão. |
+| "**We ship usually the fix.**" | "**We usually ship the fix.**" | Com um verbo principal simples, o advérbio de frequência vai **antes** do verbo. |
+| "**Is clear. / Are two issues.**" | "**It is clear. / There are two issues.**" | *It* e *there* funcionam como sujeito quando não há um agente nomeado. |
+| "**I reviewed the PR I wrote the notes.**" | "**I reviewed the PR. I wrote the notes.**" | Duas orações completas pedem ponto ou conectivo; uma run-on confunde o leitor. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Explicit subject** means:
-| Slot | Value |
-|------|-------|
-| A | Omitting the subject |
-| B | **Always mentioning who** |
-| C | Using only pronouns |
-| D | Using only nouns |
-**Key:** B
-**br_pt_form:** "explicit subject / sempre mencionar quem"
+### Exercício 1 — Reconhecimento de SVO
 
-### Item 2 — Vocabulary (Matching)
-Match the writing term to its meaning:
-| Term | Meaning |
-|------|---------|
-| **Fragment** | a. Incomplete sentence |
-| **Run-on** | b. Sentence without punctuation |
-| **Word order** | c. Sequence of words |
-| **Clause** | d. Part of a sentence |
-**Key:** Fragment→a, Run-on→b, Word order→c, Clause→d
-**br_pt_form:** "fragmento", "frase corrida", "ordem das palavras", "oração"
+Qual versão está na ordem SVO padrão para um comentário de código?
 
-### Item 3 — Grammar: SVO order (fill-in-blank)
-Rewrite in **SVO order**:
-"coffee / she / likes → She likes coffee."
-"here / I / work → I work here."
-"English / they / study → They study English."
-**Key:** She likes coffee / I work here / They study English
-**br_pt_form:** "Ela gosta de café / Eu trabalho aqui / Eles estudam inglês"
+| Opção | Frase |
+|---|---|
+| A | "The docs she reviews before the demo." |
+| B | **"She reviews the docs before the demo."** |
+| C | "Reviews she the docs before the demo." |
+| D | "She the docs reviews before the demo." |
+
+**Key:** B — *She* é o sujeito, *reviews* é o verbo e *the docs* é o objeto; as outras opções só reordenam os mesmos blocos.
+
+### Exercício 2 — Reconstrução L1 → L2
+
+Reescreva as intenções em inglês natural, mantendo sujeito explícito e ordem SVO:
+
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Ela revisa o texto da release." | "She reviews the release copy." |
+| "Nós enviamos o relatório toda sexta." | "We send the report every Friday." |
+| "Eles corrigem os testes antes do deploy." | "They fix the tests before the deploy." |
+| "Eu escrevo as notas depois da call." | "I write the notes after the call." |
+
+**Key:** She reviews the release copy / We send the report every Friday / They fix the tests before the deploy / I write the notes after the call.
+
+### Exercício 3 — Advérbios de frequência e sujeitos expletivos
+
+Complete com a forma natural em inglês:
+
+1. "Nós **geralmente** atualizamos o quadro." → "We ______ update the board." → **usually**
+2. "Está claro que o contrato foi aprovado." → "______ is clear that the contract was approved." → **It**
+3. "Há dois bugs na lista." → "______ are two bugs in the list." → **There**
+
+**Key:** usually / It / There — o advérbio fica antes do verbo principal; *it* e *there* abrem a frase como sujeito.
+
+### Exercício 4 — Fragmento × run-on
+
+Classifique e repare os dois problemas do time:
+
+1. "Because the build failed." → **fragment** — falta uma oração principal.
+2. "The build failed we fixed the script." → **run-on** — duas orações completas sem separação.
+3. "The build failed, so we fixed the script." → **frase correta** — conectivo liga as duas partes.
+
+**Key:** 1) fragment; 2) run-on; 3) correta com *so*.
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Writing: SVO Sentences (individual)
-**Write 6 sentences** in SVO order about your work.
+### 5 sentenças-alvo (leia em voz corrida)
 
-**Example:**
-> "I write code. She manages projects. We attend meetings. They review documents. He fixes bugs. I test features."
+I review the pull request before the stand-up and I usually leave a short comment.
+She checks the copy after the demo because she always catches a vague promise.
+It is clear that there are two issues in the summary.
+We ship the fix tomorrow and we write the release notes in SVO order.
+They often ask for an example before they approve the wording.
 
-**Create your own 6 SVO sentences** about your daily work.
+### Foco articulatório para falantes de pt-BR
+
+- **Grupo SVO sem pausa artificial:** em *I review the pull request*, ligue *review the* com uma única respiração; não insira uma pausa depois de cada palavra como se fossem blocos soltos.
+- **Advérbio integrado:** em *I usually leave*, *usually* é átono e curto; evite dar a ele o mesmo destaque de *leave*, que carrega a ação.
+- **It is clear:** o *it* inicial é fraco e rápido, quase colado em *is*; não o pronuncie como o pronome enfático *IT*.
+- **There are:** o *there* átono não recebe o /r/ forte do pt-BR; mantenha a sequência leve e deixe o contraste em *two issues*.
+- **Final das sentenças:** desça o tom no ponto final de cada linha para marcar que a frase fechou, sobretudo depois de *promise* e *wording*.
+
+### Prompt de produção (escrita, com leitura em voz alta)
+
+Escreva **5 frases** sobre o seu dia de trabalho em en-US. Cada frase deve começar com sujeito explícito, seguir ordem SVO e incluir pelo menos um destes recursos: um advérbio de frequência (*always, usually, often*), um *it* expletivo (*It is clear that...*) ou um *there* expletivo (*There are...*). Depois leia as cinco frases em voz corrida e verifique se você não transformou nenhuma em fragmento ou run-on.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Fragment** is:
-| Slot | Value |
-|------|-------|
-| A | A complete sentence |
-| B | **An incomplete sentence** |
-| C | A run-on |
-| D | A clause |
-**Key:** B
-**br_pt_form:** "fragment / frase incompleta"
+1. **Gramática (L1):** Qual linha está correta?  
+   A) "The summary she checks before the release."  
+   B) **"She checks the summary before the release."**  
+   C) "Checks she the summary before the release."  
+   D) "She the summary checks before the release."  
+   **Key:** B
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **SVO order**:
-| Slot | Value |
-|------|-------|
-| A | **Coffee she likes.** |
-| B | **She likes coffee.** |
-| C | **Likes she coffee.** |
-| D | **She coffee likes.** |
-**Key:** B
-**br_pt_form:** "Ela gosta de café."
+2. **Gramática (L1):** Qual frase usa o sujeito expletivo de forma adequada?  
+   A) "Are two issues in the summary."  
+   B) "Is clear that the tests passed."  
+   C) **"There are two issues in the summary."**  
+   D) "There is two issues in the summary."  
+   **Key:** C
 
 ---
 
@@ -115,23 +149,20 @@ Choose the correct **SVO order**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## 📊 Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_rem_writing_svo",
   "cefr_level": "B1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (SVO explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/leia-e-escreva-melhor-em-ingles.md (BaixeLivros notice applies) - scoping of writing skills"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - writing terms are unprotectable linguistic concepts; definitions authored"
-  },
+  "module": "mod_b1_fluency_project",
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "remediation_trigger": "writing mastery < 0.60",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "writing"],
   "output_modalities": ["writing"],
   "skill_items": {

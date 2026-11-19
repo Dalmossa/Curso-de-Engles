@@ -3,110 +3,140 @@
 **Lesson ID:** `les_b1_project_presentation_final`
 **Module:** `mod_b1_fluency_project`
 **CEFR:** B1
-**Reuse basis:** `cite_only`
-**Source:** `docs/leia-e-escreva-melhor-em-ingles.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted. Grammar topics (present perfect vs past simple, imperative, *will* for decisions made while speaking) were selected through the project grammar reference tool.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: a apresentação final do piloto na sala do time
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **final presentation** | apresentação final | *exposição conclusiva do projeto* |
-| **executive summary** | resumo executivo | *visão geral de 1 slide para liderança* |
-| **key findings** | principais descobertas | *resultados mais importantes* |
-| **recommendation** | recomendação | *ação proposta baseada em evidência* |
-| **Q&A** | perguntas e respostas | *sessão de dúvidas da audiência* |
-| **slide deck** | deck de slides | *conjunto de slides* |
-| **storytelling** | narrativa / contação de história | *estrutura envolvente* |
-| **data-driven** | orientado a dados | *baseado em métricas, não opinião* |
-| **call to action** | chamada para ação | *próximo passo claro* |
-| **timebox** | timebox / limite de tempo | *tempo fixo para cada seção* |
-| **rehearsal** | ensaio | *prática antes da apresentação real* |
-| **feedback loop** | ciclo de feedback | *entrada → ajuste → melhoria* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> **Coach:** "**Final presentation** — 10 min + 5 min **Q&A**. Structure: **executive summary**, **key findings**, **recommendation**, **call to action**."
+> **Rafa (tech lead):** "We have finished the pilot, and the dashboard is live in staging. I'll start with the context, then I'll walk you through the numbers."
 >
-> **Student:** "**Storytelling**: problem → journey → solution. **Data-driven**: every claim has a **metric**. **Slide deck**: 10 slides max. **Timebox**: 1 min per slide."
+> **Bia (engineer):** "Last month we measured latency before the change. Since we shipped the cache layer, the p95 has dropped from 820 ms to 310 ms."
 >
-> **Coach:** "**Rehearsal** 3x. Record, watch, **feedback loop**. **Q&A** prep: anticipate 3 tough questions."
+> **Rafa:** "Good. Two findings, both backed by logs. My recommendation is simple: approve the rollout on Friday."
+>
+> **Bia:** "Watch the time markers. Say 'last month we measured', not 'last month we have measured'. Use the present perfect when the result still matters now."
+>
+> **Rafa:** "Right. The pilot has produced two findings, and the logs confirm both of them. So here is the ask: approve the rollout, assign an owner, and schedule the retro."
+>
+> **Bia:** "Close with a clear call to action. Don't say 'maybe we could think about it'. Say 'Approve the rollout by Thursday'."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **executive summary** | resumo executivo | Um slide com problema, solução, impacto e pedido; não é uma especificação técnica. |
+| **key findings** | principais descobertas | Resultados que sustentam a recomendação; prefira números a adjetivos. |
+| **data-driven** | baseado em dados | Cada afirmação vem acompanhada de uma métrica. |
+| **to ship** | colocar em produção / entregar | *We shipped the cache layer* = "colocamos a camada de cache em produção". |
+| **rollout** | lançamento gradual em produção | Não confundir com *release notes* (notas de versão). |
+| **call to action** | pedido explícito / próximo passo | O fechamento diz o que a audiência precisa aprovar ou fazer. |
+| **Q&A** | sessão de perguntas e respostas | Anuncie o bloco antes de abrir para perguntas. |
+| **signpost** | sinalizar a estrutura | *I'll start with..., then I'll..., and finally I'll...* guia a audiência. |
+| **I'll + verbo base** | vou/decido agora fazer | *I'll start with the context* soa como decisão tomada no momento da fala. |
+| **since + present perfect** | desde que + presente perfeito | *Since we shipped..., the p95 has dropped* liga o passado ao resultado atual. |
+| **last month + past simple** | mês passado + passado simples | Tempo fechado no passado pede *measured*, não *have measured*. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "Last month we **have measured** latency." | "Last month we **measured** latency." | *Last month* fecha o tempo; use o passado simples. |
+| "Since we shipped the cache, the p95 **dropped** to 310 ms." | "Since we shipped the cache, the p95 **has dropped** to 310 ms." | O resultado chega até agora: o presente perfeito faz essa ligação. |
+| "We **have finished** the pilot **yesterday**." | "We **finished** the pilot yesterday." | *Yesterday* é tempo fechado e não combina com o presente perfeito. |
+| "I recommend **to approve** the rollout." | "I recommend **we approve** the rollout." / "I recommend **approving** the rollout." | Depois de *recommend*, use uma oração com *we* ou a forma em *-ing*, não o infinitivo com *to*. |
+| "**Approves** the rollout on Friday." | "**Approve** the rollout on Friday." | O imperativo usa a forma base do verbo, sem *-s*. |
+| "Maybe we could **to think** about it." | "Maybe we could **think** about it." | Depois de um modal, o verbo vem na forma base. |
+| "I **give** the context first" (decidindo agora) | "I**'ll give** the context first." | *will* contraído marca a decisão tomada no momento da apresentação. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-An **executive summary** should be:
-| Slot | Value |
-|------|-------|
-| A | 10 slides of details |
-| B | **1 slide: problem, solution, impact, ask** |
-| C | Full technical spec |
-| D | Team bios |
-**Key:** B
-**br_pt_form:** "resumo executivo / 1 slide: problema, solução, impacto, pedido"
+### Exercício 1 — Reconhecimento: tempo verbal na apresentação (L1)
 
-### Item 2 — Vocabulary (Matching)
-Match the presentation section to its purpose:
-| Section | Purpose |
-|---------|---------|
-| **Executive summary** | a. One-slide overview |
-| **Key findings** | b. Evidence-based results |
-| **Recommendation** | c. What to do next |
-| **Call to action** | d. Clear next step for audience |
-**Key:** Executive summary→a, Key findings→b, Recommendation→c, Call to action→d
-**br_pt_form:** "resumo executivo", "principais descobertas", "recomendação", "chamada para ação"
+A tech lead está fechando o piloto. Qual versão está correta?
 
-### Item 3 — Grammar: Imperative for call to action (fill-in-blank)
-Write **imperative** calls to action:
-"______ (approve) the budget. ______ (schedule) the rollout. ______ (assign) owners."
-**Key:** Approve / Schedule / Assign
-**br_pt_form:** "Aprove", "Agende", "Designe"
+| Opção | Frase |
+|---|---|
+| A | "Last month we have measured the p95 before the change." |
+| B | "Since we shipped the cache layer, the p95 dropped to 310 ms." |
+| C | "Last month we measured the p95, and since we shipped the cache layer it has dropped to 310 ms." |
+| D | "We have finished the pilot yesterday and measured the p95." |
 
----
+**Key:** C
+O tempo fechado (*last month*, *yesterday*) pede o passado simples; o resultado que ainda vale agora (*has dropped*) pede o presente perfeito. A usa perfeito com tempo fechado, B perde a ligação com o presente e D repete o erro em *yesterday*.
 
-## FASE 3 — Output Task [4 min]
+### Exercício 2 — Transformação L1 → L2
 
-### Speaking: Final Presentation Delivery (individual)
-**Deliver:** 3-minute final presentation for your project. Structure:
+Reescreva as intenções do script em inglês natural para uma apresentação de projeto:
 
-1. **Executive summary** (30s): problem, solution, impact
-2. **Key findings** (90s): 3 metrics + evidence
-3. **Recommendation** (30s): what to do next
-4. **Call to action** (30s): approve / fund / staff / schedule
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Vou começar pelo contexto e depois mostro os números." | "I'll start with the context, then I'll show the numbers." |
+| "Mês passado medimos a latência antes da mudança." | "Last month we measured latency before the change." |
+| "Desde que colocamos o cache, a latência caiu para 310 ms." | "Since we shipped the cache, latency has dropped to 310 ms." |
+| "Recomendo que aprovemos o rollout na sexta." | "I recommend we approve the rollout on Friday." |
 
-**Use vocabulary:** *executive summary, key findings, recommendation, Q&A, slide deck, storytelling, data-driven, call to action, timebox, rehearsal, feedback loop*.
+**Key:** I'll start / measured / has dropped / I recommend we approve
+As duas primeiras frases separam decisão no momento da fala (*I'll start*) de tempo fechado (*measured*); a terceira liga o passado ao presente com *has dropped*; a quarta evita o infinitivo indevido depois de *recommend*.
+
+### Exercício 3 — Call to action: imperativo e decisão (L1 → L2)
+
+Complete o fechamento da apresentação com as formas corretas:
+
+1. "______ (approve) the rollout by Thursday." → **Approve**
+2. "I ______ (give) you the context first, then I'll show the findings." → **'ll give**
+3. "I recommend we ______ (assign) an owner today." → **assign**
+
+**Key:** 1) Approve; 2) 'll give; 3) assign.
+O imperativo pede a forma base (*Approve*), a decisão tomada agora usa *I'll give*, e depois de *I recommend we...* o verbo fica na forma base (*assign*).
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Data-driven** presentation means:
-| Slot | Value |
-|------|-------|
-| A | Many slides |
-| B | **Claims backed by metrics/evidence** |
-| C | Uses database |
-| D | Automated slides |
-**Key:** B
-**br_pt_form:** "orientado a dados / baseado em métricas"
+### 5 sentenças-alvo (leia em voz corrida)
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **imperative** for a call to action:
-| Slot | Value |
-|------|-------|
-| A | **Approve** the proposal. |
-| B | **Approving** the proposal. |
-| C | **Approved** the proposal. |
-| D | **Approves** the proposal. |
-**Key:** A
-**br_pt_form:** "Aprove a proposta."
+I'll start with the context, then I'll walk you through the numbers.
+Last month we measured latency before the change, and the p95 was 820 milliseconds.
+Since we shipped the cache layer, the p95 has dropped to 310 milliseconds.
+Our pilot has produced two findings, and the logs confirm both of them.
+Approve the rollout, assign an owner, and schedule the retro for Thursday.
+
+### Foco articulatório para falantes de pt-BR
+
+- **I'll**: uma sílaba só, /aɪl/; não acrescente uma vogal final ("ai-ou"). A contração soa presa ao pronome.
+- **-ed em *shipped* e *dropped***: depois de /p/, a terminação soa /t/ sem vogal extra — evite "ship-ê-d" e "drop-ê-d".
+- **/z/ final em *numbers*, *findings* e *p95***: mantenha a vibração e não transforme o fim em /s/ nem em "findin-gui".
+- **Linking em *walk you through***: o /k/ de *walk* se liga ao /j/ de *you* sem pausa; a sequência fica próxima de "walk-you", com o *through* marcado depois.
+- **Ritmo do fechamento**: em *Approve the rollout, assign an owner...*, marque uma pausa curta após cada vírgula para que cada pedido da chamada para ação fique audível.
+
+### Prompt de **output** (produção oral/escrita do aprendiz)
+
+Prepare um fechamento de 60 a 90 segundos para a apresentação final do seu projeto, em versão falada ou escrita. Estruture em quatro blocos: executive summary (problema, solução, impacto), key findings (duas métricas com evidência), recommendation (o que fazer) e call to action (o que a audiência deve aprovar ou agendar). Use pelo menos uma frase com *I'll* para anunciar a estrutura, uma com passado simples e tempo fechado, uma com presente perfeito ligando o passado ao resultado atual e um imperativo no pedido final. Se fizer a versão escrita, leia em voz alta uma vez e marque onde respirou.
+
+---
+
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
+
+1. **Gramática (L1):** Qual frase fecha a apresentação sem erro de tempo verbal?  
+   A) "Since we shipped the cache, the p95 dropped to 310 ms."  
+   B) "We have finished the pilot yesterday."  
+   C) **"Since we shipped the cache, the p95 has dropped to 310 ms."**  
+   D) "Last month we have measured the p95."  
+   **Key:** C
+
+2. **Vocabulário e função (L1):** Qual opção é um call to action adequado?  
+   A) "Maybe we could think about the rollout."  
+   B) "I recommend to approve the rollout."  
+   C) "The dashboard is live in staging."  
+   D) **"Approve the rollout by Thursday."**  
+   **Key:** D
 
 ---
 
@@ -115,55 +145,49 @@ Choose the correct **imperative** for a call to action:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_b1_project_presentation_final",
   "cefr_level": "B1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (Coach/Student dialogue), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/leia-e-escreva-melhor-em-ingles.md (BaixeLivros notice applies) - scoping of presentation skills and academic communication vocabulary"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - presentation terms are unprotectable professional concepts; definitions authored"
-  },
+  "module": "mod_b1_fluency_project",
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR to en-US); no external source text reproduced or adapted.",
+  "estimated_time_min": 15,
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
-  "output_modalities": ["speaking"],
+  "output_modalities": ["speaking", "writing"],
   "skill_items": {
     "grammar": [
-      "grammar.imperative_call_to_action"
+      "grammar.present_perfect_past_simple",
+      "grammar.imperative_call_to_action",
+      "grammar.will_on_the_spot_decision"
     ],
     "vocabulary": [
-      "vocab.presentation.final_presentation",
-      "vocab.presentation.executive_summary",
-      "vocab.presentation.key_findings",
-      "vocab.presentation.recommendation",
-      "vocab.presentation.q_and_a",
-      "vocab.presentation.slide_deck",
-      "vocab.presentation.storytelling",
-      "vocab.presentation.data_driven",
-      "vocab.presentation.call_to_action",
-      "vocab.presentation.timebox",
-      "vocab.presentation.rehearsal",
-      "vocab.presentation.feedback_loop"
+      "vocab.presentation_executive_summary",
+      "vocab.presentation_key_findings",
+      "vocab.presentation_rollout",
+      "vocab.presentation_call_to_action"
     ],
     "listening": [
-      "listening.presentation_context"
+      "listening.presentation_signposting"
     ],
     "pronunciation": [
-      "pronunciation.technical_terms"
+      "pronunciation.presentation_word_stress",
+      "pronunciation.past_ed_after_stop"
+    ],
+    "speaking": [
+      "speaking.final_presentation_delivery"
     ]
   },
   "prereq_lessons": [
     "les_a2_it_terms_basics",
-    "les_a2_it_communication",
-    "les_b1_it_technical"
-  ],
-  "estimated_time_min": 15
+    "les_a2_it_meeting_standup",
+    "les_b1_it_presentations"
+  ]
 }
 ```

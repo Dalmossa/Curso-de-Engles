@@ -3,106 +3,171 @@
 **Lesson ID:** `les_rem_confidence_builder`
 **Module:** `mod_b1_fluency_project`
 **CEFR:** B1
-**Reuse basis:** `cite_only`
-**Source:** `docs/frases-ingles-trabalho.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Material 100% autoral para engenheiros de software brasileiros (pt-BR → en-US); nenhum texto externo reproduzido ou adaptado.
 **Estimated time:** 15 min
+**Trigger:** `profile = false_beginner`
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: o primeiro stand-up de Bia no time de plataforma
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **affective filter** | filtro afetivo | *ansiedade que bloqueia aprendizagem* |
-| **false beginner** | falso iniciante | *estudou mas não usa* |
-| **confidence** | confiança | *segurança para falar* |
-| **anxiety** | ansiedade | *medo de errar* |
-| **mistake** | erro | *falha* |
-| **practice** | prática | *repetir para melhorar* |
-| **safe environment** | ambiente seguro | *espaço sem julgamento* |
-| **encouragement** | encorajamento | *apoio positivo* |
-| **progress** | progresso | *evolução* |
-| **frustration** | frustração | *sentimento de incapacidade* |
-| **breakthrough** | avanço | *momento de superação* |
-| **mindset** | mentalidade | *atitude mental* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**Affective filter**: 'High **anxiety** blocks learning. Create a **safe environment** to lower the filter.'"
+> **Rafael (tech lead):** "Good morning, Bia. Before we start, do you have a quick update?"
 >
-> "**False beginner**: 'A **false beginner** studied English but cannot speak. They need **confidence**, not basics.'"
+> **Bia (backend developer):** "I know the words, but I freeze when everyone looks at me. Can I try one sentence?"
 >
-> "**Encouragement**: '**Mistakes** are part of learning. **Practice** builds **confidence**. Celebrate **progress**.'"
+> **Rafael:** "Please do. Low risk: just say what you did yesterday."
+>
+> **Bia:** "Okay. I fixed the retry bug in the payment worker, and I added two tests. I need a second when I don't find the word."
+>
+> **Rafael:** "That was clear. Nobody is grading your grammar here."
+>
+> **Bia:** "Thanks. I understand a lot in the docs, but I almost never say these sentences out loud."
+>
+> **Rafael:** "Then today we practise the sentences you already know. Mistakes are part of the work."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **affective filter** | filtro afetivo | O nome para o "travamento" quando o medo de errar sobe; no dia a dia, diga **I freeze** ou **I feel blocked**. |
+| **false beginner** | falso iniciante | Alguém que estudou muito, entende leitura e áudio lento, mas não fala: **I know it, but I don't say it**. |
+| **passive vocabulary** | vocabulário passivo | Palavras que você reconhece; transforme uma ou duas por dia em **active vocabulary**. |
+| **active vocabulary** | vocabulário ativo | Palavras que você consegue usar sem ensaiar; cresce com produção de baixo risco. |
+| **low-risk task** | tarefa de baixo risco | Uma fala curta e previsível, como **I fixed the bug and added a test**. |
+| **safe environment** | ambiente seguro | **Nobody is grading your grammar here**: erro não vira juízo de valor. |
+| **encouragement** | encorajamento | **You can try**, **Take your time** — apoio que reduz a ansiedade sem corriger o conteúdo. |
+| **to freeze** | travar, dar um branco | **I freeze in meetings** descreve o sintoma sem rotular a pessoa. |
+| **to buy time** | ganhar tempo | **Let me think** e **Give me a second** são frases de sobrevivência legítimas. |
+| **to say it out loud** | dizer em voz alta | A ponte entrevocabulário passivo e ativo; é o que a FASE 3 exercita. |
+| **mistake** | erro | **Mistakes are part of learning**: no time de engenharia, erro é dado de diagnóstico. |
+| **progress** | progresso | **My progress is real** — pequeno, observável e acumulável. |
+
+### Armadilhas do falso iniciante (pt-BR → en-US)
+
+| Armadilha típica | Forma natural em en-US | Por quê? |
+|---|---|---|
+| Esperar "estar pronto" para falar: **"I will speak when my English is perfect."** | **"I can try one sentence now."** | A fluência cresce com output de baixo risco; esperar a perfeição mantém o filtro afetivo alto. |
+| Traduzir o branco como silêncio: **"I don't know."** (e travar) | **"Give me a second, please."** | Uma frase de sobrevivência profissional mantém você na conversa enquanto o cérebro recupera a palavra. |
+| Confundir reconhecer com saber usar: **"I read the docs, so I can discuss it."** | **"I know the word, but I never say it in meetings."** | Vocabulário passivo precisa de uma etapa explícita de produção. |
+| Evitar o erro com frase curta demais: **"Yes. Fine. Done."** | **"I fixed the retry bug and added two tests."** | Uma oração coordenada com **and** é curta, segura e informativa. |
+| Pedir repetição com tom de desculpa: **"Sorry, my English is bad, repeat."** | **"Can you say that again a little more slowly, please?"** | **Can you...?** + **please** é pedido educado e neutro; não pede permissão para existir. |
+| Generalizar o medo: **"I am bad at English."** | **"I freeze when the whole team is watching."** | Nomear a situação é mais preciso e menos definitivo que rotular a pessoa. |
+
+**Nota de mediação:** a estratégia desta lição é baixar o filtro afetivo antes de exigir precisão. As tarefas começam com reconhecimento, passam por frases prontas de sobrevivência e só depois pedem output pessoal.
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Affective filter** refers to:
-| Slot | Value |
-|------|-------|
-| A | Grammar rules |
-| B | **Anxiety that blocks learning** |
-| C | Vocabulary |
-| D | Pronunciation |
+### Exercício 1 — Reconhecimento: o que é um falso iniciante?
+
+| Opção | Frase |
+|---|---|
+| A | "A false beginner never studied English and knows no words." |
+| B | **"A false beginner understands a lot but rarely speaks."** |
+| C | "A false beginner is a native speaker who studies grammar for fun." |
+| D | "A false beginner cannot read a technical document at all." |
+
 **Key:** B
-**br_pt_form:** "affective filter / ansiedade que bloqueia aprendizagem"
 
-### Item 2 — Vocabulary (Matching)
-Match the term to its meaning:
-| Term | Meaning |
-|------|---------|
-| **False beginner** | a. Studied but cannot speak |
-| **Confidence** | b. Self-assurance |
-| **Safe environment** | c. Space without judgment |
-| **Breakthrough** | d. Moment of overcoming |
-**Key:** False beginner→a, Confidence→b, Safe environment→c, Breakthrough→d
-**br_pt_form:** "falso iniciante", "confiança", "ambiente seguro", "avanço"
+**Feedback:** A descreve um iniciante real, C descreve um falante nativo e D contradiz o perfil: o ponto do falso iniciante é justamente o desequilíbrio entre compreensão e produção.
 
-### Item 3 — Grammar: Present simple for facts (fill-in-blank)
-Complete with **present simple**:
-"Mistakes ______ (be) part of learning. Practice ______ (build) confidence. Progress ______ (come) with effort."
-**Key:** are / builds / comes
-**br_pt_form:** "são / constrói / vem"
+### Exercício 2 — Transformação L1 → L2: frases de sobrevivência
+
+Reescreva cada intenção em inglês natural, mantendo o tom baixo risco:
+
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Dá um segundo que eu acho a palavra." | "Give me a second, please." |
+| "Posso tentar uma frase?" | "Can I try one sentence?" |
+| "Repete mais devagar, por favor?" | "Can you say that again a little more slowly, please?" |
+| "Eu entendo o texto, mas não costumo dizer isso." | "I understand it, but I don't say it out loud." |
+
+**Key:** Give me a second, please / Can I try one sentence? / Can you say that again a little more slowly, please? / I understand it, but I don't say it out loud.
+
+**Feedback:** As quatro respostas são curtas, previsíveis e socialmente seguras: elas mantêm você na interação enquanto o vocabulário passivo vira ativo.
+
+### Exercício 3 — Gramática: present simple para fatos
+
+Complete com a forma correta do present simple:
+
+1. "Mistakes ______ (be) part of learning." → **are**
+2. "Practice ______ (build) confidence." → **builds**
+3. "Progress ______ (come) with small, repeated attempts." → **comes**
+
+**Key:** 1) are; 2) builds; 3) comes.
+
+**Feedback:** *Mistakes* é plural e pede **are**; *practice* e *progress* são sujeitos singulares não contáveis, então o verbo leva a marca de 3ª pessoa: **builds** e **comes**. Aqui o present simple fala de uma verdade geral, não de um evento de ontem.
+
+### Exercício 4 — Vocabulário: recombinação passivo → ativo
+
+Escolha a opção que transforma uma palavra reconhecida em uma fala utilizável na stand-up:
+
+| Opção | Frase |
+|---|---|
+| A | "Affective filter, anxiety, encouragement." |
+| B | "I freeze, but the filter is affective." |
+| C | **"I know the word, but I never say it. Today I can try one sentence."** |
+| D | "The confidence is in the vocabulary of the passive." |
+
+**Key:** C
+
+**Feedback:** A é apenas uma lista passiva, B mistura termos sem comunicar e D soa como tradução literal. C usa uma estrutura simples e repetível — **I know..., but I never... Today I can...** — que pode ser reaproveitada em qualquer reunião.
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Speaking: Confidence Building (individual)
-**Create 6 sentences** to encourage a false beginner.
+### 5 sentenças-alvo (leia em voz corrida)
 
-**Example:**
-> "Mistakes are normal. You can improve with practice. This is a safe environment. Your progress is real. Keep going. You will have a breakthrough."
+I know the word, but I never say it in a meeting.
+Mistakes are part of learning, so I can try one sentence.
+Can you say that again a little more slowly, please?
+Practice builds confidence, and my progress is real.
+We have a safe environment here, so I will share my idea.
+
+### Foco articulatório para falantes de pt-BR
+
+- **/k/ fraco em *can*:** em *so I can try*, **can** fica reduzido, quase /kən/; não o pronuncie como *can-* com vogal plena nem o omita.
+- **Final de *mistakes*:** o grupo /ks/ deve soar inteiro, sem virar "mistakes-i"; o /s/ não ganha sílaba extra.
+- **Linking em *part of* e *lots of*:** o /t/ de *part* liga-se à vogal de *of*; ensaie "par-tof" em voz corrida, sem pausa dura.
+- **/ð/ em *the* e *that*:** língua entre os dentes, som voiced; evite trocar por /d/ ("da", "dat") e por /z/.
+- **Ritmo do pedido:** em *Can you say that again... please?*, mantenha *can you* curto e deixe a entonação descer em *please*; o pedido soa calmo, não apologético.
+
+### Prompt de produção (oral ou escrita)
+
+Escreva e diga em voz alta **5 a 7 falas** de uma stand-up mock. Você é um engenheiro brasileiro que entende o time, mas ainda trava ao falar. Inclua: **uma** frase de sobrevivência para ganhar tempo, **um** pedido de repetição com **Can you...?**, **duas** frases no present simple sobre aprendizado (**mistakes / practice / progress**) e **uma** contribuição real sobre uma tarefa do seu dia. Termine com uma frase de encorajamento dirigida a outro colega. Depois, repita apenas a frase em que você mais travou — uma vez devagar, uma vez em ritmo normal.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**False beginner** is someone who:
-| Slot | Value |
-|------|-------|
-| A | Never studied English |
-| B | **Studied English but cannot speak it** |
-| C | Is a native speaker |
-| D | Is a teacher |
-**Key:** B
-**br_pt_form:** "false beginner / estudou inglês mas não consegue falar"
+1. **Vocabulário (L1, adaptativo):** Qual situação descreve melhor um *false beginner*?
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **present simple**:
-| Slot | Value |
-|------|-------|
-| A | Mistakes **is** part of learning. |
-| B | Mistakes **are** part of learning. |
-| C | Mistakes **being** part of learning. |
-| D | Mistakes **be** part of learning. |
-**Key:** B
-**br_pt_form:** "Erros fazem parte do aprendizado."
+   | Opção | Frase |
+   |---|---|
+   | A | "Rafael never studied English and cannot read a bug report." |
+   | B | **"Bia reads the docs well but freezes when she has to speak."** |
+   | C | "Bia is a native speaker who teaches grammar." |
+   | D | "Rafael speaks English at home with his family every day." |
+
+   **Key:** B
+
+2. **Gramática (L1, adaptativo):** Escolha o present simple correto para o fato geral.
+
+   | Opção | Frase |
+   |---|---|
+   | A | "Mistakes is part of learning." |
+   | B | "Mistakes being part of learning." |
+   | C | "Mistakes be part of learning." |
+   | D | **"Mistakes are part of learning."** |
+
+   **Key:** D
+
+3. **Produção (shadow):** Escute a frase-modelo (áudio `deferred_render`) e repita com o mesmo ritmo: "Give me a second. I know the word, but I need one try."
 
 ---
 
@@ -111,22 +176,25 @@ Choose the correct **present simple**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_rem_confidence_builder",
   "cefr_level": "B1",
-  "provenance": {
-    "reuse_basis": "cite_only",
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "trigger": "profile = false_beginner",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "provenance_detail": {
+    "reuse_basis": "authored_material",
     "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (affective filter explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/frases-ingles-trabalho.md (BaixeLivros notice applies) - scoping of confidence and motivation"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - affective filter terms are unprotectable psychological concepts; definitions authored"
+    "bibliography_only": [],
+    "authored_material": "all exercises, the stand-up dialogue, the contrastive glossary, the trap table, the five target sentences, the articulation focus, the output prompt and the Shadow CAT items",
+    "verbatim_reproduction": "none"
   },
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
   "output_modalities": ["speaking"],

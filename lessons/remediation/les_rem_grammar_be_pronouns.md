@@ -3,113 +3,133 @@
 **Lesson ID:** `les_rem_grammar_be_pronouns`
 **Module:** `mod_b1_fluency_project`
 **CEFR:** B1
-**Reuse basis:** `cite_only`
-**Source:** `docs/apostila-ingles-para-iniciantes-impresso.md` (`cite_only`)
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
+**Trigger:** grammar θ < -1.5
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: post-mortem de um deploy na sala do time
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **to be** | ser / estar | *verbo de ligação* |
-| **pronoun** | pronome | *palavra que substitui substantivo* |
-| **subject pronoun** | pronome sujeito | *I, you, he, she, it, we, they* |
-| **object pronoun** | pronome objeto | *me, you, him, her, it, us, them* |
-| **possessive** | possessivo | *my, your, his, her, its, our, their* |
-| **contraction** | contração | *I'm, you're, he's* |
-| **affirmative** | afirmativa | *frase positiva* |
-| **negative** | negativa | *frase com not* |
-| **interrogative** | interrogativa | *pergunta* |
-| **short answer** | resposta curta | *Yes, I am / No, I'm not* |
-| **remediation** | remediação | *corrigir dificuldade* |
-| **drill** | exercício / treino | *prática repetitiva* |
-
-### Mini-texto (áudio: `deferred_render`)
-
-> "**To be + pronouns**: '**I am** happy. **You are** here. **He is** tall. **She is** smart. **It is** a book. **We are** friends. **They are** students.'"
+> **Rafa (backend):** "I'm on call today, so I'm tracking the rollback. Bruno is looking at the queue metrics."
 >
-> "**Contractions**: '**I'm** happy. **You're** here. **He's** tall. **She's** smart. **It's** a book. **We're** friends. **They're** students.'"
+> **Lia (frontend):** "Thanks. It's a config issue, not a code regression. The dashboard is still showing old data."
 >
-> "**Negative**: 'I **am not** sad. You **aren't** late. He **isn't** here.' **Short answers**: 'Yes, I am. / No, I'm not.'"
+> **Rafa:** "You're right. We're in the verification window now. Are you in the incident channel?"
+>
+> **Lia:** "Yes, I am. Marcelo is there too, and he's checking the feature flag. They're in the room with the SREs."
+>
+> **Rafa:** "There are two alerts in the log, but there's only one root cause. I'm not blaming anyone — we're just documenting the sequence."
+>
+> **Lia:** "Good. It's a process gap, and we're fixing it before the next release."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **I am / I'm** | eu sou / estou | A 1ª pessoa sempre leva **am**; a contração **I'm** é a forma comum na fala. |
+| **You are / you're** | você é / está | **Are** serve para *you* no singular e no plural. |
+| **He / she / it is** | ele / ela / é, está | A 3ª pessoa do singular leva **is**, inclusive para coisas (*it is a bug*). |
+| **We / they are** | nós / eles são, estão | O plural mantém **are**, mesmo quando o sujeito é um nome de time. |
+| **There is / there's** | há / existe (singular) | O verbo concorda com o nome que vem **depois**: *there's a flag*. |
+| **There are** | há / existem (plural) | Use antes de plural: *there are two alerts*. |
+| **Yes, I am / No, I'm not** | sim, estou / não, não estou | A resposta curta repete o **be**; não repita o predicado. |
+| **Am I / are you / is she?** | eu sou / você é / ela é? | Na pergunta, o **be** vai **antes** do sujeito. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "**Am happy** today." / "**Is on call** today." | "**I am happy** today." / "**He is on call** today." | O português permite omitir o sujeito; o inglês exige sujeito explícito em quase toda frase. |
+| "I **happy** with the rollback." | "I **am happy** with the rollback." | Adjetivo não vira verbo em inglês; o ligador **be** é obrigatório. |
+| "She **are** in the channel." / "They **is** in the room." | "She **is** in the channel." / "They **are** in the room." | A concordância é com o sujeito: *she/he/it → is*, *we/you/they → are*. |
+| "I **am** a bug in the cache." (para dizer *há um bug*) | "**There is** a bug in the cache." | Existência usa **there is/are**, não *I am* nem *it is* com sujeito vazio. |
+| "**There is** two alerts in the log." | "**There are** two alerts in the log." | Com plural depois de *there*, o verbo é **are**. |
+| "Yes, I **do**." (respondendo a *Are you ready?*) | "Yes, I **am**." | Resposta curta repete o auxiliar da pergunta; aqui o auxiliar é **be**, não *do*. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-**Contraction** of "I am" is:
-| Slot | Value |
-|------|-------|
-| A | I'm |
-| B | **I'm** |
-| C | Im |
-| D | Iam |
+### Exercício 1 — Reconhecimento (L1)
+
+Um dev descreve a verificação de um deploy durante a call. Qual frase está correta?
+
+| Opção | Frase |
+|---|---|
+| A | "Marcelo are in the incident channel with the SREs." |
+| B | **"Marcelo is in the incident channel with the SREs."** |
+| C | "Marcelo be in the incident channel with the SREs." |
+| D | "Is in the incident channel with the SREs." |
+
 **Key:** B
-**br_pt_form:** "I'm / contração de I am"
 
-### Item 2 — Vocabulary (Matching)
-Match the pronoun to its "to be" form:
-| Pronoun | To Be |
-|---------|-------|
-| **I** | a. am |
-| **You** | b. are |
-| **He** | c. is |
-| **They** | d. are |
-**Key:** I→a, You→b, He→c, They→d
-**br_pt_form:** "eu", "você", "ele", "eles"
+### Exercício 2 — Transformação L1 → L2
 
-### Item 3 — Grammar: To be + pronoun (fill-in-blank)
-Complete with **correct "to be" form**:
-"I ______ happy. You ______ here. He ______ tall. She ______ smart. We ______ friends. They ______ students."
-**Key:** am / are / is / is / are / are
-**br_pt_form:** "estou / está / é / é / somos / são"
+Reescreva as intenções em inglês natural, mantendo sujeito e forma de **be**:
+
+| Português (intenção) | Resposta esperada |
+|---|---|
+| "Estou no plantão hoje." | "I am on call today." |
+| "Ela está revisando o pull request." | "She is reviewing the pull request." |
+| "Há dois alertas no log." | "There are two alerts in the log." |
+| "Nós não estamos prontos para o deploy." | "We are not ready for the deploy." |
+
+**Key:** I am / She is / There are / We are not
+
+### Exercício 3 — Pergunta e resposta curta
+
+Complete a pergunta e a resposta curta do check-in:
+
+> "**______ you** the reviewer for this change?" — "Yes, **I ______**."
+
+| Opção | Par |
+|---|---|
+| A | "Do you" / "I do" |
+| B | "Are you" / "I do" |
+| C | **"Are you" / "I am"** |
+| D | "Is you" / "I am" |
+
+**Key:** C
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Speaking: Pronoun Drill (individual)
-**Practice the drill**:
+### 5 sentenças-alvo (leia em voz corrida)
 
-1. I am → I'm
-2. You are → You're
-3. He is → He's
-4. She is → She's
-5. It is → It's
-6. We are → We're
-7. They are → They're
+I'm on the on-call rotation, and she's the reviewer for this pull request.
+He's in the stand-up now, so we're waiting for his update on the incident.
+It's a flaky test, not a production bug, and they're checking the logs.
+There's a race condition in the cache, but there are two fixes in the branch.
+You're right about the rollout, and I'm not sure we're ready for the demo.
 
-**Say each pair aloud** 5 times.
+### Foco articulatório para falantes de pt-BR
+
+- **Contrações com *be***: em *I'm*, *he's* e *we're*, o verbo perde a sílaba cheia — não diga "I am" separado nem insira uma vogal extra ("he-is-i").
+- **/m/ final de *I'm***: feche os lábios com suavidade; evite transformá-lo em /n/ ou em "im" com vogal epentética.
+- **/z/ em *is*, *there's* e *he's***: o -s soa como /z/, sem virar /s/ nem ganhar sílaba; mantenha a voz ligada à vogal anterior.
+- **Contraste *there's* ↔ *there are***: marque a diferença de número com o fim da palavra — /z/ curto no singular, /r/ final em *are* no plural.
+- **Ritmo da resposta curta**: em "Yes, I am", o *am* fica um pouco mais forte; em "Yes, I'm not", a negação carrega o contraste da correção.
+
+### Prompt de produção (oral ou escrita)
+
+Descreva para um colega o estado de um deploy ou de uma reunião: use **pelo menos quatro** formas de **be** (uma contração, uma pergunta, uma resposta curta e uma frase com *there is/there are*). Mencione uma pessoa do time, um problema técnico e uma decisão tomada. Depois grave ou escreva a versão corrigida, checando se nenhum sujeito e nenhum **be** ficaram de fora.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Short answer** to "Are you happy?":
-| Slot | Value |
-|------|-------|
-| A | Yes, I am happy. |
-| B | **Yes, I am.** |
-| C | Yes, am. |
-| D | Yes, happy. |
-**Key:** B
-**br_pt_form:** "Sim, estou. / resposta curta"
+1. **Gramática (L1):** Qual frase está correta?
+   A) "There is two alerts in the log."  B) "There are two alerts in the log."  C) "There be two alerts in the log."  D) "Are two alerts in the log."
+   **Key:** B
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **"to be" form**:
-| Slot | Value |
-|------|-------|
-| A | She **am** smart. |
-| B | She **is** smart. |
-| C | She **are** smart. |
-| D | She **be** smart. |
-**Key:** B
-**br_pt_form:** "Ela é inteligente."
+2. **Gramática (L1):** Escolha a resposta curta natural para "Is Marcelo in the incident channel?"
+   A) "Yes, he does."  B) "Yes, he is in the channel."  C) **"Yes, he is."**  D) "Yes, is."
+   **Key:** C
 
 ---
 
@@ -118,23 +138,21 @@ Choose the correct **"to be" form**:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_rem_grammar_be_pronouns",
+  "title": "To Be + Pronouns (Remediation)",
+  "module": "mod_b1_fluency_project",
   "cefr_level": "B1",
-  "provenance": {
-    "reuse_basis": "cite_only",
-    "adapted_sources": [],
-    "authored_material": "all exercises, the mini-text (to be + pronouns explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task scenario",
-    "bibliography_only": [
-      "docs/apostila-ingles-para-iniciantes-impresso.md (no licence grant) - scoping of verb to be and pronouns"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - grammar terms are unprotectable linguistic knowledge; definitions authored"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "trigger": "grammar_theta_lt_-1.5",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
   "output_modalities": ["speaking"],
   "skill_items": {
