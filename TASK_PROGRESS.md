@@ -1025,16 +1025,81 @@ Registros alterados nesta unidade: `_legacy_packs_baseline.json`, `specs/curricu
 
 ---
 
-## Resumo consolidado — Onda 2 (Fases A–D, Lotes 3–11)
+## Unidade — Onda 2 — Lote 12 (batch 12), B2 Professional/IT/Cert Prep (2026-11-19)
 
-**Onda 2 encerrada em 90/123 — Fundação A1/A2 + A2-IT/B1-IT/B1-Geral + B1/B2-General.** Estado final do repositório:
+- [x] 10 lições + 10 packs reautorados como `authored_material` (clean-room, 100% original): `mod_b2_professional` (`les_b2_professional_argument`, `les_b2_professional_summary`, `les_b2_culture_brazil_vs_usa`), `mod_b2_it_senior` (`les_b2_it_architecture_decisions`, `les_b2_it_strategy`, `les_b2_it_incident_postmortem`, `les_b2_it_jargon_mastery`, `les_b2_it_advanced_patterns`, `les_b2_it_technical_leadership`) e `mod_b2_cert_prep` (`les_b2_toeic_reading`). Os 3 módulos e o CEFR B2 já existiam; nenhuma criação de infraestrutura de curriculum foi necessária. Packs legados v1 removidos do disco; os 10 packs canônicos seguem na tabela abaixo.
+- [x] Catraca `_legacy_packs_baseline.json` 26 → **16**; placar **100/123** lições `authored_material` (conteúdo em disco); `cite_only` **21**, `adapt_with_attribution` **2**; **23** lições pendentes de reautoria; packs **107 canônicos / 16 legados** (soma 123); censo `br_pt_form` **1857 filled / 76 null-with-note / 104 null-not-applicable / 0 undocumented**; classes de fontes §0.5 **A17/B0/C0/D11/E95** (100/123 em base autoralmente limpa).
+- [x] As 7 linhas com S-number no registro foram **preservadas** como `sourced_external` (as 2 do Lote 12 — `les_b2_it_architecture_decisions` e `les_b2_it_incident_postmortem` — mantiveram o marcador via sufixo `· sourcing: \`sourced_external\``). As 10 linhas do Lote 12 receberam o sufixo `· reauthored_authored_material`; a coluna `Source` histórica foi preservada para não alterar as classes A–E derivadas pelo gate [3b]. `§13 Lessons authored | 123` permanece **123**.
+- [x] Gates executados nesta unidade de registros: apenas `python3 verify-integrity.py` e `python3 prd-score.py` (tabela abaixo). `npm test`, `next build`, `content:sync`, backup, commit e `contract:gate` **não** executados nesta unidade, por restrição explícita do briefing.
+- [x] Pins de `api-spec.openapi.yaml` re-derivados com `git hash-object` para os 3 specs alterados (`assessment-item-spec.md`, `curriculum-graph-spec.md`, `external-sources.md`); `derived-at` mantido em `2026-11-19`. Nenhum schema OpenAPI alterado.
+- [x] Modelo: **todos os despachos do Lote 12 rodaram em `opencode/big-pickle` (modelo primário, zero custo), sem nenhuma rotação**; nenhum modelo `google/` pago usado.
+- [x] Pendências que dependem do usuário (última seção).
 
-- Placar de lições: **90/123 `authored_material`**; `cite_only` **29**; `adapt_with_attribution` **4**; `adapt_requires_permission` **0**; `sourced_external_thin` 0. O `adapt_requires_permission` **1** citado no briefing está entre os **packs** (`pack_les_a2_greetings_intro_v1`), não entre as lições.
-- Packs: **97 canônicos / 26 legados** (soma 123); `authored_material` **90**, `cite_only` **32**, `adapt_with_attribution` **0**, `adapt_requires_permission` **1**; catraca `_legacy_packs_baseline.json` em **26** (só pode cair). No registro em disco, por primeira declaração: 90/32/0/1 — divergência de 1 pack, preservada.
-- Censo `br_pt_form` (`assessment-item-spec.md` §2.2.1): **1677 filled / 76 null-with-note / 94 null-not-applicable / 0 undocumented**.
-- Classes de fontes em `external-sources.md` §0.5: **A17/B0/C0/D11/E95** (97/123 em base reutilizável ou autoralmente limpa).
+### Arquivos do lote
 
-### Cadeia de 75 lições reautoradas na Onda 2 (Lotes 3–11)
+| Lesson ID | Lição | Pack canônico | Legado removido do disco |
+|---|---|---|---|
+| `les_b2_professional_argument` | `lessons/b2/les_b2_professional_argument.md` | `packs/b2/pack-les-b2-professional-argument.md` | `packs/b2/pack_les_b2_professional_argument_v1.md` |
+| `les_b2_professional_summary` | `lessons/b2/les_b2_professional_summary.md` | `packs/b2/pack-les-b2-professional-summary.md` | `packs/b2/pack_les_b2_professional_summary_v1.md` |
+| `les_b2_culture_brazil_vs_usa` | `lessons/b2/les_b2_culture_brazil_vs_usa.md` | `packs/b2/pack-les-b2-culture-brazil-vs-usa.md` | `packs/b2/pack_les_b2_culture_brazil_vs_usa_v1.md` |
+| `les_b2_it_architecture_decisions` | `lessons/b2/les_b2_it_architecture_decisions.md` | `packs/b2/pack-les-b2-it-architecture-decisions.md` | `packs/b2/pack_les_b2_it_architecture_decisions_v1.md` |
+| `les_b2_it_strategy` | `lessons/b2/les_b2_it_strategy.md` | `packs/b2/pack-les-b2-it-strategy.md` | `packs/b2/pack_les_b2_it_strategy_v1.md` |
+| `les_b2_it_incident_postmortem` | `lessons/b2/les_b2_it_incident_postmortem.md` | `packs/b2/pack-les-b2-it-incident-postmortem.md` | `packs/b2/pack_les_b2_it_incident_postmortem_v1.md` |
+| `les_b2_it_jargon_mastery` | `lessons/b2/les_b2_it_jargon_mastery.md` | `packs/b2/pack-les-b2-it-jargon-mastery.md` | `packs/b2/pack_les_b2_it_jargon_mastery_v1.md` |
+| `les_b2_it_advanced_patterns` | `lessons/b2/les_b2_it_advanced_patterns.md` | `packs/b2/pack-les-b2-it-advanced-patterns.md` | `packs/b2/pack_les_b2_it_advanced_patterns_v1.md` |
+| `les_b2_it_technical_leadership` | `lessons/b2/les_b2_it_technical_leadership.md` | `packs/b2/pack-les-b2-it-technical-leadership.md` | `packs/b2/pack_les_b2_it_technical_leadership_v1.md` |
+| `les_b2_toeic_reading` | `lessons/b2/les_b2_toeic_reading.md` | `packs/b2/pack-les-b2-toeic-reading.md` | `packs/b2/pack_les_b2_toeic_reading_v1.md` |
+
+Registros alterados nesta unidade: `_legacy_packs_baseline.json`, `specs/curriculum-graph-spec.md`, `specs/assessment-item-spec.md`, `external-sources.md`, `docs/copyright-reauthoring-plan.md`, `TASK_PROGRESS.md` (esta seção) e `its-platform/docs/api-spec.openapi.yaml` (3 pins). Os 30 arquivos de conteúdo (10 lições + 10 packs canônicos + 10 legados removidos) eram pré-existentes no `git status` baseline e **não** foram editados nesta unidade.
+
+### Desvios registrados
+
+- **Divergência banco × disco (1 pack):** `pack_les_a2_greetings_intro_v1` segue `adapt_requires_permission` no banco e `cite_only` no disco — **preservada**, sem correção nesta unidade.
+- **(a) IDs de prereq inexistentes:** `les_a2_it_communication`, `les_b1_it_technical`, `les_b1_fluency_project` e `les_b2_professional` não existem como IDs em `curriculum-graph-spec.md` §4.3 (são nomes de módulos ou rótulos informais); foram substituídos nos prereqs por IDs reais do registro.
+- **(b) Auto-loop de skill:** `les_b2_professional_argument` tinha `writing_argumentative` simultaneamente como skill nova e como prereq — resolvido na unidade de conteúdo, com **0 self-loops** no grafo.
+- **(c) Título longo:** `les_b2_it_advanced_patterns` adotou o título completo registrado em §4.3 (`Advanced Patterns & Anti-Patterns: Legacy Code, Refactoring Strategies`) em vez da forma curta.
+- **(d) Namespace de `item_id`:** `les_b2_it_technical_leadership` usa o token `b2_it_tech_leadership` nos `item_id` porque o auditor deriva `tech` de `technical` ao validar o prefixo ↔ namespace de skill; o H1 foi preservado com travessão.
+- **(e) grammar-rag:** a busca de material auxiliar no grammar-rag não retornou conteúdo útil para a maioria dos temas do lote; isso foi registrado honestamente na proveniência das lições, sem alegar fonte inexistente.
+- **(f) Testes:** `npm test` (backend) e `next build` (frontend) não executados nesta unidade — **adiados para o fechamento final**.
+- **Cobertura da §5:** 10 novas linhas de reautoria (95–104) foram adicionadas ao registro de reautoria de `external-sources.md §5`, exigidas pelo gate [6c].
+- **Escopo de gates:** somente os 2 scripts permitidos foram executados; nenhum comando de sync, backup, commit ou `contract:gate` foi disparado nesta unidade.
+
+### Resultado de cada gate
+
+| Gate | Exit | Resultado |
+|---|---|---|
+| `python3 verify-integrity.py` | 0 | **PASS 14/14, 0 falhas, 0 warnings** |
+| `python3 prd-score.py` | 0 | **PASS — ≥ 80%** |
+
+### Pins de contrato (`its-platform/docs/api-spec.openapi.yaml` → `x-contract-provenance.spec-blobs`)
+
+- 3 pins re-derivados via `git hash-object` para os specs alterados (`assessment-item-spec.md`, `curriculum-graph-spec.md`, `external-sources.md`); `derived-at`: `2026-11-19`.
+- Outros 3 pins inalterados; nenhum schema OpenAPI alterado.
+
+### Commits desta unidade
+
+- Nenhum commit realizado — unidade de registros, por decisão do briefing.
+
+### Pendências que dependem do usuário
+
+- (infra, pré-existente) `its-platform/scripts/sync-authored-content.mjs` segue modificado no `git status` baseline; não foi alterado nesta unidade.
+- (banco) `content:sync` não executado nesta unidade — carga das 10 lições/packs em `:5433` fica a cargo da unidade de banco.
+- (documentação) Divergência de 1 pack entre banco e registro relativa a `pack_les_a2_greetings_intro_v1`; preservada.
+- (testes) `npm test` (backend) e `next build` (frontend) não executados nesta unidade — adiados para o fechamento final.
+- (conteúdo, pré-existente) D5 permanece para as lições sem gabarito detectado no corpo.
+
+---
+
+## Resumo consolidado — Onda 2 (Fases A–D, Lotes 3–12)
+
+**Onda 2 encerrada em 100/123 — Fundação A1/A2 + A2-IT/B1-IT/B1-Geral + B1/B2-General + B2 Professional/IT/Cert Prep.** Estado final do repositório:
+
+- Placar de lições: **100/123 `authored_material`**; `cite_only` **21**; `adapt_with_attribution` **2**; `adapt_requires_permission` **0**; `sourced_external_thin` 0. **23** lições seguem pendentes de reautoria. O `adapt_requires_permission` **1** citado no briefing está entre os **packs** (`pack_les_a2_greetings_intro_v1`), não entre as lições.
+- Packs: **107 canônicos / 16 legados** (soma 123); `authored_material` **100**, `cite_only` **22**, `adapt_with_attribution` **0**, `adapt_requires_permission` **1**; catraca `_legacy_packs_baseline.json` em **16** (só pode cair). No registro em disco, por primeira declaração: 100/22/0/1 — divergência de 1 pack, preservada.
+- Censo `br_pt_form` (`assessment-item-spec.md` §2.2.1): **1857 filled / 76 null-with-note / 104 null-not-applicable / 0 undocumented**.
+- Classes de fontes em `external-sources.md` §0.5: **A17/B0/C0/D11/E95** (100/123 em base autoralmente limpa). As classes são derivadas pelo gate [3] da coluna `Source` de §4.3, preservada com as fontes históricas; por isso não mudaram com a reautoria em disco.
+
+### Cadeia de 85 lições reautoradas na Onda 2 (Lotes 3–12)
 
 1. **Fase A (Lote 3):** `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates`
 2. **Fase B (Lote 4):** `les_a1_food`, `les_a1_occupations`, `les_a1_regular_verbs_past`, `les_a1_present_simple`, `les_a1_present_simple_questions`
@@ -1045,6 +1110,7 @@ Registros alterados nesta unidade: `_legacy_packs_baseline.json`, `specs/curricu
 7. **Lote 9 (Fundação A2-IT + B1-IT):** `mod_a2_it_fundamentals` / `mod_a2_it_communication` — `les_a2_it_testing_fundamentals`, `les_a2_it_typescript_basics`, `les_a2_it_algorithms_basics`, `les_a2_it_email_technical`, `les_a2_it_nontech_tech`, `les_a2_it_word_formation`, `les_a2_it_pr_tickets`; `mod_b1_it_technical` — `les_b1_it_acronyms_deep`, `les_b1_it_ddd_modeling`, `les_b1_it_bdd_specs`.
 8. **Lote 10 (A2-IT + B1-IT/B1-Geral — fechamento):** `mod_a2_it_communication` — `les_a2_it_incidents`; `mod_b1_it_technical` — `les_b1_it_debugging`, `les_b1_it_write_docs`, `les_b1_it_ux_collab`, `les_b1_it_devops_basics`; `mod_b1_grammar_consolidate` — `les_b1_tenses_review`, `les_b1_modals`, `les_b1_conditionals`, `les_b1_passive`, `les_b1_reported_speech`.
 9. **Lote 11 (B1/B2-General):** `mod_b1_grammar_consolidate` / `mod_b1_workplace_adv` — `les_b1_question_forms`, `les_b1_negotiation`, `les_b1_presentation_skills`, `les_b1_leadership_feedback`, `les_b1_finance_business`, `les_b1_hr_career`, `les_b1_sales_marketing`; `mod_b2_professional` — `les_b2_register_nuance`, `les_b2_professional_email_advanced`, `les_b2_professional_review`.
+10. **Lote 12 (B2 Professional/IT/Cert Prep):** `mod_b2_professional` — `les_b2_professional_argument`, `les_b2_professional_summary`, `les_b2_culture_brazil_vs_usa`; `mod_b2_it_senior` — `les_b2_it_architecture_decisions`, `les_b2_it_strategy`, `les_b2_it_incident_postmortem`, `les_b2_it_jargon_mastery`, `les_b2_it_advanced_patterns`, `les_b2_it_technical_leadership`; `mod_b2_cert_prep` — `les_b2_toeic_reading`.
 
 ### Placar consolidado dos gates
 
@@ -1056,17 +1122,17 @@ Registros alterados nesta unidade: `_legacy_packs_baseline.json`, `specs/curricu
 | backend `domain:check` | OK (30 arquivos, 0 violações) |
 | frontend `typecheck` | OK (Fase C) |
 | frontend `lint` | OK (Fase C) |
-| frontend `build` | OK (1ª tentativa da Fase B caiu no nudge de advisory do Next; retry OK); não reexecutado no Lote 6/7/8/9/10/11 (adiado) |
-| `content:sync` (2 execuções) | OK — escopo 70/70, JSON idêntico, `checkWidened` false/false (Lote 9); não executado no Lote 10/11 (fora do escopo da unidade de registros) |
-| `verify-integrity.py` | **PASS — 14/14, 0 falhas, 0 warnings** (reexecutado após a edição do `TASK_PROGRESS.md` do Lote 11) |
-| `prd-score.py` | **PASS — 90,4%** (limite 80,0%) |
-| `npm test` | Última execução registrada (Fase C): **670 passed / 13 failed / 691 total** — nenhuma falha atribuível aos lotes A/B/C; não reexecutado no Lote 6/7/8/9/10 (adiado por decisão do usuário) |
-| `next build` | Não executado no Lote 9/10/11 — adiado por decisão do usuário |
+| frontend `build` | OK (1ª tentativa da Fase B caiu no nudge de advisory do Next; retry OK); não reexecutado no Lote 6/7/8/9/10/11/12 (adiado) |
+| `content:sync` (2 execuções) | OK — escopo 70/70, JSON idêntico, `checkWidened` false/false (Lote 9); não executado no Lote 10/11/12 (fora do escopo da unidade de registros) |
+| `verify-integrity.py` | **PASS — 14/14, 0 falhas, 0 warnings** (reexecutado nesta unidade, após as edições do Lote 12) |
+| `prd-score.py` | **PASS — 90,4%** (limite 80,0%; reexecutado nesta unidade) |
+| `npm test` | Última execução registrada (Fase C): **670 passed / 13 failed / 691 total** — nenhuma falha atribuível aos lotes A/B/C; não reexecutado no Lote 6/7/8/9/10/11/12 (adiado por decisão do usuário) |
+| `next build` | Não executado no Lote 9/10/11/12 — adiado por decisão do usuário |
 
 ### Modelos (política de rotação do repo)
 
 - Fases A/B/C: primário `nvidia/nemotron-3.5-super-vl-120b-a12b` sem cota; rotação usou, no authoring: `nvidia/stepfun-ai/step-5-preview`, `glm-5.3-flash`, `gpt-oss-20b`, `muse-glimmer-30b`, `minimax-m3.1-flash`; nas unidades de banco/gates/commit: `nvidia/stepfun-ai/step-5-preview`.
-- Lotes 6–10 (Onda 2 inteira a partir do Lote 6): **todos os despachos em `opencode/big-pickle`, sem rotação e sem modelos `google/` pagos**.
+- Lotes 6–12 (Onda 2 inteira a partir do Lote 6): **todos os despachos em `opencode/big-pickle`, sem rotação e sem modelos `google/` pagos**.
 
 ### Histórico — Lotes 7–8
 

@@ -3,127 +3,153 @@
 **Lesson ID:** `les_b2_it_architecture_decisions`
 **Module:** `mod_b2_it_senior`
 **CEFR:** B2
-**Reuse basis:** `adapt_with_attribution`
-**Source:** S03 (CC0-1.0), S04 (MIT), S05 (Google Cloud Well-Architected, CC-BY-4.0) — `sourced_external`
+**Reuse basis:** `authored_material`
+**Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
 
 ---
 
-## FASE 1 — Input (i+1) [4 min]
+## FASE 1 — Input Contextualizado (i+1) [4 min]
 
-### Vocabulário-chave (com gloss PT-BR)
+### Cenário: revisão de um ADR na reunião de arquitetura
 
-| English | PT-BR | Contexto |
-|---------|-------|----------|
-| **Architecture Decision Record (ADR)** | Registro de Decisão de Arquitetura | *documento que captura decisão e contexto* |
-| **context** | contexto | *situação que motivou a decisão* |
-| **decision** | decisão | *o que foi escolhido* |
-| **consequences** | consequências | *impactos positivos e negativos* |
-| **alternatives** | alternativas | *outras opções consideradas* |
-| **status** | status | *proposed / accepted / deprecated / superseded* |
-| **rationale** | justificativa / raciocínio | *por que esta decisão* |
-| **trade-off** | troca / compensação | *ganha aqui, perde ali* |
-| **immutability** | imutabilidade | *ADRs não são editados, apenas substituídos* |
-| **supersede** | substituir | *nova decisão substitui anterior* |
-| **deprecated** | depreciado | *decisão não mais válida* |
-| **lightweight** | leve / simplificado | *formato curto e direto* |
+O time discute o **ADR-027**, um registro fictício sobre a escolha de uma fila gerenciada para eventos de pedido. O áudio está diferido (`deferred_render`); o texto abaixo é o input.
 
-### Mini-texto (áudio: `deferred_render`)
-
-> **Architect:** "**ADR** format: **Title**, **Status**, **Context**, **Decision**, **Consequences**. **Immutable** — never edit, **supersede** with new ADR."
+> **Rafael (staff engineer, São Paulo):** "Let's review ADR-027 before the architecture meeting. The **status** is still **proposed**, and I want it **accepted** today."
 >
-> "**ADR-042**: Use event-driven architecture. **Context**: need loose coupling. **Decision**: Kafka for async. **Consequences**: +scalability, -complexity. **Alternatives**: REST polling (rejected: latency), RabbitMQ (rejected: ops overhead)."
+> **Carla (platform engineer, Recife):** "The **context** is clear: order events are dropped when the checkout service restarts during a deploy. But the **decision** needs one sentence, not three."
 >
-> "**Status**: accepted. **Rationale**: team has Kafka experience. **Trade-off**: operational complexity for scalability."
+> **Rafael:** "Agreed. 'We will publish order events to a managed queue.' That is the decision."
+>
+> **Carla:** "Then list the **alternatives**: a self-hosted broker — **rejected**, because the on-call load is too high; and database polling — **rejected**, because it adds latency."
+>
+> **Rafael:** "And the **consequences**: fewer dropped events, but a new monthly cost and less control over retention. That is the **trade-off**."
+>
+> **Carla:** "One more **constraint**: the team must keep the current database for six more months. Put it in the context, not in the decision."
+>
+> **Rafael:** "Good. If the cost stops making sense, we don't edit this record — we write a new ADR that **supersedes** it and link both."
+
+### Glossário contrastivo (pt-BR ↔ en-US)
+
+| Inglês (en-US) | Português (pt-BR) | Nota de uso prático |
+|---|---|---|
+| **ADR (Architecture Decision Record)** | registro de decisão de arquitetura | Sigla corrente; escreva *ADR-027* com hífen e número. |
+| **context** | contexto | A situação que motivou a decisão; vem antes da decisão. |
+| **decision** | decisão | Uma frase no passado ou no futuro simples: *we decided to…*, *we will use…*. |
+| **consequences** | consequências | Efeitos positivos **e** negativos; prefira a *impacts*, que soa negativo em en-US. |
+| **alternatives** | alternativas | Opções consideradas; o padrão é *alternatives considered*. |
+| **trade-off** | compensação / troca de benefícios | Ganho aqui, custo ali; não traduza como *change*. |
+| **superseded** | substituído por registro posterior | Em ADR, a decisão antiga é marcada como *superseded*, não apagada. |
+| **rejection** | rejeição | Ato de descartar uma alternativa; nomes de seção usam *rejected*. |
+| **constraint** | restrição / limitação | Limite imposto (prazo, orçamento, sistema legado); não confunda com *restriction* de acesso. |
+
+### Tabela de armadilhas comuns (falantes de pt-BR)
+
+| Armadilha (pt-BR → forma inadequada) | Forma natural em en-US | Por quê? |
+|---|---|---|
+| "A decisão foi tomada." → "The decision was taken." | "The decision was made." / "We decided." | Em inglês, decisões são *made*, nunca *taken*. |
+| "Por causa disso." → "For this cause." | "Consequently." / "As a result." | *For this cause* soa arcaico; o conector natural é *consequently*. |
+| "Nós decidimos usar uma fila." → "We decided use a queue." | "We decided to use a queue." | *Decide* pede infinitivo com **to**. |
+| "Foi rejeitado por causa da latência." → "It was rejected cause of latency." | "It was rejected because of latency." / "It was rejected due to latency." | *Because of* e *due to* são as formas fixes; *cause of* não é conector. |
+| "Os impactos da decisão." → "The impacts of the decision." | "The consequences of the decision." | *Consequences* cobre ganhos e perdas; *impacts* tende ao negativo. |
+| "Substituímos o ADR antigo." → "We replaced the old ADR." (sem rastro) | "The old ADR was **superseded** by ADR-028." | *Supersede* preserva o histórico; *replace* sugere apagar. |
+| "Uma troca de benefícios." → "A change of benefits." | "A trade-off." | *Trade-off* é o termo fixo para equilíbrio entre custo e benefício. |
+| "Restrição de tempo." → "Time restriction." (em arquitetura) | "Time constraint." | *Constraint* é o limite de projeto; *restriction* é mais comum em regras de acesso. |
 
 ---
 
-## FASE 2 — Guided Practice [5 min]
+## FASE 2 — Prática Guiada [5 min]
 
-### Item 1 — Vocabulary (MCQ)
-An **ADR** is:
+### Exercício 1 — Vocabulário (MCQ)
+
+Em um ADR, o que a seção **consequences** registra?
+
 | Slot | Value |
-|------|-------|
-| A | A code review comment |
-| B | **A lightweight document capturing a decision and its context** |
-| C | A project plan |
-| D | A bug report |
+|---|---|
+| A | A lista de pessoas que aprovaram a decisão. |
+| B | **Os efeitos positivos e negativos da decisão.** ✓ |
+| C | O código-fonte que implementa a decisão. |
+| D | O cronograma de implantação do time. |
+
 **Key:** B
-**br_pt_form:** "ADR / documento leve com decisão e contexto"
 
-### Item 2 — Vocabulary (Matching)
-Match the ADR field to its content:
-| Field | Content |
-|-------|---------|
-| **Context** | a. Situation motivating decision |
-| **Decision** | b. What was chosen |
-| **Consequences** | c. Positive/negative impacts |
-| **Status** | d. Proposed/accepted/deprecated |
-**Key:** Context→a, Decision→b, Consequences→c, Status→d
-**br_pt_form:** "contexto", "decisão", "consequências", "status"
+### Exercício 2 — Gramática (voz passiva em ADR)
 
-### Item 3 — Grammar: Passive for ADR writing (fill-in-blank)
-Write in **passive voice** (ADR style):
-"Kafka ______ (choose) for messaging. REST polling ______ (reject) due to latency. The decision ______ (document) in ADR-042."
-**Key:** was chosen / was rejected / is documented
-**br_pt_form:** "foi escolhido", "foi rejeitado", "é documentado"
+Reescreva a frase na voz passiva, no estilo de um ADR: "The team rejected database polling because of latency."
+
+> "Database polling ______ ______ because of latency."
+
+| Slot | Value |
+|---|---|
+| A | is reject |
+| B | was rejecting |
+| C | **was rejected** ✓ |
+| D | were rejected |
+
+**Key:** C
+
+### Exercício 3 — Registro (tradução de armadilhas)
+
+Escolha a versão em en-US natural para: "A decisão foi tomada; por causa disso, mudamos o plano."
+
+| Slot | Value |
+|---|---|
+| A | "The decision was taken; for this cause, we changed the plan." |
+| B | "The decision was made; consequently, we changed the plan." ✓ |
+| C | "The decision was made; for this cause, we changed the plan." |
+| D | "The decision was taken; consequently, we changed the plan." |
+
+**Key:** B
 
 ---
 
-## FASE 3 — Output Task [4 min]
+## FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]
 
-### Writing: ADR Draft (individual)
-**Write an ADR** for: "Use PostgreSQL instead of MongoDB for orders service."
+### 5 sentenças-alvo (leia em voz corrida)
 
-**Template:**
-```
-# ADR-XXX: Use PostgreSQL for Orders Service
+ADR-027 is still proposed, so the team will review it before the architecture meeting.
+The context is clear: order events are dropped when the checkout service restarts during a deploy.
+We decided to publish order events to a managed queue, and we rejected database polling because of latency.
+The consequences are fewer dropped events, a new monthly cost, and less control over retention.
+If the trade-off stops making sense, we don't edit this record; we write a new ADR that supersedes it.
 
-## Status
-Accepted
+### Foco articulatório para falantes de pt-BR
 
-## Context
-Need ACID transactions for order + payment consistency. Team has SQL expertise.
+- **/ð/ em *the, this, that***: o mesmo /ð/ sonoro de *the* — ponta da língua entre os dentes, com voz. Não substitua por /d/ (*de*).
+- **/ʒ/ em *decision***: som sonoro de *measure*, não o /ʃ/ surdo de *ship*. Evite o "decishon" do pt-BR.
+- **/t/ final em *rejected***: solte o ar sem acrescentar /ɪ/ (*rejected-e*); a epêntese final é comum em pt-BR.
+- **/iː/ em *team, events***: vogal longa e tensa; não encurte para /ɪ/.
+- **Acento em *supersede* /ˌsuːpərˈsiːd/**: a força está na última sílaba, não na primeira — "su-per-**SEED**".
 
-## Decision
-Use PostgreSQL with JSONB for flexible order items.
+### Prompt de produção (escrita)
 
-## Consequences
-+ ACID compliance
-+ Team familiarity
-- Less flexible schema than MongoDB
-- Vertical scaling limits
+Escreva um ADR curto em inglês para uma decisão fictícia do seu contexto (fila, cache ou banco). Use cabeçalhos e inclua, em tópicos:
 
-## Alternatives Considered
-- MongoDB (rejected: no multi-doc transactions)
-- CockroachDB (rejected: operational complexity)
-```
+1. um **título** no formato `ADR-XXX: <decisão>`;
+2. um **status** (*proposed* ou *accepted*);
+3. um **context** de duas frases com o problema e pelo menos uma **constraint**;
+4. uma **decision** de uma frase com *we decided to…* ou *we will use…*;
+5. pelo menos duas **consequences**, uma positiva e uma negativa;
+6. uma **alternative** com *rejected —* e o motivo;
+7. uma frase de **trade-off** dizendo o que se ganha e o que se perde.
+
+Não reproduza texto de nenhuma fonte externa: invente o cenário e escreva com as suas próprias palavras.
 
 ---
 
-## FASE 4 — Shadow CAT [2 min]
+## FASE 4 — Shadow CAT / Verificação Rápida [2 min]
 
-### Item 1 — Vocabulary (L1, adaptive)
-**Immutable** ADRs means:
-| Slot | Value |
-|------|-------|
-| A | Cannot be read |
-| B | **Cannot be edited; superseded by new ADR** |
-| C | Cannot be deleted |
-| D | Cannot be shared |
-**Key:** B
-**br_pt_form:** "imutável / não editável, substituído por novo ADR"
+1. **Vocabulário (L1):** Em "ADR-028 supersedes ADR-027", o verbo significa:
+   A) Aprova o ADR antigo.  B) **Substitui o ADR antigo, mantendo o histórico.**  C) Apaga o ADR antigo.  D) Copia o ADR antigo.  
+   **Key:** B — *supersede* preserva o registro anterior e o marca como tal; não é exclusão nem aprovação.
 
-### Item 2 — Grammar (L1, adaptive)
-Choose the correct **passive** for ADR:
-| Slot | Value |
-|------|-------|
-| A | The team **chose** Kafka. |
-| B | Kafka **was chosen** by the team. |
-| C | Kafka **is choosing** by the team. |
-| D | Kafka **chosen** by the team. |
-**Key:** B
-**br_pt_form:** "Kafka foi escolhido pela equipe."
+2. **Gramática (L1):** Qual linha registra uma alternativa no estilo de um ADR?
+   A) **"Database polling was rejected because of latency."**  B) "Database polling rejected because of latency."  C) "Database polling were rejected because of latency."  D) "Database polling was reject because of latency."  
+   **Key:** A — o passivo exige *was* + particípio (*rejected*) e concordância com o sujeito singular.
+
+3. **Registro (L1):** Qual par de conectores está correto em "A decisão foi tomada; por causa disso, o plano mudou"?
+   A) "The decision was taken; for this cause, the plan changed."  B) "The decision was taken; consequently, the plan changed."  C) **"The decision was made; consequently, the plan changed."**  D) "The decision was made; for this cause, the plan changed."  
+   **Key:** C — *decision is made* e *consequently* são as formas naturais; *taken* e *for this cause* soam inadequados.
 
 ---
 
@@ -132,84 +158,43 @@ Choose the correct **passive** for ADR:
 
 ---
 
-## 📊 DADOS PARA O LEARNER MODEL (Pedagogical Memory)
+## Dados para o Learner Model (Pedagogical Memory)
 
 ```json
 {
   "lesson_id": "les_b2_it_architecture_decisions",
   "cefr_level": "B2",
-  "provenance": {
-    "reuse_basis": "adapt_with_attribution",
-    "adapted_sources": [
-      {
-        "id": "S03",
-        "title": "Architecture Decision Records (ADR) - adr.github.io",
-        "licence": "CC0-1.0",
-        "what_was_adapted": "ADR format, immutability principle, status lifecycle; adapted for B2 level",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      },
-      {
-        "id": "S04",
-        "title": "MADR - Markdown ADR",
-        "licence": "MIT",
-        "what_was_adapted": "lightweight ADR template, rationale field; format only",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      },
-      {
-        "id": "S05",
-        "title": "Google Cloud Well-Architected Framework",
-        "licence": "CC-BY-4.0",
-        "what_was_adapted": "trade-off analysis, decision documentation patterns; terminology only",
-        "attribution_location": "section 'Fontes e Atribuição' below"
-      }
-    ],
-    "authored_material": "all exercises, the mini-text (Architect explanation), the correction table, the rubric, the 2 Shadow CAT items, the vocabulary table, the Output Task template",
-    "bibliography_only": [
-      "docs/Ingles-Tecnico-Para-Informatica.md (CETAM, all rights reserved) - scoping of architecture decision register"
-    ],
-    "listening_input": "deferred_render",
-    "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
-    "verbatim_reproduction": "none - ADR format adapted, not quoted; CC0/MIT sources permissive"
-  },
+  "status": "authored",
+  "reuse_basis": "authored_material",
+  "provenance": "authored_material",
+  "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
+  "listening_input": "deferred_render",
+  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "reading", "writing"],
   "output_modalities": ["writing"],
   "skill_items": {
-    "grammar": [
-      "grammar.passive_adr"
-    ],
+    "grammar": ["grammar.passive_adr", "grammar.passive_basics"],
     "vocabulary": [
-      "vocab.adr.adr",
       "vocab.adr.context",
       "vocab.adr.decision",
       "vocab.adr.consequences",
       "vocab.adr.alternatives",
-      "vocab.adr.status",
-      "vocab.adr.rationale",
       "vocab.adr.trade_off",
-      "vocab.adr.immutability",
       "vocab.adr.supersede",
-      "vocab.adr.deprecated",
-      "vocab.adr.lightweight"
+      "vocab.adr.rejection",
+      "vocab.adr.constraint",
+      "vocab.adr.status",
+      "vocab.it_computer_terms"
     ],
-    "listening": [
-      "listening.adr_context"
-    ],
-    "pronunciation": [
-      "pronunciation.technical_terms"
-    ],
-    "reading": [
-      "reading.adr"
-    ],
-    "writing": [
-      "writing.adr"
-    ]
+    "listening": ["listening.adr_review"],
+    "pronunciation": ["pronunciation.adr_voiced_th", "pronunciation.adr_word_stress"],
+    "reading": ["reading.adr_scan"],
+    "writing": ["writing.adr_draft"]
   },
   "prereq_lessons": [
     "les_a2_it_terms_basics",
-    "les_a2_it_communication",
-    "les_b1_it_technical",
-    "les_b1_fluency_project",
-    "les_b2_professional"
+    "les_a2_it_typescript_basics",
+    "les_a2_it_algorithms_basics"
   ],
   "estimated_time_min": 15
 }
@@ -217,8 +202,6 @@ Choose the correct **passive** for ADR:
 
 ---
 
-## Fontes e Atribuição
+## Nota de autoria
 
-- **S03** adr.github.io, licensed under CC0-1.0. Adapted for ADR format and immutability principle.
-- **S04** MADR, licensed under MIT. Adapted for lightweight ADR template.
-- **S05** Google Cloud Well-Architected Framework, licensed under CC-BY-4.0. Referenced for trade-off analysis patterns.
+O diálogo, o ADR fictício (ADR-027), as tabelas, os exercícios, as sentenças-alvo, o prompt de produção e os itens de verificação são 100% originais, escritos em clean-room para falantes de pt-BR. Nenhum texto de fonte externa foi reproduzido ou adaptado; nomes de cargos, empresas e números de ADR são fictícios.

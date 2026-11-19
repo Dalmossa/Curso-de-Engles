@@ -12,7 +12,9 @@
 **Atualizado (Onda 2 — Lote 8 (batch 8), Fundação A2 + B1-IT):** 2026-11-18 — reautoria clean-room de 10 lições (4 writing + 6 IT) para `authored_material` (100% original).  
 **Atualizado (Onda 2 — Lote 9 (batch 9), A2 + B1-IT):** 2026-11-18 — reautoria clean-room de 10 lições (7 A2 IT + 3 B1 IT) para `authored_material` (100% original).  
 **Atualizado (Onda 2 — Lote 10 (batch 10), A2-IT + B1-IT/B1-General):** 2026-11-19 — reautoria clean-room de 10 lições (1 A2 IT, 4 B1 IT e 5 B1 General) para `authored_material` (100% original).  
-**Escopo:** inventário original em modo leitura + atualizações dos Lotes 1 e 2 e das Onda 2 — Lote 2 (batch 2), Lote 3 (batch 3) — Fase A, Lote 4 (batch 4) — Fase B e Lote 5 (batch 5) — Fase C, Lote 6 (batch 6), Lote 7 (batch 7), Lote 8 (batch 8), Lote 9 (batch 9) e Lote 10 (batch 10) registradas abaixo.  
+**Atualizado (Onda 2 — Lote 11 (batch 11), B1/B2 General):** 2026-11-19 — reautoria clean-room de 10 lições B1/B2 General para `authored_material` (100% original).  
+**Atualizado (Onda 2 — Lote 12 (batch 12), B2 Professional/IT/Cert Prep):** 2026-11-19 — reautoria clean-room de 10 lições/packs B2 (3 Professional, 6 IT Senior, 1 Cert Prep) para `authored_material` (100% original); catraca de packs legados 26→16.  
+**Escopo:** inventário original em modo leitura + atualizações dos Lotes 1 e 2 e das Onda 2 — Lote 2 (batch 2), Lote 3 (batch 3) — Fase A, Lote 4 (batch 4) — Fase B e Lote 5 (batch 5) — Fase C, Lote 6 (batch 6), Lote 7 (batch 7), Lote 8 (batch 8), Lote 9 (batch 9), Lote 10 (batch 10), Lote 11 (batch 11) e Lote 12 (batch 12) registradas abaixo.  
 **Fontes normativas lidas:** `AGENTS.md` (Licensing/Provenance), `PRD.md` (§2, §4, §7, RF-004, RF-008), `specs/curriculum-graph-spec.md` (§4.3–§4.4).  
 **Gate:** `python3 verify-integrity.py` deve permanecer `PASS 14/14`.
 
@@ -40,18 +42,19 @@
 
 ### 2.1 Inventário auditado (somente leitura)
 - Lições em `lessons/` (`.md`): **123** arquivos. Total do registro: **123** lições, todas com arquivo.
-- Packs em `packs/` (`.md`): **123** arquivos — **97 canônicos** (`pack-les-*.md`) + **26 legados v1** (`pack_les_*_v1.md`).
+- Packs em `packs/` (`.md`): **123** arquivos — **107 canônicos** (`pack-les-*.md`) + **16 legados v1** (`pack_les_*_v1.md`).
 - Nó do registro sem arquivo de lição: **0**.
 - Lições por nível/trilha: `A1|General`=24, `A2|General`=30, `A2|IT`=16, `B1|General`=18, `B1|IT`=9, `B1|Remediation`=5, `B2|General`=12, `B2|IT`=8.
 
 ### 2.2 Placar de proveniência das lições (estado atual × meta `authored_material`)
 | Categoria | Qtde (lições) | Situação frente à meta 100% `authored_material` |
 |---|---:|---|
-| **Já `authored_material` (liberadas)** | **90** | Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2 (Onda 2): `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`; Onda 2 — Lote 2 (batch 2): `les_a1_alphabet_sounds`, `les_a1_en_us_en_gb`, `les_a1_to_be_forms`, `les_a1_pronouns_subject_object`, `les_a1_pronouns_possessive`; Onda 2 — Lote 3 (batch 3) — Fase A: `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates`; Onda 2 — Lote 4 (batch 4) — Fase B: `les_a1_food`, `les_a1_occupations`, `les_a1_regular_verbs_past`, `les_a1_present_simple`, `les_a1_present_simple_questions`; Onda 2 — Lote 5 (batch 5) — Fase C: `les_a1_have_has`, `les_a1_there_is_are`, `les_a1_reading_skimming`, `les_a1_false_cognates`, `les_a2_phone_calls`; Onda 2 — Lote 6 (batch 6): `les_a1_articles_nouns`, `les_a2_ask_for_help`, `les_a2_deadlines_tasks`, `les_a2_feedback_praise`, `les_a2_corporate_wrapup`, `les_a2_corpus_intro`, `les_a2_past_narrative`, `les_a2_future_will`, `les_a2_present_continuous`, `les_a2_modals_can_need`; Onda 2 — Lote 7 (batch 7): `les_a2_imperatives`, `les_a2_prepositions_basic`, `les_a2_travel_vocab_core`, `les_a2_collocations`, `les_a2_stress_timing`, `les_a2_airport`, `les_a2_hotel_taxi`, `les_a2_restaurant_shopping`, `les_a2_reading_strategy`, `les_a2_writing_svo`; Onda 2 — Lote 8 (batch 8): `les_a2_writing_bio`, `les_a2_writing_messages`, `les_a2_writing_past`, `les_a2_writing_selfcheck`, `les_a2_it_roles_hierarchy`, `les_a2_it_reading_strategy`, `les_a2_it_computer_parts`, `les_a2_it_system_unit`, `les_a2_it_internet_history`, `les_a2_it_clean_code_basics`; Onda 2 — Lote 9 (batch 9): `les_a2_it_testing_fundamentals`, `les_a2_it_typescript_basics`, `les_a2_it_algorithms_basics`, `les_a2_it_email_technical`, `les_a2_it_nontech_tech`, `les_a2_it_word_formation`, `les_a2_it_pr_tickets`, `les_b1_it_acronyms_deep`, `les_b1_it_ddd_modeling`, `les_b1_it_bdd_specs`; Onda 2 — Lote 10 (batch 10): `les_a2_it_incidents`, `les_b1_it_debugging`, `les_b1_it_write_docs`, `les_b1_it_ux_collab`, `les_b1_it_devops_basics`, `les_b1_tenses_review`, `les_b1_modals`, `les_b1_conditionals`, `les_b1_passive`, `les_b1_reported_speech`; Onda 2 — Lote 11 (batch 11): `les_b1_question_forms`, `les_b1_negotiation`, `les_b1_presentation_skills`, `les_b1_leadership_feedback`, `les_b1_finance_business`, `les_b1_hr_career`, `les_b1_sales_marketing`, `les_b2_register_nuance`, `les_b2_professional_email_advanced`, `les_b2_professional_review` |
-| **`cite_only` (pendentes de reautoria)** | **29** | Material original/citado por base, mas **não declarado `authored_material`**; requer revisão e reclassificação/reautoria conforme checklist |
-| **`adapt_with_attribution` (pendentes de reautoria)** | **4** | Adaptação de fonte permissiva com atribuição; **não 100% autoral** — requer reautoria integral para atingir `authored_material` |
+| **Já `authored_material` (liberadas)** | **100** | Lote 1: `les_b1_it_presentations`, `les_b1_it_architecture_vocab`, `les_b1_it_code_review`, `les_b2_it_mentoring`, `les_b2_it_rfc_writing`; Lote 2 (Onda 2): `les_a1_greetings`, `les_a1_intro_dialogue`, `les_a1_daily_basics`, `les_a1_pronunciation_intro`, `les_a2_it_meeting_standup`; Onda 2 — Lote 2 (batch 2): `les_a1_alphabet_sounds`, `les_a1_en_us_en_gb`, `les_a1_to_be_forms`, `les_a1_pronouns_subject_object`, `les_a1_pronouns_possessive`; Onda 2 — Lote 3 (batch 3) — Fase A: `les_a1_pronouns_demonstrative`, `les_a1_wh_questions`, `les_a1_numbers_colors`, `les_a1_days_months`, `les_a1_time_dates`; Onda 2 — Lote 4 (batch 4) — Fase B: `les_a1_food`, `les_a1_occupations`, `les_a1_regular_verbs_past`, `les_a1_present_simple`, `les_a1_present_simple_questions`; Onda 2 — Lote 5 (batch 5) — Fase C: `les_a1_have_has`, `les_a1_there_is_are`, `les_a1_reading_skimming`, `les_a1_false_cognates`, `les_a2_phone_calls`; Onda 2 — Lote 6 (batch 6): `les_a1_articles_nouns`, `les_a2_ask_for_help`, `les_a2_deadlines_tasks`, `les_a2_feedback_praise`, `les_a2_corporate_wrapup`, `les_a2_corpus_intro`, `les_a2_past_narrative`, `les_a2_future_will`, `les_a2_present_continuous`, `les_a2_modals_can_need`; Onda 2 — Lote 7 (batch 7): `les_a2_imperatives`, `les_a2_prepositions_basic`, `les_a2_travel_vocab_core`, `les_a2_collocations`, `les_a2_stress_timing`, `les_a2_airport`, `les_a2_hotel_taxi`, `les_a2_restaurant_shopping`, `les_a2_reading_strategy`, `les_a2_writing_svo`; Onda 2 — Lote 8 (batch 8): `les_a2_writing_bio`, `les_a2_writing_messages`, `les_a2_writing_past`, `les_a2_writing_selfcheck`, `les_a2_it_roles_hierarchy`, `les_a2_it_reading_strategy`, `les_a2_it_computer_parts`, `les_a2_it_system_unit`, `les_a2_it_internet_history`, `les_a2_it_clean_code_basics`; Onda 2 — Lote 9 (batch 9): `les_a2_it_testing_fundamentals`, `les_a2_it_typescript_basics`, `les_a2_it_algorithms_basics`, `les_a2_it_email_technical`, `les_a2_it_nontech_tech`, `les_a2_it_word_formation`, `les_a2_it_pr_tickets`, `les_b1_it_acronyms_deep`, `les_b1_it_ddd_modeling`, `les_b1_it_bdd_specs`; Onda 2 — Lote 10 (batch 10): `les_a2_it_incidents`, `les_b1_it_debugging`, `les_b1_it_write_docs`, `les_b1_it_ux_collab`, `les_b1_it_devops_basics`, `les_b1_tenses_review`, `les_b1_modals`, `les_b1_conditionals`, `les_b1_passive`, `les_b1_reported_speech`; Onda 2 — Lote 11 (batch 11): `les_b1_question_forms`, `les_b1_negotiation`, `les_b1_presentation_skills`, `les_b1_leadership_feedback`, `les_b1_finance_business`, `les_b1_hr_career`, `les_b1_sales_marketing`, `les_b2_register_nuance`, `les_b2_professional_email_advanced`, `les_b2_professional_review`; Onda 2 — Lote 12 (batch 12): `les_b2_professional_argument`, `les_b2_professional_summary`, `les_b2_culture_brazil_vs_usa`, `les_b2_it_architecture_decisions`, `les_b2_it_strategy`, `les_b2_it_incident_postmortem`, `les_b2_it_jargon_mastery`, `les_b2_it_advanced_patterns`, `les_b2_it_technical_leadership`, `les_b2_toeic_reading` |
+| **`cite_only` (pendentes de reautoria)** | **21** | Material original/citado por base, mas **não declarado `authored_material`**; requer revisão e reclassificação/reautoria conforme checklist |
+| **`adapt_with_attribution` (pendentes de reautoria)** | **2** | Adaptação de fonte permissiva com atribuição; **não 100% autoral** — requer reautoria integral para atingir `authored_material` |
 | **`adapt_requires_permission` (pendentes)** | **0** | Não publicável sem permissão; requer permissão ou reautoria integral |
 | **`blocked` / `blocked_no_adequate_source` (pendentes)** | **0** | — |
+| **Total pendente de reautoria** | **23** | 21 `cite_only` + 2 `adapt_with_attribution`; meta: 100/123 liberadas |
 | **Total (registro)** | **123** | 123 arquivos auditados (todos com arquivo, 0 bloqueados no registro) |
 
 > **`sourced_external_thin` (sinalização de sourcing no registro):** **0** lições. `les_a2_it_meeting_standup`, `les_b2_it_mentoring` e `les_b2_it_rfc_writing` foram reautoradas para `authored_material` (Lotes 1 e 2).
@@ -60,10 +63,10 @@
 | Dimensão | Valor |
 |---|---|
 | Total de packs `.md` | **123** |
-| Schema canônico (`pack-les-*.md`) | **97** |
-| Schema legado v1 (`pack_les_*_v1.md`) | **26** |
-| Packs com `reuse_basis` = `authored_material` | **90** |
-| Packs com `reuse_basis` = `cite_only` | **32** |
+| Schema canônico (`pack-les-*.md`) | **107** |
+| Schema legado v1 (`pack_les_*_v1.md`) | **16** |
+| Packs com `reuse_basis` = `authored_material` | **100** |
+| Packs com `reuse_basis` = `cite_only` | **22** |
 | Packs com `reuse_basis` = `adapt_with_attribution` | **0** |
 | Packs com `reuse_basis` = `adapt_requires_permission` | **1** |
 | Packs sem `reuse_basis` explícito | **0** |
@@ -179,25 +182,25 @@
 | `les_rem_pronunciation_th_vw` | B1 | Remediation | `mod_b1_fluency_project` | — | `cite_only` | — | `lessons/remediation/les_rem_pronunciation_th_vw.md` |
 | `les_rem_writing_svo` | B1 | Remediation | `mod_b1_fluency_project` | — | `cite_only` | — | `lessons/remediation/les_rem_writing_svo.md` |
 | `les_b2_celpe_br` | B2 | General | `mod_b2_cert_prep` | — | `cite_only` | — | `lessons/b2/les_b2_celpe_br.md` |
-| `les_b2_culture_brazil_vs_usa` | B2 | General | `mod_b2_professional` | — | `cite_only` | — | `lessons/b2/les_b2_culture_brazil_vs_usa.md` |
+| `les_b2_culture_brazil_vs_usa` | B2 | General | `mod_b2_professional` | — | `authored_material` | — | `lessons/b2/les_b2_culture_brazil_vs_usa.md` |
 | `les_b2_exam_simulations` | B2 | General | `mod_b2_cert_prep` | — | `cite_only` | — | `lessons/b2/les_b2_exam_simulations.md` |
 | `les_b2_exam_vocab` | B2 | General | `mod_b2_cert_prep` | — | `cite_only` | — | `lessons/b2/les_b2_exam_vocab.md` |
 | `les_b2_ielts_writing` | B2 | General | `mod_b2_cert_prep` | — | `cite_only` | — | `lessons/b2/les_b2_ielts_writing.md` |
-| `les_b2_professional_argument` | B2 | General | `mod_b2_professional` | — | `cite_only` | — | `lessons/b2/les_b2_professional_argument.md` |
+| `les_b2_professional_argument` | B2 | General | `mod_b2_professional` | — | `authored_material` | — | `lessons/b2/les_b2_professional_argument.md` |
 | `les_b2_professional_email_advanced` | B2 | General | `mod_b2_professional` | — | `authored_material` | — | `lessons/b2/les_b2_professional_email_advanced.md` |
 | `les_b2_professional_review` | B2 | General | `mod_b2_professional` | — | `authored_material` | — | `lessons/b2/les_b2_professional_review.md` |
-| `les_b2_professional_summary` | B2 | General | `mod_b2_professional` | — | `cite_only` | — | `lessons/b2/les_b2_professional_summary.md` |
+| `les_b2_professional_summary` | B2 | General | `mod_b2_professional` | — | `authored_material` | — | `lessons/b2/les_b2_professional_summary.md` |
 | `les_b2_register_nuance` | B2 | General | `mod_b2_professional` | — | `authored_material` | — | `lessons/b2/les_b2_register_nuance.md` |
-| `les_b2_toeic_reading` | B2 | General | `mod_b2_cert_prep` | — | `cite_only` | — | `lessons/b2/les_b2_toeic_reading.md` |
+| `les_b2_toeic_reading` | B2 | General | `mod_b2_cert_prep` | — | `authored_material` | — | `lessons/b2/les_b2_toeic_reading.md` |
 | `les_b2_toeic_writing` | B2 | General | `mod_b2_cert_prep` | — | `cite_only` | — | `lessons/b2/les_b2_toeic_writing.md` |
-| `les_b2_it_advanced_patterns` | B2 | IT | `mod_b2_it_senior` | — | `cite_only` | — | `lessons/b2/les_b2_it_advanced_patterns.md` |
-| `les_b2_it_architecture_decisions` | B2 | IT | `mod_b2_it_senior` | — | `adapt_with_attribution` | — | `lessons/b2/les_b2_it_architecture_decisions.md` |
-| `les_b2_it_incident_postmortem` | B2 | IT | `mod_b2_it_senior` | — | `adapt_with_attribution` | — | `lessons/b2/les_b2_it_incident_postmortem.md` |
-| `les_b2_it_jargon_mastery` | B2 | IT | `mod_b2_it_senior` | — | `cite_only` | — | `lessons/b2/les_b2_it_jargon_mastery.md` |
+| `les_b2_it_advanced_patterns` | B2 | IT | `mod_b2_it_senior` | — | `authored_material` | — | `lessons/b2/les_b2_it_advanced_patterns.md` |
+| `les_b2_it_architecture_decisions` | B2 | IT | `mod_b2_it_senior` | — | `authored_material` | — | `lessons/b2/les_b2_it_architecture_decisions.md` |
+| `les_b2_it_incident_postmortem` | B2 | IT | `mod_b2_it_senior` | — | `authored_material` | — | `lessons/b2/les_b2_it_incident_postmortem.md` |
+| `les_b2_it_jargon_mastery` | B2 | IT | `mod_b2_it_senior` | — | `authored_material` | — | `lessons/b2/les_b2_it_jargon_mastery.md` |
 | `les_b2_it_mentoring` | B2 | IT | `mod_b2_it_senior` | — | `authored_material` | — | `lessons/b2/les_b2_it_mentoring.md` |
 | `les_b2_it_rfc_writing` | B2 | IT | `mod_b2_it_senior` | — | `authored_material` | — | `lessons/b2/les_b2_it_rfc_writing.md` |
-| `les_b2_it_strategy` | B2 | IT | `mod_b2_it_senior` | — | `cite_only` | — | `lessons/b2/les_b2_it_strategy.md` |
-| `les_b2_it_technical_leadership` | B2 | IT | `mod_b2_it_senior` | — | `cite_only` | — | `lessons/b2/les_b2_it_technical_leadership.md` |
+| `les_b2_it_strategy` | B2 | IT | `mod_b2_it_senior` | — | `authored_material` | — | `lessons/b2/les_b2_it_strategy.md` |
+| `les_b2_it_technical_leadership` | B2 | IT | `mod_b2_it_senior` | — | `authored_material` | — | `lessons/b2/les_b2_it_technical_leadership.md` |
 | `les_b1_it_presentations` | B1 | IT | `mod_b1_it_technical` | `blocked_no_adequate_source` | `blocked_no_adequate_source` | — | (sem arquivo em lessons/ — nó bloqueado no registro §4.3) |
 
 ## 4. Inventário detalhado — Packs (`packs/`)
@@ -301,25 +304,25 @@
 | `pack_les_b1_it_ux_collab_v1` | `les_b1_it_ux_collab` | B1 | IT | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 10 (batch 10) | `packs/b1/pack-les-b1-it-ux-collab.md` |
 | `pack_les_b1_it_write_docs_v1` | `les_b1_it_write_docs` | B1 | IT | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 10 (batch 10) | `packs/b1/pack-les-b1-it-write-docs.md` |
 | `pack_les_b2_celpe_br_v1` | `les_b2_celpe_br` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_celpe_br_v1.md` |
-| `pack_les_b2_culture_brazil_vs_usa_v1` | `les_b2_culture_brazil_vs_usa` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_culture_brazil_vs_usa_v1.md` |
+| `pack_les_b2_culture_brazil_vs_usa_v1` | `les_b2_culture_brazil_vs_usa` | B2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 12 (batch 12) | `packs/b2/pack-les-b2-culture-brazil-vs-usa.md` |
 | `pack_les_b2_exam_simulations_v1` | `les_b2_exam_simulations` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_exam_simulations_v1.md` |
 | `pack_les_b2_exam_vocab_v1` | `les_b2_exam_vocab` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_exam_vocab_v1.md` |
 | `pack_les_b2_ielts_writing_v1` | `les_b2_ielts_writing` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_ielts_writing_v1.md` |
-| `pack_les_b2_professional_argument_v1` | `les_b2_professional_argument` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_professional_argument_v1.md` |
+| `pack_les_b2_professional_argument_v1` | `les_b2_professional_argument` | B2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 12 (batch 12) | `packs/b2/pack-les-b2-professional-argument.md` |
 | `pack_les_b2_professional_email_advanced_v1` | `les_b2_professional_email_advanced` | B2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 11 (batch 11) | `packs/b2/pack-les-les-b2-professional-email-advanced.md` |
 | `pack_les_b2_professional_review_v1` | `les_b2_professional_review` | B2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 11 (batch 11) | `packs/b2/pack-les-les-b2-professional-review.md` |
-| `pack_les_b2_professional_summary_v1` | `les_b2_professional_summary` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_professional_summary_v1.md` |
+| `pack_les_b2_professional_summary_v1` | `les_b2_professional_summary` | B2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 12 (batch 12) | `packs/b2/pack-les-b2-professional-summary.md` |
 | `pack_les_b2_register_nuance_v1` | `les_b2_register_nuance` | B2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 11 (batch 11) | `packs/b2/pack-les-les-b2-register-nuance.md` |
-| `pack_les_b2_toeic_reading_v1` | `les_b2_toeic_reading` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_toeic_reading_v1.md` |
+| `pack_les_b2_toeic_reading_v1` | `les_b2_toeic_reading` | B2 | General | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 12 (batch 12) | `packs/b2/pack-les-b2-toeic-reading.md` |
 | `pack_les_b2_toeic_writing_v1` | `les_b2_toeic_writing` | B2 | General | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_toeic_writing_v1.md` |
-| `pack_les_b2_it_advanced_patterns_v1` | `les_b2_it_advanced_patterns` | B2 | IT | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_it_advanced_patterns_v1.md` |
-| `pack_les_b2_it_architecture_decisions_v1` | `les_b2_it_architecture_decisions` | B2 | IT | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_it_architecture_decisions_v1.md` |
-| `pack_les_b2_it_incident_postmortem_v1` | `les_b2_it_incident_postmortem` | B2 | IT | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_it_incident_postmortem_v1.md` |
-| `pack_les_b2_it_jargon_mastery_v1` | `les_b2_it_jargon_mastery` | B2 | IT | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_it_jargon_mastery_v1.md` |
+| `pack_les_b2_it_advanced_patterns_v1` | `les_b2_it_advanced_patterns` | B2 | IT | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 12 (batch 12) | `packs/b2/pack-les-b2-it-advanced-patterns.md` |
+| `pack_les_b2_it_architecture_decisions_v1` | `les_b2_it_architecture_decisions` | B2 | IT | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 12 (batch 12) | `packs/b2/pack-les-b2-it-architecture-decisions.md` |
+| `pack_les_b2_it_incident_postmortem_v1` | `les_b2_it_incident_postmortem` | B2 | IT | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 12 (batch 12) | `packs/b2/pack-les-b2-it-incident-postmortem.md` |
+| `pack_les_b2_it_jargon_mastery_v1` | `les_b2_it_jargon_mastery` | B2 | IT | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 12 (batch 12) | `packs/b2/pack-les-b2-it-jargon-mastery.md` |
 | `pack_les_b2_it_mentoring_v1` | `les_b2_it_mentoring` | B2 | IT | canonical (`pack-les-*.md`) | authored_material | ✅ Lote 1 | `packs/b2/pack-les-b2-it-mentoring.md` |
 | `pack_les_b2_it_rfc_writing_v1` | `les_b2_it_rfc_writing` | B2 | IT | canonical (`pack-les-*.md`) | authored_material | ✅ Lote 1 | `packs/b2/pack-les-b2-it-rfc-writing.md` |
-| `pack_les_b2_it_strategy_v1` | `les_b2_it_strategy` | B2 | IT | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_it_strategy_v1.md` |
-| `pack_les_b2_it_technical_leadership_v1` | `les_b2_it_technical_leadership` | B2 | IT | legacy_v1 | cite_only | — | `packs/b2/pack_les_b2_it_technical_leadership_v1.md` |
+| `pack_les_b2_it_strategy_v1` | `les_b2_it_strategy` | B2 | IT | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 12 (batch 12) | `packs/b2/pack-les-b2-it-strategy.md` |
+| `pack_les_b2_it_technical_leadership_v1` | `les_b2_it_technical_leadership` | B2 | IT | canonical (`pack-les-*.md`) | authored_material | ✅ Onda 2 — Lote 12 (batch 12) | `packs/b2/pack-les-b2-it-technical-leadership.md` |
 | `pack_les_a2_greetings_intro_v1` | `lesson-15min-workplace-greetings` | None | General | canonical | adapt_requires_permission | 6 source_derived, 1 authored (`rdg_scanning_microtext_001`, CAT-excluded per G-Q7) | `packs/a2/pack-les-a2-greetings-intro.md` |
 | `pack_les_rem_confidence_builder_v1` | `les_rem_confidence_builder` | None | Remediation | legacy_v1 | cite_only | — | `packs/remediation/pack_les_rem_confidence_builder_v1.md` |
 | `pack_les_rem_grammar_be_pronouns_v1` | `les_rem_grammar_be_pronouns` | None | Remediation | legacy_v1 | cite_only | — | `packs/remediation/pack_les_rem_grammar_be_pronouns_v1.md` |
@@ -349,14 +352,14 @@ Objetivo de cada onda: reescrever integralmente o conteúdo didático/itens para
 | `les_b1_it_presentations` | B1 | IT | `blocked_no_adequate_source` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks · **BLOQUEADA (criar arquivo e definir fonte/escopo autoral)** | `(sem arquivo em lessons/ — nó bloqueado no registro §4.3)` |
 | `les_b1_it_ux_collab` | B1 | IT | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 10 (batch 10) | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b1/les_b1_it_ux_collab.md` |
 | `les_b1_it_write_docs` | B1 | IT | ~~`adapt_with_attribution`~~ → `authored_material` ✅ Onda 2 — Lote 10 (batch 10) | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b1/les_b1_it_write_docs.md` |
-| `les_b2_it_advanced_patterns` | B2 | IT | `cite_only` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b2/les_b2_it_advanced_patterns.md` |
-| `les_b2_it_architecture_decisions` | B2 | IT | `adapt_with_attribution` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b2/les_b2_it_architecture_decisions.md` |
-| `les_b2_it_incident_postmortem` | B2 | IT | `adapt_with_attribution` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b2/les_b2_it_incident_postmortem.md` |
-| `les_b2_it_jargon_mastery` | B2 | IT | `cite_only` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b2/les_b2_it_jargon_mastery.md` |
+| `les_b2_it_advanced_patterns` | B2 | IT | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 12 (batch 12) | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b2/les_b2_it_advanced_patterns.md` |
+| `les_b2_it_architecture_decisions` | B2 | IT | ~~`adapt_with_attribution`~~ → `authored_material` ✅ Onda 2 — Lote 12 (batch 12) | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b2/les_b2_it_architecture_decisions.md` |
+| `les_b2_it_incident_postmortem` | B2 | IT | ~~`adapt_with_attribution`~~ → `authored_material` ✅ Onda 2 — Lote 12 (batch 12) | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b2/les_b2_it_incident_postmortem.md` |
+| `les_b2_it_jargon_mastery` | B2 | IT | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 12 (batch 12) | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b2/les_b2_it_jargon_mastery.md` |
 | `les_b2_it_mentoring` | B2 | IT | `adapt_with_attribution` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks · **thin** | `lessons/b2/les_b2_it_mentoring.md` |
 | `les_b2_it_rfc_writing` | B2 | IT | `adapt_with_attribution` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks · **thin** | `lessons/b2/les_b2_it_rfc_writing.md` |
-| `les_b2_it_strategy` | B2 | IT | `cite_only` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b2/les_b2_it_strategy.md` |
-| `les_b2_it_technical_leadership` | B2 | IT | `cite_only` | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b2/les_b2_it_technical_leadership.md` |
+| `les_b2_it_strategy` | B2 | IT | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 12 (batch 12) | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b2/les_b2_it_strategy.md` |
+| `les_b2_it_technical_leadership` | B2 | IT | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 12 (batch 12) | Inglês técnico TI (vocabulário, discurso e tarefas do módulo B1/B2 IT) — reautoria integral do input, prática guiada, output e checks | `lessons/b2/les_b2_it_technical_leadership.md` |
 
 **Packs associados (Onda 1):** migrar os packs dos mesmos `lesson_id` para schema canônico, declarar `**Reuse basis:** authored_material` coerente com os itens, e garantir conformidade de `item_id`/chaves/distratores.
 - ~~~`packs/b1/pack_les_b1_it_acronyms_deep_v1.md`~~ → `packs/b1/pack-les-b1-it-acronyms-deep.md` (lesson `les_b1_it_acronyms_deep`, canônico, `authored_material`, ✅ Onda 2 — Lote 9 (batch 9))
@@ -368,14 +371,14 @@ Objetivo de cada onda: reescrever integralmente o conteúdo didático/itens para
 - ~~`packs/b1/pack_les_b1_it_devops_basics_v1.md`~~ → `packs/b1/pack-les-b1-it-devops-basics.md` (lesson `les_b1_it_devops_basics`, canônico, `authored_material`, ✅ Onda 2 — Lote 10 (batch 10))
 - ~~`packs/b1/pack_les_b1_it_ux_collab_v1.md`~~ → `packs/b1/pack-les-b1-it-ux-collab.md` (lesson `les_b1_it_ux_collab`, canônico, `authored_material`, ✅ Onda 2 — Lote 10 (batch 10))
 - ~~`packs/b1/pack_les_b1_it_write_docs_v1.md`~~ → `packs/b1/pack-les-b1-it-write-docs.md` (lesson `les_b1_it_write_docs`, canônico, `authored_material`, ✅ Onda 2 — Lote 10 (batch 10))
-- `packs/b2/pack_les_b2_it_advanced_patterns_v1.md` (lesson `les_b2_it_advanced_patterns`, schema legacy_v1, base atual `cite_only`)
-- `packs/b2/pack_les_b2_it_architecture_decisions_v1.md` (lesson `les_b2_it_architecture_decisions`, schema legacy_v1, base atual `cite_only`)
-- `packs/b2/pack_les_b2_it_incident_postmortem_v1.md` (lesson `les_b2_it_incident_postmortem`, schema legacy_v1, base atual `cite_only`)
-- `packs/b2/pack_les_b2_it_jargon_mastery_v1.md` (lesson `les_b2_it_jargon_mastery`, schema legacy_v1, base atual `cite_only`)
+- ~~`packs/b2/pack_les_b2_it_advanced_patterns_v1.md`~~ → `packs/b2/pack-les-b2-it-advanced-patterns.md` (lesson `les_b2_it_advanced_patterns`, canônico, `authored_material`, ✅ Onda 2 — Lote 12 (batch 12))
+- ~~`packs/b2/pack_les_b2_it_architecture_decisions_v1.md`~~ → `packs/b2/pack-les-b2-it-architecture-decisions.md` (lesson `les_b2_it_architecture_decisions`, canônico, `authored_material`, ✅ Onda 2 — Lote 12 (batch 12))
+- ~~`packs/b2/pack_les_b2_it_incident_postmortem_v1.md`~~ → `packs/b2/pack-les-b2-it-incident-postmortem.md` (lesson `les_b2_it_incident_postmortem`, canônico, `authored_material`, ✅ Onda 2 — Lote 12 (batch 12))
+- ~~`packs/b2/pack_les_b2_it_jargon_mastery_v1.md`~~ → `packs/b2/pack-les-b2-it-jargon-mastery.md` (lesson `les_b2_it_jargon_mastery`, canônico, `authored_material`, ✅ Onda 2 — Lote 12 (batch 12))
 - ~~`packs/b2/pack_les_b2_it_mentoring_v1.md`~~ → `packs/b2/pack-les-b2-it-mentoring.md` (lesson `les_b2_it_mentoring`, canônico, `authored_material`, ✅ Lote 1)
 - ~~`packs/b2/pack_les_b2_it_rfc_writing_v1.md`~~ → `packs/b2/pack-les-b2-it-rfc-writing.md` (lesson `les_b2_it_rfc_writing`, canônico, `authored_material`, ✅ Lote 1)
-- `packs/b2/pack_les_b2_it_strategy_v1.md` (lesson `les_b2_it_strategy`, schema legacy_v1, base atual `cite_only`)
-- `packs/b2/pack_les_b2_it_technical_leadership_v1.md` (lesson `les_b2_it_technical_leadership`, schema legacy_v1, base atual `cite_only`)
+- ~~`packs/b2/pack_les_b2_it_strategy_v1.md`~~ → `packs/b2/pack-les-b2-it-strategy.md` (lesson `les_b2_it_strategy`, canônico, `authored_material`, ✅ Onda 2 — Lote 12 (batch 12))
+- ~~`packs/b2/pack_les_b2_it_technical_leadership_v1.md`~~ → `packs/b2/pack-les-b2-it-technical-leadership.md` (lesson `les_b2_it_technical_leadership`, canônico, `authored_material`, ✅ Onda 2 — Lote 12 (batch 12))
 
 ### Onda 2 — Fundação A1/A2 (Onboarding do aluno)
 
@@ -494,16 +497,16 @@ Objetivo de cada onda: reescrever integralmente o conteúdo didático/itens para
 | `les_rem_pronunciation_th_vw` | B1 | Remediation | `cite_only` | Remediação dirigida (lacunas diagnósticas) — reautoria integral e alinhamento ao gatilho | `lessons/remediation/les_rem_pronunciation_th_vw.md` |
 | `les_rem_writing_svo` | B1 | Remediation | `cite_only` | Remediação dirigida (lacunas diagnósticas) — reautoria integral e alinhamento ao gatilho | `lessons/remediation/les_rem_writing_svo.md` |
 | `les_b2_celpe_br` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_celpe_br.md` |
-| `les_b2_culture_brazil_vs_usa` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_culture_brazil_vs_usa.md` |
+| `les_b2_culture_brazil_vs_usa` | B2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 12 (batch 12) | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_culture_brazil_vs_usa.md` |
 | `les_b2_exam_simulations` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_exam_simulations.md` |
 | `les_b2_exam_vocab` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_exam_vocab.md` |
 | `les_b2_ielts_writing` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_ielts_writing.md` |
-| `les_b2_professional_argument` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_professional_argument.md` |
+| `les_b2_professional_argument` | B2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 12 (batch 12) | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_professional_argument.md` |
 | `les_b2_professional_email_advanced` | B2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 11 (batch 11) | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_professional_email_advanced.md` |
 | `les_b2_professional_review` | B2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 11 (batch 11) | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_professional_review.md` |
-| `les_b2_professional_summary` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_professional_summary.md` |
+| `les_b2_professional_summary` | B2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 12 (batch 12) | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_professional_summary.md` |
 | `les_b2_register_nuance` | B2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 11 (batch 11) | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_register_nuance.md` |
-| `les_b2_toeic_reading` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_toeic_reading.md` |
+| `les_b2_toeic_reading` | B2 | General | ~~`cite_only`~~ → `authored_material` ✅ Onda 2 — Lote 12 (batch 12) | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_toeic_reading.md` |
 | `les_b2_toeic_writing` | B2 | General | `cite_only` | Consolidação B1/B2 (gramática, fluência, produção e domínio profissional geral) ou remediação — reautoria integral | `lessons/b2/les_b2_toeic_writing.md` |
 
 **Backlog de migração de packs legados (todos os schemas `legacy_v1`):**
@@ -598,24 +601,24 @@ Objetivo de cada onda: reescrever integralmente o conteúdo didático/itens para
 - ~~`packs/b1/pack_les_b1_sales_marketing_v1.md`~~ → `packs/b1/pack-les-les-b1-sales-marketing.md` (lesson `les_b1_sales_marketing`, canônico, `authored_material`, ✅ Onda 2 — Lote 11 (batch 11))
 - ~~`packs/b1/pack_les_b1_tenses_review_v1.md`~~ → `packs/b1/pack-les-b1-tenses-review.md` (lesson `les_b1_tenses_review`, canônico, `authored_material`, ✅ Onda 2 — Lote 10 (batch 10))
 - `packs/b2/pack_les_b2_celpe_br_v1.md` → migrar para schema canônico; lesson `les_b2_celpe_br`, base atual `cite_only`
-- `packs/b2/pack_les_b2_culture_brazil_vs_usa_v1.md` → migrar para schema canônico; lesson `les_b2_culture_brazil_vs_usa`, base atual `cite_only`
+- ~~`packs/b2/pack_les_b2_culture_brazil_vs_usa_v1.md`~~ → `packs/b2/pack-les-b2-culture-brazil-vs-usa.md` (lesson `les_b2_culture_brazil_vs_usa`, canônico, `authored_material`, ✅ Onda 2 — Lote 12 (batch 12))
 - `packs/b2/pack_les_b2_exam_simulations_v1.md` → migrar para schema canônico; lesson `les_b2_exam_simulations`, base atual `cite_only`
 - `packs/b2/pack_les_b2_exam_vocab_v1.md` → migrar para schema canônico; lesson `les_b2_exam_vocab`, base atual `cite_only`
 - `packs/b2/pack_les_b2_ielts_writing_v1.md` → migrar para schema canônico; lesson `les_b2_ielts_writing`, base atual `cite_only`
-- `packs/b2/pack_les_b2_it_advanced_patterns_v1.md` → migrar para schema canônico; lesson `les_b2_it_advanced_patterns`, base atual `cite_only`
-- `packs/b2/pack_les_b2_it_architecture_decisions_v1.md` → migrar para schema canônico; lesson `les_b2_it_architecture_decisions`, base atual `cite_only`
-- `packs/b2/pack_les_b2_it_incident_postmortem_v1.md` → migrar para schema canônico; lesson `les_b2_it_incident_postmortem`, base atual `cite_only`
-- `packs/b2/pack_les_b2_it_jargon_mastery_v1.md` → migrar para schema canônico; lesson `les_b2_it_jargon_mastery`, base atual `cite_only`
+- ~~`packs/b2/pack_les_b2_it_advanced_patterns_v1.md`~~ → `packs/b2/pack-les-b2-it-advanced-patterns.md` (lesson `les_b2_it_advanced_patterns`, canônico, `authored_material`, ✅ Onda 2 — Lote 12 (batch 12))
+- ~~`packs/b2/pack_les_b2_it_architecture_decisions_v1.md`~~ → `packs/b2/pack-les-b2-it-architecture-decisions.md` (lesson `les_b2_it_architecture_decisions`, canônico, `authored_material`, ✅ Onda 2 — Lote 12 (batch 12))
+- ~~`packs/b2/pack_les_b2_it_incident_postmortem_v1.md`~~ → `packs/b2/pack-les-b2-it-incident-postmortem.md` (lesson `les_b2_it_incident_postmortem`, canônico, `authored_material`, ✅ Onda 2 — Lote 12 (batch 12))
+- ~~`packs/b2/pack_les_b2_it_jargon_mastery_v1.md`~~ → `packs/b2/pack-les-b2-it-jargon-mastery.md` (lesson `les_b2_it_jargon_mastery`, canônico, `authored_material`, ✅ Onda 2 — Lote 12 (batch 12))
 - `packs/b2/pack_les_b2_it_mentoring_v1.md` → migrar para schema canônico; lesson `les_b2_it_mentoring`, base atual `cite_only`
 - `packs/b2/pack_les_b2_it_rfc_writing_v1.md` → migrar para schema canônico; lesson `les_b2_it_rfc_writing`, base atual `cite_only`
-- `packs/b2/pack_les_b2_it_strategy_v1.md` → migrar para schema canônico; lesson `les_b2_it_strategy`, base atual `cite_only`
-- `packs/b2/pack_les_b2_it_technical_leadership_v1.md` → migrar para schema canônico; lesson `les_b2_it_technical_leadership`, base atual `cite_only`
-- `packs/b2/pack_les_b2_professional_argument_v1.md` → migrar para schema canônico; lesson `les_b2_professional_argument`, base atual `cite_only`
+- ~~`packs/b2/pack_les_b2_it_strategy_v1.md`~~ → `packs/b2/pack-les-b2-it-strategy.md` (lesson `les_b2_it_strategy`, canônico, `authored_material`, ✅ Onda 2 — Lote 12 (batch 12))
+- ~~`packs/b2/pack_les_b2_it_technical_leadership_v1.md`~~ → `packs/b2/pack-les-b2-it-technical-leadership.md` (lesson `les_b2_it_technical_leadership`, canônico, `authored_material`, ✅ Onda 2 — Lote 12 (batch 12))
+- ~~`packs/b2/pack_les_b2_professional_argument_v1.md`~~ → `packs/b2/pack-les-b2-professional-argument.md` (lesson `les_b2_professional_argument`, canônico, `authored_material`, ✅ Onda 2 — Lote 12 (batch 12))
 - ~~`packs/b2/pack_les_b2_professional_email_advanced_v1.md`~~ → `packs/b2/pack-les-les-b2-professional-email-advanced.md` (lesson `les_b2_professional_email_advanced`, canônico, `authored_material`, ✅ Onda 2 — Lote 11 (batch 11))
 - ~~`packs/b2/pack_les_b2_professional_review_v1.md`~~ → `packs/b2/pack-les-les-b2-professional-review.md` (lesson `les_b2_professional_review`, canônico, `authored_material`, ✅ Onda 2 — Lote 11 (batch 11))
-- `packs/b2/pack_les_b2_professional_summary_v1.md` → migrar para schema canônico; lesson `les_b2_professional_summary`, base atual `cite_only`
+- ~~`packs/b2/pack_les_b2_professional_summary_v1.md`~~ → `packs/b2/pack-les-b2-professional-summary.md` (lesson `les_b2_professional_summary`, canônico, `authored_material`, ✅ Onda 2 — Lote 12 (batch 12))
 - ~~`packs/b2/pack_les_b2_register_nuance_v1.md`~~ → `packs/b2/pack-les-les-b2-register-nuance.md` (lesson `les_b2_register_nuance`, canônico, `authored_material`, ✅ Onda 2 — Lote 11 (batch 11))
-- `packs/b2/pack_les_b2_toeic_reading_v1.md` → migrar para schema canônico; lesson `les_b2_toeic_reading`, base atual `cite_only`
+- ~~`packs/b2/pack_les_b2_toeic_reading_v1.md`~~ → `packs/b2/pack-les-b2-toeic-reading.md` (lesson `les_b2_toeic_reading`, canônico, `authored_material`, ✅ Onda 2 — Lote 12 (batch 12))
 - `packs/b2/pack_les_b2_toeic_writing_v1.md` → migrar para schema canônico; lesson `les_b2_toeic_writing`, base atual `cite_only`
 - `packs/remediation/pack_les_rem_confidence_builder_v1.md` → migrar para schema canônico; lesson `les_rem_confidence_builder`, base atual `cite_only`
 - `packs/remediation/pack_les_rem_grammar_be_pronouns_v1.md` → migrar para schema canônico; lesson `les_rem_grammar_be_pronouns`, base atual `cite_only`
@@ -813,4 +816,16 @@ Aplicar a **cada lição** (e ao pack correspondente) ao concluir a reautoria, g
 - **Registros/gates atualizados nesta unidade:** `specs/curriculum-graph-spec.md` (§4.3 das 10 lições: `Source` → `Original (clean-room, Onda 2 — Lote 11)`, `Status` → `✅ **authored** · reauthored_authored_material`; §4.4.5 placar 80→90; §13 packs 97 canônicos / 26 legados), `specs/assessment-item-spec.md` §2.2.1 (censo `br_pt_form` recomputado: **1677 filled / 76 null-with-note / 94 null-not-applicable / 0 undocumented**), `external-sources.md` (§0.5: classes A17/B0/C0/D11/E95; placar 97/123; §5 lições 85–94), `_legacy_packs_baseline.json` (36→26), `docs/copyright-reauthoring-plan.md` (este bloco, §2.1–§2.3, §3, §4, §5 e backlog de migração), `TASK_PROGRESS.md` e `its-platform/docs/api-spec.openapi.yaml` (3 pins re-derivados).
 - **Validação:** ✅ `python3 verify-integrity.py` PASS — 14/14 (0 falhas, 0 warnings), reexecutado nesta unidade. `python3 prd-score.py` PASS — ≥ 80%. Nenhum outro gate foi executado nesta unidade.
 - **Seed/carga DB (:5433):** fora do escopo desta unidade de registros — sincronização de conteúdo e re-derivação dos pins ficam a cargo da unidade de banco/gates.
-- **Placar pós-Onda 2 — Lote 11 (batch 11) (estado atual):** **90/123** lições `authored_material`, 0 bloqueadas, `cite_only` **29**, `adapt_with_attribution` **4**, `sourced_external_thin` 0; packs **97 canônicos / 26 legados** (123 no total). Registro desta entrega = este bloco da §6.
+- **Placar pós-Onda 2 — Lote 11 (batch 11) (estado anterior):** **90/123** lições `authored_material`, 0 bloqueadas, `cite_only` **29**, `adapt_with_attribution` **4**, `sourced_external_thin` 0; packs **97 canônicos / 26 legados** (123 no total).
+
+---
+
+## 6. Registro de Execução — Onda 2 — Lote 12 (batch 12), B2 Professional/IT/Cert Prep (2026-11-19)
+
+- **Escopo entregue:** `les_b2_professional_argument`, `les_b2_professional_summary`, `les_b2_culture_brazil_vs_usa` (`mod_b2_professional`), `les_b2_it_architecture_decisions`, `les_b2_it_strategy`, `les_b2_it_incident_postmortem`, `les_b2_it_jargon_mastery`, `les_b2_it_advanced_patterns`, `les_b2_it_technical_leadership` (`mod_b2_it_senior`) e `les_b2_toeic_reading` (`mod_b2_cert_prep`) — 10 lições e packs 100% `authored_material` (clean-room), com 4 fases pedagógicas e 0 self-loops no grafo.
+- **Packs migrados para schema canônico:** `packs/b2/pack-les-b2-professional-argument.md`, `packs/b2/pack-les-b2-professional-summary.md`, `packs/b2/pack-les-b2-culture-brazil-vs-usa.md`, `packs/b2/pack-les-b2-it-architecture-decisions.md`, `packs/b2/pack-les-b2-it-strategy.md`, `packs/b2/pack-les-b2-it-incident-postmortem.md`, `packs/b2/pack-les-b2-it-jargon-mastery.md`, `packs/b2/pack-les-b2-it-advanced-patterns.md`, `packs/b2/pack-les-b2-it-technical-leadership.md`, `packs/b2/pack-les-b2-toeic-reading.md`. Legados v1 correspondentes removidos do disco; catraca `_legacy_packs_baseline.json` 26→**16** (a catraca só pode cair).
+- **Registros/gates atualizados nesta unidade:** `specs/curriculum-graph-spec.md` (§4.3 das 10 lições: `Status` → `✅ **authored** · reauthored_authored_material`, preservando `· sourcing: sourced_external` nas 2 linhas que o exigem; §4.4.5 placar 90→100; §13 `Lessons authored | 123` inalterado e packs 107 canônicos / 16 legados), `specs/assessment-item-spec.md` §2.2.1 (censo `br_pt_form` recomputado: **1857 filled / 76 null-with-note / 104 null-not-applicable / 0 undocumented**), `external-sources.md` (§0.5: classes A17/B0/C0/D11/E95 inalteradas; placar 100/123; §5 lições 95–104), `_legacy_packs_baseline.json` (26→16), `docs/copyright-reauthoring-plan.md` (este bloco, §2.1–§2.3, §3, §4, §5 e backlog de migração), `TASK_PROGRESS.md` e `its-platform/docs/api-spec.openapi.yaml` (3 pins re-derivados).
+- **Validação:** ✅ `python3 verify-integrity.py` PASS — 14/14 (0 falhas, 0 warnings). `python3 prd-score.py` PASS — ≥ 80%. Nenhum outro gate foi executado nesta unidade.
+- **Seed/carga DB (:5433):** fora do escopo desta unidade de registros — sincronização de conteúdo e re-derivação dos pins ficam a cargo da unidade de banco/gates.
+- **Nota metodológica:** o placar de `authored_material` foi medido na primeira declaração de `**Reuse basis:**` em `lessons/*/*.md` (100/2/21). As classes A–E são derivadas pelo gate [3] da coluna `Source` de §4.3, que permanece com as fontes históricas; por isso A17/B0/C0/D11/E95 não mudaram apesar da reautoria em disco.
+- **Placar pós-Onda 2 — Lote 12 (batch 12) (estado atual):** **100/123** lições `authored_material`, 0 bloqueadas, `cite_only` **21**, `adapt_with_attribution` **2**, `sourced_external_thin` 0; **23** lições pendentes de reautoria; packs **107 canônicos / 16 legados** (123 no total). Registro desta entrega = este bloco da §6.
