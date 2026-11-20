@@ -3,8 +3,8 @@
  * builds a body when that resolution refuses.
  *
  * The five operations live in four modules, so this is the file that keeps them one decision: every
- * handler passes `(subject, id)` — the token's `sub` and the path parameter, in that order — to the
- * one `LearnerScopeService`, and every handler's value is produced only after that call resolves.
+ * handler/service passes `(subject, id)` — the token's `sub` and the path parameter, in that order —
+ * to the one `LearnerScopeService`, and every value is produced only after that call resolves.
  * ADR-038 D3 removed the alternative shape by name (`if (pathId === tokenSubject)`), and the way
  * that removal survives contact with five handlers is that the handlers cannot answer without
  * asking.
@@ -13,20 +13,17 @@
  * truthful is P1.10/P1.11's question and A5b's ratified scope leaves them the stubs they were. Each
  * route pins one member of its published body so that "the payload did not change" has an address.
  *
- * One of the five moved under A7b, and this file records the shape of the move rather than its
- * content: `GET …/profile` no longer asks `requireVisible` for a row and then ignores it — it asks
- * `withVisible` for the row **and the transaction**, which is what lets its four reads run under the
- * policy that decided the 404 (ADR-045 D1). The members it now derives are asserted, member by
- * member and against their sources, in `tests/integration/learner-routes-bodies.spec.ts`; what is
- * pinned here is that the ask still happens first, with the subject first, and that no body is built
- * when it refuses.
- *
- * The scope service is a stub — it is the decision under test. That the real one loads the row from
- * PostgreSQL under the caller's own RLS context is `tests/integration/learner-scope-rls.spec.ts`.
+ * Under A7b, `GET .../profile` asks `withVisible` for the row **and the transaction** (ADR-045 D1)
+ * so its reads run under the policy that decided the 404; the other routes keep their own ask shape.
+ * The members it now derives are asserted in `tests/integration/learner-routes-bodies.spec.ts`;
+ * what is pinned here is that the ask still happens first, with the subject first, and that no body
+ * is built when it refuses.
  */
 
 import { NotFoundException } from '@nestjs/common';
 import type { QueryRunner } from 'typeorm';
+import { DataSource } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
 
 import { LearnerProfileRepository } from '../../../src/infrastructure/repositories/learner-profile.repository.js';
 import type { UserIdentityRepository } from '../../../src/infrastructure/repositories/user-identity.repository.js';
@@ -42,11 +39,14 @@ import type { PracticeSubmissionDto } from '../../../src/modules/practice/dto/pr
 const SUBJECT = '3f2a1c44-9b7e-4a01-8c4d-1e2f3a4b5c6d';
 const ADDRESSED = '9b7e4a01-8c4d-1e2f-3a4b-5c6d3f2a1c44';
 
+const PACK_ID = 'pack_les_a2_airport_v1';
+const ITEM_ID = 'grm_airport_immigration_questions_001';
+
 const placementBody = { learner_id: ADDRESSED, mode: 'adaptive' } as DiagnosticRequestDto;
 const practiceBody = {
   learner_id: ADDRESSED,
-  pack_id: 'pack_les_a2_airport_v1',
-  responses: [{ item_id: 'voc_airport_001', response: 'gate', response_time_ms: 900 }],
+  pack_id: PACK_ID,
+  responses: [{ item_id: ITEM_ID, response: 'B', response_time_ms: 900 }],
 } as PracticeSubmissionDto;
 
 /** The two ways a handler asks ADR-038 D3's question — load only, or load and then read (A7b). */
@@ -54,24 +54,95 @@ type Scope = Pick<LearnerScopeService, 'requireVisible' | 'withVisible'>;
 
 /**
  * The profile's other collaborator, stubbed for the same reason the scope service is: what is under
- * test here is the ask, not the aggregate. An empty answer is the honest stub — it is what the real
- * repository returns for a learner with no rows.
+ * test here is the ask, not the aggregate. An empty answer is the honest stub.
  */
 const PROFILE_REPOSITORY = {
   read: () => Promise.resolve({ cefr: null, mastery: {}, fsrsStates: {} }),
 } as unknown as LearnerProfileRepository;
 
-/**
- * The identity — the `users` row behind the display name, the e-mail and the avatar.
- *
- * Stubbed for the same reason as the profile repository: the aggregate is not what this file
- * measures. It answers "a learner with no account", which is the honest answer for a learner
- * whose `users` row was never filled in.
- */
+/** The identity collaborator, stubbed: no account. */
 const IDENTITY_REPOSITORY = {
   read: () => Promise.resolve(null),
   update: () => Promise.resolve(null),
 } as unknown as UserIdentityRepository;
+
+/**
+ * Minimal DataSource/tx for constructing a real PracticeService whose grading path can succeed
+ * without a database, while the scope ask remains the real decision under test.
+ */
+function mockTxForPractice(): unknown {
+  const insertAttempt = { id: 'attempt-1' };
+  const insertSession = { id: 'session-1', learner_id: ADDRESSED, started_at: new Date(), ended_at: null };
+  const query = jest.fn().mockImplementation((sql: string) => {
+    if (sql.includes('FROM packs')) {
+      return Promise.resolve([{ id: PACK_ID, lesson_id: 'les_a2_airport', item_ids: [ITEM_ID] }]);
+    }
+    if (sql.includes('FROM items')) {
+      return Promise.resolve([
+        {
+          id: ITEM_ID,
+          item_type: 'contextual_selection',
+          skill_ids: '{grammar.present_simple_airport}',
+          domain_id: 'grammar',
+          scoring: 'choice',
+          stem: 'Stem',
+          key: 'B',
+          p_random: 0.25,
+        },
+      ]);
+    }
+    if (sql.includes('FROM sessions')) {
+      return Promise.resolve([insertSession]);
+    }
+    if (sql.includes('INSERT INTO sessions')) {
+      return Promise.resolve([insertSession]);
+    }
+    if (sql.includes('INSERT INTO practice_attempts')) {
+      return Promise.resolve([insertAttempt]);
+    }
+    if (sql.includes('FROM learner_mastery')) {
+      return Promise.resolve([]);
+    }
+    if (sql.includes('INSERT INTO learner_mastery')) {
+      return Promise.resolve([]);
+    }
+    if (sql.includes('INSERT INTO item_responses')) {
+      return Promise.resolve([]);
+    }
+    if (sql.includes('FROM fsrs_parameters')) {
+      return Promise.resolve([
+        {
+          w_version: '4.5.0',
+          w: [0.212, 1.2931, 2.3065, 8.2956, 6.4133, 0.8334, 3.0194, 0.001, 1.8722, 0.1666, 0.796, 1.4835, 0.0614, 0.2629, 1.6483, 0.6014, 1.8729, 0.5425, 0.0912, 0.0658, 0.1542],
+          decay: 0.1542,
+          factor: 0.9803,
+        },
+      ]);
+    }
+    if (sql.includes('FROM fsrs_states')) {
+      return Promise.resolve([]);
+    }
+    if (sql.includes('INSERT INTO fsrs_states')) {
+      return Promise.resolve([]);
+    }
+    if (sql.includes('ORDER BY fs.due_date')) {
+      return Promise.resolve([]);
+    }
+    return Promise.resolve([]);
+  });
+  return { query };
+}
+
+const MOCK_DATA_SOURCE = {
+  query: jest.fn().mockImplementation((sql: string, params?: unknown[]) =>
+    (mockTxForPractice() as { query: (s: string, p?: unknown[]) => Promise<unknown[]> }).query(sql, params),
+  ),
+} as unknown as DataSource;
+
+/** Minimal mock ConfigService for service construction */
+const MOCK_CONFIG_SERVICE = {
+  get: jest.fn().mockReturnValue('/home/dalmo/Documentos/Curso-de-Ingles/specs/curriculum-graph-spec.md'),
+} as unknown as ConfigService;
 
 interface Route {
   readonly name: string;
@@ -105,7 +176,11 @@ const ROUTES: readonly Route[] = [
   {
     name: 'GET /learners/{learner_id}/next',
     call: (scope) =>
-      new CurriculumService(scope as LearnerScopeService).getNextActivity(SUBJECT, ADDRESSED, {}),
+      new CurriculumService(
+        scope as LearnerScopeService,
+        MOCK_DATA_SOURCE,
+        MOCK_CONFIG_SERVICE,
+      ).getNextActivity(SUBJECT, ADDRESSED, {}),
     member: 'activity_id',
   },
   {
@@ -120,18 +195,21 @@ const ROUTES: readonly Route[] = [
   },
   {
     name: 'POST /learners/{learner_id}/practice',
-    call: (scope) =>
-      new PracticeService(scope as LearnerScopeService).submitPractice(
-        SUBJECT,
-        ADDRESSED,
-        practiceBody,
-      ),
+    call: (scope) => {
+      // Real PracticeService: it must resolve the addressed learner via withVisible before grading.
+      const service = new PracticeService(
+        scope as LearnerScopeService,
+        {} as never,
+        MOCK_DATA_SOURCE,
+      );
+      return service.submitPractice(SUBJECT, ADDRESSED, practiceBody) as Promise<Record<string, unknown>>;
+    },
     member: 'pack_id',
   },
 ];
 
 /** The transaction a runner-free stub hands to the work — what `withVisible` passes through. */
-const TX = { marker: 'tx' } as unknown as QueryRunner;
+const TX = mockTxForPractice() as unknown as QueryRunner;
 
 /** A scope service that records what it was asked and answers the way the real one would. */
 function scope(visible: boolean): { service: Scope; asked: Array<[string, string]> } {

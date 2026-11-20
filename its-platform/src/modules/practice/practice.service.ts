@@ -100,33 +100,25 @@ export class PracticeService {
    * 9. Return PracticeResult
    */
   async submitPractice(subject: string, id: string, body: PracticeSubmissionDto) {
-    // 1. Verify learner visibility (RLS policy)
-    await this.learnerScope.requireVisible(subject, id);
+    // All learner-scoped work (including visibility) runs inside withVisible so RLS context is set
+    // for learner-owned reads/writes and so a foreign learner is refused before any body is built.
+    return this.learnerScope.withVisible(subject, id, async (_learner, manager) => {
+      const pack = await this.getPackForGrading(body.pack_id);
+      if (!pack) {
+        throw new Error(`Pack not found: ${body.pack_id}`);
+      }
 
-    // 2. Fetch pack with items and keys
-    const pack = await this.getPackForGrading(body.pack_id);
-    if (!pack) {
-      throw new Error(`Pack not found: ${body.pack_id}`);
-    }
-
-    // 3. Grade responses
-    const gradedItems = this.gradeResponses(pack.items, body.responses);
-
-    // 4-8. Persist everything in a transaction
-    const result = await this.dataSource.transaction(async (manager) => {
-      // Get or create session
+      const gradedItems = this.gradeResponses(pack.items, body.responses);
       const session = await this.getOrCreateSession(manager, id);
-
-      // Create practice attempt
-      const attempt = await this.createPracticeAttempt(manager, session.id, id, body.pack_id, gradedItems);
-
-      // Create item responses and update mastery
+      const attempt = await this.createPracticeAttempt(
+        manager,
+        session.id,
+        id,
+        body.pack_id,
+        gradedItems,
+      );
       const masteryUpdates = await this.processItemResponses(manager, attempt.id, id, gradedItems);
-
-      // Update FSRS for choice items
       await this.updateFsrsStates(manager, id, gradedItems);
-
-      // Build next review schedule
       const nextReviewSchedule = await this.buildNextReviewSchedule(manager, id, masteryUpdates);
 
       return {
@@ -141,8 +133,6 @@ export class PracticeService {
         next_review_schedule: nextReviewSchedule,
       };
     });
-
-    return result;
   }
 
   /**
@@ -172,9 +162,14 @@ export class PracticeService {
     );
 
     // Order items by pack's item_ids order
-    const position = new Map<string, number>(itemIds.map((itemId: string, index: number) => [itemId, index]));
+    const position = new Map<string, number>(
+      itemIds.map((itemId: string, index: number) => [itemId, index]),
+    );
     const orderedItems = items
-      .sort((a: { id: string }, b: { id: string }) => (position.get(a.id) ?? 0) - (position.get(b.id) ?? 0))
+      .sort(
+        (a: { id: string }, b: { id: string }) =>
+          (position.get(a.id) ?? 0) - (position.get(b.id) ?? 0),
+      )
       .map((item: any) => ({
         id: item.id,
         item_type: item.item_type,
@@ -203,7 +198,11 @@ export class PracticeService {
     itemId: string;
     correct: boolean | null;
     skill: string;
-    bktUpdate: { prior: number; posterior: number; transition: 'learned' | 'retained' | 'forgot' | 'guessed' };
+    bktUpdate: {
+      prior: number;
+      posterior: number;
+      transition: 'learned' | 'retained' | 'forgot' | 'guessed';
+    };
     response: string | { transcript?: string; audioRef?: string };
     responseTimeMs: number;
     confidence?: number;
@@ -231,7 +230,7 @@ export class PracticeService {
       const initialState: BktState = {
         pKnow: 0.15, // DEFAULT_BKT_PARAMS.pL0
         pLearn: 0.25, // DEFAULT_BKT_PARAMS.pT
-        pSlip: 0.10, // DEFAULT_BKT_PARAMS.pS
+        pSlip: 0.1, // DEFAULT_BKT_PARAMS.pS
         pGuess: guessProb,
       };
 
@@ -243,7 +242,11 @@ export class PracticeService {
         itemId: string;
         correct: boolean | null;
         skill: string;
-        bktUpdate: { prior: number; posterior: number; transition: 'learned' | 'retained' | 'forgot' | 'guessed' };
+        bktUpdate: {
+          prior: number;
+          posterior: number;
+          transition: 'learned' | 'retained' | 'forgot' | 'guessed';
+        };
         response: string | { transcript?: string; audioRef?: string };
         responseTimeMs: number;
         confidence?: number;
@@ -371,7 +374,13 @@ export class PracticeService {
         [learnerId, skillId],
       );
 
-      let currentMastery: { pKnow: number; nObs: number; distinctDays: number; spacedObs: number; lastPracticeAt: Date | null } | null = null;
+      let currentMastery: {
+        pKnow: number;
+        nObs: number;
+        distinctDays: number;
+        spacedObs: number;
+        lastPracticeAt: Date | null;
+      } | null = null;
       if (masteryRows.length > 0) {
         const row = masteryRows[0];
         currentMastery = {
@@ -389,7 +398,7 @@ export class PracticeService {
         skillId,
         pL0: 0.15,
         pT: 0.25,
-        pS: 0.10,
+        pS: 0.1,
         pG: guessProb,
         source: 'judgement_anchor',
         fittedAt: null,
@@ -437,7 +446,8 @@ export class PracticeService {
       });
 
       // Create item_response
-      const responseText = typeof item.response === 'string' ? item.response : item.response.transcript ?? '';
+      const responseText =
+        typeof item.response === 'string' ? item.response : (item.response.transcript ?? '');
       await manager.query(
         `INSERT INTO item_responses (attempt_id, learner_id, item_id, response, correct, response_time_ms, confidence, bkt_prior, bkt_posterior)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
@@ -465,14 +475,7 @@ export class PracticeService {
            spaced_obs = $6,
            last_practice_at = NOW(),
            updated_at = NOW()`,
-        [
-          learnerId,
-          skillId,
-          updatedState.pKnow,
-          newNobs,
-          newDistinctDays,
-          newSpacedObs,
-        ],
+        [learnerId, skillId, updatedState.pKnow, newNobs, newDistinctDays, newSpacedObs],
       );
     }
 
@@ -580,7 +583,7 @@ export class PracticeService {
   ) {
     const now = new Date();
     const fsrsRows = await manager.query(
-      `SELECT skill_id, item_id, due_date, stability
+      `SELECT fs.item_id, fs.due_date, i.skill_ids
          FROM fsrs_states fs
          JOIN items i ON i.id = fs.item_id
         WHERE fs.learner_id = $1
@@ -594,17 +597,14 @@ export class PracticeService {
     const scheduleMap = new Map<string, { nextReviewAt: Date; intervalDays: number }>();
 
     for (const row of fsrsRows) {
-      const skillIds = row.skill_id; // This is item_id, we need to get skill from items
-      // Get skill from item
-      const itemRows = await manager.query(
-        `SELECT skill_ids FROM items WHERE id = $1`,
-        [row.item_id],
-      );
-      if (itemRows.length === 0) continue;
-      const skill = itemRows[0].skill_ids[0]?.split('.')[0] ?? 'vocab';
+      const skillIds: string[] = Array.isArray(row.skill_ids) ? row.skill_ids : [];
+      const skill = skillIds[0]?.split('.')[0] ?? 'vocab';
 
       const dueDate = new Date(row.due_date);
-      const intervalDays = Math.max(1, Math.ceil((dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+      const intervalDays = Math.max(
+        1,
+        Math.ceil((dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)),
+      );
 
       if (!scheduleMap.has(skill) || dueDate < scheduleMap.get(skill)!.nextReviewAt) {
         scheduleMap.set(skill, { nextReviewAt: dueDate, intervalDays });

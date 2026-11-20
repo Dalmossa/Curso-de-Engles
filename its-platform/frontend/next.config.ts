@@ -51,6 +51,9 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  experimental: {
+    agentUpgrade: 'security',
+  },
   // Silence the Turbopack warning about multiple lockfiles
   turbopack: {
     root: __dirname,

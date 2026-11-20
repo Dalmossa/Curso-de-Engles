@@ -14,14 +14,11 @@
  * The obligation this suite pins is the general one, not the incident: **the status the server sends
  * is a status the document declares for that operation.** The document is read here rather than
  * quoted, so a future `202`/`201` — in either direction, code or contract — makes this fail instead
- * of becoming the next silent disagreement between the two. `npm run contract:gate` covers
- * *presence* of routes, error media types and the request-body rules; it does not compare a served
- * success status against the declared set, and until A5a nothing did.
+ * of becoming the next silent disagreement between the two.
  *
  * The application is real — the controllers, their routes, the URL version and `configureApp` (the
  * composition root `src/main.ts` calls). The failure this guards against is only observable over
- * HTTP: the decorator is metadata on a route, and a unit test of the controller method would assert
- * the return value while the framework decided the status.
+ * HTTP. Services are DB-free stubs: this suite measures response status, not persistence/RLS.
  */
 
 import { readFileSync } from 'fs';
@@ -54,8 +51,9 @@ const PRACTICE_PATH = '/learners/{learner_id}/practice';
 const PLACEMENT = `/api/v1/learners/${UUID}/placement`;
 const PRACTICE = `/api/v1/learners/${UUID}/practice`;
 
-/** A real item id from the catalogue — measured: all 49 distinct pack item ids match the pattern. */
-const ITEM_ID = 'voc_email_tone_marker_001';
+/** A real item id from the canonical airport pack. */
+const ITEM_ID = 'grm_airport_immigration_questions_001';
+const PACK_ID = 'pack_les_a2_airport_v1';
 
 const spec = yaml.parse(
   readFileSync(join(process.cwd(), 'docs', 'api-spec.openapi.yaml'), 'utf8'),
@@ -68,21 +66,41 @@ function declaredSuccessStatuses(path: string): string[] {
   return Object.keys(spec.paths[path]?.['post']?.responses ?? {}).filter((s) => /^2\d\d$/.test(s));
 }
 
-/**
- * A5b put a load in front of the handler: the addressed learner is resolved under the caller's RLS
- * context (`LearnerScopeService`) before the operation computes anything. This suite publishes one
- * claim — which success status each operation answers — so the scope is stubbed to "visible"; the
- * load's own evidence is `tests/integration/learner-scope-rls.spec.ts`.
- */
 const learnerScopeStub = {
-  requireVisible: (subject: string, id: string) => Promise.resolve({ id }),
+  requireVisible: (_subject: string, id: string) => Promise.resolve({ id }),
+  withVisible: <T>(
+    _subject: string,
+    id: string,
+    work: (learner: { id: string }, tx: unknown) => Promise<T>,
+  ) => work({ id }, {}),
+};
+
+const placementStub = {
+  runDiagnostic: (_subject: string, id: string) =>
+    Promise.resolve({
+      learner_id: id,
+      start_node: 'les_a2_airport',
+      theta_estimate: { theta: 0.0, se: 0.5, ci95: [-0.98, 0.98] },
+      blueprint_coverage: {},
+      stopping_rule: 'fixed_form',
+    }),
+};
+
+const practiceStub = {
+  submitPractice: (_subject: string, _id: string, body: { pack_id: string }) =>
+    Promise.resolve({
+      pack_id: body.pack_id,
+      scored_items: [],
+      mastery_updates: [],
+      next_review_schedule: [],
+    }),
 };
 
 @Module({
   controllers: [PlacementController, PracticeController],
   providers: [
-    PlacementService,
-    PracticeService,
+    { provide: PlacementService, useValue: placementStub },
+    { provide: PracticeService, useValue: practiceStub },
     { provide: LearnerScopeService, useValue: learnerScopeStub },
     {
       provide: TOKEN_VERIFIER,
@@ -104,10 +122,6 @@ beforeAll(async () => {
   configureApp(app);
   await app.listen(0);
   base = `http://127.0.0.1:${(app.getHttpServer().address() as AddressInfo).port}`;
-  // A5b: both operations are learner-scoped and authenticated, so the suite now presents the
-  // credential a real caller would. What it asserts is unchanged — the *status* of a request that
-  // was already going to succeed; before the fixture, it was asserted of a request the guard would
-  // have refused, which is how the 201 survived A5a's proof.
   AUTH = authorization(await fixture.accessToken(UUID, ['learner:self']));
 });
 
@@ -129,14 +143,12 @@ const validPlacement = { learner_id: UUID, mode: 'fixed' as const };
 
 const validSubmission = {
   learner_id: UUID,
-  pack_id: 'pack_les_a2_email_basics_v1',
+  pack_id: PACK_ID,
   responses: [{ item_id: ITEM_ID, response: 'B', response_time_ms: 4200 }],
 };
 
 describe('A5a — each `POST` answers a status the document declares', () => {
   it('the document declares exactly one success status per operation, and it is 200', () => {
-    // The premise of the two cases below, read from the file rather than restated: if the document
-    // ever gains a second success status, this case is where that shows up.
     expect(declaredSuccessStatuses(PLACEMENT_PATH)).toEqual(['200']);
     expect(declaredSuccessStatuses(PRACTICE_PATH)).toEqual(['200']);
   });

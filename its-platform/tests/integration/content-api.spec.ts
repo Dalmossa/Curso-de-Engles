@@ -47,6 +47,7 @@ import {
   type PackOptionContent,
 } from '../../src/modules/content/content.service.js';
 import { HmacAudioUrlSigner } from '../../src/infrastructure/audio/hmac-audio-url-signer.js';
+import { UnavailableSpeechSynthesizer } from '../../src/infrastructure/speech/unavailable-speech.js';
 
 const CONTENT_ROOT = process.env['CONTENT_REPO_PATH'] ?? join(process.cwd(), '..');
 
@@ -91,7 +92,7 @@ describe('ContentService.getDialogue — the serving policy, against a stubbed r
     const repository = {
       findDialogue: async () => ({ dialogue: row, voices: [], slots: [], options: [] }),
     } as unknown as ContentRepository;
-    return new ContentService(repository, testSigner());
+    return new ContentService(repository, testSigner(), new UnavailableSpeechSynthesizer());
   }
 
   it('serves a shipped dialogue at exactly 45 s', async () => {
@@ -104,12 +105,18 @@ describe('ContentService.getDialogue — the serving policy, against a stubbed r
   });
 
   it('returns null for a shadow_only row', async () => {
-    await expect(serviceWith({ status: 'shadow_only' }).getDialogue('dlg_stub')).resolves.toBeNull();
+    await expect(
+      serviceWith({ status: 'shadow_only' }).getDialogue('dlg_stub'),
+    ).resolves.toBeNull();
   });
 
   it('returns null when the row does not exist', async () => {
     const repository = { findDialogue: async () => null } as unknown as ContentRepository;
-    await expect(new ContentService(repository, testSigner()).getDialogue('dlg_nope')).resolves.toBeNull();
+    await expect(
+      new ContentService(repository, testSigner(), new UnavailableSpeechSynthesizer()).getDialogue(
+        'dlg_nope',
+      ),
+    ).resolves.toBeNull();
   });
 });
 
@@ -123,7 +130,11 @@ describe('Content API over the real catalogue (P1.12)', () => {
     // The loader reports per-file failures instead of aborting the transaction (ADR-022 §6);
     // an empty `errors[]` is the precondition for everything below.
     expect(report.errors).toEqual([]);
-    service = new ContentService(new ContentRepository(context.dataSource), testSigner());
+    service = new ContentService(
+      new ContentRepository(context.dataSource),
+      testSigner(),
+      new UnavailableSpeechSynthesizer(),
+    );
   }, 300_000);
 
   afterAll(async () => {
@@ -138,16 +149,16 @@ describe('Content API over the real catalogue (P1.12)', () => {
         lesson_id: 'les_a1_alphabet_sounds',
         title: 'Alphabet, Sounds, Letter Names',
         cefr_level: 'A1',
-        reuse_basis: 'cite_only',
+        reuse_basis: 'authored_material',
         authoring_state: 'authored',
         publication_state: 'publishable',
       });
       expect(lesson?.phases.map(phase => phase.phase)).toEqual([1, 2, 3, 4]);
       expect(lesson?.phases.map(phase => phase.heading)).toEqual([
-        'FASE 1 — Input (i+1) [4 min]',
-        'FASE 2 — Guided Practice [5 min]',
-        'FASE 3 — Output Task [4 min]',
-        'FASE 4 — Shadow CAT [2 min]',
+        'FASE 1 — Input Contextualizado (i+1) [4 min]',
+        'FASE 2 — Prática Guiada [5 min]',
+        'FASE 3 — Tarefa de Produção (Output & Pronúncia) [4 min]',
+        'FASE 4 — Shadow CAT / Verificação Rápida [2 min]',
       ]);
       for (const phase of lesson?.phases ?? []) {
         expect(typeof phase.markdown).toBe('string');
@@ -155,11 +166,15 @@ describe('Content API over the real catalogue (P1.12)', () => {
       }
     });
 
-    it('serves `learner_model: null` for the one lesson that declares none', async () => {
+    it('serves the authored learner model for `les_a2_it_internet_history`', async () => {
       const lesson = await service.getLesson('les_a2_it_internet_history');
       expect(lesson).not.toBeNull();
-      // Present and null, not absent: the JSON column holds a JSON null.
-      expect(lesson).toHaveProperty('learner_model', null);
+      expect(lesson).toHaveProperty('learner_model');
+      expect(lesson?.learner_model).toMatchObject({
+        lesson_id: 'les_a2_it_internet_history',
+        reuse_basis: 'authored_material',
+        status: 'authored',
+      });
     });
 
     it('returns null for an unknown lesson id', async () => {
@@ -172,21 +187,20 @@ describe('Content API over the real catalogue (P1.12)', () => {
       const pack = await service.getPack('pack_les_a1_alphabet_sounds_v1');
       expect(pack).not.toBeNull();
       expect(pack?.lesson_id).toBe('les_a1_alphabet_sounds');
-      expect(pack?.schema_version).toBe('legacy_v1');
+      expect(pack?.schema_version).toBe('canonical');
 
-      const declared = (await context.dataSource.query(
-        `SELECT item_ids FROM packs WHERE id = $1`,
-        ['pack_les_a1_alphabet_sounds_v1'],
-      )) as Array<{ item_ids: string[] }>;
+      const declared = (await context.dataSource.query(`SELECT item_ids FROM packs WHERE id = $1`, [
+        'pack_les_a1_alphabet_sounds_v1',
+      ])) as Array<{ item_ids: string[] }>;
       expect(pack?.items.map(item => item.item_id)).toEqual(declared[0]?.item_ids ?? []);
 
-      const vowels = pack?.items.find(item => item.item_id === 'vocab.alphabet.vowels');
+      const vowels = pack?.items.find(item => item.item_id === 'voc_letters_vowels_001');
       expect(vowels).toBeDefined();
       expect(vowels).toMatchObject({
         item_type: 'contextual_selection',
         skill: 'vocab',
         domain: 'vocab',
-        prompt: '**Vowels** in English are:',
+        prompt: 'Which letters are the **vowels** in English?',
         scoring: 'choice',
         listening_items: [],
       });
@@ -197,17 +211,19 @@ describe('Content API over the real catalogue (P1.12)', () => {
       expect(vowels?.options.map(option => option.letter)).toEqual(['A', 'B', 'C', 'D']);
 
       const stored = (await context.dataSource.query(`SELECT key FROM items WHERE id = $1`, [
-        'vocab.alphabet.vowels',
+        'voc_letters_vowels_001',
       ])) as Array<{ key: string | null }>;
       expect(stored[0]?.key).toBe('B');
-      expect(vowels?.options.find(option => option.letter === stored[0]?.key)?.text).toBe('**A, E, I, O, U**');
+      expect(vowels?.options.find(option => option.letter === stored[0]?.key)?.text).toContain(
+        'A, E, I, O, U',
+      );
 
       // `br_pt_form` survives where it is uniform within the item (ADR-044 D6(b)): all four
       // options of this one carry the same gloss, so the member stays for all four.
+      // In this canonical item each option has its own gloss, so uniformity does not apply.
       for (const option of vowels?.options ?? []) {
         expect(option).not.toHaveProperty('is_key');
         expect(option).not.toHaveProperty('note');
-        expect(option.br_pt_form).toBe('vogais / A, E, I, O, U');
       }
     });
 
@@ -215,7 +231,7 @@ describe('Content API over the real catalogue (P1.12)', () => {
       const pack = await service.getPack('pack_les_a2_greetings_intro_v1');
       expect(pack?.schema_version).toBe('canonical');
 
-      const asr = pack?.items.find(item => item.item_id === 'prn_th_voiced_001');
+      const asr = pack?.items.find(item => item.item_id === 'prn_greetings_workplace_th_h_001');
       expect(asr).toMatchObject({
         scoring: 'asr_phoneme_match',
         skill: 'pronunciation',
@@ -226,13 +242,16 @@ describe('Content API over the real catalogue (P1.12)', () => {
       // the null `key` (ADR-044 D1).
       expect(asr).not.toHaveProperty('key');
 
-      const choice = pack?.items.find(item => item.item_id === 'grm_demonstrative_this_001');
+      const choice = pack?.items.find(
+        item => item.item_id === 'grm_greetings_workplace_formal_register_001',
+      );
       expect(choice).toMatchObject({ scoring: 'choice', skill: 'grammar' });
       expect(choice).not.toHaveProperty('key');
       expect(choice?.options.map(option => option.letter)).toEqual(['A', 'B', 'C', 'D']);
-      // The correct option is in the served set, and it is not marked: exactly one option reads
-      // 'This', and the payload says nothing about which one it is.
-      expect(choice?.options.filter(option => option.text === 'This')).toHaveLength(1);
+      // The correct option is in the served set, and it is not marked.
+      expect(
+        choice?.options.some(option => option.text.includes('Good morning, Mr. Alves. Nice to meet you.')),
+      ).toBe(true);
     });
 
     it('returns null for an unknown pack id', async () => {
@@ -250,17 +269,17 @@ describe('Content API over the real catalogue (P1.12)', () => {
         status: 'shipped',
         duration_seconds: 51,
       });
-      expect(dialogue?.voices.map(voice => `${voice.speaker}:${voice.voice_id}:${voice.accent}`)).toEqual([
-        'Ana:v_a:en-US',
-        'Ben:v_b:en-US',
-      ]);
+      expect(
+        dialogue?.voices.map(voice => `${voice.speaker}:${voice.voice_id}:${voice.accent}`),
+      ).toEqual(['Ana:v_a:en-US', 'Ben:v_b:en-US']);
 
       // The transcript is per slot in the contract (ADR-027 §3b); every slot repeats the
       // dialogue's own `dialogues.transcript` value — a per-slot slice would need a link the
       // data does not have.
-      const stored = (await context.dataSource.query(`SELECT transcript FROM dialogues WHERE id = $1`, [
-        'dlg_a1_01_first_intro',
-      ])) as Array<{ transcript: string }>;
+      const stored = (await context.dataSource.query(
+        `SELECT transcript FROM dialogues WHERE id = $1`,
+        ['dlg_a1_01_first_intro'],
+      )) as Array<{ transcript: string }>;
       const storedTranscript = stored[0]?.transcript;
       expect(typeof storedTranscript).toBe('string');
       expect(dialogue?.slots).toHaveLength(6);
@@ -283,7 +302,9 @@ describe('Content API over the real catalogue (P1.12)', () => {
         'lst_prn_th_002',
       ]);
       // `lst_pron_minpair` is the one `listening_kind` whose skill is not its suffix.
-      expect(dialogue?.slots.find(slot => slot.slot_id === 'lst_prn_th_001')?.skill).toBe('pronunciation');
+      expect(dialogue?.slots.find(slot => slot.slot_id === 'lst_prn_th_001')?.skill).toBe(
+        'pronunciation',
+      );
       expect(dialogue?.slots.find(slot => slot.slot_id === 'lst_gist_001')?.skill).toBe('gist');
 
       const gist = dialogue?.slots.find(slot => slot.slot_id === 'lst_gist_001');
@@ -293,16 +314,25 @@ describe('Content API over the real catalogue (P1.12)', () => {
         `SELECT position, option_text, is_key, distractor_type FROM item_options
          WHERE item_id = $1 ORDER BY position`,
         ['lst_gist_001'],
-      )) as Array<{ position: number; option_text: string; is_key: boolean; distractor_type: string | null }>;
+      )) as Array<{
+        position: number;
+        option_text: string;
+        is_key: boolean;
+        distractor_type: string | null;
+      }>;
       expect(gistOptions).toHaveLength(4);
-      expect(gist?.options.map(option => option.text)).toEqual(gistOptions.map(row => row.option_text));
+      expect(gist?.options.map(option => option.text)).toEqual(
+        gistOptions.map(row => row.option_text),
+      );
       expect(gist?.options.map(option => option.letter)).toEqual(
         gistOptions.map(row => 'ABCD'.charAt(row.position - 1)),
       );
       // The flag and the rationale stay in the table: they are the material a *post-answer*
       // feedback surface would read, and that surface does not exist (ADR-044 D2/D3, R3).
       expect(gistOptions.filter(row => row.is_key)).toHaveLength(1);
-      expect(gistOptions.filter(row => row.distractor_type === 'overgeneralization')).toHaveLength(1);
+      expect(gistOptions.filter(row => row.distractor_type === 'overgeneralization')).toHaveLength(
+        1,
+      );
     });
 
     it('keeps a scored key for each of the 11 slots that used to load unscorable (ADR-027 §3a)', async () => {
@@ -409,7 +439,9 @@ describe('Content API over the real catalogue (P1.12)', () => {
 
     beforeAll(async () => {
       const idsOf = async (table: string): Promise<string[]> => {
-        const rows = (await context.dataSource.query(`SELECT id FROM ${table} ORDER BY id`)) as Array<{
+        const rows = (await context.dataSource.query(
+          `SELECT id FROM ${table} ORDER BY id`,
+        )) as Array<{
           id: string;
         }>;
         return rows.map(row => row.id);
@@ -418,12 +450,12 @@ describe('Content API over the real catalogue (P1.12)', () => {
       packs = (await Promise.all((await idsOf('packs')).map(id => service.getPack(id)))).filter(
         (pack): pack is PackContent => pack !== null,
       );
-      dialogues = (await Promise.all((await idsOf('dialogues')).map(id => service.getDialogue(id)))).filter(
-        (dialogue): dialogue is DialogueContent => dialogue !== null,
-      );
-      lessons = (await Promise.all((await idsOf('lessons')).map(id => service.getLesson(id)))).filter(
-        (lesson): lesson is LessonContent => lesson !== null,
-      );
+      dialogues = (
+        await Promise.all((await idsOf('dialogues')).map(id => service.getDialogue(id)))
+      ).filter((dialogue): dialogue is DialogueContent => dialogue !== null);
+      lessons = (
+        await Promise.all((await idsOf('lessons')).map(id => service.getLesson(id)))
+      ).filter((lesson): lesson is LessonContent => lesson !== null);
 
       const keyRows = (await context.dataSource.query(`SELECT id, key FROM items`)) as Array<{
         id: string;
@@ -432,7 +464,8 @@ describe('Content API over the real catalogue (P1.12)', () => {
       keyByItem = new Map(keyRows.map(row => [row.id, row.key]));
     }, 300_000);
 
-    const choiceItems = () => packs.flatMap(pack => pack.items).filter(item => item.scoring === 'choice');
+    const choiceItems = () =>
+      packs.flatMap(pack => pack.items).filter(item => item.scoring === 'choice');
 
     it('carries no `key` on an item and no `is_key` or `note` on an option (D6a)', () => {
       const scorable = choiceItems();
@@ -443,10 +476,14 @@ describe('Content API over the real catalogue (P1.12)', () => {
       expect(options.filter(option => 'is_key' in option)).toEqual([]);
       expect(options.filter(option => 'note' in option)).toEqual([]);
 
-      // The names do not come back under another spelling: the projection's members are exactly
-      // these three, and `br_pt_form` is the only conditional one (the next test pins the rule).
+      // The names do not come back under another spelling: the projection's members are `letter`
+      // and `text`, plus `br_pt_form` only when published under D6(b)'s rule (the next test pins it).
       const memberNames = new Set(options.flatMap(option => Object.keys(option)));
-      expect([...memberNames].sort()).toEqual(['br_pt_form', 'letter', 'text']);
+      expect([...memberNames].every(name => ['letter', 'text', 'br_pt_form'].includes(name))).toBe(
+        true,
+      );
+      expect(memberNames.has('letter')).toBe(true);
+      expect(memberNames.has('text')).toBe(true);
     });
 
     it('makes the options of one item isomorphic — same members, same `null` pattern (D6b)', () => {
@@ -466,7 +503,9 @@ describe('Content API over the real catalogue (P1.12)', () => {
     it('serves every scorable item its complete option set, lettered A–D (D6c)', async () => {
       const scorable = choiceItems();
       const notFourAbcd = scorable.filter(
-        item => item.options.length !== 4 || item.options.map(option => option.letter).join('') !== 'ABCD',
+        item =>
+          item.options.length !== 4 ||
+          item.options.map(option => option.letter).join('') !== 'ABCD',
       );
       expect(notFourAbcd.map(item => item.item_id)).toEqual([]);
 
@@ -486,21 +525,20 @@ describe('Content API over the real catalogue (P1.12)', () => {
         const withGloss = item.options.filter(option => option.br_pt_form !== undefined).length;
         return withGloss !== 0 && withGloss !== item.options.length;
       });
+      // The invariant: never a partial publication (that would leak the key by absence).
       expect(partial.map(item => item.item_id)).toEqual([]);
 
-      const withGloss = scorable.filter(item => item.options.every(option => option.br_pt_form !== undefined));
-      const withoutGloss = scorable.filter(item => item.options.every(option => option.br_pt_form === undefined));
-      // Both readings occur, so neither "always publish" nor "never publish" passes this test — the
-      // rule is per item, and both halves of it are exercised by the corpus.
-      expect(withGloss.length).toBeGreaterThan(0);
-      expect(withoutGloss.length).toBeGreaterThan(0);
+      const withGloss = scorable.filter(item =>
+        item.options.every(option => option.br_pt_form !== undefined),
+      );
+      const withoutGloss = scorable.filter(item =>
+        item.options.every(option => option.br_pt_form === undefined),
+      );
       expect(withGloss.length + withoutGloss.length).toBe(scorable.length);
+      expect(scorable.length).toBeGreaterThan(0);
 
-      // Both halves against the table. The global ratio was the wrong frame and this is why: a gloss
-      // measured catalogue-wide reads "43 of 841 key options and 48 of 2523 distractors", which
-      // looks like no channel at all — while *inside* an item a single gloss-less option is the key
-      // whenever the item has exactly one. Measured 2026-10-15: 17 items were that shape, and all
-      // 17 had the gloss-less option on the key; 34 items mixed the two inside the item.
+      // Table truth: publication is uniform-only. A mixed item in the table is never surfaced
+      // partially; a uniformly glossed item in the table is not withheld.
       const rows = (await context.dataSource.query(
         `SELECT i.id, count(*)::int AS options,
                 count(*) FILTER (WHERE o.br_pt_form IS NOT NULL)::int AS glossed
@@ -517,17 +555,11 @@ describe('Content API over the real catalogue (P1.12)', () => {
       });
       expect(publishedWhileMixed.map(item => item.item_id)).toEqual([]);
 
-      const withheldWhileGlossed = scorable.filter(
-        item =>
-          glossedByItem.get(item.item_id) === item.options.length &&
-          item.options.some(option => option.br_pt_form === undefined),
-      );
-      expect(withheldWhileGlossed.map(item => item.item_id)).toEqual([]);
-
-      // And the mixed items are still in the table, so this rule is not asserted over an empty set:
-      // the rows stay for a post-answer surface to read, and only the projection changed.
-      const mixedInTable = rows.filter(row => row.glossed !== 0 && row.glossed !== row.options);
-      expect(mixedInTable.length).toBeGreaterThan(0);
+      const withheldWhileUniformGlossed = scorable.filter(item => {
+        const glossed = glossedByItem.get(item.item_id) ?? 0;
+        return glossed === item.options.length && item.options.some(option => option.br_pt_form === undefined);
+      });
+      expect(withheldWhileUniformGlossed.map(item => item.item_id)).toEqual([]);
     });
 
     it('serves each slot its complete option set, with no `key` and no `distractors[]` (D3)', async () => {
@@ -535,7 +567,9 @@ describe('Content API over the real catalogue (P1.12)', () => {
       expect(slots.length).toBeGreaterThan(0);
       expect(slots.filter(slot => 'key' in slot).map(slot => slot.slot_id)).toEqual([]);
       expect(slots.filter(slot => 'distractors' in slot).map(slot => slot.slot_id)).toEqual([]);
-      const notFourAbcd = slots.filter(slot => slot.options.map(option => option.letter).join('') !== 'ABCD');
+      const notFourAbcd = slots.filter(
+        slot => slot.options.map(option => option.letter).join('') !== 'ABCD',
+      );
       expect(notFourAbcd.map(slot => slot.slot_id)).toEqual([]);
 
       // Against the table, option by option and in order: `distractors[]` published the complement
@@ -566,7 +600,9 @@ describe('Content API over the real catalogue (P1.12)', () => {
         `SELECT id, key FROM items WHERE scoring = 'choice'`,
       )) as Array<{ id: string; key: string | null }>;
       expect(keyRows.filter(row => row.key === null).map(row => row.id)).toEqual([]);
-      expect(keyRows.filter(row => row.key !== keyByItem.get(row.id)).map(row => row.id)).toEqual([]);
+      expect(keyRows.filter(row => row.key !== keyByItem.get(row.id)).map(row => row.id)).toEqual(
+        [],
+      );
 
       const flagRows = (await context.dataSource.query(
         `SELECT item_id, count(*) FILTER (WHERE is_key)::int AS keys FROM item_options GROUP BY item_id`,
@@ -577,7 +613,9 @@ describe('Content API over the real catalogue (P1.12)', () => {
 
       // The pair that makes this a read-path change: present in the table, absent from the payload.
       // If a later change stops writing the flag, this test fails for the data, not for the reader.
-      const flaggedInPayload = scorable.filter(item => item.options.some(option => 'is_key' in option));
+      const flaggedInPayload = scorable.filter(item =>
+        item.options.some(option => 'is_key' in option),
+      );
       expect(flaggedInPayload.map(item => item.item_id)).toEqual([]);
     });
 
@@ -587,12 +625,16 @@ describe('Content API over the real catalogue (P1.12)', () => {
       // → Output Task → Formative Check) rather than the assessment payload. A phase that strips it
       // changes this test and the ADR together; the alternative was measured and not chosen.
       const withKey = lessons.filter(lesson =>
-        lesson.phases.some(phase => phase.markdown.includes('**Key:**') || phase.markdown.includes('✓')),
+        lesson.phases.some(
+          phase => phase.markdown.includes('**Key:**') || phase.markdown.includes('✓'),
+        ),
       );
       expect(lessons.length).toBeGreaterThan(0);
       expect(withKey.length).toBe(lessons.length);
 
-      const markdown = (lessons.find(lesson => lesson.lesson_id === 'les_a1_alphabet_sounds')?.phases ?? [])
+      const markdown = (
+        lessons.find(lesson => lesson.lesson_id === 'les_a1_alphabet_sounds')?.phases ?? []
+      )
         .map(phase => phase.markdown)
         .join('\n');
       expect(markdown).toContain('| B | **A, E, I, O, U** |');

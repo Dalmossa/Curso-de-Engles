@@ -16,10 +16,6 @@
  * with the connection switched to `its_platform_app`, the role ADR-019/ADR-026 define for the process
  * and the same switch `rls-isolation.spec.ts` uses. The last `describe` measures what that means: with
  * the connection left as its owner the same request answers `200`, because nothing filtered the row.
- * That is not a hypothetical — `src/infrastructure/data-source.ts` builds the pool from
- * `DB_USERNAME` (default `postgres`) and no code in `src/` issues `SET ROLE` — and it is why
- * `reports/api/fase-5b.md` §4.2 records the connection role as an open item of this phase rather than
- * a detail of the test.
  *
  * **Both modes.** `createTestDb()` gives PGlite when `TEST_DATABASE_URL` is unset and a real
  * PostgreSQL 16 when it is set; the assertions are the same in both, and CI runs this file in the
@@ -34,6 +30,11 @@
 
 import { createTestDb, type TestDbContext } from '../helpers/db.js';
 import { PgSessionContext } from '../../src/infrastructure/persistence/pg-session-context.js';
+import {
+  AIRPORT_ITEM_ID,
+  AIRPORT_PACK_ID,
+  seedContentFixture,
+} from '../helpers/content-fixture.js';
 import { startLearnerRoutesApp, type LearnerRoutesApp } from '../helpers/learner-routes-app.js';
 
 /** The caller. Owns a row, and is the `sub` of every token this file mints. */
@@ -45,15 +46,11 @@ const ABSENT = 'cccccccc-cccc-4333-8333-333333333333';
 
 const PROBLEM_MEDIA_TYPE = /^application\/problem\+json(; charset=utf-8)?$/;
 
-/** A pack id and an item id the contract's patterns accept (measured against `PracticeSubmission`). */
-const PACK_ID = 'pack_les_a2_airport_v1';
-const ITEM_ID = 'voc_airport_001';
-
 const placement = (learnerId: string) => ({ learner_id: learnerId, mode: 'adaptive' });
 const practice = (learnerId: string) => ({
   learner_id: learnerId,
-  pack_id: PACK_ID,
-  responses: [{ item_id: ITEM_ID, response: 'gate', response_time_ms: 900 }],
+  pack_id: AIRPORT_PACK_ID,
+  responses: [{ item_id: AIRPORT_ITEM_ID, response: 'B', response_time_ms: 900 }],
 });
 
 /** The part of a `Problem` that must not depend on who asks (`request_id`/`instance` vary, §4.6). */
@@ -95,20 +92,6 @@ function post(path: string, body: unknown): Promise<Response> {
   });
 }
 
-/**
- * Run `work` with the connection switched to the application role, and put it back afterwards. The
- * same shape `rls-isolation.spec.ts` uses: `SET ROLE` on the pooled connection, `RESET ROLE` in a
- * `finally`, so no test leaves the connection in another role.
- */
-async function asApp<T>(work: () => Promise<T>): Promise<T> {
-  await testDb.dataSource.query('SET ROLE its_platform_app');
-  try {
-    return await work();
-  } finally {
-    await testDb.dataSource.query('RESET ROLE');
-  }
-}
-
 beforeAll(async () => {
   testDb = await createTestDb();
   sessionContext = new PgSessionContext(testDb.dataSource);
@@ -120,18 +103,18 @@ beforeAll(async () => {
     [LEARNER_A, LEARNER_B],
   );
 
-  // The application boots through the shared helper: the four modules' controllers with the
-  // deployed guard, pipes and error filter, over this harness's connection, and a real RS256
-  // credential whose `sub` is the learner. A5b's own decision here is only the connection's role,
-  // which the describes below set and reset.
+  // Seed canonical content so the caller's own practice request can succeed (200) in the positive
+  // control; cross-learner requests are refused at visibility (404) before grading/content access.
+  await seedContentFixture(testDb.dataSource);
+
   started = await startLearnerRoutesApp(testDb.dataSource);
   base = started.base;
   AUTH = await started.auth(LEARNER_A);
 });
 
 afterAll(async () => {
-  await started.close();
-  await testDb.cleanup();
+  await started?.close();
+  await testDb?.cleanup();
 });
 
 describe('A5b — the load that decides, as its_platform_app', () => {
@@ -144,10 +127,6 @@ describe('A5b — the load that decides, as its_platform_app', () => {
   });
 
   it('hands the connection to the application in the application role, not as its owner', async () => {
-    // The mechanism made explicit, on the exact path the handler takes: `PgSessionContext` opens the
-    // transaction on a query runner the pool hands it, and `SET ROLE` was issued on the pool. PGlite
-    // has one connection, so this is exact there; on a pool it holds because the requests in this
-    // file are serial and the connection is warm — the same assumption `rls-isolation.spec.ts` makes.
     const rows = await sessionContext.withLearner(LEARNER_A, (tx) =>
       tx.query('SELECT current_user AS who'),
     );
@@ -176,15 +155,12 @@ describe('A5b — the load that decides, as its_platform_app', () => {
     const foreign = await call(`/api/v1/learners/${LEARNER_B}/profile`);
     const absent = await call(`/api/v1/learners/${ABSENT}/profile`);
 
-    // Both, before they are compared. A comparison of two answers is satisfied by any pair of equal
-    // answers, and the negative control run for this file showed exactly that: with the load removed
-    // this case passed while the five around it failed. It is a *sameness* assertion, so the pair has
-    // to be pinned to the refusal first for it to mean anything.
     expect(foreign.status).toBe(404);
     expect(absent.status).toBe(404);
     expect(absent.status).toBe(foreign.status);
-    // `request_id` and `instance` differ by design (§4.6); the members that carry meaning must not.
-    expect(consequently(absent)).toEqual(consequently(foreign));
+    expect(comparable((await absent.json()) as Record<string, unknown>)).toEqual(
+      comparable((await foreign.json()) as Record<string, unknown>),
+    );
   });
 
   it("refuses another learner's mastery with 404", async () => {
@@ -223,13 +199,8 @@ describe('A5b — the load that decides, as its_platform_app', () => {
 /**
  * The door the deployment must keep shut.
  *
- * Nothing here is a claim about how the API *should* answer; it is a measurement of what the
- * application does when the connection is what `src/infrastructure/data-source.ts` builds by default
- * — the owner of the tables, which bypasses their policies. It is the negative control for the
- * describe above: it shows the 404 is produced by the policy and not by the handler, and therefore
- * that the connection role is a **precondition** of ADR-038 D3 rather than an implementation detail.
- *
- * `reports/api/fase-5b.md` §4.2 records it.
+ * Negative control: with the connection left as its owner the same request answers `200`, because
+ * nothing filtered the row. `reports/api/fase-5b.md` §4.2 records it.
  */
 describe('A5b — with the connection left as its owner, the same request is answered 200', () => {
   it("the row the 404 hid is present: another learner's id exists, and the 404 was not absence", async () => {
@@ -244,15 +215,3 @@ describe('A5b — with the connection left as its owner, the same request is ans
     expect(response.status).toBe(200);
   });
 });
-
-function consequently(response: Response): Promise<Record<string, unknown>> {
-  return response.json().then((body: unknown) => {
-    const problem = body as ProblemBody;
-    return {
-      type: problem.type,
-      title: problem.title,
-      status: problem.status,
-      detail: problem.detail,
-    };
-  });
-}

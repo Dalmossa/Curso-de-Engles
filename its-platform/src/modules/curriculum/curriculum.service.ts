@@ -78,7 +78,8 @@ export class CurriculumService {
   }
 
   private loadCurriculumGraph(): CurriculumGraph {
-    const specPath = this.configService.get<string>('CURRICULUM_SPEC_PATH') ||
+    const specPath =
+      this.configService.get<string>('CURRICULUM_SPEC_PATH') ||
       path.resolve('/home/dalmo/Documentos/Curso-de-Ingles/specs/curriculum-graph-spec.md');
     const markdown = fs.readFileSync(specPath, 'utf-8');
     return parseCurriculumSpec(markdown);
@@ -111,13 +112,7 @@ export class CurriculumService {
 
   private async buildLearnerModel(learnerId: string): Promise<LearnerModel> {
     // Fetch all data in parallel
-    const [
-      masteryRows,
-      fsrsRows,
-      thetaRows,
-      diagnosticRows,
-      practiceRows,
-    ] = await Promise.all([
+    const [masteryRows, fsrsRows, thetaRows, diagnosticRows, practiceRows] = await Promise.all([
       this.dataSource.query<MasteryRow[]>(
         `SELECT skill_id, p_know, n_obs, distinct_days, spaced_obs, last_practice_at
            FROM learner_mastery
@@ -137,10 +132,10 @@ export class CurriculumService {
         [learnerId],
       ),
       this.dataSource.query<DiagnosticRow[]>(
-        `SELECT id, cefr, theta_estimate, skill_theta, completed_at
+        `SELECT id, cefr, theta AS theta_estimate, skill_theta, created_at AS completed_at
            FROM diagnostic_results
           WHERE learner_id = $1
-          ORDER BY completed_at DESC
+          ORDER BY created_at DESC
           LIMIT 1`,
         [learnerId],
       ),
@@ -155,7 +150,16 @@ export class CurriculumService {
     ]);
 
     // Build mastery map
-    const mastery = new Map<string, { pKnow: number; nObs: number; distinctDays: number; spacedObs: number; lastPracticeAt: Date | null }>();
+    const mastery = new Map<
+      string,
+      {
+        pKnow: number;
+        nObs: number;
+        distinctDays: number;
+        spacedObs: number;
+        lastPracticeAt: Date | null;
+      }
+    >();
     for (const row of masteryRows) {
       mastery.set(row.skill_id, {
         pKnow: Number(row.p_know),
@@ -167,17 +171,20 @@ export class CurriculumService {
     }
 
     // Build FSRS states map
-    const fsrsStates = new Map<string, {
-      stability: number;
-      difficulty: number;
-      state: FsrsStateName;
-      lastReview: Date;
-      dueDate: Date;
-      elapsedDays: number;
-      scheduledDays: number;
-      reps: number;
-      lapses: number;
-    }>();
+    const fsrsStates = new Map<
+      string,
+      {
+        stability: number;
+        difficulty: number;
+        state: FsrsStateName;
+        lastReview: Date;
+        dueDate: Date;
+        elapsedDays: number;
+        scheduledDays: number;
+        reps: number;
+        lapses: number;
+      }
+    >();
     for (const row of fsrsRows) {
       fsrsStates.set(row.item_id, {
         stability: Number(row.stability),
@@ -193,7 +200,10 @@ export class CurriculumService {
     }
 
     // Build theta estimates map
-    const thetaEstimates = new Map<string, { theta: number; se: number; ci95Lower: number; ci95Upper: number }>();
+    const thetaEstimates = new Map<
+      string,
+      { theta: number; se: number; ci95Lower: number; ci95Upper: number }
+    >();
     for (const row of thetaRows) {
       thetaEstimates.set(row.skill_id, {
         theta: Number(row.theta),
@@ -208,7 +218,7 @@ export class CurriculumService {
     for (const attempt of practiceRows) {
       if (attempt.completed_at && attempt.pack_id) {
         // Extract lesson_id from pack_id (pack_les_<lesson>_v1 -> les_<lesson>)
-        const lessonMatch = attempt.pack_id.match(/pack[-_]les_([a-z0-9_]+)(?:_v\d+)?/);
+        const lessonMatch = /pack[-_]les_([a-z0-9_]+)(?:_v\d+)?/.exec(attempt.pack_id);
         if (lessonMatch) {
           currentNodeId = `les_${lessonMatch[1]}`;
           break;

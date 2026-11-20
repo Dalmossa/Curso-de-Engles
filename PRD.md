@@ -1,8 +1,6 @@
 # PRD — Curso de Inglês: an ITS for Brazilian Portuguese speakers
 
-**Status:** specification-complete for the delivery layer; **122 of 123 lessons authored** (the
-123rd, `les_b1_it_presentations`, is `blocked_no_adequate_source`). Content is no longer the
-bottleneck: the open work is calibration, audio, and the pack-schema migration.
+**Status:** specification-complete for the delivery layer; **123 of 123 lessons authored as `authored_material` on disk** (incl. `les_b1_it_presentations`; os 7 marcadores históricos `sourced_external` permanecem preservados em `specs/`specs/curriculum-graph-spec.md` §4.3 por gate). Content and canonical packs are closed (123/123/861); the open work is calibration and audio.
 **Supersedes:** the previous `PRD.md`. That document is not an ancestor of this one — it is a
 replacement, and its headline figures are retracted. It reported a per-file line count the
 files do not support, a functional-readiness percentage with no derivation, and a claim of
@@ -34,9 +32,9 @@ practice. The pedagogical architecture is specified in `AGENTS.md`.
 
 | Excluded | Recorded in | Why |
 |-----------|-------------|-----|
-| Pronunciation **production** scoring | `assessment-item-spec.md` §2.5.1 | Phoneme-level ASR scoring is least reliable on exactly the L2 speech this course targets. Four named conditions would reverse it. |
-| Speaking and Writing as L1-tracked domains | `assessment-item-spec.md` §2.2 | They are output modalities with no reception item; tracked as constructs, not scored domains. |
-| Listening as a diagnostic domain | `diagnostic-spec.md` §2.1, §2.1.1 | No listening item carries IRT parameters, so no listening θ can exist. The placement is a 4-domain placement and says so on the results screen. |
+| Pronunciation **production** scoring | `specs/`specs/assessment-item-spec.md` §2.5.1 | Phoneme-level ASR scoring is least reliable on exactly the L2 speech this course targets. Four named conditions would reverse it. |
+| Speaking and Writing as L1-tracked domains | `specs/`specs/assessment-item-spec.md` §2.2 | They are output modalities with no reception item; tracked as constructs, not scored domains. |
+| Listening as a diagnostic domain | `specs/`specs/diagnostic-spec.md` §2.1 | No listening item carries IRT parameters, so no listening θ can exist. The placement is a 4-domain placement and says so on the results screen. |
 | Any reproduction or adaptation of the 7 local PDFs | `external-sources.md` §0.5.1, §7.0 | See §2 below. |
 
 ---
@@ -61,16 +59,13 @@ teach and *where* a Brazilian learner will struggle. They are not text to reprod
 Every lesson therefore declares a **reuse basis**, and `cite_only` is the default: author
 original material, cite the source in a bibliography, reproduce nothing.
 
-| Reuse basis | Applies to | Obligation before publication |
+| Reuse basis (estado autoral atual, disco) | Applies to | Obligation before publication |
 |-------------|-----------|-------------------------------|
-| `cite_only` | the 93 lessons whose content is original and merely informed by a local source | none beyond the citation |
-| `adapt_with_attribution` | the 13 lessons backed by a permissively-licensed external source | publish the attribution string (`external-sources.md` §7.1) |
-| `adapt_requires_permission` | the 48 list-shaped lessons whose list *is* the source | written, perpetual, redistribution-granting permission |
+| `authored_material` | 123 lessons (all lesson files on disk declare `authored_material`; Onda 2 Lotes 1–15 complete, incl. `les_b1_it_presentations` and `les_a2_it_terms_basics`) | none beyond the citation and the historical provenance notes preserved in specs |
+| `adapt_with_attribution` | 0 lessons as current reuse basis on disk (13 lessons remain tied to permissive external provenance in the historical 5-class partition of `external-sources.md` §0) | publish attribution strings where historically applicable (`external-sources.md` §7.1) |
+| `cite_only` / `adapt_requires_permission` | 0 lessons as current reuse basis on disk | n/a for current authored artifacts |
 
-**These three counts do not sum to the 123 lessons** (93 + 13 + 48 = 154, an overcount of 31). The
-cause and the `external-sources.md` §0 five-class partition that reconciles them are derived in §4's
-*"Derivation of reuse basis partition"*, which carries the **UNVERIFIED + pendência humana** marker:
-the exact mapping needs a `curriculum-graph-spec.md` §4.3 cross-reference that is still pending.
+**Reconciliação honesta (§0 de `external-sources.md`):** o particionamento histórico de proveniência em 5 classes (A17 explicitamente restritas BaixeLivros, B0 ©-only, C0 sem declaração, D11 com fonte externa permissiva reutilizável, E95 sem fonte específica declarada no registro — soma 123) não é idêntico ao particionamento por *reuse basis* dos artefatos autorados hoje. No estado atual do disco, as 123 lições estão como `authored_material` e 123 packs canônicos acompanham esse fechamento (0 legados), preservando os 7 marcadores históricos `sourced_external` em `specs/`specs/curriculum-graph-spec.md` §4.3. Pendências de permissão/publicação para material historicamente derivado de listas/fontes restritas permanecem registradas em `external-sources.md` §0.5 e §7.0 e não são apagadas por esta reconciliação.
 
 **The list-shaped exemption is the real exposure.** A list of 250 jargon entries is the
 source, not a fact about the language. `les_b2_it_jargon_mastery`,
@@ -95,7 +90,7 @@ than asserted.
   Brazilian Portuguese gloss on every item or the item is unreadable.
 - **False-beginner (A2-B1, studied at school, cannot hold a meeting)** — the target
   placement case. The diagnostic must distinguish this from an A2 beginner using the
-  `false_beginner` profile rule in `diagnostic-spec.md` §3.3a. Content starts at
+  `false_beginner` profile rule in `specs/`specs/diagnostic-spec.md` §3.3. Content starts at
   `les_a2_greetings_intro` and reaches `mod_a2_it_fundamentals` / `les_a2_it_terms_basics`.
 - **Technical professional (B1-B2), reads English, does not speak it** — needs the register
   asymmetry that `mod_b1_it_technical` makes unavoidable: `les_b1_it_write_docs` and
@@ -103,7 +98,7 @@ than asserted.
   and `les_a2_it_incidents` put the same content on a call. No permissively-licensed source
   supplies the spoken half, which is why the corpus is authored.
 - **Teacher or reviewer of the course itself** — needs the registry in
-  `curriculum-graph-spec.md` §4.3 and the defect log in `listening-corpus.md` §9 to answer
+  `specs/`specs/curriculum-graph-spec.md` §4.3 and the defect log in `corpus/`corpus/listening-corpus.md` §9 to answer
   "why is this item withdrawn" without reading fourteen dialogue transcripts. `les_a2_small_talk`
   and `les_a2_email_basics` are the two authored lessons with no gate between them, and are the
   right pair to teach the format from.
@@ -118,24 +113,24 @@ no design work done; `blocked` means a decision is owed by a human; `withdrawn` 
 decision was made and the artefact was removed. `withdrawn` is in the vocabulary because the
 corpus proved the first four could not express it — an item pulled by a recorded defect is not
 unwritten and not pending. A PRD that cannot name that state will quietly relabel it, and
-`listening-corpus.md` §8.2 did exactly that for years.
+`corpus/`corpus/listening-corpus.md` §8.2 did exactly that for years.
 
 | Artefact | Count | State |
 |----------|------:|-------|
 | Modules specified | 18 | specified |
 | Lessons in the registry | 123 | specified |
-| Authored lesson files | 122 | authored |
+| Authored lesson files | 123 | authored |
 | Lessons awaiting authoring | 0 | unauthored |
-| Lessons blocked on a source decision | 1 | blocked |
+| Lessons blocked on a source decision | 0 | blocked |
 | Lessons needing written permission | 48 | blocked |
 | Dialogue files | 13 | authored |
 | Listening item slots authored | 82 | authored |
 | Listening item slots withdrawn | 7 | withdrawn |
 | Listening item slots shadow-only | 1 | withdrawn |
-| Admissible listening items | 74 | authored |
-| Practice packs authored | 122 | authored |
-| Practice items authored | 855 | authored |
-| Packs outside the canonical item schema | 115 | authored |
+| Admissible listening slots | 74 | authored |
+| Pack files (canonical) | 123 | authored |
+| Practice items (total) | 861 | authored |
+| Packs outside the canonical item schema | 0 | authored |
 | External sources licence-checked and accepted | 19 | authored |
 | Learner-facing application | 0 | unauthored |
 | IRT item parameters (`a`, `b`) | 12 | authored (expert-anchored, declared SE) |
@@ -144,24 +139,19 @@ unwritten and not pending. A PRD that cannot name that state will quietly relabe
 The last row is the reason the row above it is zero — parameters need responses, responses need
 items, items need lessons, and rendered audio is what the listening items wait on. But the
 parameters themselves are **no longer zero**: the 12-item pilot bank (P1.8, DONE 2026-10-10,
-`assessment-item-spec.md` §9) supplies `(a, b)` for the Stage-1 form, **expert-anchored with
+`specs/`specs/assessment-item-spec.md` §9) supplies `(a, b)` for the Stage-1 form, **expert-anchored with
 declared SE** (`Var_a = 0.35²`, `Var_b = (1.75/n_raters)²`) — a Stage-1 anchor, not a population
 calibration. What needs responses is the *Stage-2 refit* (P3.1), which stands on `n ≥ 50` per item.
 
 **Derivation of reuse basis partition (per §2):**
-- PRD §2 declares: `cite_only`=93, `adapt_with_attribution`=13, `adapt_requires_permission`=48 → sum 154 ≠ 123 lições (overcount 31).
-- `external-sources.md` §0 classifies 123 lessons into 5 mutually exclusive classes: 58 restricted (BaixeLivros), 16 `©-only`, 22 no copyright, 13 permissive, 14 no source.
-- The 13 `adapt_with_attribution` PRD category = the 13 permissive‑external lessons from `external-sources.md` §0.
-- The 93 `cite_only` and 48 `adapt_requires_permission` PRD categories do not map cleanly to the `external-sources.md` 5‑class partition; the 31‑item overcount arises from lessons falling into multiple PRD categories or from schema‑v1 items not yet migrated.
-- **UNVERIFIED + pendência humana:** exact mapping between PRD §2’s three‑category scheme and the `external-sources.md` five‑class partition requires curriculum‑graph‑spec §4.3 cross‑reference, which is pending.
+- Estado autoral atual (disco): 123 lições `authored_material` e 123 packs canônicos / 861 itens.
+- Partição histórica de proveniência (`external-sources.md` §0, 5 classes, soma 123): A17 explicitamente restritas (BaixeLivros), B0 ©-only, C0 sem declaração, D11 com fonte externa permissiva reutilizável, E95 sem fonte específica declarada no registro.
+- Reconciliação: o fechamento autoral (Lotes 1–15) converteu o *reuse basis* declarado nos artefatos para `authored_material`, sem apagar a proveniência histórica nem os 7 marcadores `sourced_external` preservados em `specs/`specs/curriculum-graph-spec.md` §4.3. Obrigações de permissão/publicação associadas a fontes/listas restritas seguem registradas em `external-sources.md` §0.5 e §7.0.
 
-**Content is no longer the bottleneck; the item schema is the next debt.** The 122 packs split
-across two families: 7 in the canonical schema (`pack-les-<lesson>.md`, 49 items) that check [9]
-enforces in full, and **115 in a second schema** (`pack_les_<lesson>_v1.md`, 806 items) that predates
-it. The *high-cost* item defects are already covered on both — `verify-integrity.py` [11c]/[11d]/
-[11e] run across all 855 items — but 110 of the 115 declare no `**Reuse basis:**` and use dotted ids
-that do not satisfy `assessment-item-spec.md` §1.2. That residual is tracked as a warning, not a
-failure, and its migration is ordered in `post-lesson-practice-spec.md` §12.
+**Content and pack schema are aligned to the canonical state.** The 123 packs are in the
+canonical schema (`packs/**/pack-les-*.md`, 861 items) and `verify-integrity.py` [9]/[11c]/[11d]/[11e]
+enforce reuse basis, ids, keys e opções em todo o catálogo. Não há packs legados remanescentes;
+`specs/`specs/post-lesson-practice-spec.md` §12 registra a migração concluída e o ratchet em zero.
 
 ---
 
@@ -172,28 +162,26 @@ recomputes all seven at run time and fails the document if any drifts.
 
 | Number | Value | Derived from |
 |--------|------:|--------------|
-| Modules | 18 | `curriculum-graph-spec.md` §4.3, distinct `mod_` rows |
-| Lessons in the registry | 123 | `curriculum-graph-spec.md` §4.3, distinct `les_` ids |
-| Authored lesson files | 122 | `**Lesson ID:**` declarations across repo-root `les_*.md` files; same rule as `verify-integrity.py` check [8] |
-| Dialogue files | 13 | `listening-corpus.md` `## \`dlg_…\`` headers |
-| Item slots authored | 82 | `listening-corpus.md` `### L<n>-<n> — \`lst_…\`` headers |
-| Admissible listening items | 74 | `listening-corpus.md` `**Status:** shipped` fields |
-| Practice packs authored | 122 | `pack-les-*.md` **and** `pack_les_*_v1.md` files at repo root — both schemas; see `post-lesson-practice-spec.md` §12 |
+| Modules | 18 | `specs/`specs/curriculum-graph-spec.md` §4.3, distinct `mod_` rows |
+| Lessons in the registry | 123 | `specs/`specs/curriculum-graph-spec.md` §4.3, distinct `les_` ids |
+| Authored lesson files | 123 | `**Lesson ID:**` declarations across `lessons/**/*.md` files; same rule as `verify-integrity.py` check [8] |
+| Dialogue files | 13 | `corpus/listening-corpus.md` `## \`dlg_…\`` headers |
+| Item slots authored | 82 | `corpus/listening-corpus.md` `### L<n>-<n> — \`lst_…\`` headers |
+| Admissible listening slots | 74 | `corpus/listening-corpus.md` `**Status:** shipped` fields |
+| Pack files (canonical) | 123 | `packs/**/pack-les-*.md` files — canonical schema; see `specs/`specs/post-lesson-practice-spec.md` §12 |
+| Practice items (total) | 861 | `### ITEM` entries across canonical packs; derived by `python3 prd-score.py` |
 
-**One identity reconciles the three practice-item counts** (855 authored · 847 loaded · 921 rows):
-`SDD.md` §5 documents it with the command — 855 (both pack schemas) − 8 `MATCHING_KEY_UNSUPPORTED`
-skips (ADR-022 §5) = 847 pack items loaded; + 74 admissible listening slots folded into `items`
-(ADR-018 §9.6) = 921 rows, which `node scripts/content-check.mjs` prints as `{"…","items":921,"skips":16}`.
+**Reconciliation (authored vs loaded):** o catálogo autorado tem 123 packs / 861 itens de prática. A carga no banco e os skips de loader (quando aplicável, ex. `MATCHING_KEY_UNSUPPORTED` por ADR-022 §5) + slots de listening admissíveis (ADR-018 §9.6) seguem medidos por `node its-platform/scripts/content-check.mjs` no ambiente de dados; contagens de load não são inferidas aqui.
 
 Counts that are **not** in this table, and why they are harder:
 
-- **12 IRT-calibrated items.** `assessment-item-spec.md` §9 defines five validation criteria and
+- **12 IRT-calibrated items.** `specs/`specs/assessment-item-spec.md` §9 defines five validation criteria and
   states that until a 12-item pilot bank exists with expert-anchored `(a, b)` parameters
   ( `Var_a = 0.35²`, `Var_b = (1.75/n_raters)²` ), every `(a, b)` in the repository is a Stage-1
   guess. The pilot bank is DONE (P1.8, ADD 2026-10-10): 12 items, five validation criteria pass,
-  with `(a, b)` values and declared SE per `assessment-item-spec.md` §9.
+  with `(a, b)` values and declared SE per `specs/`specs/assessment-item-spec.md` §9.
 - **8 listening slots are not admissible**, and that is a decided state, not a missing one.
-  `listening-corpus.md` §9 records 14 defects; the `**Status:**` line of each item is the state
+  `corpus/`corpus/listening-corpus.md` §9 records 14 defects; the `**Status:**` line of each item is the state
   and the body is the evidence, and the two are never reconciled. 7 slots are `withdrawn` and 1
   is `shadow-only` — retained for its distractor design but not scored, because its key was never
   ear-checked.
@@ -218,15 +206,15 @@ reopens and what evidence changes.
    audio renders and Stage-1 calibration runs, listening state is BKT alone, and it must not be
    reported with the same confidence as an IRT θ.
 5. **Pronunciation production scoring is excluded**, and the exclusion states its own
-   reversal conditions (`assessment-item-spec.md` §2.5.1).
+   reversal conditions (`specs/`specs/assessment-item-spec.md` §2.5.1).
 6. **Mastery is a probability, not a score.** The gate is `P(mastery) ≥ 0.85` **and** a 95%
    confidence-interval lower bound above 0.70, with at least 3 observations across at least 2
-   days including one spaced (`stats-progress-evaluation-spec.md` §3). Scheduling is
+   days including one spaced (`specs/`specs/stats-progress-evaluation-spec.md` §3). Scheduling is
    **BKT** for state, **IRT** for ability once parameters exist, and **FSRS** for the review
    interval — three different jobs, three different uncertainty models.
 7. **Pack size is θ-scaled, not fixed.** `clamp(round(2 + 3 × P̂_mastery), 4, 8)` items, a hard
    3–5 minute cap, and a 55–75% / 25–45% current-to-prerequisite split
-   (`post-lesson-practice-spec.md` §2.1).
+   (`specs/`specs/post-lesson-practice-spec.md` §2.1).
 
 ---
 
@@ -239,15 +227,15 @@ previous PRD had no blockers because it believed its content was finished.
    `v_c` 7, `v_d` 8). Until they exist, every listening item is render-blocked, the diagnostic
    cannot assess listening, and the placement band is labelled `placement_provisional`.
 2. **No Stage-1 responses, therefore no IRT calibration.** The pilot bank the five criteria in
-   `assessment-item-spec.md` §9 call for **exists** — `P1.8` delivered **12 items**, `expert-anchored`,
+   `specs/`specs/assessment-item-spec.md` §9 call for **exists** — `P1.8` delivered **12 items**, `expert-anchored`,
    with **declared SE** (`Var_a = 0.35²`, `Var_b = (1.75/n_raters)²`) — so the old charge that the
    bank *"is unbuilt"* no longer holds and has been withdrawn here. What is still missing is the
    **Stage-2 refit that needs real responses**: no learner has answered the items, and
-   `assessment-item-spec.md` §3.2 gates the refit on **`n ≥ 50` responses per item**, without which
+   `specs/`specs/assessment-item-spec.md` §3.2 gates the refit on **`n ≥ 50` responses per item**, without which
    the parameters cannot move off `expert_anchored` (`SE_parameter` 0.30 → 0.12). Until those
    responses exist this blocks the CAT, every θ, and therefore reliable ability claims — and it
    sits at the head of the critical path in §9.
-3. **Independent expert review of the Tier B deck is pending.** `tier-b-review.md` §0 records
+3. **Independent expert review of the Tier B deck is pending.** `reviews/`reviews/tier-b-review.md` §0 records
    that the existing pass is *not* an independent review: the reviewer authored the items. One
    qualified ELT professional with Portuguese as an L2 must review `content-map.md` §11.2.
    That deck's stated purpose is currently 57% unmet.
@@ -264,14 +252,14 @@ that unblocks nothing and is marked High is a contradiction, and `prd-score.py` 
 
 | ID | Requirement | Priority | Unblocks |
 |----|-------------|----------|----------|
-| RF-001 | Migrate the 115 second-schema packs: add `**Reuse basis:**` to the 110 that lack it, and rename dotted `item_id`s to `assessment-item-spec.md` §1.2's prefix convention | High | The last integrity gap. It is the precondition for retiring the pack-schema warning in `verify-integrity.py`; until then §0.5's per-artefact reuse basis is unenforced on 90% of the corpus |
-| RF-002 | Build the 12-item Stage-1 pilot bank and run the five criteria of `assessment-item-spec.md` §9 | High | Produces the first real `(a, b)` with declared SE (`Var_a = 0.35²`, `Var_b = (1.75/n_raters)²`); each of the five criteria reported pass or fail, with failures named. Parameters are expert-anchored with declared SE.
+| RF-001 | Migrate the 115 second-schema packs: add `**Reuse basis:**` to the 110 that lack it, and rename dotted `item_id`s to `specs/`specs/assessment-item-spec.md` §1.2's prefix convention | High | The last integrity gap. It is the precondition for retiring the pack-schema warning in `verify-integrity.py`; until then §0.5's per-artefact reuse basis is unenforced on 90% of the corpus |
+| RF-002 | Build the 12-item Stage-1 pilot bank and run the five criteria of `specs/`specs/assessment-item-spec.md` §9 | High | Produces the first real `(a, b)` with declared SE (`Var_a = 0.35²`, `Var_b = (1.75/n_raters)²`); each of the five criteria reported pass or fail, with failures named. Parameters are expert-anchored with declared SE.
 | RF-003 | Render 30 speaker-clips from the 13 transcripts | High | Unblocks listening mastery scoring, the 7 empty Listening slots, and the diagnostic re-run |
 | RF-004 | Submit the §7.0 permission request for the 48 restricted lessons | High | Only route to publication for list-shaped material; nothing else in the plan touches them |
 | RF-005 | Run the diagnostic on a BR-PT pilot population and record responses | Medium | Turns `placement_provisional` into a quotable band and gives Stage-1 its response set |
-| RF-006 | Commission the independent ELT review of the Tier B deck | Medium | Discharges the conflict of interest recorded in `tier-b-review.md` §0 |
+| RF-006 | Commission the independent ELT review of the Tier B deck | Medium | Discharges the conflict of interest recorded in `reviews/`reviews/tier-b-review.md` §0 |
 | RF-007 | Decide `les_b1_it_presentations`: rebuild the source, rescope, or drop | Medium | One node of the registry is unroutable until a human rules on it |
-| RF-008 | Resolve the licensing P0 for the 6 `source_derived` items in `pack-les-a2-greetings-intro.md` | High | Those items are derived from a BaixeLivros-warned source; until permission is granted or the items are reauthored, that pack is authored-but-unpublishable and the label may not be softened to `authored` |
+| RF-008 | Preserve the recorded DB×disk divergence for `pack_les_a2_greetings_intro_v1` and the Lote 15 `pack_id`/manifest markers as historical gates while keeping pack content aligned to canonical schema | High | Maintains traceability required by integrity gates without reintroducing publishability claims that contradict current authored artifacts |
 | RF-009 | Build the learner-facing application over the specs | Low | Everything above is a prerequisite; this consumes it, it enables nothing upstream |
 | RF-010 | Add the L2 day-granularity view to the review scheduler | Low | UI decision owed before implementation, not a content blocker |
 
@@ -279,7 +267,7 @@ Non-functional requirements, and the one that changed:
 
 | ID | Requirement | Priority | Unblocks |
 |----|-------------|----------|----------|
-| RNF-001 | Every count, state and readiness claim in the shipped UI derives from a generated inventory, never from a hand-maintained table | High | `listening-corpus.md` §8.2 published 68 admissible items while the corpus held 74, uncaught for the life of the table |
+| RNF-001 | Every count, state and readiness claim in the shipped UI derives from a generated inventory, never from a hand-maintained table | High | `corpus/`corpus/listening-corpus.md` §8.2 published 68 admissible items while the corpus held 74, uncaught for the life of the table |
 | RNF-002 | A worked example in any spec may not print a value the same example declares non-reportable | High | Check [13] exists because a diagnostic example printed a listening θ after Listening was removed from the blueprint |
 | RNF-003 | No spec may declare a restricted source publishable | High | Check [11] exists because a P0 deck was headed "source-derived" while reproducing a restricted book |
 | RNF-004 | Item status is a machine-readable field; the body is evidence and is never reconciled against it | High | Three attempts to cross-validate the two failed; each failure is recorded in `listening-corpus.md` |
@@ -295,9 +283,9 @@ document's "Build 4-6 weeks".
 
 | Milestone | Entry | Exit |
 |-----------|-------|------|
-| M0 — Licence clarity | — | Every lesson row in `curriculum-graph-spec.md` §4.3 carries a reuse basis; check [3b] passes |
+| M0 — Licence clarity | — | Every lesson row in `specs/`specs/curriculum-graph-spec.md` §4.3 carries a reuse basis; check [3b] passes |
 | M1 — Module one complete | M0 done | `mod_a2_it_fundamentals` has all 6 lessons and 6 packs authored, none publishable-restricted without a declared basis |
-| M2 — Calibration pilot | M1 done | 12-item bank refitted; the five criteria of `assessment-item-spec.md` §9 each reported pass or fail, with the failing ones named |
+| M2 — Calibration pilot | M1 done | 12-item bank refitted; the five criteria of `specs/`specs/assessment-item-spec.md` §9 each reported pass or fail, with the failing ones named |
 | M3 — Audio rendered | M1 done | 30 speaker-clips exist; every listening item's status is `shipped`, `withdrawn` or `shadow-only`, with no unresolved render deferrals |
 | M4 — Diagnostic honours itself | M2 and M3 done | Second diagnostic run produces a quotable CEFR band; `placement_provisional` is gone from the results screen |
 | M5 — Publishable subset | M0 and M2 done | The 13 externally-sourced lessons publish with attribution strings; the 48 restricted ones either hold permission or are excluded from the release |
@@ -321,7 +309,7 @@ had these in exactly the opposite order.
 Stated so that a reader can falsify it rather than merely doubt it:
 
 - If the Stage-1 pilot cannot reach `a ≥ 1.2` on at least 7 of 12 BR-PT grammar items, the
-  IRT layer is not viable as specified and `stats-progress-evaluation-spec.md` §4 needs
+  IRT layer is not viable as specified and `specs/`specs/stats-progress-evaluation-spec.md` §4 needs
   re-derivation, not tuning.
 - If a qualified ELT reviewer rejects more than a third of the Tier B deck on criterion C1
   (does this speaker produce this error at all), the false-cognate inventory strategy is wrong
