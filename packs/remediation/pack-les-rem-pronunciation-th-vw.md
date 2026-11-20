@@ -261,7 +261,7 @@ cefr: B1
 domain: pronunciation
 provenance: authored
 asr_scored: true
-clip: TTS_render_pending
+clip: clips/practice/prn_pronunciation_th_vw_w_sound_006.mp3
 br_pt_form: null
 br_pt_form_state: not_applicable_no_distractor_set
 ```
@@ -275,7 +275,7 @@ br_pt_form_state: not_applicable_no_distractor_set
 
 **Feedback:** recast only — replay the model, no explicit correction.
 
-**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **⚠️ blocked on render**
+**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **✅ rendered (TTS static)**
 
 ---
 
@@ -290,7 +290,7 @@ cefr: B1
 domain: listening
 provenance: authored
 asr_scored: true
-clip: TTS_render_pending
+clip: clips/practice/lst_pronunciation_th_vw_context_007.mp3
 br_pt_form: null
 br_pt_form_state: not_applicable_no_distractor_set
 prereq_lesson: `les_a2_stress_timing`
@@ -305,7 +305,7 @@ prereq_lesson: `les_a2_stress_timing`
 
 **Feedback:** recast only — replay the model, no explicit correction.
 
-**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **⚠️ blocked on render**
+**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **✅ rendered (TTS static)**
 
 ---
 
@@ -322,5 +322,5 @@ prereq_lesson: `les_a2_stress_timing`
 ## 4. VALIDATION NOTES
 
 1. All `b` values are priors, per `assessment-item-spec.md` §8.2.
-2. Items 6 and 7 are ASR-scored production and do not substitute for listening-pool calibration while the clips are blocked on render.
+2. Items 6 and 7 are ASR-scored production and do not substitute for listening-pool calibration while the clips are rendered (TTS static).
 3. Items target authored lesson content; no external source text is reproduced.

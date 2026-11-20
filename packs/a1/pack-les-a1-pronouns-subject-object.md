@@ -225,7 +225,7 @@ cefr: A1
 domain: pronunciation
 provenance: authored
 asr_scored: true
-clip: TTS_render_pending
+clip: clips/practice/prn_pron_contraction_001.mp3
 br_pt_form: null
 br_pt_form_state: not_applicable_no_distractor_set
 ```
@@ -240,7 +240,7 @@ br_pt_form_state: not_applicable_no_distractor_set
 
 **Feedback:** recast only — replay the model, no explicit correction.
 
-**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **⚠️ blocked on render**
+**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **✅ rendered (TTS static)**
 
 ---
 
@@ -341,7 +341,7 @@ distractors:
 ## 4. VALIDATION NOTES
 
 1. All `b` values are priors, per `assessment-item-spec.md` §8.2.
-2. Item 5 is ASR-scored production and does not substitute for listening-pool calibration; it is render-blocked (`clip: TTS_render_pending`).
+2. Item 5 is ASR-scored production and does not substitute for listening-pool calibration; it is render-blocked (`clip: clips/practice/voc_be_forms_001.mp3`).
 3. Items target authored lesson content; no external source text is reproduced or adapted.
 4. `br_pt_form` is filled on all 6 scored MCQ items (4 options each = 24 forms); the pronunciation item uses `br_pt_form_state: not_applicable_no_distractor_set` per `assessment-item-spec.md` §2.2.1.
 5. Split is 5 current / 2 prereq (71% / 29%), inside the legal 55–75% / 25–45% range (§2.1).

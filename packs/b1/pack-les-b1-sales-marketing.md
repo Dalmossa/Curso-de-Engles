@@ -226,7 +226,7 @@ cefr: B1
 domain: pronunciation
 provenance: authored
 asr_scored: true
-clip: TTS_render_pending
+clip: clips/practice/prn_sales_marketing_roi_churn_001.mp3
 br_pt_form: null
 br_pt_form_state: not_applicable_no_distractor_set
 ```
@@ -241,7 +241,7 @@ br_pt_form_state: not_applicable_no_distractor_set
 
 **Feedback:** recast only — replay the model, no explicit correction.
 
-**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **⚠️ blocked on render**
+**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **✅ rendered (TTS static)**
 
 ---
 
@@ -342,7 +342,7 @@ distractors:
 ## 4. VALIDATION NOTES
 
 1. All `b` values are illustrative priors, per `assessment-item-spec.md` §8.2.
-2. Item 5 is ASR-scored production and blocked on render; it does not substitute for listening-pool calibration.
+2. Item 5 is ASR-scored production and rendered (TTS static); it does not substitute for listening-pool calibration.
 3. Items 6 and 7 review `les_b1_it_acronyms_deep` (`grammar.acronym_prepositions` and `vocab.acronyms_corporate`), the registry lesson that deepens this lesson's prerequisite skill.
 4. `br_pt_form_coverage: 6/6` counts the six scored MCQ items; item 5 is correctly `not_applicable_no_distractor_set`.
 5. The distinctive `sales_marketing` token appears in all seven `item_id` values, written without backticks; `skill` and `type` keep the backticks required by the pack contract.

@@ -133,7 +133,7 @@ Descreva para um colega o estado de um deploy ou de uma reunião: use **pelo men
 
 ---
 
-**Listening input:** `deferred_render`
+**Listening input:** `rendered_tts_static`
 **Pack ID:** `pack_les_rem_grammar_be_pronouns_v1`
 
 ---
@@ -151,8 +151,8 @@ Descreva para um colega o estado de um deploy ou de uma reunião: use **pelo men
   "provenance": "authored_material",
   "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
   "trigger": "grammar_theta_lt_-1.5",
-  "listening_input": "deferred_render",
-  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "listening_input": "rendered_tts_static",
+  "listening_input_status": "rendered_tts_static - static TTS audio clips rendered for corpus listening and pending practice items",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "speaking"],
   "output_modalities": ["speaking"],
   "skill_items": {

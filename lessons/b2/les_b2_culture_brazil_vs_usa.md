@@ -165,7 +165,7 @@ Inclua um detalhe real do seu contexto (ticket, deploy, fila, fuso horário). Tr
 
 ---
 
-**Listening input:** `deferred_render`
+**Listening input:** `rendered_tts_static`
 **Pack ID:** `pack_les_b2_culture_brazil_vs_usa_v1`
 
 ---
@@ -180,8 +180,8 @@ Inclua um detalhe real do seu contexto (ticket, deploy, fila, fuso horário). Tr
   "reuse_basis": "authored_material",
   "provenance": "authored_material",
   "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
-  "listening_input": "deferred_render",
-  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "listening_input": "rendered_tts_static",
+  "listening_input_status": "rendered_tts_static - static TTS audio clips rendered for corpus listening and pending practice items",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "reading", "speaking"],
   "output_modalities": ["speaking", "writing"],
   "skill_items": {

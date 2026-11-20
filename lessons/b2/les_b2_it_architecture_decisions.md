@@ -13,7 +13,7 @@
 
 ### Cenário: revisão de um ADR na reunião de arquitetura
 
-O time discute o **ADR-027**, um registro fictício sobre a escolha de uma fila gerenciada para eventos de pedido. O áudio está diferido (`deferred_render`); o texto abaixo é o input.
+O time discute o **ADR-027**, um registro fictício sobre a escolha de uma fila gerenciada para eventos de pedido. O áudio está diferido (`rendered_tts_static`); o texto abaixo é o input.
 
 > **Rafael (staff engineer, São Paulo):** "Let's review ADR-027 before the architecture meeting. The **status** is still **proposed**, and I want it **accepted** today."
 >
@@ -153,7 +153,7 @@ Não reproduza texto de nenhuma fonte externa: invente o cenário e escreva com 
 
 ---
 
-**Listening input:** `deferred_render`
+**Listening input:** `rendered_tts_static`
 **Pack ID:** `pack_les_b2_it_architecture_decisions_v1`
 
 ---
@@ -168,8 +168,8 @@ Não reproduza texto de nenhuma fonte externa: invente o cenário e escreva com 
   "reuse_basis": "authored_material",
   "provenance": "authored_material",
   "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
-  "listening_input": "deferred_render",
-  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "listening_input": "rendered_tts_static",
+  "listening_input_status": "rendered_tts_static - static TTS audio clips rendered for corpus listening and pending practice items",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "reading", "writing"],
   "output_modalities": ["writing"],
   "skill_items": {

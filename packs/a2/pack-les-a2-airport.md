@@ -226,7 +226,7 @@ cefr: A2
 domain: pronunciation
 provenance: authored
 asr_scored: true
-clip: TTS_render_pending
+clip: clips/practice/prn_airport_customs_th_001.mp3
 br_pt_form: null
 br_pt_form_state: not_applicable_no_distractor_set
 ```
@@ -241,7 +241,7 @@ br_pt_form_state: not_applicable_no_distractor_set
 
 **Feedback:** recast only — replay the model, no explicit correction.
 
-**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **⚠️ blocked on render**
+**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **✅ rendered (TTS static)**
 
 ---
 
@@ -342,7 +342,7 @@ distractors:
 ## 4. VALIDATION NOTES
 
 1. All `b` values are priors, per `assessment-item-spec.md` §8.2.
-2. Item 5 is ASR-scored production and does not substitute for listening-pool calibration; `clip: TTS_render_pending` keeps its gate blocked on render.
+2. Item 5 is ASR-scored production and does not substitute for listening-pool calibration; clip asset rendered (TTS static).
 3. Items 6 and 7 review `les_a2_prepositions_basic` and `les_a2_travel_vocab_core` and carry `prereq_lesson` for the interleaving rule.
 4. Listening is explicitly deferred (`listening_items: 0`); the 45 s Q-L2 floor is not claimed by any item here.
 5. Every item is authored for this lesson; no external source text is reproduced or adapted, and the `airport` token keeps all seven ids globally distinctive.

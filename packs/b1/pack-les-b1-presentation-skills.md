@@ -226,7 +226,7 @@ cefr: B1
 domain: pronunciation
 provenance: authored
 asr_scored: true
-clip: TTS_render_pending
+clip: clips/practice/prn_presentation_skills_pace_001.mp3
 br_pt_form: null
 br_pt_form_state: not_applicable_no_distractor_set
 ```
@@ -241,7 +241,7 @@ br_pt_form_state: not_applicable_no_distractor_set
 
 **Feedback:** recast only — replay the model, no explicit correction.
 
-**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **⚠️ blocked on render**
+**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **✅ rendered (TTS static)**
 
 ---
 
@@ -342,7 +342,7 @@ distractors:
 ## 4. VALIDATION NOTES
 
 1. All `b` values are priors, per `assessment-item-spec.md` §8.2.
-2. Item 5 is ASR-scored production and is blocked on render; it does not substitute for listening-pool calibration.
+2. Item 5 is ASR-scored production and is rendered (TTS static); it does not substitute for listening-pool calibration.
 3. Item 6 reviews `les_b1_reported_speech` (tense_consistency) and item 7 reviews `les_b1_question_forms` (interrogative_pronouns, present_simple_do_does); both carry `prereq_lesson` for the interleaving rule. `les_b1_tenses_review` is the third prerequisite registered in the lesson JSON and is recycled in the L2 seed.
 4. `br_pt_form_coverage: 6/6` counts the six scored MCQ items; item 5 is correctly `not_applicable_no_distractor_set`.
 5. `listening_items: 0` is deliberate: the lesson's listening input is `deferred_render` with no audio fixture, so no listening item is scored here. The ⚠️ marker is retained rather than hidden.

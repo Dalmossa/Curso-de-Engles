@@ -226,7 +226,7 @@ cefr: A2
 domain: pronunciation
 provenance: authored
 asr_scored: true
-clip: TTS_render_pending
+clip: clips/practice/prn_pr_tickets_acronyms_001.mp3
 br_pt_form: null
 br_pt_form_state: not_applicable_no_distractor_set
 ```
@@ -241,7 +241,7 @@ br_pt_form_state: not_applicable_no_distractor_set
 
 **Feedback:** recast only — replay the model, no explicit correction.
 
-**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **⚠️ blocked on render**
+**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **✅ rendered (TTS static)**
 
 ---
 
@@ -342,7 +342,7 @@ distractors:
 ## 4. VALIDATION NOTES
 
 1. All `b` values are priors, per `assessment-item-spec.md` §8.2.
-2. Item 5 is ASR-scored production and is blocked on render; it does not substitute for listening-pool calibration.
+2. Item 5 is ASR-scored production and is rendered (TTS static); it does not substitute for listening-pool calibration.
 3. Items 6 and 7 review `les_a2_imperatives` and `les_a2_it_terms_basics` and carry `prereq_lesson` for the interleaving rule.
 4. `br_pt_form_coverage: 6/6` counts the six scored MCQ items; item 5 is correctly `not_applicable_no_distractor_set`.
 5. The grammar-rag query for this authoring returned weakly related material (verb complements in `-ing`, plus an answer key); the pedagogy is anchored in the canonical A2 models instead — technical-email register, `Could you...?` requests, imperative commit messages and contrastive pronunciation.

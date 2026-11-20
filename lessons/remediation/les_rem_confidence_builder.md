@@ -167,11 +167,11 @@ Escreva e diga em voz alta **5 a 7 falas** de uma stand-up mock. Você é um eng
 
    **Key:** D
 
-3. **Produção (shadow):** Escute a frase-modelo (áudio `deferred_render`) e repita com o mesmo ritmo: "Give me a second. I know the word, but I need one try."
+3. **Produção (shadow):** Escute a frase-modelo (áudio `rendered_tts_static`) e repita com o mesmo ritmo: "Give me a second. I know the word, but I need one try."
 
 ---
 
-**Listening input:** `deferred_render`
+**Listening input:** `rendered_tts_static`
 **Pack ID:** `pack_les_rem_confidence_builder_v1`
 
 ---
@@ -187,8 +187,8 @@ Escreva e diga em voz alta **5 a 7 falas** de uma stand-up mock. Você é um eng
   "provenance": "authored_material",
   "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
   "trigger": "profile = false_beginner",
-  "listening_input": "deferred_render",
-  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "listening_input": "rendered_tts_static",
+  "listening_input_status": "rendered_tts_static - static TTS audio clips rendered for corpus listening and pending practice items",
   "provenance_detail": {
     "reuse_basis": "authored_material",
     "adapted_sources": [],

@@ -112,7 +112,7 @@ Simule uma conversa de mentoria (2–3 minutos). Dê **3 recomendações** a uma
 
 ---
 
-**Listening input:** `deferred_render`
+**Listening input:** `rendered_tts_static`
 **Pack ID:** `pack_les_b2_it_mentoring_v1`
 
 ---

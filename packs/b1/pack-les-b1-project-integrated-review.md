@@ -226,7 +226,7 @@ cefr: B1
 domain: pronunciation
 provenance: authored
 asr_scored: true
-clip: TTS_render_pending
+clip: clips/practice/prn_project_integrated_review_phonemes_001.mp3
 br_pt_form: null
 br_pt_form_state: not_applicable_no_distractor_set
 ```
@@ -241,7 +241,7 @@ br_pt_form_state: not_applicable_no_distractor_set
 
 **Feedback:** recast only — replay the model, no explicit correction.
 
-**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **⚠️ blocked on render**
+**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **✅ rendered (TTS static)**
 
 ---
 
@@ -342,7 +342,7 @@ distractors:
 ## 4. VALIDATION NOTES
 
 1. All `b` values are priors, per `assessment-item-spec.md` §8.2.
-2. Item 5 is ASR-scored production and is blocked on render; it does not substitute for listening-pool calibration, and its Gates stay marked accordingly.
+2. Item 5 is ASR-scored production and is rendered (TTS static); it does not substitute for listening-pool calibration, and its Gates stay marked accordingly.
 3. Items 6 and 7 review `les_b1_question_forms` (`hedging`) and `les_a2_it_terms_basics` (`it_computer_terms`), both real ids in §4.3; each carries `prereq_lesson` for the interleaving rule.
 4. The lesson itself is excluded from `prereq_lessons`; §4.3 declares `all_skills` as both the new skill and the prereq skill for this row, an intentional structural auto-loop, not a self-reference by lesson id.
 5. Items 1–5 target authored lesson content; every stimulus, option, gloss and note is original, with no restricted source text reproduced or adapted.

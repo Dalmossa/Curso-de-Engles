@@ -116,7 +116,7 @@ Escreva um mini-RFC (8–12 linhas) para uma mudança técnica simples (ex.: adi
 
 ---
 
-**Listening input:** `deferred_render`
+**Listening input:** `rendered_tts_static`
 **Pack ID:** `pack_les_b2_it_rfc_writing_v1`
 
 ---

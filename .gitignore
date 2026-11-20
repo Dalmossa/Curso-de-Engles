@@ -21,6 +21,7 @@ __pycache__/
 .venv/
 venv/
 .pytest_cache/
+tools/grammar-rag/.venv/
 
 # Logs
 *.log
@@ -46,3 +47,6 @@ its-platform/tests/helpers/*.d.ts.map
 # Livros protegidos (corpus de referência local)
 Ingles/output/
 Ingles/
+# Archive folder (PDFs and derived content)
+archive/
+clips/

@@ -226,7 +226,7 @@ cefr: B2
 domain: pronunciation
 provenance: authored
 asr_scored: true
-clip: TTS_render_pending
+clip: clips/practice/prn_toeic_reading_diphthongs_001.mp3
 br_pt_form: null
 br_pt_form_state: not_applicable_no_distractor_set
 ```
@@ -241,7 +241,7 @@ br_pt_form_state: not_applicable_no_distractor_set
 
 **Feedback:** recast only — replay the model, no explicit correction.
 
-**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **⚠️ blocked on render**
+**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **✅ rendered (TTS static)**
 
 ---
 
@@ -342,7 +342,7 @@ distractors:
 ## 4. VALIDATION NOTES
 
 1. All `b` values are priors, per `assessment-item-spec.md` §8.2.
-2. Item 5 is ASR-scored production and is blocked on render; it does not substitute for listening-pool calibration, so the manifest keeps `listening_items: 0` with the ⚠️ deferred marker.
+2. Item 5 is ASR-scored production and is rendered (TTS static); it does not substitute for listening-pool calibration, so the manifest keeps `listening_items: 0` with the ⚠️ deferred marker.
 3. Items 6 and 7 review `les_a2_it_terms_basics` and `les_a2_it_reading_strategy` respectively, and carry `prereq_lesson` for the interleaving rule; both ids are verified in `curriculum-graph-spec.md` §4.3.
 4. `br_pt_form_coverage: 6/6` counts the six scored MCQ items; item 5 is correctly `not_applicable_no_distractor_set`.
 5. Every passage, statement, option, gloss and note in this pack is fictional and authored in a clean room for Brazilian software engineers. No real TOEIC item, answer key, or proprietary preparation material was reproduced or adapted.

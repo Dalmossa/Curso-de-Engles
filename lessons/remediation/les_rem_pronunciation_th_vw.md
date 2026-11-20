@@ -160,7 +160,7 @@ Grave um áudio de 30 a 45 segundos para um colega: descreva um bug usando pelo 
 
 ---
 
-**Listening input:** `deferred_render`
+**Listening input:** `rendered_tts_static`
 **Pack ID:** `pack_les_rem_pronunciation_th_vw_v1`
 
 ---
@@ -176,8 +176,8 @@ Grave um áudio de 30 a 45 segundos para um colega: descreva um bug usando pelo 
   "provenance": "authored_material",
   "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
   "trigger": "pronunciation θ < -1.5",
-  "listening_input": "deferred_render",
-  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "listening_input": "rendered_tts_static",
+  "listening_input_status": "rendered_tts_static - static TTS audio clips rendered for corpus listening and pending practice items",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation"],
   "output_modalities": ["speaking"],
   "skill_items": {

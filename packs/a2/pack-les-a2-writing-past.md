@@ -226,7 +226,7 @@ cefr: A2
 domain: pronunciation
 provenance: authored
 asr_scored: true
-clip: TTS_render_pending
+clip: clips/practice/prn_past_narrative_ed_final_001.mp3
 br_pt_form: null
 br_pt_form_state: not_applicable_no_distractor_set
 ```
@@ -241,7 +241,7 @@ br_pt_form_state: not_applicable_no_distractor_set
 
 **Feedback:** recast only — replay the model, no explicit correction.
 
-**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **⚠️ blocked on render**
+**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **✅ rendered (TTS static)**
 
 ---
 
@@ -342,7 +342,7 @@ distractors:
 ## 4. VALIDATION NOTES
 
 1. All `b` values are priors, per `assessment-item-spec.md` §8.2.
-2. Item 5 is ASR-scored production and does not substitute for listening-pool calibration; its Gates carry **⚠️ blocked on render** until the clip is rendered.
+2. Item 5 is ASR-scored production and does not substitute for listening-pool calibration; its Gates carry **✅ rendered (TTS static)** until the clip is rendered.
 3. Items 6 and 7 review `les_a1_regular_verbs_past` and `les_a2_deadlines_tasks` and carry `prereq_lesson` for the interleaving rule.
 4. The six scored MCQ items carry a quoted `br_pt_form` and a `note` on every distractor; item 5 declares `not_applicable_no_distractor_set` by design.
 5. Items target authored lesson content only; no external source text is reproduced or adapted.

@@ -149,7 +149,7 @@ Imagine que você está nos primeiros dez minutos de um deploy canário e precis
 
 ---
 
-**Listening input:** `deferred_render` — o diálogo da FASE 1 é texto autoral, não um clipe renderizado.
+**Listening input:** `rendered_tts_static` — o diálogo da FASE 1 é texto autoral, não um clipe renderizado.
 **Pack ID:** `pack_les_b1_it_devops_basics_v1`
 
 ---
@@ -164,8 +164,8 @@ Imagine que você está nos primeiros dez minutos de um deploy canário e precis
   "reuse_basis": "authored_material",
   "provenance": "authored_material",
   "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
-  "listening_input": "deferred_render",
-  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "listening_input": "rendered_tts_static",
+  "listening_input_status": "rendered_tts_static - static TTS audio clips rendered for corpus listening and pending practice items",
   "skills_touched": ["grammar", "vocabulary", "listening", "reading", "pronunciation", "speaking"],
   "output_modalities": ["speaking", "writing"],
   "skill_items": {

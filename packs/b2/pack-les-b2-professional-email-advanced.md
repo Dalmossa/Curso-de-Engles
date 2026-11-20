@@ -226,7 +226,7 @@ cefr: B2
 domain: pronunciation
 provenance: authored
 asr_scored: true
-clip: TTS_render_pending
+clip: clips/practice/prn_professional_email_advanced_th_schwa_001.mp3
 br_pt_form: null
 br_pt_form_state: not_applicable_no_distractor_set
 ```
@@ -241,7 +241,7 @@ br_pt_form_state: not_applicable_no_distractor_set
 
 **Feedback:** recast only — replay the model, no explicit correction.
 
-**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **⚠️ blocked on render**
+**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **✅ rendered (TTS static)**
 
 ---
 
@@ -342,7 +342,7 @@ distractors:
 ## 4. VALIDATION NOTES
 
 1. All `b` values are priors, per `assessment-item-spec.md` §8.2.
-2. The pronunciation item is ASR-scored production and is blocked on render; it does not substitute for listening-pool calibration.
+2. The pronunciation item is ASR-scored production and is rendered (TTS static); it does not substitute for listening-pool calibration.
 3. Items 6 and 7 review `les_a2_it_email_technical` (`email_vocab`, `email_register`) and carry `prereq_lesson` for the interleaving rule.
 4. `br_pt_form_coverage: 6/6` counts the six scored MCQ items; the ASR item is correctly `not_applicable_no_distractor_set`.
 5. Every option, gloss and note is authored in a clean room; no restricted source text is reproduced. The terms *CC*, *BCC*, *FYI* and *ETA* are unprotected professional conventions or abbreviations.

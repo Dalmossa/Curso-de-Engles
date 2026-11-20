@@ -152,7 +152,7 @@ Você é o tech lead da cena. Em **45–60 segundos**, apresente Ana a Bruno (pa
 
 ---
 
-**Listening input:** `deferred_render`
+**Listening input:** `rendered_tts_static`
 **Pack ID:** `pack_les_a2_introducing_others_v1`
 
 ---
@@ -167,7 +167,7 @@ Você é o tech lead da cena. Em **45–60 segundos**, apresente Ana a Bruno (pa
   "reuse_basis": "authored_material",
   "provenance": "authored_material",
   "source": "Original authored material for Brazilian software engineers (pt-BR to en-US); no external source text reproduced or adapted.",
-  "listening_input": "deferred_render",
+  "listening_input": "rendered_tts_static",
   "estimated_time_min": 15,
   "prereq_lessons": ["les_a2_greetings_intro"],
   "next_lessons": ["les_a2_small_talk", "les_a2_meeting_open"],

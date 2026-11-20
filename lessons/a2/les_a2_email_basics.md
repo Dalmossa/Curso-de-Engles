@@ -6,7 +6,7 @@
 **Reuse basis:** authored_material
 **Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
-**Input de listening:** `deferred_render`
+**Input de listening:** `rendered_tts_static`
 **Target:** Brasileiro, nível A2, perfil desenvolvedor/engenheiro de software
 **Princípio ITS:** Input i+1 → Guided Practice → Output Task → Formative Check
 **Foco SLA:** Comprehensible Input, Focus on Form, Written Corrective Feedback
@@ -200,7 +200,7 @@ Escreva um e-mail de **≤ 120 palavras** para um colega que você conhece há a
 
 ---
 
-**Listening input:** `deferred_render`
+**Listening input:** `rendered_tts_static`
 **Pack ID:** `pack_les_a2_email_basics_v1`
 
 ---
@@ -216,8 +216,8 @@ Escreva um e-mail de **≤ 120 palavras** para um colega que você conhece há a
   "provenance": "authored_material",
   "source": "Original authored material for Brazilian software engineers (pt-BR to en-US); no external source text reproduced or adapted.",
   "estimated_time_min": 15,
-  "listening_input": "deferred_render",
-  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "listening_input": "rendered_tts_static",
+  "listening_input_status": "rendered_tts_static - static TTS audio clips rendered for corpus listening and pending practice items",
   "skills_touched": ["grammar", "vocabulary", "reading", "pronunciation", "writing"],
   "output_modalities": ["writing", "speaking"],
   "skill_items": {

@@ -6,7 +6,7 @@
 **Reuse basis:** `authored_material`
 **Source:** Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.
 **Estimated time:** 15 min
-**Listening input:** deferred_render
+**Listening input:** rendered_tts_static
 **Pack ID:** pack_les_b1_finance_business_v1
 
 ---
@@ -167,7 +167,7 @@ Use um dado real do seu contexto (equipe, serviço, mês ou moeda) e leia o resu
 
 ---
 
-**Listening input:** `deferred_render`
+**Listening input:** `rendered_tts_static`
 **Pack ID:** `pack_les_b1_finance_business_v1`
 
 ---
@@ -182,8 +182,8 @@ Use um dado real do seu contexto (equipe, serviço, mês ou moeda) e leia o resu
   "reuse_basis": "authored_material",
   "provenance": "authored_material",
   "source": "Original authored material for Brazilian software engineers (pt-BR → en-US); no external source text reproduced or adapted.",
-  "listening_input": "deferred_render",
-  "listening_input_status": "render_blocked - no audio rendered; the phase serves text and marks the item deferred_render",
+  "listening_input": "rendered_tts_static",
+  "listening_input_status": "rendered_tts_static - static TTS audio clips rendered for corpus listening and pending practice items",
   "skills_touched": ["grammar", "vocabulary", "listening", "pronunciation", "reading", "speaking"],
   "output_modalities": ["speaking", "writing"],
   "skill_items": {

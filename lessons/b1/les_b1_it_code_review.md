@@ -109,7 +109,7 @@ Escreva (ou fale) **4 comentários de code review** para um PR fictício: 1 bloq
 
 ---
 
-**Listening input:** `deferred_render`
+**Listening input:** `rendered_tts_static`
 **Pack ID:** `pack_les_b1_it_code_review_v1`
 
 ---

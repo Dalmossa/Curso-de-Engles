@@ -226,7 +226,7 @@ cefr: B1
 domain: pronunciation
 provenance: authored
 asr_scored: true
-clip: TTS_render_pending
+clip: clips/practice/prn_finance_business_margin_001.mp3
 br_pt_form: null
 br_pt_form_state: not_applicable_no_distractor_set
 ```
@@ -241,7 +241,7 @@ br_pt_form_state: not_applicable_no_distractor_set
 
 **Feedback:** recast only — replay the model, no explicit correction.
 
-**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **⚠️ blocked on render**
+**Gates:** G-Q2 ✅ · G-Q3 ✅ · G-Q4 ✅ · **✅ rendered (TTS static)**
 
 ---
 
@@ -342,7 +342,7 @@ distractors:
 ## 4. VALIDATION NOTES
 
 1. All `b` values are illustrative priors, per `assessment-item-spec.md` §8.2.
-2. Item 5 is ASR-scored production and blocked on render; it does not substitute for listening-pool calibration.
+2. Item 5 is ASR-scored production and rendered (TTS static); it does not substitute for listening-pool calibration.
 3. Items 6 and 7 review `les_b1_tenses_review` (present simple) and `les_b1_it_acronyms_deep` (`acronyms_corporate`), the two lessons in the registry that supply this lesson's prerequisite skills.
 4. `br_pt_form_coverage: 6/6` counts the six scored MCQ items; item 5 is correctly `not_applicable_no_distractor_set`.
 5. Every option, Portuguese gloss and distractor note is authored in a clean room. The finance terms and acronyms are unprotected business vocabulary; the glossary and all examples were written originally for Brazilian software engineers.

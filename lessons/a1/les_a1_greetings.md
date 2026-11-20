@@ -128,7 +128,7 @@ Prepare um mini diálogo de **40–60 segundos** para um primeiro contato no tra
 
 ---
 
-**Listening input:** `deferred_render`
+**Listening input:** `rendered_tts_static`
 **Pack ID:** `pack_les_a1_greetings_v1`
 
 ---

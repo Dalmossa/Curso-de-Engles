@@ -125,7 +125,7 @@ Prepare uma apresentação oral curta (**30–45 segundos**) para seu primeiro d
 
 ---
 
-**Listening input:** `deferred_render`
+**Listening input:** `rendered_tts_static`
 **Pack ID:** `pack_les_a1_intro_dialogue_v1`
 
 ---

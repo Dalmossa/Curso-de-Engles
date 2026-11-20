@@ -117,7 +117,7 @@ Prepare uma miniapresentação de **60–90 segundos** sobre uma melhoria técni
 
 ---
 
-**Listening input:** `deferred_render`
+**Listening input:** `rendered_tts_static`
 **Pack ID:** `pack_les_b1_it_presentations_v1`
 
 ---

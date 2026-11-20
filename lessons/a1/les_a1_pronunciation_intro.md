@@ -122,7 +122,7 @@ Grave um áudio curto (45–60 segundos) simulando um aviso técnico para seu ti
 
 ---
 
-**Listening input:** `deferred_render`
+**Listening input:** `rendered_tts_static`
 **Pack ID:** `pack_les_a1_pronunciation_intro_v1`
 
 ---
