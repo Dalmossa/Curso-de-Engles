@@ -8,17 +8,8 @@ import {
 } from '@nestjs/common';
 import { Observable, from, throwError, catchError } from 'rxjs';
 import { ConfigService } from '@nestjs/config';
-import {
-  CircuitBreaker,
-  CircuitState,
-  type CircuitBreakerConfig,
-  DEFAULT_CIRCUIT_CONFIGS,
-} from './circuit-breaker.js';
-import {
-  FallbackStrategy,
-  type FallbackConfig,
-  FALLBACK_CONFIGS_TOKEN,
-} from './fallback.strategy.js';
+import { CircuitBreaker, CircuitState, type CircuitBreakerConfig, DEFAULT_CIRCUIT_CONFIGS } from './circuit-breaker.js';
+import { FallbackStrategy, type FallbackConfig, FALLBACK_CONFIGS_TOKEN } from './fallback.strategy.js';
 import {
   executeWithRetry,
   type RetryConfig,
@@ -70,10 +61,8 @@ export class ResilienceInterceptor implements NestInterceptor {
   private readonly circuitBreakers = new Map<string, CircuitBreaker>();
 
   constructor(
-    @Inject('CIRCUIT_BREAKER_CONFIG')
-    private readonly circuitConfigs: Record<string, CircuitBreakerConfig>,
-    @Inject(FALLBACK_CONFIGS_TOKEN)
-    private readonly fallbackConfigs: Record<string, FallbackConfig>,
+    @Inject('CIRCUIT_BREAKER_CONFIG') private readonly circuitConfigs: Record<string, CircuitBreakerConfig>,
+    @Inject(FALLBACK_CONFIGS_TOKEN) private readonly fallbackConfigs: Record<string, FallbackConfig>,
     @Inject('RETRY_CONFIGS') private readonly retryConfigs: Record<string, RetryConfig>,
     @Inject('TIMEOUT_CONFIGS') private readonly timeoutConfigs: Record<string, number>,
     private readonly configService: ConfigService,
@@ -87,15 +76,12 @@ export class ResilienceInterceptor implements NestInterceptor {
    */
   private initializeMetrics(): ResilienceMetrics {
     const meter = getMeter();
-
+    
     return {
-      circuitBreakerStateChanges: meter.createCounter(
-        'its_platform_circuit_breaker_state_changes_total',
-        {
-          description: 'Total number of circuit breaker state changes',
-          unit: '1',
-        },
-      ),
+      circuitBreakerStateChanges: meter.createCounter('its_platform_circuit_breaker_state_changes_total', {
+        description: 'Total number of circuit breaker state changes',
+        unit: '1',
+      }),
       circuitBreakerState: meter.createUpDownCounter('its_platform_circuit_breaker_state', {
         description: 'Current circuit breaker state (0=closed, 1=half-open, 2=open)',
         unit: '1',
@@ -116,13 +102,10 @@ export class ResilienceInterceptor implements NestInterceptor {
         description: 'Total number of fallback activations',
         unit: '1',
       }),
-      operationDuration: meter.createHistogram(
-        'its_platform_resilience_operation_duration_seconds',
-        {
-          description: 'Operation duration with resilience patterns applied',
-          unit: 's',
-        },
-      ),
+      operationDuration: meter.createHistogram('its_platform_resilience_operation_duration_seconds', {
+        description: 'Operation duration with resilience patterns applied',
+        unit: 's',
+      }),
       operationErrors: meter.createCounter('its_platform_resilience_operation_errors_total', {
         description: 'Total number of operation errors after resilience patterns',
         unit: '1',
@@ -136,12 +119,7 @@ export class ResilienceInterceptor implements NestInterceptor {
   private getCircuitConfig(serviceName: string): CircuitBreakerConfig {
     // Use bracket notation for default access with non-null assertion
     const defaultConfig = DEFAULT_CIRCUIT_CONFIGS['default']!;
-    return (
-      this.circuitConfigs[serviceName] ??
-      this.circuitConfigs['http'] ??
-      this.circuitConfigs['default'] ??
-      defaultConfig
-    );
+    return this.circuitConfigs[serviceName] ?? this.circuitConfigs['http'] ?? this.circuitConfigs['default'] ?? defaultConfig;
   }
 
   private getRetryConfig(serviceName: string, method: string): RetryConfig {
@@ -153,11 +131,7 @@ export class ResilienceInterceptor implements NestInterceptor {
   }
 
   private getTimeoutConfig(serviceName: string, operationType: string): number {
-    return (
-      this.timeoutConfigs[operationType] ??
-      this.timeoutConfigs['default'] ??
-      DEFAULT_TIMEOUTS.default
-    );
+    return this.timeoutConfigs[operationType] ?? this.timeoutConfigs['default'] ?? DEFAULT_TIMEOUTS.default;
   }
 
   private getFallbackConfig(serviceName: string): FallbackConfig | undefined {
@@ -179,21 +153,16 @@ export class ResilienceInterceptor implements NestInterceptor {
   /**
    * Record circuit breaker state change metrics
    */
-  private recordCircuitBreakerMetrics(
-    serviceName: string,
-    oldState: CircuitState,
-    newState: CircuitState,
-  ): void {
-    const stateValue =
-      newState === CircuitState.CLOSED ? 0 : newState === CircuitState.HALF_OPEN ? 1 : 2;
-
+  private recordCircuitBreakerMetrics(serviceName: string, oldState: CircuitState, newState: CircuitState): void {
+    const stateValue = newState === CircuitState.CLOSED ? 0 : newState === CircuitState.HALF_OPEN ? 1 : 2;
+    
     this.metrics.circuitBreakerStateChanges.add(1, {
       service: serviceName,
       from_state: oldState,
       to_state: newState,
     });
     this.metrics.circuitBreakerState.add(stateValue, { service: serviceName });
-
+    
     this.logger.log(`Circuit breaker for "${serviceName}" changed: ${oldState} -> ${newState}`);
   }
 
@@ -203,7 +172,7 @@ export class ResilienceInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     // Extract resilience context from request/handler metadata
     const resilienceContext = this.extractResilienceContext(context);
-
+    
     if (!resilienceContext) {
       // No resilience context, pass through
       return next.handle();
@@ -215,18 +184,16 @@ export class ResilienceInterceptor implements NestInterceptor {
     const retryConfig = this.getRetryConfig(serviceName, method);
     const timeout = this.getTimeoutConfig(serviceName, `http_${method.toLowerCase()}`);
 
-    return from(
-      this.executeWithResilience(
-        serviceName,
-        operationName,
-        method,
-        () => next.handle().toPromise(),
-        circuitBreaker,
-        retryConfig,
-        timeout,
-        startTime,
-      ),
-    ).pipe(
+    return from(this.executeWithResilience(
+      serviceName,
+      operationName,
+      method,
+      () => next.handle().toPromise(),
+      circuitBreaker,
+      retryConfig,
+      timeout,
+      startTime,
+    )).pipe(
       catchError((error: unknown) => {
         this.recordErrorMetrics(serviceName, operationName, error, Date.now() - startTime);
         return throwError(() => error);
@@ -260,42 +227,30 @@ export class ResilienceInterceptor implements NestInterceptor {
         return operationWithTimeout();
       }
 
-      return executeWithRetry(operationWithTimeout, retryConfig, (attempt, error, delay) => {
-        this.metrics.retryAttempts.add(1, {
-          service: serviceName,
-          operation: operationName,
-          attempt: attempt.toString(),
-        });
-        this.metrics.retryDelays.record(delay / 1000, {
-          service: serviceName,
-          operation: operationName,
-        });
-        this.logger.debug(
-          `Retry attempt ${attempt} for ${serviceName}.${operationName} after ${delay}ms`,
-          { error: error instanceof Error ? error.message : String(error) },
-        );
-      });
+      return executeWithRetry(
+        operationWithTimeout,
+        retryConfig,
+        (attempt, error, delay) => {
+          this.metrics.retryAttempts.add(1, {
+            service: serviceName,
+            operation: operationName,
+            attempt: attempt.toString(),
+          });
+          this.metrics.retryDelays.record(delay / 1000, {
+            service: serviceName,
+            operation: operationName,
+          });
+          this.logger.debug(
+            `Retry attempt ${attempt} for ${serviceName}.${operationName} after ${delay}ms`,
+            { error: error instanceof Error ? error.message : String(error) }
+          );
+        },
+      );
     };
 
     // Execute with circuit breaker and fallback
     try {
-      const result = await circuitBreaker.execute(
-        operationWithRetry,
-        // Fallback function
-        async () => {
-          const fallbackConfig = this.getFallbackConfig(serviceName);
-          this.metrics.fallbackActivations.add(1, {
-            service: serviceName,
-            operation: operationName,
-            strategy: fallbackConfig?.strategy ?? 'error',
-          });
-
-          const fallbackResult = await this.fallbackStrategy.execute(serviceName, operation, {
-            method,
-          });
-          return fallbackResult as T;
-        },
-      );
+      const result = await circuitBreaker.execute(operationWithRetry);
 
       // Record success metrics
       const duration = Date.now() - startTime;
@@ -316,6 +271,34 @@ export class ResilienceInterceptor implements NestInterceptor {
 
       return result;
     } catch (error) {
+      const fallbackConfig = this.getFallbackConfig(serviceName);
+      const currentState = circuitBreaker.getState();
+
+      // Only use fallback when circuit is open; otherwise propagate error (baseline behavior)
+      if (currentState === CircuitState.OPEN && fallbackConfig && fallbackConfig.strategy !== 'error') {
+        this.metrics.fallbackActivations.add(1, {
+          service: serviceName,
+          operation: operationName,
+          strategy: fallbackConfig.strategy,
+        });
+        try {
+          const fallbackResult = await this.fallbackStrategy.execute(
+            serviceName,
+            async () => { throw error instanceof Error ? error : new Error(String(error)); },
+            { method },
+          );
+          const duration = Date.now() - startTime;
+          this.metrics.operationDuration.record(duration / 1000, {
+            service: serviceName,
+            operation: operationName,
+            result: 'fallback',
+          });
+          return fallbackResult as T;
+        } catch (fallbackError) {
+          error = fallbackError;
+        }
+      }
+
       // Record error metrics
       const duration = Date.now() - startTime;
       this.metrics.operationDuration.record(duration / 1000, {
@@ -329,8 +312,6 @@ export class ResilienceInterceptor implements NestInterceptor {
         error_type: error instanceof Error ? error.name : 'UnknownError',
       });
 
-      // Check for state change after error
-      const currentState = circuitBreaker.getState();
       if (currentState !== previousState) {
         this.recordCircuitBreakerMetrics(serviceName, previousState, currentState);
       }
@@ -346,12 +327,11 @@ export class ResilienceInterceptor implements NestInterceptor {
   private extractResilienceContext(context: ExecutionContext): ResilienceContext | null {
     const handler = context.getHandler();
     const className = context.getClass()?.name ?? '';
-
+    
     // Check for resilience metadata on the handler or class
-    const metadata =
-      Reflect.getMetadata('resilience', handler) ??
-      Reflect.getMetadata('resilience', context.getClass());
-
+    const metadata = Reflect.getMetadata('resilience', handler) ?? 
+                     Reflect.getMetadata('resilience', context.getClass());
+    
     if (metadata) {
       return metadata as ResilienceContext;
     }
@@ -374,7 +354,7 @@ export class ResilienceInterceptor implements NestInterceptor {
    */
   private inferServiceName(className: string): string | null {
     const lower = className.toLowerCase();
-
+    
     if (lower.includes('jwks') || lower.includes('token') || lower.includes('auth')) {
       return 'jwks';
     }
@@ -390,7 +370,7 @@ export class ResilienceInterceptor implements NestInterceptor {
     if (lower.includes('external') || lower.includes('http') || lower.includes('api')) {
       return 'external_api';
     }
-
+    
     return 'default';
   }
 
@@ -401,11 +381,11 @@ export class ResilienceInterceptor implements NestInterceptor {
     serviceName: string,
     operationName: string,
     error: unknown,
-    durationMs: number,
+    durationMs: number
   ): void {
     const errorType = error instanceof Error ? error.name : 'UnknownError';
     const isTimeout = error instanceof TimeoutError;
-
+    
     if (isTimeout) {
       this.metrics.timeouts.add(1, {
         service: serviceName,
@@ -417,20 +397,16 @@ export class ResilienceInterceptor implements NestInterceptor {
   /**
    * Get all circuit breaker states (for monitoring/health checks)
    */
-  getCircuitBreakerStates(): Record<
-    string,
-    { state: CircuitState; metrics: ReturnType<CircuitBreaker['getMetrics']> }
-  > {
-    const states: Record<
-      string,
-      { state: CircuitState; metrics: ReturnType<CircuitBreaker['getMetrics']> }
-    > = {};
+  getCircuitBreakerStates(): Record<string, { state: CircuitState; metrics: ReturnType<CircuitBreaker['getMetrics']> }> {
+    const states: Record<string, { state: CircuitState; metrics: ReturnType<CircuitBreaker['getMetrics']> }> = {};
 
+    const configured = { ...DEFAULT_CIRCUIT_CONFIGS, ...(this.circuitConfigs ?? {}) };
+    for (const serviceName of Object.keys(configured)) {
+      const breaker = this.getCircuitBreaker(serviceName);
+      states[serviceName] = { state: breaker.getState(), metrics: breaker.getMetrics() };
+    }
     for (const [name, breaker] of this.circuitBreakers.entries()) {
-      states[name] = {
-        state: breaker.getState(),
-        metrics: breaker.getMetrics(),
-      };
+      if (!states[name]) states[name] = { state: breaker.getState(), metrics: breaker.getMetrics() };
     }
 
     return states;
@@ -451,11 +427,7 @@ export class ResilienceInterceptor implements NestInterceptor {
  * Decorator to attach resilience context to a method
  */
 export function Resilience(context: ResilienceContext): MethodDecorator {
-  return (
-    target: object,
-    propertyKey: string | symbol,
-    descriptor: TypedPropertyDescriptor<any>,
-  ) => {
+  return (target: object, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<any>) => {
     Reflect.defineMetadata('resilience', context, descriptor.value);
     return descriptor;
   };
@@ -464,9 +436,7 @@ export function Resilience(context: ResilienceContext): MethodDecorator {
 /**
  * Decorator for service-level resilience configuration
  */
-export function ResilienceService(
-  config: Omit<ResilienceContext, 'operationName'>,
-): ClassDecorator {
+export function ResilienceService(config: Omit<ResilienceContext, 'operationName'>): ClassDecorator {
   return (target: object) => {
     Reflect.defineMetadata('resilience', config, target);
   };

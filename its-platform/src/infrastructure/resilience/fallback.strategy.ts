@@ -101,9 +101,7 @@ export class FallbackStrategy {
    */
   private getConfig(serviceName: string): FallbackConfig {
     // Use non-null assertion since we guarantee a default config exists
-    return (this.configs[serviceName] ??
-      this.configs['default'] ??
-      DEFAULT_FALLBACK_CONFIGS['default'])!;
+    return (this.configs[serviceName] ?? this.configs['default'] ?? DEFAULT_FALLBACK_CONFIGS['default'])!;
   }
 
   /**
@@ -112,17 +110,17 @@ export class FallbackStrategy {
   async execute<T>(
     serviceName: string,
     operation: () => Promise<T>,
-    context?: { method?: string; url?: string; attempt?: number },
+    context?: { method?: string; url?: string; attempt?: number }
   ): Promise<T> {
     const config = this.getConfig(serviceName);
-
+    
     try {
       return await operation();
     } catch (error) {
       if (config.logFallback) {
         console.warn(
           `[Fallback] Service "${serviceName}" failed, applying ${config.strategy} strategy`,
-          { error: error instanceof Error ? error.message : String(error), context },
+          { error: error instanceof Error ? error.message : String(error), context }
         );
       }
 
@@ -131,8 +129,11 @@ export class FallbackStrategy {
           return this.getCachedFallback<T>(serviceName, config);
         case FallbackStrategyType.DEGRADED:
           return this.getDegradedResponse<T>(serviceName, error as Error);
-        case FallbackStrategyType.DEFAULT:
+        case FallbackStrategyType.DEFAULT: {
+          const cached = this.cache.get(serviceName);
+          if (cached && cached.expiresAt > Date.now()) return cached.data as T;
           return config.defaultResponse as T;
+        }
         case FallbackStrategyType.CUSTOM:
           if (config.customFallback) {
             return config.customFallback(error as Error) as Promise<T>;
@@ -150,11 +151,9 @@ export class FallbackStrategy {
    */
   storeForFallback<T>(serviceName: string, data: T): void {
     const config = this.getConfig(serviceName);
-    if (config.cacheTtl) {
-      this.cache.set(serviceName, {
-        data,
-        expiresAt: Date.now() + config.cacheTtl,
-      });
+    const ttl = config.cacheTtl ?? (config.strategy === FallbackStrategyType.CACHE || config.strategy === FallbackStrategyType.DEFAULT ? 300000 : undefined);
+    if (ttl) {
+      this.cache.set(serviceName, { data, expiresAt: Date.now() + ttl });
     }
   }
 
@@ -169,7 +168,7 @@ export class FallbackStrategy {
       }
       return entry.data as T;
     }
-
+    
     // Cache expired or not found, fall through to degraded
     if (config.logFallback) {
       console.warn(`[Fallback] No valid cache for "${serviceName}", using degraded response`);
@@ -187,20 +186,20 @@ export class FallbackStrategy {
         // For JWKS, we can't really degrade - auth must fail closed
         // But we return a special marker that the verifier can check
         throw new DegradedAuthError('JWKS unavailable, auth degraded', error);
-
+      
       case 'database':
         // Return empty result sets for read operations
         return [] as unknown as T;
-
+      
       case 'redis':
         // Redis unavailable - operations that depend on cache should proceed without it
         return null as unknown as T;
-
+      
       case 'external_api':
       case 'kong':
         // Return minimal viable response
         return { degraded: true, service: serviceName, error: error.message } as unknown as T;
-
+      
       default:
         throw new DegradedServiceError(`Service ${serviceName} degraded`, error);
     }
@@ -226,14 +225,14 @@ export class FallbackStrategy {
   getCacheStats(): Record<string, { size: number; oldestEntry: number | null }> {
     const stats: Record<string, { size: number; oldestEntry: number | null }> = {};
     let oldestEntry: number | null = null;
-
+    
     for (const [key, entry] of this.cache.entries()) {
       if (!oldestEntry || entry.expiresAt < oldestEntry) {
         oldestEntry = entry.expiresAt;
       }
       stats[key] = { size: 1, oldestEntry: entry.expiresAt };
     }
-
+    
     return stats;
   }
 }
@@ -242,10 +241,7 @@ export class FallbackStrategy {
  * Error thrown when auth is degraded but not completely failed
  */
 export class DegradedAuthError extends Error {
-  constructor(
-    message: string,
-    public readonly originalError: Error,
-  ) {
+  constructor(message: string, public readonly originalError: Error) {
     super(message);
     this.name = 'DegradedAuthError';
   }
@@ -255,10 +251,7 @@ export class DegradedAuthError extends Error {
  * Error thrown when a service is degraded
  */
 export class DegradedServiceError extends Error {
-  constructor(
-    message: string,
-    public readonly originalError: Error,
-  ) {
+  constructor(message: string, public readonly originalError: Error) {
     super(message);
     this.name = 'DegradedServiceError';
   }
@@ -269,14 +262,12 @@ export class DegradedServiceError extends Error {
  */
 export const FALLBACK_CONFIGS_TOKEN = 'FALLBACK_CONFIGS';
 
-export function createFallbackConfigs(
-  configService: ConfigService,
-): Record<string, FallbackConfig> {
+export function createFallbackConfigs(configService: ConfigService): Record<string, FallbackConfig> {
   // Use a helper to safely get config values
   const getConfig = <T>(key: string, defaultValue: T): T => {
     return configService.get<T>(key) ?? defaultValue;
   };
-
+  
   // Directly inline the default values to avoid TypeScript issues
   return {
     jwks: {

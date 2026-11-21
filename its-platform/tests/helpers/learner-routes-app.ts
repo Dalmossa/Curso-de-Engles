@@ -36,6 +36,7 @@ import { UserIdentityRepository } from '../../src/infrastructure/repositories/us
 import { LearnerRepository } from '../../src/infrastructure/repositories/learner.repository.js';
 import { TOKEN_VERIFIER } from '../../src/modules/auth/tokens.js';
 import { tokenVerifierFromEnv } from '../../src/infrastructure/auth/token-verifier-from-env.js';
+import { ConfigService } from '@nestjs/config';
 import { CurriculumController } from '../../src/modules/curriculum/curriculum.controller.js';
 import { CurriculumService } from '../../src/modules/curriculum/curriculum.service.js';
 import { LearnerScopeService } from '../../src/modules/learners/learner-scope.service.js';
@@ -86,6 +87,12 @@ export function learnerRoutesModule(dataSource: DataSource): new () => unknown {
         provide: TOKEN_VERIFIER,
         useFactory: () => tokenVerifierFromEnv(),
       },
+      {
+        provide: ConfigService,
+        useValue: {
+          get: (key: string) => process.env[key],
+        },
+      },
     ],
   })
   class LearnerRoutesHttpModule {}
@@ -115,10 +122,16 @@ export async function startLearnerRoutesApp(dataSource: DataSource): Promise<Lea
   const fixture = await startTokenFixture();
   setOidcEnv(fixture);
 
-  const app: INestApplication = await NestFactory.create(
-    learnerRoutesModule(dataSource) as never,
-    { logger: false },
-  );
+  let app: INestApplication;
+  try {
+    app = await NestFactory.create(
+      learnerRoutesModule(dataSource) as never,
+      { logger: ['error', 'warn'] },
+    );
+  } catch (err) {
+    console.error('[learner-routes-app] NestFactory.create failed', err);
+    throw err;
+  }
   configureApp(app);
   await app.listen(0);
   const { port } = app.getHttpServer().address() as AddressInfo;

@@ -37,6 +37,7 @@ export interface NextActivityCandidate {
     skillTransferScores: Record<string, number>;
     fsrsPriority: number;
     masteryGapPriority: number;
+    moduleSequencePriority?: number;
   };
   prerequisitesMet: boolean;
 }
@@ -439,6 +440,9 @@ export class NextActivitySelector {
       
       // CEFR progression bonus (prefer same or next CEFR level)
       const cefrBonus = this.getCefrProgressionBonus(node, learner);
+
+      // Module sequence bonus: prefer next lesson in current module order
+      const moduleSequencePriority = this.getModuleSequencePriority(node, learner);
       
       // Determine selection rule
       let selectionRule: NextActivityCandidate['rationale']['selectionRule'] = 'prerequisite';
@@ -452,7 +456,7 @@ export class NextActivitySelector {
         selectionRule = 'spaced_review';
       }
       
-      console.log('[DEBUG scoreCandidates] node:', node.id, 'selectionRule:', selectionRule, 'iPlus1Score:', iPlus1Score, 'masteryGapPriority:', masteryGapPriority, 'fsrsPriority:', fsrsPriority, 'totalScore approx:', (iPlus1Score * 10 + masteryGapPriority * 5 + (remediationTriggers.length > 0 ? 100000 : 0) + fsrsPriority * 3));
+      console.log('[DEBUG scoreCandidates] node:', node.id, 'selectionRule:', selectionRule, 'iPlus1Score:', iPlus1Score, 'masteryGapPriority:', masteryGapPriority, 'fsrsPriority:', fsrsPriority, 'moduleSequencePriority:', moduleSequencePriority, 'totalScore approx:', (iPlus1Score * 10 + masteryGapPriority * 5 + (remediationTriggers.length > 0 ? 100000 : 0) + fsrsPriority * 3));
       
       const totalScore = 
         iPlus1Score * 10 +
@@ -460,7 +464,8 @@ export class NextActivitySelector {
         (remediationTriggers.length > 0 ? 100000 : 0) + // Extremely high priority for remediation - always takes precedence
         fsrsPriority * 3 +
         trackBonus * 2 +
-        cefrBonus * 1;
+        cefrBonus * 1 +
+        moduleSequencePriority * 4;
       
       candidates.push({
         activityId: node.id,
@@ -477,6 +482,7 @@ export class NextActivitySelector {
           skillTransferScores,
           fsrsPriority,
           masteryGapPriority,
+          moduleSequencePriority,
         },
         prerequisitesMet: true,
       });
@@ -581,6 +587,61 @@ export class NextActivitySelector {
     return 0;
   }
 
+  /**
+   * Prioritizes next lesson in the same module sequence.
+   * For learners at a module boundary, prefers first lesson of next module by sortOrder.
+   */
+  private getModuleSequencePriority(node: CurriculumNode, learner: LearnerModel): number {
+    const nodeModuleId = node.moduleId;
+    if (!nodeModuleId) return 0;
+
+    const currentNodeId = learner.currentNodeId;
+    if (!currentNodeId) {
+      // New learner: prefer entry point module's first lesson
+      const moduleInfo = this.curriculumGraph.modules.get(nodeModuleId);
+      if (!moduleInfo) return 0;
+      const idx = moduleInfo.lessonIds.indexOf(node.id);
+      return idx === 0 ? 20 : 0;
+    }
+
+    const currentNode = this.curriculumGraph.nodes.get(currentNodeId);
+    const currentModuleId = currentNode?.moduleId;
+    if (!currentModuleId) return 0;
+
+    // Same module: prefer immediate next lesson in declared lessonIds order
+    if (currentModuleId === nodeModuleId) {
+      const moduleInfo = this.curriculumGraph.modules.get(nodeModuleId);
+      if (!moduleInfo) return 0;
+      const currentIdx = moduleInfo.lessonIds.indexOf(currentNodeId);
+      const nodeIdx = moduleInfo.lessonIds.indexOf(node.id);
+      if (currentIdx >= 0 && nodeIdx === currentIdx + 1) return 20;
+      if (currentIdx >= 0 && nodeIdx > currentIdx) return 1;
+      return 0;
+    }
+
+    // Different module: if current was last in its module, prefer first lesson of next module
+    const currentModule = this.curriculumGraph.modules.get(currentModuleId);
+    if (!currentModule) return 0;
+    const lastInCurrent = currentModule.lessonIds[currentModule.lessonIds.length - 1];
+    if (lastInCurrent !== currentNodeId) return 0;
+
+    const targetModule = this.curriculumGraph.modules.get(nodeModuleId);
+    if (!targetModule) return 0;
+    const firstInTarget = targetModule.lessonIds[0];
+    if (node.id !== firstInTarget) return 0;
+
+    // Prefer nearest next module by sortOrder, same track and CEFR progression
+    if (targetModule.track !== (currentNode?.track ?? learner.track)) return 0;
+    const cefrOrder = ['A1', 'A2', 'B1', 'B2'];
+    const currentCefrIdx = cefrOrder.indexOf(currentModule.cefrLevel);
+    const targetCefrIdx = cefrOrder.indexOf(targetModule.cefrLevel);
+    if (targetCefrIdx < currentCefrIdx || targetCefrIdx > currentCefrIdx + 1) return 0;
+
+    const sortDiff = targetModule.sortOrder - currentModule.sortOrder;
+    if (sortDiff <= 0) return 0;
+    return sortDiff === 1 ? 2 : 1;
+  }
+
   private isTrackCompatible(nodeId: string, track: 'General' | 'IT'): boolean {
     const node = this.curriculumGraph.nodes.get(nodeId);
     if (!node) return false;
@@ -605,7 +666,8 @@ export class NextActivitySelector {
       (r.iPlus1 ? 10 : 0) +
       r.masteryGapPriority * 5 +
       r.fsrsPriority * 3 +
-      r.masteryGapPriority * 2
+      r.masteryGapPriority * 2 +
+      (r.moduleSequencePriority ?? 0) * 4
     );
   }
 }

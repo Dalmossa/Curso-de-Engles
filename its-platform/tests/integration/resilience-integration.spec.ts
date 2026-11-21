@@ -5,11 +5,11 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ResilienceModule } from '../../../src/infrastructure/resilience/resilience.module.js';
-import { ResilienceInterceptor, ResilienceContext } from '../../../src/infrastructure/resilience/resilience.interceptor.js';
-import { CircuitBreaker, CircuitState } from '../../../src/infrastructure/resilience/circuit-breaker.js';
-import { FallbackStrategy } from '../../../src/infrastructure/resilience/fallback.strategy.js';
-import { FALLBACK_CONFIGS_TOKEN } from '../../../src/infrastructure/resilience/fallback.strategy.js';
+import { ResilienceModule } from '../../src/infrastructure/resilience/resilience.module.js';
+import { ResilienceInterceptor, ResilienceContext } from '../../src/infrastructure/resilience/resilience.interceptor.js';
+import { CircuitBreaker, CircuitState } from '../../src/infrastructure/resilience/circuit-breaker.js';
+import { FallbackStrategy } from '../../src/infrastructure/resilience/fallback.strategy.js';
+import { FALLBACK_CONFIGS_TOKEN } from '../../src/infrastructure/resilience/fallback.strategy.js';
 import { ExecutionContext, CallHandler, Injectable } from '@nestjs/common';
 import { Observable, of, throwError, delay } from 'rxjs';
 
@@ -70,11 +70,21 @@ describe('Resilience Integration', () => {
   });
 
   beforeEach(() => {
-    // Reset circuit breaker state
+    const states = interceptor.getCircuitBreakerStates();
+    for (const name of Object.keys(states)) {
+      interceptor.forceCircuitBreakerState(name, CircuitState.CLOSED);
+      const breaker = (interceptor as any).circuitBreakers?.get(name);
+      if (breaker) {
+        breaker.failureCount = 0;
+        breaker.successCount = 0;
+        breaker.lastFailureTime = 0;
+      }
+    }
     (circuitBreaker as any).state = CircuitState.CLOSED;
     (circuitBreaker as any).failureCount = 0;
     (circuitBreaker as any).successCount = 0;
     (circuitBreaker as any).lastFailureTime = 0;
+    fallbackStrategy.clearAllCaches();
   });
 
   describe('Successful Operations', () => {
@@ -145,7 +155,9 @@ describe('Resilience Integration', () => {
         handle: () => new Observable(observer => {
           attempts++;
           if (attempts < 3) {
-            observer.error(new Error('Temporary failure'));
+            const err: any = new Error('Temporary failure');
+            err.code = 'ECONNRESET'; // retryable per DEFAULT_RETRY_CONFIGS
+            observer.error(err);
           } else {
             observer.next({ data: 'success' });
             observer.complete();
@@ -169,10 +181,7 @@ describe('Resilience Integration', () => {
         }),
       } as CallHandler;
 
-      await expect(
-        interceptor.intercept(context, handler).toPromise()
-      ).rejects.toThrow('Temporary failure');
-      
+      await expect(interceptor.intercept(context, handler).toPromise()).rejects.toThrow('Temporary failure');
       expect(attempts).toBe(1); // Only one attempt for POST
     });
   });
@@ -240,7 +249,6 @@ describe('Resilience Integration', () => {
   describe('Metrics Collection', () => {
     it('should expose circuit breaker states for monitoring', async () => {
       const states = interceptor.getCircuitBreakerStates();
-      
       // Should have states for all configured services
       expect(states).toHaveProperty('external_api');
       expect(states).toHaveProperty('database');

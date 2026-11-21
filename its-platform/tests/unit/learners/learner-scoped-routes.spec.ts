@@ -199,7 +199,6 @@ const ROUTES: readonly Route[] = [
       // Real PracticeService: it must resolve the addressed learner via withVisible before grading.
       const service = new PracticeService(
         scope as LearnerScopeService,
-        {} as never,
         MOCK_DATA_SOURCE,
       );
       return service.submitPractice(SUBJECT, ADDRESSED, practiceBody) as Promise<Record<string, unknown>>;

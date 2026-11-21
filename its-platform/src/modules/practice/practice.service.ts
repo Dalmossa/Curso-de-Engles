@@ -2,7 +2,6 @@ import { Injectable, Inject } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 import { LearnerScopeService } from '../learners/learner-scope.service.js';
-import { ContentService } from '../content/content.service.js';
 import type { PracticeSubmissionDto } from './dto/practice-submission.dto.js';
 import {
   bktUpdate,
@@ -81,7 +80,6 @@ interface FsrsStateRow {
 export class PracticeService {
   constructor(
     private readonly learnerScope: LearnerScopeService,
-    private readonly contentService: ContentService,
     @Inject(DataSource) private readonly dataSource: DataSource,
   ) {}
 
@@ -137,7 +135,7 @@ export class PracticeService {
 
   /**
    * Fetches pack with items including keys for grading.
-   * Uses raw SQL to get the `key` column which ContentService doesn't expose.
+   * Uses raw SQL to get the `key` column which the catalog read path does not expose.
    */
   private async getPackForGrading(packId: string): Promise<PackForGrading | null> {
     const packRows = await this.dataSource.query(

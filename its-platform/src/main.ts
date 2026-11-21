@@ -12,8 +12,9 @@ async function bootstrap() {
   configureApp(app);
 
   const port = Number(process.env['PORT'] ?? 3000);
-  await app.listen(port);
-  console.log(`🚀 ITS Platform listening on http://localhost:${port} (API surface: /api/v1)`);
+  const host = process.env['HOST'] ?? '0.0.0.0';
+  await app.listen(port, host);
+  console.log(`🚀 ITS Platform listening on http://${host}:${port} (API surface: /api/v1)`);
 }
 
 bootstrap();
