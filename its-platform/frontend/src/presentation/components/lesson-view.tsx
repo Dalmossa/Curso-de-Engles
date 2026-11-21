@@ -1,9 +1,8 @@
 import type { LessonContent } from '@/core';
 import { isPublishable } from '@/core';
-import { Markdown } from './markdown';
 import { CefrBadge } from './cefr-badge';
 import { Alert } from './ui/alert';
-import { Badge } from './ui/badge';
+import { LessonPhaseContent, type SynthesizeAction } from './lesson-phase-content';
 
 /**
  * The four authored phases of a lesson, in order.
@@ -18,21 +17,20 @@ import { Badge } from './ui/badge';
  * as finished content would be exactly the mislabelling the repository's licence rules exist
  * to prevent.
  */
-export function LessonView({ lesson }: { readonly lesson: LessonContent }) {
+export function LessonView({
+  lesson,
+  synthesizeAction,
+}: {
+  readonly lesson: LessonContent;
+  readonly synthesizeAction?: SynthesizeAction;
+}) {
   return (
     <article className="flex flex-col gap-8">
       <header className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <CefrBadge level={lesson.cefrLevel} />
-          <Badge tone="neutral" data-testid="authoring-state">
-            {lesson.authoringState}
-          </Badge>
-          <Badge tone="neutral" data-testid="reuse-basis">
-            {lesson.reuseBasis}
-          </Badge>
         </div>
         <h1 className="text-2xl font-semibold tracking-tight text-ink-900">{lesson.title}</h1>
-        <p className="font-mono text-xs text-ink-500">{lesson.lessonId}</p>
 
         {isPublishable(lesson) ? null : (
           <Alert tone="warning" title="Conteúdo ainda não liberado para publicação" data-testid="publication-warning">
@@ -53,7 +51,7 @@ export function LessonView({ lesson }: { readonly lesson: LessonContent }) {
               </span>
               <h2 className="text-lg font-semibold text-ink-900">{phase.heading}</h2>
             </div>
-            <Markdown>{phase.markdown}</Markdown>
+            <LessonPhaseContent phase={phase} synthesizeAction={synthesizeAction} />
           </li>
         ))}
       </ol>

@@ -7,6 +7,9 @@
  * because presenting restricted content as finished is the mislabelling the repository's
  * licence rules exist to prevent, and the absent learner model because rendering an empty
  * panel would claim the block had been interpreted when it had not.
+ *
+ * Internal catalogue metadata (`lessonId`, `authoringState`, `reuseBasis`) is not shown in
+ * the learner-facing lesson UI.
  */
 import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
@@ -32,14 +35,15 @@ describe('LessonView', () => {
     });
   });
 
-  it('identifies the lesson by title, identifier, level and licence state', () => {
+  it('identifies the lesson by title and level and hides internal metadata', () => {
     render(<LessonView lesson={PUBLISHABLE_LESSON} />);
 
     expect(screen.getByRole('heading', { level: 1, name: PUBLISHABLE_LESSON.title })).toBeInTheDocument();
-    expect(screen.getByText(PUBLISHABLE_LESSON.lessonId)).toBeInTheDocument();
     expect(screen.getByTestId('cefr-badge')).toHaveTextContent('A2');
-    expect(screen.getByTestId('authoring-state')).toHaveTextContent('authored');
-    expect(screen.getByTestId('reuse-basis')).toHaveTextContent('cite_only');
+
+    expect(screen.queryByText(PUBLISHABLE_LESSON.lessonId)).toBeNull();
+    expect(screen.queryByTestId('authoring-state')).toBeNull();
+    expect(screen.queryByTestId('reuse-basis')).toBeNull();
   });
 
   it('says nothing about publication for a publishable lesson', () => {
@@ -55,7 +59,11 @@ describe('LessonView', () => {
     const warning = screen.getByTestId('publication-warning');
     expect(warning).toHaveTextContent('Conteúdo ainda não liberado para publicação');
     expect(warning).toHaveTextContent('restricted_pending_permission');
-    expect(screen.getByTestId('reuse-basis')).toHaveTextContent('adapt_requires_permission');
+
+    // Internal licence/authoring metadata remains hidden from the learner-facing view.
+    expect(screen.queryByText(RESTRICTED_LESSON.lessonId)).toBeNull();
+    expect(screen.queryByTestId('authoring-state')).toBeNull();
+    expect(screen.queryByTestId('reuse-basis')).toBeNull();
 
     // A restricted lesson is served, so its phases are readable — the warning is not a
     // substitute for the content, and it is not a 404.

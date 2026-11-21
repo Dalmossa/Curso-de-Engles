@@ -35,39 +35,36 @@ async function loadLesson(lessonId: string): Promise<LessonContent | null> {
   }
 }
 
-interface PronunciationPracticeProps {
+interface PronunciationPracticePanelProps {
   lesson: LessonContent;
 }
 
-async function PronunciationPracticePanel({ lesson }: PronunciationPracticeProps) {
+async function PronunciationPracticePanel({ lesson }: PronunciationPracticePanelProps) {
   const { useCases } = await getServerContext();
 
   // Extract pronunciation targets from lesson content
   const targets = getFirstTargets(lesson, 10);
   const firstTarget = targets[0];
+  if (!firstTarget) return null;
 
   // Synthesize speech for the first target (server-side)
   let initialSynthesis: SpeechSynthesisResult | null = null;
-  if (firstTarget) {
-    try {
-      const result = await useCases.synthesizeSpeech.execute({ text: firstTarget.text, rate: 1 });
-      initialSynthesis = result;
-    } catch {
-      // Fallback will be handled client-side
-      initialSynthesis = null;
-    }
+  try {
+    initialSynthesis = await useCases.synthesizeSpeech.execute({ text: firstTarget.text, rate: 1 });
+  } catch {
+    // Fallback will be handled client-side
+    initialSynthesis = null;
   }
 
   return (
     <PronunciationPractice
       synthesis={initialSynthesis}
-      target={firstTarget!}
+      target={firstTarget}
       allTargets={targets}
+      currentIndex={0}
       synthesizeAction={synthesizeSpeechAction}
       evaluateAction={evaluatePronunciationAction}
       getGrammarTipAction={getGrammarTipAction}
-      currentIndex={0}
-      onTargetChange={() => {}} // Navigation handled by client state
     />
   );
 }
@@ -84,7 +81,7 @@ export default async function LessonPage({ params }: PageProps) {
 
   return (
     <div className="space-y-8">
-      <LessonView lesson={lesson} />
+      <LessonView lesson={lesson} synthesizeAction={synthesizeSpeechAction} />
       {targets.length > 0 && <PronunciationPracticePanel lesson={lesson} />}
     </div>
   );
