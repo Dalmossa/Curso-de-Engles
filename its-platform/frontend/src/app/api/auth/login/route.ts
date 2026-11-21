@@ -5,6 +5,7 @@ import {
   isAuthSessionPayload,
 } from '@/infrastructure/auth/bff-session.server';
 import { safeRedirectPath } from '@/shared/safe-redirect';
+import { redirectTo } from '@/shared/request-origin';
 
 export async function POST(req: NextRequest) {
   const form = await req.formData();
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest) {
       }),
     });
   } catch {
-    return NextResponse.redirect(new URL('/login?error=unavailable', req.url));
+    return NextResponse.redirect(redirectTo(req, '/login?error=unavailable'));
   }
 
   const payload = await response.json().catch(() => null);
@@ -30,13 +31,13 @@ export async function POST(req: NextRequest) {
   // nothing to put in the cookies, and redirecting to `/` would send the learner straight back
   // here through the proxy — the loop this handler exists to close.
   if (!response.ok || !isAuthSessionPayload(payload)) {
-    const target = new URL('/login', req.url);
+    const target = redirectTo(req, '/login');
     target.searchParams.set('error', response.status === 401 ? 'invalid' : 'unavailable');
     target.searchParams.set('next', next);
     return NextResponse.redirect(target);
   }
 
-  const redirect = NextResponse.redirect(new URL(next, req.url));
+  const redirect = NextResponse.redirect(redirectTo(req, next));
   applySessionCookies(redirect, payload);
   return redirect;
 }

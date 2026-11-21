@@ -1,38 +1,34 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { SpeechSynthesisResult, PronunciationEvaluation, PronunciationTarget, GrammarTip } from '@/core';
 import type { ActionResult } from '@/shared/action-result';
+import { readStoredSpeakRate } from '@/shared/speak-rate';
 import { PronunciationPlayer } from './pronunciation-player';
 import { PronunciationRecorder } from './pronunciation-recorder';
 import { copy } from '@/presentation/lib/copy';
 
 interface PronunciationPracticeProps {
-  /** The synthesis result from TTS for the current target. */
+  /** Initial synthesis result for the initial/current target (may be null; client can regenerate/fallback). */
   synthesis: SpeechSynthesisResult | null;
-  /** The current target being practiced. */
-  target: PronunciationTarget;
-  /** All available targets in the lesson. */
+  /** The current target being practiced (optional; derived from allTargets when omitted). */
+  target?: PronunciationTarget;
+  /** All available targets in the lesson. Must not be empty. */
   allTargets: readonly PronunciationTarget[];
   /**
    * Server Action to synthesize speech.
-   *
-   * The shape is the project's `ActionResult`: a success carries the data, a failure
-   * carries the serialised `DomainError`. The actions are the real Server Actions
-   * (`speech/actions.ts`) — an inline wrapper declared in the Server Component is **not**
-   * one, and Next.js refuses to pass a plain function to a Client Component.
    */
-  synthesizeAction: (input: { text: string; voice?: string; rate?: 1 | 0.75 }) => Promise<ActionResult<SpeechSynthesisResult>>;
+  synthesizeAction: (input: { text: string; voice?: string; rate?: 1 | 0.75 | 0.5 }) => Promise<ActionResult<SpeechSynthesisResult>>;
   /** Server Action to evaluate pronunciation. */
   evaluateAction: (input: { expectedText: string; transcript?: string; audioBase64?: string; mimeType?: string; locale?: string }) => Promise<ActionResult<PronunciationEvaluation>>;
   /** Optional server action to fetch a grammar tip from the local RAG. */
   getGrammarTipAction?: (topic: string) => Promise<ActionResult<GrammarTip>>;
   /** Called when evaluation completes. */
   onEvaluate?: (evaluation: PronunciationEvaluation) => void;
-  /** Index of the current target in allTargets. */
-  currentIndex: number;
-  /** Called when the user navigates to a different target. */
-  onTargetChange: (index: number) => void;
+  /** Index of the current target in allTargets (optional; managed internally if omitted). */
+  currentIndex?: number;
+  /** Called when the user navigates to a different target (optional; managed internally if omitted). */
+  onTargetChange?: (index: number) => void;
 }
 
 /**
@@ -45,7 +41,7 @@ interface PronunciationPracticeProps {
  */
 export function PronunciationPractice({
   synthesis,
-  target,
+  target: targetProp,
   allTargets,
   synthesizeAction,
   evaluateAction,
@@ -54,36 +50,66 @@ export function PronunciationPractice({
   currentIndex,
   onTargetChange,
 }: PronunciationPracticeProps) {
-  const [localSynthesis, setLocalSynthesis] = useState<SpeechSynthesisResult | null>(synthesis);
+  const [internalIndex, setInternalIndex] = useState(currentIndex ?? 0);
+  const isControlled = typeof onTargetChange === 'function';
+  const activeIndex = isControlled ? (currentIndex ?? 0) : internalIndex;
+  const safeIndex = Math.min(Math.max(activeIndex, 0), Math.max(allTargets.length - 1, 0));
+  const activeTarget = allTargets[safeIndex] ?? targetProp ?? allTargets[0]!;
+
+  const [synthesisOverride, setSynthesisOverride] = useState<SpeechSynthesisResult | null>(null);
   const [isSynthesizing, setIsSynthesizing] = useState(false);
   const [grammarTip, setGrammarTip] = useState<GrammarTip | null>(null);
   const [grammarTipLoading, setGrammarTipLoading] = useState(false);
   const [grammarTipError, setGrammarTipError] = useState<string | null>(null);
-  const [grammarTipTarget, setGrammarTipTarget] = useState<string | null>(null);
+  const [activeKey, setActiveKey] = useState<string | null>(null);
 
-  // Update local synthesis when prop changes (e.g., after target change)
-  if (synthesis !== localSynthesis) {
-    setLocalSynthesis(synthesis);
-  }
+  const targetKey = `${safeIndex}:${activeTarget.text}`;
+  const displayedSynthesis = safeIndex === 0 ? (synthesisOverride ?? synthesis) : synthesisOverride;
 
-  if (grammarTipTarget !== target.text) {
-    setGrammarTipTarget(target.text);
+  // Adjust state during render when the active target changes (avoids sync setState in effects).
+  if (activeKey !== targetKey) {
+    setActiveKey(targetKey);
     setGrammarTip(null);
     setGrammarTipError(null);
+    setSynthesisOverride(null);
+    setIsSynthesizing(safeIndex !== 0);
   }
+
+  // Synthesize speech for non-initial targets on navigation.
+  useEffect(() => {
+    if (safeIndex === 0) return;
+
+    let cancelled = false;
+    void (async () => {
+      try {
+        const rate = readStoredSpeakRate();
+        const result = await synthesizeAction({ text: activeTarget.text, rate });
+        if (!cancelled && result.ok) {
+          setSynthesisOverride(result.data);
+        }
+      } finally {
+        if (!cancelled) setIsSynthesizing(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [safeIndex, activeTarget.text, synthesizeAction]);
 
   const handleSynthesize = useCallback(async () => {
     if (isSynthesizing) return;
     setIsSynthesizing(true);
     try {
-      const result = await synthesizeAction({ text: target.text, rate: 1 });
-      if (result.ok && result.data) {
-        setLocalSynthesis(result.data);
+      const rate = readStoredSpeakRate();
+      const result = await synthesizeAction({ text: activeTarget.text, rate });
+      if (result.ok) {
+        setSynthesisOverride(result.data);
       }
     } finally {
       setIsSynthesizing(false);
     }
-  }, [target.text, synthesizeAction, isSynthesizing]);
+  }, [activeTarget.text, synthesizeAction, isSynthesizing]);
 
   const handleEvaluate = useCallback(
     (evaluation: PronunciationEvaluation) => {
@@ -97,7 +123,7 @@ export function PronunciationPractice({
     setGrammarTipLoading(true);
     setGrammarTipError(null);
     try {
-      const result = await getGrammarTipAction(target.text);
+      const result = await getGrammarTipAction(activeTarget.text);
       if (result.ok) {
         setGrammarTip(result.data);
       } else {
@@ -106,7 +132,18 @@ export function PronunciationPractice({
     } finally {
       setGrammarTipLoading(false);
     }
-  }, [getGrammarTipAction, grammarTipLoading, target.text]);
+  }, [getGrammarTipAction, grammarTipLoading, activeTarget.text]);
+
+  const handleTargetChange = useCallback(
+    (index: number) => {
+      if (isControlled) {
+        onTargetChange(index);
+      } else {
+        setInternalIndex(index);
+      }
+    },
+    [isControlled, onTargetChange],
+  );
 
   return (
     <section className="space-y-6" aria-labelledby="pronunciation-practice-heading">
@@ -123,14 +160,14 @@ export function PronunciationPractice({
           {allTargets.map((t, index) => (
             <button
               key={index}
-              onClick={() => onTargetChange(index)}
-              disabled={index === currentIndex}
+              onClick={() => handleTargetChange(index)}
+              disabled={index === safeIndex}
               className={`btn btn-sm whitespace-nowrap transition-colors ${
-                index === currentIndex
+                index === safeIndex
                   ? 'btn-primary'
                   : 'btn-outline'
               }`}
-              aria-current={index === currentIndex ? 'step' : undefined}
+              aria-current={index === safeIndex ? 'step' : undefined}
             >
               {t.heading || `${copy.pronunciation.phase} ${t.phase}`}
             </button>
@@ -141,7 +178,7 @@ export function PronunciationPractice({
       {/* Current target context */}
       <div className="p-3 bg-muted rounded-lg">
         <p className="text-sm text-muted-foreground mb-1">
-          {copy.pronunciation.currentTarget}: {target.heading || `${copy.pronunciation.phase} ${target.phase}`}
+          {copy.pronunciation.currentTarget}: {activeTarget.heading || `${copy.pronunciation.phase} ${activeTarget.phase}`}
         </p>
       </div>
 
@@ -150,8 +187,8 @@ export function PronunciationPractice({
         <h3 className="text-lg font-medium">{copy.pronunciation.listen}</h3>
         <div className="p-4 border rounded-lg bg-card">
           <PronunciationPlayer
-            synthesis={localSynthesis}
-            targetText={target.text}
+            synthesis={displayedSynthesis}
+            targetText={activeTarget.text}
           />
           <div className="flex items-center gap-2">
             <button
@@ -161,7 +198,7 @@ export function PronunciationPractice({
             >
               {isSynthesizing ? copy.pronunciation.generating : copy.pronunciation.regenerateAudio}
             </button>
-            {localSynthesis?.engine === 'none' && (
+            {displayedSynthesis?.engine === 'none' && (
               <span className="text-xs text-muted-foreground">{copy.pronunciation.usingBrowserTTS}</span>
             )}
           </div>
@@ -201,7 +238,7 @@ export function PronunciationPractice({
         )}
         <div className="p-4 border rounded-lg bg-card">
           <PronunciationRecorder
-            targetText={target.text}
+            targetText={activeTarget.text}
             evaluateAction={evaluateAction}
             onEvaluate={handleEvaluate}
             maxDurationSeconds={15}
@@ -213,13 +250,13 @@ export function PronunciationPractice({
       {allTargets.length > 1 && (
         <div className="pt-4 border-t">
           <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
-            <span>{copy.pronunciation.progress} {currentIndex + 1} / {allTargets.length}</span>
-            <span>{Math.round(((currentIndex + 1) / allTargets.length) * 100)}%</span>
+            <span>{copy.pronunciation.progress} {safeIndex + 1} / {allTargets.length}</span>
+            <span>{Math.round(((safeIndex + 1) / allTargets.length) * 100)}%</span>
           </div>
           <div className="h-2 bg-muted rounded-full overflow-hidden">
             <div
               className="h-full bg-primary transition-all duration-300"
-              style={{ width: `${((currentIndex + 1) / allTargets.length) * 100}%` }}
+              style={{ width: `${((safeIndex + 1) / allTargets.length) * 100}%` }}
             />
           </div>
         </div>

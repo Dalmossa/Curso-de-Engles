@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { deleteAccount } from '@/infrastructure/account/account-bff.server';
 import { clearSessionCookies } from '@/infrastructure/auth/bff-session.server';
 import { routes } from '@/shared/routes';
+import { redirectTo } from '@/shared/request-origin';
 
 /**
  * `POST /api/account/delete` — the learner closes their own account.
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const redirect = NextResponse.redirect(new URL(routes.login, req.url));
+  const redirect = NextResponse.redirect(redirectTo(req, routes.login));
   clearSessionCookies(redirect);
   return redirect;
 }

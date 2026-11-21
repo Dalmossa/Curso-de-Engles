@@ -6,6 +6,7 @@ import type { PronunciationHistory, SpeechSynthesisInput, SpeechSynthesisResult 
 import type { ActionResult } from '@/shared/action-result';
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from '@/presentation/components/ui/card';
 import { copy } from '@/presentation/lib/copy';
+import { readStoredSpeakRate } from '@/shared/speak-rate';
 
 export interface PronunciationMasteryCardProps {
   readonly history: PronunciationHistory | null;
@@ -21,15 +22,21 @@ function playWithBrowserTts(text: string): void {
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'en-US';
-    utterance.rate = 0.75;
+    utterance.rate = readStoredSpeakRate();
     window.speechSynthesis.speak(utterance);
   } catch {
     // Erros de TTS do navegador são ignorados para não quebrar a UI.
   }
 }
 
-async function playAudioBase64(base64: string, mimeType: string): Promise<void> {
+async function playAudioBase64(base64: string, mimeType: string, targetRate?: number, synthesisRate?: number): Promise<void> {
+  const target = targetRate ?? readStoredSpeakRate();
+  const multiplier = synthesisRate ? target / synthesisRate : target;
   const audio = new Audio(`data:${mimeType};base64,${base64}`);
+  audio.playbackRate = Math.min(2, Math.max(0.25, multiplier));
+  audio.preservesPitch = true;
+  (audio as HTMLAudioElement & { mozPreservesPitch?: boolean }).mozPreservesPitch = true;
+  (audio as HTMLAudioElement & { webkitPreservesPitch?: boolean }).webkitPreservesPitch = true;
   await audio.play();
 }
 
@@ -45,9 +52,10 @@ export function PronunciationMasteryCard({
 
     setPlayingWord(word);
     try {
-      const result = await synthesizeAction({ text: word, rate: 0.75 });
+      const rate = readStoredSpeakRate();
+      const result = await synthesizeAction({ text: word, rate });
       if (result.ok && result.data.audio) {
-        await playAudioBase64(result.data.audio.base64, result.data.audio.mimeType);
+        await playAudioBase64(result.data.audio.base64, result.data.audio.mimeType, rate, result.data.rate);
       } else {
         playWithBrowserTts(word);
       }

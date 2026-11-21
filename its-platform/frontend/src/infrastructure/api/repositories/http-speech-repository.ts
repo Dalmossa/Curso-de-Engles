@@ -23,12 +23,14 @@ export class HttpSpeechRepository implements SpeechRepository {
   constructor(private readonly _transport: ApiTransport) {}
 
   async synthesizeSpeech(input: SpeechSynthesisInput): Promise<SpeechSynthesisResult> {
+    const requestedRate = input.rate ?? 1;
+    const apiRate: 1 | 0.75 = requestedRate === 0.5 ? 0.75 : requestedRate;
     const dto = await this._transport.request<SpeechSynthesisDto>({
       operation: 'content.tts',
       body: {
         text: input.text,
         voice: input.voice,
-        rate: input.rate,
+        rate: apiRate,
       },
     });
     return toSpeechSynthesisResult(dto);

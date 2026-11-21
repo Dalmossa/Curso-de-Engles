@@ -5,6 +5,7 @@ import {
   isAuthSessionPayload,
 } from '@/infrastructure/auth/bff-session.server';
 import { safeRedirectPath } from '@/shared/safe-redirect';
+import { redirectTo } from '@/shared/request-origin';
 
 export async function POST(req: NextRequest) {
   const form = await req.formData();
@@ -22,18 +23,18 @@ export async function POST(req: NextRequest) {
       }),
     });
   } catch {
-    return NextResponse.redirect(new URL('/register?error=unavailable', req.url));
+    return NextResponse.redirect(redirectTo(req, '/register?error=unavailable'));
   }
 
   const payload = await response.json().catch(() => null);
 
   if (!response.ok || !isAuthSessionPayload(payload)) {
-    const target = new URL('/register', req.url);
+    const target = redirectTo(req, '/register');
     target.searchParams.set('error', response.status === 409 ? 'exists' : 'unavailable');
     return NextResponse.redirect(target);
   }
 
-  const redirect = NextResponse.redirect(new URL(next, req.url));
+  const redirect = NextResponse.redirect(redirectTo(req, next));
   applySessionCookies(redirect, payload);
   return redirect;
 }

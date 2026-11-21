@@ -4,12 +4,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { SpeechSynthesisResult } from '@/core';
 import type { ActionResult } from '@/shared/action-result';
 import { cn } from '@/shared/utils/cn';
+import { playbackMultiplier, toSynthesisRate, type SpeakRate } from '@/shared/speak-rate';
 
-export type SpeakRate = 1 | 0.75;
+export type { SpeakRate };
 
 export interface SpeakOptions {
   readonly rate: SpeakRate;
-  readonly synthesizeAction?: (input: { text: string; rate?: 1 | 0.75 }) => Promise<ActionResult<SpeechSynthesisResult>>;
+  readonly synthesizeAction?: (input: { text: string; rate?: 1 | 0.75 | 0.5 }) => Promise<ActionResult<SpeechSynthesisResult>>;
   readonly signal?: AbortSignal;
 }
 
@@ -19,7 +20,9 @@ export interface SpeakHandle {
 }
 
 export function clampSpeakRate(rate: number): SpeakRate {
-  return rate <= 0.875 ? 0.75 : 1;
+  if (rate <= 0.625) return 0.5;
+  if (rate <= 0.875) return 0.75;
+  return 1;
 }
 
 export function cleanSpeechText(text: string): string {
@@ -41,14 +44,17 @@ function isAbortError(error: unknown): boolean {
   return error instanceof DOMException && error.name === 'AbortError';
 }
 
-async function playRemoteAudio(base64: string, mimeType: string, rate: SpeakRate, signal?: AbortSignal): Promise<void> {
+async function playRemoteAudio(base64: string, mimeType: string, playbackRate: number, signal?: AbortSignal): Promise<void> {
   if (typeof Audio === 'undefined') {
     throw new Error('audio-unavailable');
   }
 
   await new Promise<void>((resolve, reject) => {
     const audio = new Audio(`data:${mimeType};base64,${base64}`);
-    audio.playbackRate = rate;
+    audio.playbackRate = Math.min(2, Math.max(0.25, playbackRate));
+    audio.preservesPitch = true;
+    (audio as HTMLAudioElement & { mozPreservesPitch?: boolean }).mozPreservesPitch = true;
+    (audio as HTMLAudioElement & { webkitPreservesPitch?: boolean }).webkitPreservesPitch = true;
     let settled = false;
 
     const cleanup = () => {
@@ -167,17 +173,19 @@ export function speakText(text: string, options: SpeakOptions): SpeakHandle {
   }
 
   const cleaned = cleanSpeechText(text);
-  const rate = clampSpeakRate(options.rate);
+  const targetRate = clampSpeakRate(options.rate);
+  const synthesisRate = toSynthesisRate(targetRate);
   const done = (async () => {
     if (!cleaned) return;
 
     let remoteFailed = false;
     if (options.synthesizeAction) {
       try {
-        const result = await options.synthesizeAction({ text: cleaned, rate });
+        const result = await options.synthesizeAction({ text: cleaned, rate: synthesisRate });
         if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
         if (result.ok && result.data.engine === 'remote' && result.data.audio) {
-          await playRemoteAudio(result.data.audio.base64, result.data.audio.mimeType, rate, signal);
+          const multiplier = playbackMultiplier(targetRate, result.data.rate ?? synthesisRate);
+          await playRemoteAudio(result.data.audio.base64, result.data.audio.mimeType, multiplier, signal);
           return;
         }
         // engine none or missing audio -> fallback to browser TTS
@@ -188,10 +196,9 @@ export function speakText(text: string, options: SpeakOptions): SpeakHandle {
     }
 
     try {
-      await playBrowserSpeech(cleaned, rate, signal);
+      await playBrowserSpeech(cleaned, targetRate, signal);
     } catch (error) {
       if (isAbortError(error) || signal.aborted) throw error;
-      // If browser TTS unavailable and no remote audio, surface as silent failure for UI state handling? throw
       if (!options.synthesizeAction || remoteFailed) throw error;
       throw error;
     }
@@ -215,7 +222,16 @@ export interface InlineSpeakButtonProps {
   readonly stopLabel?: string;
   readonly active?: boolean;
   readonly disabled?: boolean;
+  /** Called when playback starts/stops. Alias: `onPlayStateChange`. */
   readonly onPlayingChange?: (playing: boolean) => void;
+  /** Alias for `onPlayingChange`, kept for mockup/controller compatibility. */
+  readonly onPlayStateChange?: (playing: boolean) => void;
+  /**
+   * Controlled mode: when provided, the button delegates playback to the caller.
+   * It does not call `speakText` internally. `text` is still used for disabled/label logic.
+   */
+  readonly controlledPlaying?: boolean;
+  readonly onControlledToggle?: () => void;
 }
 
 export function InlineSpeakButton({
@@ -228,11 +244,15 @@ export function InlineSpeakButton({
   active = false,
   disabled = false,
   onPlayingChange,
+  onPlayStateChange,
+  controlledPlaying,
+  onControlledToggle,
 }: InlineSpeakButtonProps) {
-  const [playing, setPlaying] = useState(false);
+  const [playingInternal, setPlayingInternal] = useState(false);
   const [error, setError] = useState(false);
   const handleRef = useRef<SpeakHandle | null>(null);
   const textRef = useRef(text);
+  const isControlled = controlledPlaying !== undefined;
 
   useEffect(() => {
     textRef.current = text;
@@ -245,17 +265,33 @@ export function InlineSpeakButton({
 
   useEffect(() => () => stop(), [stop]);
 
+  const emitPlaying = useCallback(
+    (value: boolean) => {
+      onPlayingChange?.(value);
+      onPlayStateChange?.(value);
+    },
+    [onPlayStateChange, onPlayingChange],
+  );
+
   const setPlayingState = useCallback(
     (value: boolean) => {
-      setPlaying(value);
-      onPlayingChange?.(value);
+      if (!isControlled) setPlayingInternal(value);
+      emitPlaying(value);
     },
-    [onPlayingChange],
+    [emitPlaying, isControlled],
   );
+
+  const playing = isControlled ? controlledPlaying : playingInternal;
 
   const handleClick = useCallback(async () => {
     if (disabled) return;
-    if (playing) {
+
+    if (isControlled) {
+      onControlledToggle?.();
+      return;
+    }
+
+    if (playingInternal) {
       stop();
       setPlayingState(false);
       return;
@@ -275,10 +311,10 @@ export function InlineSpeakButton({
         setPlayingState(false);
       }
     }
-  }, [disabled, playing, rate, setPlayingState, stop, synthesizeAction]);
+  }, [disabled, isControlled, onControlledToggle, playingInternal, rate, setPlayingState, stop, synthesizeAction]);
 
   const cleaned = cleanSpeechText(text);
-  const isDisabled = disabled || cleaned.length === 0;
+  const isDisabled = disabled || (cleaned.length === 0 && !isControlled);
 
   return (
     <button
@@ -289,7 +325,7 @@ export function InlineSpeakButton({
       aria-pressed={playing}
       title={playing ? stopLabel : label}
       className={cn(
-        'inline-flex h-7 w-7 items-center justify-center rounded-md border text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:opacity-40',
+        'inline-flex min-h-11 min-w-11 h-11 w-11 items-center justify-center rounded-md border text-base transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:opacity-40 sm:h-8 sm:w-8 sm:min-h-0 sm:min-w-0 sm:text-xs',
         playing || active
           ? 'border-brand-500 bg-brand-100 text-brand-700'
           : 'border-border-subtle bg-surface text-ink-700 hover:bg-surface-sunken',

@@ -16,7 +16,7 @@ export interface SpeechSynthesisAudio {
 export interface SpeechSynthesisResult {
   readonly text: string;
   readonly voice: string;
-  readonly rate: 1 | 0.75;
+  readonly rate: 1 | 0.75 | 0.5;
   readonly engine: 'remote' | 'none';
   readonly audio: SpeechSynthesisAudio | null;
   readonly fallbackReason: 'not_configured' | 'upstream_error' | null;
@@ -26,7 +26,7 @@ export interface SpeechSynthesisResult {
 export interface SpeechSynthesisInput {
   readonly text: string;
   readonly voice?: string;
-  readonly rate?: 1 | 0.75;
+  readonly rate?: 1 | 0.75 | 0.5;
 }
 
 /**

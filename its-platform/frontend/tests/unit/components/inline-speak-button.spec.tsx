@@ -41,6 +41,8 @@ describe('inline speak utilities', () => {
     expect(clampSpeakRate(0.75)).toBe(0.75);
     expect(clampSpeakRate(0.8)).toBe(0.75);
     expect(clampSpeakRate(0.9)).toBe(1);
+    expect(clampSpeakRate(0.5)).toBe(0.5);
+    expect(clampSpeakRate(0.4)).toBe(0.5);
   });
 
   it('falls back to browser speechSynthesis when action returns no remote audio', async () => {
@@ -57,6 +59,19 @@ describe('inline speak utilities', () => {
     expect(utterance.text).toBe('Hello there');
     expect(utterance.lang).toBe('en-US');
     expect(utterance.rate).toBe(0.75);
+  });
+
+  it('requests 0.75 synthesis for 0.5x target and plays browser speech at 0.5', async () => {
+    const { speak } = installSpeechSynthesisMock();
+    const action = vi.fn().mockResolvedValue({ ok: true, data: { engine: 'none', audio: null } });
+
+    const handle = speakText('Slow please', { rate: 0.5, synthesizeAction: action });
+    await handle.done;
+
+    expect(action).toHaveBeenCalledWith({ text: 'Slow please', rate: 0.75 });
+    expect(speak).toHaveBeenCalledTimes(1);
+    const utterance = speak.mock.calls[0]?.[0] as MockUtterance;
+    expect(utterance.rate).toBe(0.5);
   });
 
   it('stops browser speech on cancel', async () => {

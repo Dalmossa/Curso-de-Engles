@@ -81,8 +81,15 @@ export default async function LessonPage({ params }: PageProps) {
 
   return (
     <div className="space-y-8">
-      <LessonView lesson={lesson} synthesizeAction={synthesizeSpeechAction} />
-      {targets.length > 0 && <PronunciationPracticePanel lesson={lesson} />}
+      <LessonView
+        lesson={lesson}
+        synthesizeAction={synthesizeSpeechAction}
+      />
+      {targets.length > 0 && (
+        <div id="lesson-pronunciation-practice">
+          <PronunciationPracticePanel lesson={lesson} />
+        </div>
+      )}
     </div>
   );
 }

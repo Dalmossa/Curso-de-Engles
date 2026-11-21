@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { getRequestOrigin } from '@/shared/request-origin';
 import {
   SESSION_COOKIE_MAX_AGE_SECONDS,
   SESSION_ID_COOKIE,
@@ -66,9 +67,7 @@ function cookieOptions() {
 
 function loginRedirect(req: NextRequest): NextResponse {
   const { pathname, search } = req.nextUrl;
-  const url = req.nextUrl.clone();
-  url.pathname = '/login';
-  url.search = '';
+  const url = new URL('/login', getRequestOrigin(req));
   url.searchParams.set('next', `${pathname}${search}`);
   return NextResponse.redirect(url);
 }

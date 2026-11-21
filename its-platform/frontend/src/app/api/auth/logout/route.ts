@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { apiFetch, clearSessionCookies } from '@/infrastructure/auth/bff-session.server';
 import { SESSION_TOKEN_COOKIE } from '@/shared/auth-cookies';
+import { redirectTo } from '@/shared/request-origin';
 
 export async function POST(req: NextRequest) {
   const accessToken = req.cookies.get(SESSION_TOKEN_COOKIE)?.value;
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const response = NextResponse.redirect(new URL('/login', req.url));
+  const response = NextResponse.redirect(redirectTo(req, '/login'));
   clearSessionCookies(response);
   return response;
 }

@@ -7,6 +7,7 @@ class MockUtterance {
   text: string;
   lang = '';
   rate = 1;
+  onstart: ((ev?: unknown) => void) | null = null;
   onend: ((ev?: unknown) => void) | null = null;
   onerror: ((ev: { error: string }) => void) | null = null;
   constructor(text: string) {
@@ -18,13 +19,14 @@ function installSpeechSynthesisMock() {
   const queue: MockUtterance[] = [];
   const speak = vi.fn((utterance: MockUtterance) => {
     queue.push(utterance);
-    // do not auto-end; tests can end manually
+    queueMicrotask(() => utterance.onstart?.());
   });
   const cancel = vi.fn(() => {
     const pending = queue.splice(0, queue.length);
     for (const u of pending) u.onerror?.({ error: 'canceled' });
   });
-  Object.defineProperty(window, 'speechSynthesis', { value: { speak, cancel }, configurable: true, writable: true });
+  const synth = { speak, cancel, speaking: false, paused: false, pause: vi.fn(), resume: vi.fn() };
+  Object.defineProperty(window, 'speechSynthesis', { value: synth, configurable: true, writable: true });
   // @ts-expect-error test mock
   globalThis.SpeechSynthesisUtterance = MockUtterance;
   return {
@@ -106,18 +108,17 @@ describe('LessonPhaseContent component', () => {
     render(<LessonPhaseContent phase={phase(dialogueMarkdown)} />);
 
     expect(screen.getByTestId('lesson-dialogue')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Ouvir diálogo' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '1.0x' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: 'Reproduzir diálogo' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '1x' })).toHaveAttribute('aria-pressed', 'true');
 
-    fireEvent.click(screen.getByRole('button', { name: '0.75x' }));
-    expect(screen.getByRole('button', { name: '0.75x' })).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(screen.getByRole('button', { name: '0.5x' }));
+    expect(screen.getByRole('button', { name: '0.5x' })).toHaveAttribute('aria-pressed', 'true');
 
-    fireEvent.click(screen.getByRole('button', { name: 'Ouvir diálogo' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Reproduzir diálogo' }));
     expect(mock.speak).toHaveBeenCalledTimes(1);
     let items = screen.getAllByRole('listitem');
     expect(items[0]).toHaveAttribute('data-active', 'true');
 
-    // finish first utterance -> moves to second
     await act(async () => {
       mock.endNext();
     });
@@ -126,8 +127,8 @@ describe('LessonPhaseContent component', () => {
     expect(items[0]).toHaveAttribute('data-active', 'false');
     expect(items[1]).toHaveAttribute('data-active', 'true');
 
-    fireEvent.click(screen.getByRole('button', { name: 'Parar diálogo' }));
-    expect(mock.cancel).toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'Pausar diálogo' }));
+    expect(screen.getByRole('button', { name: 'Reproduzir diálogo' })).toBeInTheDocument();
   });
 
   it('renders glossary table with inline speak buttons for English column', () => {
