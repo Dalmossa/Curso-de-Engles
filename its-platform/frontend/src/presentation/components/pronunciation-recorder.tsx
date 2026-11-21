@@ -46,6 +46,9 @@ export function PronunciationRecorder({
   const [transcript, setTranscript] = useState('');
   const [evaluation, setEvaluation] = useState<PronunciationEvaluation | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Hydration-safe: same initial markup on server/client; capabilities detected after mount.
+  const [canRecord, setCanRecord] = useState(false);
+  const [hasSpeechRecognition, setHasSpeechRecognition] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -53,9 +56,17 @@ export function PronunciationRecorder({
   const recognitionRef = useRef<unknown>(null);
   const startTimeRef = useRef<number>(0);
 
-  // Check for SpeechRecognition support
-  const hasSpeechRecognition = typeof window !== 'undefined' &&
-    ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+  useEffect(() => {
+    const speechRecognitionSupported =
+      'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
+    const mediaDevicesSupported =
+      typeof navigator !== 'undefined' &&
+      typeof navigator.mediaDevices?.getUserMedia === 'function';
+    // Post-mount only: keeps server/client initial markup identical for hydration.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional mount-time capability detection
+    setHasSpeechRecognition(speechRecognitionSupported);
+    setCanRecord(speechRecognitionSupported || mediaDevicesSupported);
+  }, []);
 
   const handleEvaluate = useCallback(async () => {
     if (!audioBlob && !transcript.trim()) {
@@ -306,7 +317,7 @@ export function PronunciationRecorder({
       {state === 'idle' && (
         <button
           onClick={startRecording}
-          disabled={!hasSpeechRecognition && !navigator.mediaDevices?.getUserMedia}
+          disabled={!canRecord}
           className="btn btn-primary w-full py-3 text-lg"
         >
           {copy.pronunciation.startRecording}
