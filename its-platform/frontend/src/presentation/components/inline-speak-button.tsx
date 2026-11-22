@@ -336,7 +336,7 @@ export function InlineSpeakButton({
         'inline-flex min-h-11 min-w-11 h-11 w-11 items-center justify-center rounded-md border text-base transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:opacity-40 sm:h-8 sm:w-8 sm:min-h-0 sm:min-w-0 sm:text-xs',
         playing || active
           ? 'border-brand-500 bg-brand-100 text-brand-700'
-          : 'border-border-subtle bg-surface text-ink-700 hover:bg-surface-sunken',
+          : 'border-border-subtle bg-surface text-ink-700',
         error && !playing ? 'border-amber-400 text-amber-700' : null,
         className,
       )}
@@ -362,7 +362,7 @@ export function InlineSpeakButton({
           'inline-flex min-h-11 items-center justify-center rounded-md border px-2 text-[11px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:opacity-40 sm:min-h-0 sm:h-8',
           slow
             ? 'border-teal-500 bg-teal-100 text-teal-800'
-            : 'border-border-subtle bg-surface text-ink-700 hover:bg-surface-sunken',
+            : 'border-border-subtle bg-surface text-ink-700',
         )}
       >
         0.75x
