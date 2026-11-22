@@ -63,9 +63,10 @@ export function PronunciationRecorder({
       typeof navigator !== 'undefined' &&
       typeof navigator.mediaDevices?.getUserMedia === 'function';
     // Post-mount only: keeps server/client initial markup identical for hydration.
+    // Recording requires MediaRecorder/getUserMedia; SpeechRecognition is optional transcript only.
     // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional mount-time capability detection
     setHasSpeechRecognition(speechRecognitionSupported);
-    setCanRecord(speechRecognitionSupported || mediaDevicesSupported);
+    setCanRecord(mediaDevicesSupported);
   }, []);
 
   const handleEvaluate = useCallback(async () => {
@@ -163,6 +164,17 @@ export function PronunciationRecorder({
     chunksRef.current = [];
 
     try {
+      if (typeof window !== 'undefined' && !window.isSecureContext) {
+        setError(copy.pronunciation.micInsecureContext);
+        setState('error');
+        return;
+      }
+      if (!navigator.mediaDevices?.getUserMedia) {
+        setError(copy.pronunciation.micError);
+        setState('error');
+        return;
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           echoCancellation: true,
@@ -237,6 +249,10 @@ export function PronunciationRecorder({
     } catch (err) {
       if (err instanceof DOMException && err.name === 'NotAllowedError') {
         setError(copy.pronunciation.micPermissionDenied);
+      } else if (err instanceof DOMException && (err.name === 'NotFoundError' || err.name === 'NotReadableError')) {
+        setError(copy.pronunciation.micError);
+      } else if (err instanceof DOMException && err.name === 'SecurityError') {
+        setError(copy.pronunciation.micInsecureContext);
       } else {
         setError(copy.pronunciation.micError);
       }
