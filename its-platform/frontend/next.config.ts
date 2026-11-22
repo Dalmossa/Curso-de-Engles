@@ -18,7 +18,8 @@ const contentSecurityPolicy = [
   "font-src 'self' data:",
   // Signed clip URLs are served by an origin that differs per environment
   // (DialogueAudioClip.url declares only the scheme), so `https:` is the
-  // narrowest honest allow-list. LAN dev also serves pre-rendered clips over http.
+  // narrowest honest allow-list. LAN dev may serve clips over http; HTTPS dev
+  // should use the same-origin /media proxy to avoid mixed content.
   "media-src 'self' blob: https: http://192.168.0.6:3200",
   "connect-src 'self'",
   "worker-src 'self'",
@@ -49,7 +50,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ['192.168.0.6', 'localhost'],
+  allowedDevOrigins: ['192.168.0.6', 'localhost', '127.0.0.1', '[::1]'],
   reactStrictMode: true,
   poweredByHeader: false,
   experimental: {

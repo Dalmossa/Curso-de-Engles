@@ -50,3 +50,9 @@ Ingles/
 # Archive folder (PDFs and derived content)
 archive/
 clips/
+
+# Local HTTPS dev certificates (never commit private keys)
+its-platform/frontend/certs/
+*.pem
+*.key
+*.crt

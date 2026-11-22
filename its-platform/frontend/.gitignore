@@ -20,3 +20,6 @@
 .env
 .env.*
 !.env.example
+
+# Local HTTPS dev certificates (never commit private keys)
+/certs

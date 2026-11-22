@@ -13,14 +13,28 @@ function norm(s: string): string {
 }
 
 const DEFAULT_AUDIO_BASE = 'http://192.168.0.6:3200';
+const LOCAL_MEDIA_PROXY_BASE = '/media';
+
+/** Same-origin proxy path for a rendered clip; avoids mixed content on HTTPS pages. */
+export function toMediaProxyPath(clipId: string): string {
+  return `${LOCAL_MEDIA_PROXY_BASE}/catalog/render/${clipId}/take-1.opus`;
+}
+
+export function shouldUseMediaProxy(): boolean {
+  const env = process.env.NEXT_PUBLIC_AUDIO_BASE_URL?.trim();
+  if (env === '/media' || env === 'proxy' || env === 'same-origin') return true;
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:') return true;
+  return false;
+}
 
 export function getAudioBaseUrl(): string {
+  if (shouldUseMediaProxy()) return LOCAL_MEDIA_PROXY_BASE;
   const env = process.env.NEXT_PUBLIC_AUDIO_BASE_URL;
   if (env && env.trim()) return env.trim().replace(/\/+$/, '');
   if (typeof window !== 'undefined') {
-    // In browser dev/LAN, infer same host on port 3200 when not configured.
+    // In browser dev/LAN over HTTP, infer same host on port 3200 when not configured.
     const { protocol, hostname } = window.location;
-    if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1') {
+    if (protocol === 'http:' && hostname && hostname !== 'localhost' && hostname !== '127.0.0.1') {
       return `${protocol}//${hostname}:3200`;
     }
   }
@@ -38,6 +52,7 @@ export function resolveDialogueClipUrl(speaker: string, text: string): string | 
     }
   }
   if (!entry) return null;
+  if (shouldUseMediaProxy()) return toMediaProxyPath(entry.clipId);
   const base = getAudioBaseUrl();
   return `${base}/catalog/render/${entry.clipId}/take-1.opus`;
 }

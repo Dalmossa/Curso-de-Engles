@@ -1,51 +1,98 @@
 # ITS Platform Frontend
 
-This is the ITS Platform frontend (Next.js App Router, TypeScript, Tailwind CSS v4, PWA).
+Next.js App Router UI para o ITS Platform.
 
-## Architecture note
-
-- **No BFF proxy** (reversal of an earlier decision). There is no `/app/api/its/*` route and no `BffApiGateway`. All API calls originate server-side: Server Components and Server Actions use `DirectApiGateway` (server-only) to reach the NestJS API at `ITS_API_BASE_URL`. The browser has no public API base URL — `NEXT_PUBLIC_API_BASE_URL` was removed deliberately. The operation whitelist in `src/infrastructure/api/operations.ts` remains as the validation gate.
-- Layer boundaries: `presentation → application → core` (dependency rule). `infrastructure` implements `core` ports. The only exception is `@/infrastructure/composition/*` imported by server code; ESLint `no-restricted-imports` enforces this.
-- ADR-044: pack payloads ship with `options[]` as the complete unmarked set — the answer key is revealed only via `scored_items[].correct` from `POST /learners/{id}/practice`, so the UI never highlights the key before submission.
-- Mastery gate = `0.85` (matches contract). `LearnerProfile.cefr_level` may be `null`. `streak_days`/`xp` do not exist in this slice.
-- Diagnostic: only `POST /learners/{id}/placement` is used (no diagnostic question endpoint in the contract). `PlacementResult.theta`/`standardError` are rendered as returned — flagged for review against ADR-043.
-
-## Quick start
+## Desenvolvimento
 
 ```bash
-cd its-platform/frontend
-npm install
-cp .env.example .env.local  # adjust as needed
-npm run dev                 # http://localhost:3100
+npm --prefix its-platform/frontend install
+npm --prefix its-platform/frontend run dev
 ```
 
-## Scripts
+App: http://localhost:3100
 
-- `npm run dev` — start Next.js dev server (port 3100)
-- `npm run build` — typecheck + build (Next)
-- `npm run start` — production server (port 3100)
-- `npm run lint` — ESLint
-- `npm run typecheck` — TypeScript `--noEmit`
-- `npm run test` — Vitest (unit + integration)
-- `npm run test:e2e` — Playwright
-- `npm run api:types` — generate `src/infrastructure/api/generated/api-types.ts` from `../docs/api-spec.openapi.yaml`
+## HTTPS local (microfone em LAN)
 
-## Environment variables
+`getUserMedia`/microfone exige contexto seguro: `https://` ou `http://localhost`.  
+Para acessar por LAN (ex.: `https://192.168.0.6:3100`), use HTTPS local.
 
-Server-only: `ITS_API_BASE_URL`, `ITS_API_TOKEN`, `ITS_LEARNER_ID`, `ITS_API_TIMEOUT_MS`. Public: `NEXT_PUBLIC_APP_URL`. Never commit `.env.local`; `.env.example` is the template.
+### 1) Gerar certificado confiável com mkcert
 
-## Routes
+Instale mkcert (Ubuntu/Debian):
 
-- `/` (dashboard) — `GET /learners/{id}/next` + profile mastery summary
-- `/lessons/[lesson_id]` — `GET /content/lessons/{id}` (4 phases + learner_model)
-- `/lessons/[lesson_id]/practice?pack=...` — `GET /content/packs/{id}` + `POST /learners/{id}/practice`
-- `/mastery` — profile + mastery rows
-- `/diagnostic` — starts placement (no question flow)
+```bash
+sudo apt install libnss3-tools mkcert
+# ou instale o binário oficial do mkcert e depois:
+mkcert -install
+```
 
-## Tests
+Gere cert para localhost e IP LAN:
 
-Core unit tests opt into `@vitest-environment node` to keep core DOM-free.
+```bash
+mkdir -p its-platform/frontend/certs
+mkcert -key-file its-platform/frontend/certs/dev.key \
+       -cert-file its-platform/frontend/certs/dev.crt \
+       localhost 127.0.0.1 ::1 192.168.0.6
+```
 
-## PWA
+> Não commite `dev.key`/`dev.crt`. `its-platform/frontend/certs/` está ignorado pelo git.
 
-Minimal `manifest.ts`, inline no-flash theme script, service worker registered only in production.
+Fallback sem mkcert: `openssl` pode gerar cert autoassinado, mas o navegador exibirá aviso até confiar manualmente no certificado/CA.
+
+### 2) Subir frontend em HTTPS
+
+```bash
+npm --prefix its-platform/frontend run dev:https
+```
+
+Acesse:
+- https://localhost:3100
+- https://192.168.0.6:3100
+
+O script usa `--experimental-https` do Next, escutando em `0.0.0.0:3100`.
+
+### 3) Ajustes locais de env (não commitar)
+
+`its-platform/.env`:
+```env
+CORS_ORIGIN=http://localhost:3100,http://192.168.0.6:3100,https://localhost:3100,https://192.168.0.6:3100
+AUDIO_BASE_URL=http://192.168.0.6:3200
+```
+
+`its-platform/frontend/.env.local`:
+```env
+NEXT_PUBLIC_APP_URL=https://192.168.0.6:3100
+NEXT_PUBLIC_AUDIO_BASE_URL=/media
+ITS_API_BASE_URL=http://localhost:3000/api/v1
+```
+
+Reinicie frontend/backend após mudar env.
+
+### 4) Áudio e mixed content
+
+Em página HTTPS, mídia HTTP é bloqueada. A solução padrão é o proxy same-origin `/media/*` do frontend:
+
+- Browser chama `https://<host>:3100/media/catalog/render/...`
+- Route handler Next (`src/app/media/[...path]/route.ts`) faz proxy server-side para `AUDIO_BASE_URL` (ex.: `http://192.168.0.6:3200`)
+- Caminhos permitidos são restritos a `catalog/render/<clip>/<file>` (sem open proxy)
+
+Para dev HTTP antigo, `NEXT_PUBLIC_AUDIO_BASE_URL=http://192.168.0.6:3200` ainda funciona.
+
+### 5) Dispositivos móveis na LAN
+
+Dispositivos móveis precisam confiar na CA local do mkcert. No computador onde gerou os certs:
+
+```bash
+mkcert -CAROOT
+```
+
+Instale/confie essa CA no dispositivo móvel e acesse `https://192.168.0.6:3100`.
+
+## Gates
+
+```bash
+npm --prefix its-platform/frontend run typecheck
+npm --prefix its-platform/frontend run lint
+npm --prefix its-platform/frontend test
+CI=1 npm --prefix its-platform/frontend run build
+```

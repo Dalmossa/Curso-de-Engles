@@ -9,6 +9,7 @@
   },
   "scripts": {
     "dev": "next dev -p 3100",
+    "dev:https": "next dev -p 3100 -H 0.0.0.0 --experimental-https --experimental-https-key ./certs/dev.key --experimental-https-cert ./certs/dev.crt",
     "dev:fresh": "npm run token:refresh && next dev -p 3100",
     "token:refresh": "node scripts/refresh-token.mjs",
     "build": "next build",
