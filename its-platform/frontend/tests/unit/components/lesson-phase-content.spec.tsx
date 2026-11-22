@@ -192,39 +192,4 @@ describe('LessonPhaseContent component', () => {
     expect(screen.getByTestId('table-row-1')).toHaveAttribute('data-active', 'true');
   });
 
-  it('shows and toggles PT translation inline per glossary row', () => {
-    render(<LessonPhaseContent phase={phase(glossaryMarkdown)} />);
-    const ptButtons = screen.getAllByTestId('inline-translate-button');
-    expect(ptButtons.length).toBe(2);
-    expect(ptButtons[0]).toHaveAttribute('aria-expanded', 'false');
-
-    fireEvent.click(ptButtons[0]!);
-    expect(ptButtons[0]).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.getByTestId('table-translation-0')).toHaveAttribute('aria-hidden', 'false');
-
-    // second row remains closed
-    expect(ptButtons[1]).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.getByTestId('table-translation-1')).toHaveAttribute('aria-hidden', 'true');
-  });
-
-  it('shows PT translation per dialogue turn when provided', () => {
-    const md = [
-      '> **Ana:** "Hello!"',
-      '>',
-      '> **Bruno:** "Hi there!"',
-    ].join('\n');
-    render(
-      <LessonPhaseContent
-        phase={phase(md)}
-        translations={{ 'hello!': 'Olá!', 'hi there!': 'Oi!' }}
-      />,
-    );
-
-    const ptButtons = screen.getAllByTestId('inline-translate-button');
-    expect(ptButtons).toHaveLength(2);
-    fireEvent.click(ptButtons[0]!);
-    expect(screen.getByTestId('dialogue-translation-0')).toHaveAttribute('aria-hidden', 'false');
-    expect(screen.getByText('Olá!')).toBeInTheDocument();
-    expect(screen.getByTestId('dialogue-translation-1')).toHaveAttribute('aria-hidden', 'true');
-  });
 });
