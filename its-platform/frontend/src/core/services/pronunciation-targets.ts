@@ -69,9 +69,18 @@ function extractPhaseOneCandidates(phase: LessonPhase): string[] {
       if (table) {
         const speakCol = detectSpeakColumn(table.header);
         if (speakCol >= 0) {
+          const alphabet = isAlphabetTable(table.header, table.rows);
+          const tableCells: string[] = [];
           for (const row of table.rows) {
-            const cell = cleanForSpeech(row[speakCol] ?? '');
-            if (isSpeakableTargetText(cell)) out.push(cell);
+            const cell = speakableTableCell(row[speakCol] ?? '', alphabet);
+            if (cell) tableCells.push(cell);
+          }
+          if (alphabet) {
+            const uniqueLetters = Array.from(new Set(tableCells.map((c) => c.toUpperCase())));
+            uniqueLetters.sort((a, b) => a.localeCompare(b, 'en'));
+            out.push(...uniqueLetters);
+          } else {
+            out.push(...tableCells);
           }
         }
         // Non-speakable tables are ignored for pronunciation targets.
@@ -189,21 +198,78 @@ function parseTable(lines: readonly string[], start: number): { header: string[]
   return { header, rows, end };
 }
 
+const SPEAK_HEADER_TOKENS = [
+  'inglês',
+  'ingles',
+  'english',
+  'en-us',
+  'en-gb',
+  'letter',
+  'letra',
+  'expressão',
+  'expressao',
+  'expression',
+  'termo',
+  'term',
+  'palavra',
+  'word',
+];
+
+function normalizeHeaderCell(text: string): string {
+  return cleanForSpeech(text).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+}
+
 function detectSpeakColumn(header: readonly string[]): number {
+  let fallback = -1;
   for (let i = 0; i < header.length; i++) {
-    const h = cleanForSpeech(header[i] ?? '').toLowerCase();
-    if (h.includes('inglês') || h.includes('ingles') || h.includes('english') || h.includes('en-us') || h.includes('en-gb')) {
-      return i;
+    const h = normalizeHeaderCell(header[i] ?? '');
+    if (!h) continue;
+    if (SPEAK_HEADER_TOKENS.some((token) => h.includes(token))) {
+      // Prefer explicit English-language columns over generic letter/term labels.
+      if (/(ingles|english|en-us|en-gb)/.test(h)) return i;
+      if (fallback < 0) fallback = i;
     }
   }
-  return -1;
+  return fallback;
+}
+
+function isSingleAlphabetLetter(text: string): boolean {
+  return /^[A-Za-z]$/.test(cleanForSpeech(text).trim());
+}
+
+function isAlphabetTable(header: readonly string[], rows: readonly (readonly string[])[]): boolean {
+  const speakCol = detectSpeakColumn(header);
+  if (speakCol < 0) return false;
+  const headerNorm = normalizeHeaderCell(header[speakCol] ?? '');
+  const headerLooksAlphabet = headerNorm === 'letter' || headerNorm === 'letra' || headerNorm.includes('letter') || headerNorm.includes('letra');
+  const sample = rows
+    .map((r) => cleanForSpeech(r[speakCol] ?? '').trim())
+    .filter((v) => v.length > 0)
+    .slice(0, 12);
+  if (sample.length === 0) return false;
+  const letters = sample.filter((v) => isSingleAlphabetLetter(v));
+  return letters.length >= Math.min(3, sample.length) && (headerLooksAlphabet || letters.length === sample.length);
+}
+
+function speakableTableCell(text: string, alphabet: boolean): string | null {
+  const cleaned = cleanForSpeech(text).trim();
+  if (!cleaned) return null;
+  if (alphabet) {
+    if (!isSingleAlphabetLetter(cleaned)) return null;
+    return cleaned.toUpperCase();
+  }
+  if (!isSpeakableTargetText(cleaned)) return null;
+  return cleaned;
 }
 
 function isSpeakableTargetText(text: string): boolean {
   const s = text.trim();
-  if (s.length < 2 || s.length > 300) return false;
+  if (s.length < 1 || s.length > 300) return false;
   if (!/[A-Za-z]/.test(s)) return false;
   if (/^(#+|Table|Figure|Example|Note:|Tip:|Warning:|Caution:)/i.test(s)) return false;
+  // Allow isolated A-Z alphabet letters.
+  if (/^[A-Za-z]$/.test(s)) return true;
+  if (s.length < 2) return false;
   const latin = (s.match(/[A-Za-z]/g) || []).length / Math.max(1, s.length);
   if (latin < 0.3) return false;
   return true;

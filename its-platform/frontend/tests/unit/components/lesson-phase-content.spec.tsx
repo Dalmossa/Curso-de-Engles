@@ -67,6 +67,16 @@ const glossaryMarkdown = [
   '| **Nice to meet you** | prazer | Contato |',
 ].join('\n');
 
+const alphabetMarkdown = [
+  '### Alfabeto',
+  '',
+  '| Letter | Nome |',
+  '|---|---|',
+  '| A | ei |',
+  '| B | bi |',
+  '| C | ci |',
+].join('\n');
+
 function phase(markdown: string, n = 1): LessonPhase {
   return { phase: n, heading: 'Fase de teste', markdown };
 }
@@ -131,14 +141,90 @@ describe('LessonPhaseContent component', () => {
     expect(screen.getByRole('button', { name: 'Reproduzir diálogo' })).toBeInTheDocument();
   });
 
-  it('renders glossary table with inline speak buttons for English column', () => {
-    installSpeechSynthesisMock();
+  it('renders glossary table with inline speak buttons and 0.75x slow toggle', async () => {
+    const mock = installSpeechSynthesisMock();
     render(<LessonPhaseContent phase={phase(glossaryMarkdown)} />);
 
     expect(screen.getByTestId('lesson-glossary-table')).toBeInTheDocument();
     const buttons = screen.getAllByRole('button', { name: /Ouvir termo|Parar/ });
     expect(buttons.length).toBeGreaterThanOrEqual(2);
-    // table content still rendered
-    expect(screen.getByText(/bom dia/)).toBeInTheDocument();
+    expect(screen.getAllByText(/bom dia/).length).toBeGreaterThanOrEqual(1);
+
+    const slowToggles = screen.getAllByTestId('inline-speak-slow-toggle');
+    expect(slowToggles.length).toBeGreaterThanOrEqual(2);
+    await act(async () => {
+      fireEvent.click(slowToggles[0]!);
+    });
+    await act(async () => {
+      fireEvent.click(screen.getAllByRole('button', { name: 'Ouvir termo' })[0]!);
+    });
+    const utterance = mock.speak.mock.calls[0]?.[0] as MockUtterance | undefined;
+    expect(utterance?.rate).toBe(0.75);
+  });
+
+  it('renders alphabet table, speaks isolated letters one by one, and highlights active row', async () => {
+    const mock = installSpeechSynthesisMock();
+    render(<LessonPhaseContent phase={phase(alphabetMarkdown)} />);
+
+    expect(screen.getByTestId('lesson-glossary-table')).toBeInTheDocument();
+    const letterA = screen.getByRole('button', { name: 'Ouvir letra A' });
+    const letterB = screen.getByRole('button', { name: 'Ouvir letra B' });
+    expect(letterA).toBeInTheDocument();
+    expect(letterB).toBeInTheDocument();
+
+    await act(async () => {
+      fireEvent.click(letterA);
+    });
+    expect(mock.speak).toHaveBeenCalledTimes(1);
+    expect((mock.speak.mock.calls[0]?.[0] as MockUtterance).text).toBe('A');
+    expect(screen.getByTestId('table-row-0')).toHaveAttribute('data-active', 'true');
+
+    await act(async () => {
+      mock.endNext();
+    });
+    expect(screen.getByTestId('table-row-0')).toHaveAttribute('data-active', 'false');
+
+    await act(async () => {
+      fireEvent.click(letterB);
+    });
+    expect(mock.speak).toHaveBeenCalledTimes(2);
+    expect((mock.speak.mock.calls[1]?.[0] as MockUtterance).text).toBe('B');
+    expect(screen.getByTestId('table-row-1')).toHaveAttribute('data-active', 'true');
+  });
+
+  it('shows and toggles PT translation inline per glossary row', () => {
+    render(<LessonPhaseContent phase={phase(glossaryMarkdown)} />);
+    const ptButtons = screen.getAllByTestId('inline-translate-button');
+    expect(ptButtons.length).toBe(2);
+    expect(ptButtons[0]).toHaveAttribute('aria-expanded', 'false');
+
+    fireEvent.click(ptButtons[0]!);
+    expect(ptButtons[0]).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByTestId('table-translation-0')).toHaveAttribute('aria-hidden', 'false');
+
+    // second row remains closed
+    expect(ptButtons[1]).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.getByTestId('table-translation-1')).toHaveAttribute('aria-hidden', 'true');
+  });
+
+  it('shows PT translation per dialogue turn when provided', () => {
+    const md = [
+      '> **Ana:** "Hello!"',
+      '>',
+      '> **Bruno:** "Hi there!"',
+    ].join('\n');
+    render(
+      <LessonPhaseContent
+        phase={phase(md)}
+        translations={{ 'hello!': 'Olá!', 'hi there!': 'Oi!' }}
+      />,
+    );
+
+    const ptButtons = screen.getAllByTestId('inline-translate-button');
+    expect(ptButtons).toHaveLength(2);
+    fireEvent.click(ptButtons[0]!);
+    expect(screen.getByTestId('dialogue-translation-0')).toHaveAttribute('aria-hidden', 'false');
+    expect(screen.getByText('Olá!')).toBeInTheDocument();
+    expect(screen.getByTestId('dialogue-translation-1')).toHaveAttribute('aria-hidden', 'true');
   });
 });

@@ -232,6 +232,8 @@ export interface InlineSpeakButtonProps {
    */
   readonly controlledPlaying?: boolean;
   readonly onControlledToggle?: () => void;
+  /** Shows a compact 0.75x slow toggle next to the speaker button. */
+  readonly showSpeedToggle?: boolean;
 }
 
 export function InlineSpeakButton({
@@ -247,12 +249,15 @@ export function InlineSpeakButton({
   onPlayStateChange,
   controlledPlaying,
   onControlledToggle,
+  showSpeedToggle = false,
 }: InlineSpeakButtonProps) {
   const [playingInternal, setPlayingInternal] = useState(false);
   const [error, setError] = useState(false);
+  const [slowOverride, setSlowOverride] = useState<boolean | null>(null);
   const handleRef = useRef<SpeakHandle | null>(null);
   const textRef = useRef(text);
   const isControlled = controlledPlaying !== undefined;
+  const slow = slowOverride ?? rate === 0.75;
 
   useEffect(() => {
     textRef.current = text;
@@ -283,6 +288,8 @@ export function InlineSpeakButton({
 
   const playing = isControlled ? controlledPlaying : playingInternal;
 
+  const effectiveRate: SpeakRate = showSpeedToggle ? (slow ? 0.75 : 1) : rate;
+
   const handleClick = useCallback(async () => {
     if (disabled) return;
 
@@ -298,7 +305,7 @@ export function InlineSpeakButton({
     }
 
     setError(false);
-    const handle = speakText(textRef.current, { rate, synthesizeAction });
+    const handle = speakText(textRef.current, { rate: effectiveRate, synthesizeAction });
     handleRef.current = handle;
     setPlayingState(true);
     try {
@@ -311,12 +318,12 @@ export function InlineSpeakButton({
         setPlayingState(false);
       }
     }
-  }, [disabled, isControlled, onControlledToggle, playingInternal, rate, setPlayingState, stop, synthesizeAction]);
+  }, [disabled, effectiveRate, isControlled, onControlledToggle, playingInternal, setPlayingState, stop, synthesizeAction]);
 
   const cleaned = cleanSpeechText(text);
   const isDisabled = disabled || (cleaned.length === 0 && !isControlled);
 
-  return (
+  const speakButton = (
     <button
       type="button"
       onClick={handleClick}
@@ -324,6 +331,7 @@ export function InlineSpeakButton({
       aria-label={playing ? stopLabel : label}
       aria-pressed={playing}
       title={playing ? stopLabel : label}
+      data-testid="inline-speak-button"
       className={cn(
         'inline-flex min-h-11 min-w-11 h-11 w-11 items-center justify-center rounded-md border text-base transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:opacity-40 sm:h-8 sm:w-8 sm:min-h-0 sm:min-w-0 sm:text-xs',
         playing || active
@@ -335,5 +343,30 @@ export function InlineSpeakButton({
     >
       <span aria-hidden="true">{playing ? '■' : '🔊'}</span>
     </button>
+  );
+
+  if (!showSpeedToggle) return speakButton;
+
+  return (
+    <span className="inline-flex items-center gap-1">
+      {speakButton}
+      <button
+        type="button"
+        onClick={() => setSlowOverride((v) => !(v ?? rate === 0.75))}
+        disabled={isDisabled}
+        aria-label={slow ? 'Velocidade normal' : 'Velocidade lenta 0.75x'}
+        aria-pressed={slow}
+        title={slow ? '1x' : '0.75x'}
+        data-testid="inline-speak-slow-toggle"
+        className={cn(
+          'inline-flex min-h-11 items-center justify-center rounded-md border px-2 text-[11px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:opacity-40 sm:min-h-0 sm:h-8',
+          slow
+            ? 'border-teal-500 bg-teal-100 text-teal-800'
+            : 'border-border-subtle bg-surface text-ink-700 hover:bg-surface-sunken',
+        )}
+      >
+        0.75x
+      </button>
+    </span>
   );
 }

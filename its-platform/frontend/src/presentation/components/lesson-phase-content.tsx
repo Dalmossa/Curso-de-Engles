@@ -1,11 +1,12 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { LessonPhase } from '@/core';
 import type { ActionResult } from '@/shared/action-result';
 import type { SpeechSynthesisResult } from '@/core';
 import { Markdown } from './markdown';
 import { InlineSpeakButton, cleanSpeechText } from './inline-speak-button';
+import { InlineTranslateButton } from './inline-translate-button';
 import { cn } from '@/shared/utils/cn';
 import { readStoredSpeakRate, type SpeakRate } from '@/shared/speak-rate';
 import { useDialogueAudioController, formatTime, type DialogueSynthesizeAction } from '@/presentation/hooks/use-dialogue-audio-controller';
@@ -24,6 +25,8 @@ export interface DialogueTurn {
   readonly raw: string;
   /** Optional pre-rendered clip URL; when absent, resolved from static lookup. */
   readonly audioUrl?: string | null;
+  /** Optional PT-BR translation for this turn, from existing lesson/pack data. */
+  readonly translationPt?: string | null;
 }
 
 export interface DialogueSegment {
@@ -48,6 +51,9 @@ export interface MarkdownSegment {
 }
 
 export type PhaseSegment = DialogueSegment | TableSegment | MarkdownSegment;
+
+import { lookupTranslation, type LessonTranslationMap } from '@/presentation/lib/lesson-translations';
+export type { LessonTranslationMap };
 
 function normalizeLineEndings(text: string): string {
   return text.replace(/\r\n?/g, '\n');
@@ -78,14 +84,63 @@ function isTableLine(line: string): boolean {
   return t.startsWith('|') && t.endsWith('|') && t.includes('|');
 }
 
+const SPEAK_HEADER_TOKENS = [
+  'inglês',
+  'ingles',
+  'english',
+  'en-us',
+  'en-gb',
+  'letter',
+  'letra',
+  'expressão',
+  'expressao',
+  'expression',
+  'termo',
+  'term',
+  'palavra',
+  'word',
+];
+
+function normalizeHeaderText(text: string): string {
+  return stripMdInline(text).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+}
+
 function detectSpeakColumn(header: readonly string[]): number {
+  let fallback = -1;
   for (let i = 0; i < header.length; i++) {
-    const h = stripMdInline(header[i] ?? '').toLowerCase();
-    if (h.includes('inglês') || h.includes('ingles') || h.includes('english') || h.includes('en-us') || h.includes('en-gb')) {
-      return i;
+    const h = normalizeHeaderText(header[i] ?? '');
+    if (!h) continue;
+    if (SPEAK_HEADER_TOKENS.some((token) => h.includes(token))) {
+      if (/(ingles|english|en-us|en-gb)/.test(h)) return i;
+      if (fallback < 0) fallback = i;
     }
   }
-  return -1;
+  return fallback;
+}
+
+function isSingleAlphabetLetter(text: string): boolean {
+  return /^[A-Za-z]$/.test(cleanSpeechText(stripMdInline(text)).trim());
+}
+
+function isAlphabetTable(table: InteractiveTable): boolean {
+  const header = normalizeHeaderText(table.header[table.speakColumnIndex] ?? '');
+  const looksAlphabetHeader = header === 'letter' || header === 'letra' || header.includes('letter') || header.includes('letra');
+  const sample = table.rows
+    .map((row) => cleanSpeechText(stripMdInline(row[table.speakColumnIndex] ?? '')).trim())
+    .filter((v) => v.length > 0)
+    .slice(0, 12);
+  if (sample.length === 0) return false;
+  const letters = sample.filter((v) => isSingleAlphabetLetter(v));
+  return letters.length >= Math.min(3, sample.length) && (looksAlphabetHeader || letters.length === sample.length);
+}
+
+function speakableCellText(text: string, alphabetTable: boolean): string {
+  const cleaned = cleanSpeechText(stripMdInline(text)).trim();
+  if (!cleaned) return '';
+  if (alphabetTable) {
+    return isSingleAlphabetLetter(cleaned) ? cleaned.toUpperCase() : '';
+  }
+  return cleaned;
 }
 
 export function parseInteractiveTable(lines: readonly string[], start: number): { segment: TableSegment; end: number } | null {
@@ -422,13 +477,20 @@ function ListenRepeatCard({
 function DialogueSection({
   turns,
   synthesizeAction,
+  translations,
 }: {
   readonly turns: readonly DialogueTurn[];
   readonly synthesizeAction?: SynthesizeAction;
+  readonly translations?: LessonTranslationMap;
 }) {
   const resolvedTurns = useMemo(
-    () => turns.map((t) => ({ ...t, audioUrl: t.audioUrl ?? resolveDialogueClipUrl(t.speaker, t.text) })),
-    [turns],
+    () =>
+      turns.map((t) => ({
+        ...t,
+        audioUrl: t.audioUrl ?? resolveDialogueClipUrl(t.speaker, t.text),
+        translationPt: t.translationPt ?? lookupTranslation(translations, t.speaker, t.text),
+      })),
+    [translations, turns],
   );
   const controller = useDialogueAudioController({ turns: resolvedTurns, synthesizeAction: synthesizeAction as DialogueSynthesizeAction | undefined });
   const speakers = useMemo(() => {
@@ -438,6 +500,16 @@ function DialogueSection({
     }
     return map;
   }, [turns]);
+  const [openTranslations, setOpenTranslations] = useState<ReadonlySet<number>>(() => new Set());
+  const toggleTranslation = useCallback((index: number, open?: boolean) => {
+    setOpenTranslations((prev) => {
+      const next = new Set(prev);
+      const shouldOpen = open ?? !next.has(index);
+      if (shouldOpen) next.add(index);
+      else next.delete(index);
+      return next;
+    });
+  }, []);
 
   const targetText = turns[0]?.text ?? null;
 
@@ -446,11 +518,14 @@ function DialogueSection({
       <DialogueAudioPlayer controller={controller} />
 
       <ul className="flex flex-col gap-3" aria-label="Transcrição do diálogo">
-        {turns.map((turn, index) => {
+        {resolvedTurns.map((turn, index) => {
           const active = controller.activeIndex === index;
           const linePlaying = active && controller.isPlaying;
           const speakerIndex = speakers.get(turn.speaker) ?? 0;
           const first = index === 0;
+          const translation = turn.translationPt?.trim() || null;
+          const translationOpen = openTranslations.has(index);
+          const translationId = `dialogue-translation-${index}`;
           return (
             <li
               key={`${turn.speaker}-${index}`}
@@ -475,17 +550,48 @@ function DialogueSection({
               <div className="min-w-0 flex-1">
                 <p className={cn('text-sm font-semibold', active ? 'text-teal-900' : 'text-ink-900')}>{turn.speaker}</p>
                 <p className={cn('mt-0.5 text-sm leading-relaxed', active ? 'text-teal-950' : 'text-ink-800')}>{turn.text}</p>
+                <div
+                  id={translationId}
+                  role="region"
+                  aria-label={`Tradução de ${turn.speaker}`}
+                  aria-hidden={!translationOpen}
+                  data-testid={`dialogue-translation-${index}`}
+                  className={cn(
+                    'grid transition-all duration-200 ease-out',
+                    translationOpen ? 'mt-2 grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0',
+                  )}
+                >
+                  <div className="overflow-hidden">
+                    {translation ? (
+                      <p className="rounded-md border border-teal-100 bg-teal-50/80 px-2.5 py-1.5 text-sm leading-relaxed text-ink-800">
+                        <span className="mr-1.5 text-[10px] font-semibold uppercase tracking-wide text-teal-700">PT-BR</span>
+                        {translation}
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
               </div>
-              <InlineSpeakButton
-                text={turn.text}
-                synthesizeAction={synthesizeAction}
-                rate={controller.rate}
-                label={`Ouvir fala de ${turn.speaker}`}
-                stopLabel={`Parar fala de ${turn.speaker}`}
-                active={active}
-                controlledPlaying={linePlaying}
-                onControlledToggle={() => void controller.toggleTurn(index)}
-              />
+              <div className="flex shrink-0 items-start gap-1">
+                <InlineTranslateButton
+                  textEn={turn.text}
+                  translationPt={translation}
+                  isOpen={translationOpen}
+                  onToggle={(open) => toggleTranslation(index, open)}
+                  buttonOnly
+                  controlsId={translationId}
+                  className="h-9"
+                />
+                <InlineSpeakButton
+                  text={turn.text}
+                  synthesizeAction={synthesizeAction}
+                  rate={controller.rate}
+                  label={`Ouvir fala de ${turn.speaker}`}
+                  stopLabel={`Parar fala de ${turn.speaker}`}
+                  active={active}
+                  controlledPlaying={linePlaying}
+                  onControlledToggle={() => void controller.toggleTurn(index)}
+                />
+              </div>
             </li>
           );
         })}
@@ -496,21 +602,45 @@ function DialogueSection({
   );
 }
 
+function detectPortugueseColumn(header: readonly string[]): number {
+  for (let i = 0; i < header.length; i++) {
+    const h = stripMdInline(header[i] ?? '').toLowerCase();
+    if (h.includes('portugu') || h.includes('pt-br') || h.includes('pt br') || h.includes('tradu')) return i;
+  }
+  return -1;
+}
+
 function InteractiveTableView({
   table,
   synthesizeAction,
+  translations,
 }: {
   readonly table: InteractiveTable;
   readonly synthesizeAction?: SynthesizeAction;
+  readonly translations?: LessonTranslationMap;
 }) {
   const rate: SpeakRate = readStoredSpeakRate();
+  const ptColumnIndex = useMemo(() => detectPortugueseColumn(table.header), [table.header]);
+  const alphabetTable = useMemo(() => isAlphabetTable(table), [table]);
+  const [openRows, setOpenRows] = useState<ReadonlySet<number>>(() => new Set());
+  const [activeRow, setActiveRow] = useState<number | null>(null);
+  const toggleRow = useCallback((rowIndex: number, open?: boolean) => {
+    setOpenRows((prev) => {
+      const next = new Set(prev);
+      const shouldOpen = open ?? !next.has(rowIndex);
+      if (shouldOpen) next.add(rowIndex);
+      else next.delete(rowIndex);
+      return next;
+    });
+  }, []);
+
   return (
     <div className="my-4 overflow-x-auto" data-testid="lesson-glossary-table">
       <table className="w-full border-collapse text-sm">
         <thead>
           <tr>
-            <th className="border border-border-subtle bg-surface-sunken px-2 py-2 text-left font-semibold text-ink-900 w-10">
-              <span className="sr-only">Ouvir</span>
+            <th className="border border-border-subtle bg-surface-sunken px-2 py-2 text-left font-semibold text-ink-900 w-20">
+              <span className="sr-only">Ações</span>
             </th>
             {table.header.map((cell, i) => (
               <th key={i} className="border border-border-subtle bg-surface-sunken px-3 py-2 text-left font-semibold text-ink-900">
@@ -521,25 +651,73 @@ function InteractiveTableView({
         </thead>
         <tbody>
           {table.rows.map((row, r) => {
-            const speakTextValue = cleanSpeechText(stripMdInline(row[table.speakColumnIndex] ?? ''));
+            const speakTextValue = speakableCellText(row[table.speakColumnIndex] ?? '', alphabetTable);
+            const ptValue = ptColumnIndex >= 0 ? stripMdInline(row[ptColumnIndex] ?? '').trim() : '';
+            const mapTranslation = lookupTranslation(translations, null, speakTextValue || stripMdInline(row[table.speakColumnIndex] ?? ''));
+            const translation = ptValue || mapTranslation;
+            const isOpen = openRows.has(r);
+            const translationId = `table-translation-${r}`;
+            const rowActive = activeRow === r;
             return (
-              <tr key={r} className="align-top">
-                <td className="border border-border-subtle px-2 py-2">
-                  {speakTextValue ? (
-                    <InlineSpeakButton
-                      text={speakTextValue}
-                      synthesizeAction={synthesizeAction}
-                      rate={rate}
-                      label="Ouvir termo"
-                      stopLabel="Parar"
+              <tr
+                key={r}
+                className={cn('align-top transition-colors', rowActive ? 'bg-teal-50/70' : null)}
+                data-active={rowActive ? 'true' : 'false'}
+                data-testid={`table-row-${r}`}
+              >
+                <td className={cn('border border-border-subtle px-2 py-2', rowActive ? 'bg-teal-50/40' : null)}>
+                  <div className="flex items-center gap-1">
+                    {speakTextValue ? (
+                      <InlineSpeakButton
+                        text={speakTextValue}
+                        synthesizeAction={synthesizeAction}
+                        rate={rate}
+                        label={alphabetTable ? `Ouvir letra ${speakTextValue}` : 'Ouvir termo'}
+                        stopLabel="Parar"
+                        active={rowActive}
+                        showSpeedToggle
+                        onPlayingChange={(playing) => setActiveRow((current) => (playing ? r : current === r ? null : current))}
+                      />
+                    ) : null}
+                    <InlineTranslateButton
+                      textEn={speakTextValue || stripMdInline(row[0] ?? '')}
+                      translationPt={translation}
+                      isOpen={isOpen}
+                      onToggle={(open) => toggleRow(r, open)}
+                      buttonOnly
+                      controlsId={translationId}
+                      className="h-9"
                     />
-                  ) : null}
+                  </div>
                 </td>
-                {table.header.map((_, c) => (
-                  <td key={c} className="border border-border-subtle px-3 py-2 text-ink-800">
-                    <Markdown>{row[c] ?? ''}</Markdown>
-                  </td>
-                ))}
+                {table.header.map((_, c) => {
+                  const isSpeakCol = c === table.speakColumnIndex;
+                  return (
+                    <td key={c} className={cn('border border-border-subtle px-3 py-2 text-ink-800', rowActive ? 'bg-teal-50/30' : null)}>
+                      <Markdown>{row[c] ?? ''}</Markdown>
+                      {isSpeakCol && translation ? (
+                        <div
+                          id={translationId}
+                          role="region"
+                          aria-label="Tradução em português"
+                          aria-hidden={!isOpen}
+                          data-testid={`table-translation-${r}`}
+                          className={cn(
+                            'grid transition-all duration-200 ease-out',
+                            isOpen ? 'mt-2 grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0',
+                          )}
+                        >
+                          <div className="overflow-hidden">
+                            <p className="rounded-md border border-teal-100 bg-teal-50/80 px-2.5 py-1.5 text-sm leading-relaxed text-ink-800">
+                              <span className="mr-1.5 text-[10px] font-semibold uppercase tracking-wide text-teal-700">PT-BR</span>
+                              {translation}
+                            </p>
+                          </div>
+                        </div>
+                      ) : null}
+                    </td>
+                  );
+                })}
               </tr>
             );
           })}
@@ -552,9 +730,11 @@ function InteractiveTableView({
 export function LessonPhaseContent({
   phase,
   synthesizeAction,
+  translations,
 }: {
   readonly phase: LessonPhase;
   readonly synthesizeAction?: SynthesizeAction;
+  readonly translations?: LessonTranslationMap;
 }) {
   const segments = useMemo(() => segmentPhaseContent(phase.markdown), [phase.markdown]);
 
@@ -562,10 +742,10 @@ export function LessonPhaseContent({
     <div className="flex flex-col gap-4" data-testid={`lesson-phase-content-${phase.phase}`}>
       {segments.map((segment, index) => {
         if (segment.type === 'dialogue') {
-          return <DialogueSection key={index} turns={segment.turns} synthesizeAction={synthesizeAction} />;
+          return <DialogueSection key={index} turns={segment.turns} synthesizeAction={synthesizeAction} translations={translations} />;
         }
         if (segment.type === 'table') {
-          return <InteractiveTableView key={index} table={segment.table} synthesizeAction={synthesizeAction} />;
+          return <InteractiveTableView key={index} table={segment.table} synthesizeAction={synthesizeAction} translations={translations} />;
         }
         return <Markdown key={index}>{segment.markdown}</Markdown>;
       })}

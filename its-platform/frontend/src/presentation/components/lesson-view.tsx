@@ -5,6 +5,7 @@ import { routes } from '@/shared/routes';
 import { CefrBadge } from './cefr-badge';
 import { Alert } from './ui/alert';
 import { LessonPhaseContent, type SynthesizeAction } from './lesson-phase-content';
+import { extractLessonTranslations, type LessonTranslationMap } from '@/presentation/lib/lesson-translations';
 
 export interface LessonViewHero {
   /** Optional unit label, e.g. "Unidade 1". Rendered only when provided. */
@@ -22,6 +23,8 @@ export interface LessonViewProps {
   readonly hero?: LessonViewHero;
   /** Back navigation target. Defaults to home. */
   readonly backHref?: string;
+  /** Optional PT-BR translations keyed by EN text/speaker|text. Reuses existing lesson data when omitted. */
+  readonly translations?: LessonTranslationMap;
 }
 
 /**
@@ -36,10 +39,12 @@ export function LessonView({
   synthesizeAction,
   hero,
   backHref = routes.home,
+  translations,
 }: LessonViewProps) {
   const hasProgress = hero?.progress && hero.progress.total > 0;
   const hasUnit = Boolean(hero?.unitLabel);
   const hasHero = Boolean(hero?.illustration?.src);
+  const resolvedTranslations = translations ?? extractLessonTranslations(lesson.phases);
 
   return (
     <article className="flex flex-col gap-6 sm:gap-8">
@@ -106,7 +111,7 @@ export function LessonView({
               </span>
               <h2 className="text-lg font-semibold text-ink-900">{phase.heading}</h2>
             </div>
-            <LessonPhaseContent phase={phase} synthesizeAction={synthesizeAction} />
+            <LessonPhaseContent phase={phase} synthesizeAction={synthesizeAction} translations={resolvedTranslations} />
           </li>
         ))}
       </ol>

@@ -110,6 +110,52 @@ describe('extractPronunciationTargets', () => {
     expect(texts.indexOf('Good morning')).toBeLessThan(texts.indexOf('Good morning everyone here.'));
   });
 
+  it('extracts alphabet letters from phase 1 alphabet tables as isolated A-Z targets, deduplicated and ordered', () => {
+    const lesson = lessonWithPhases([
+      phase(
+        1,
+        [
+          '### Alfabeto',
+          '',
+          '| Letter | Name |',
+          '|---|---|',
+          '| C | cee |',
+          '| A | ay |',
+          '| B | bee |',
+          '| A | ay |',
+        ].join('\n'),
+        'Input',
+      ),
+      phase(2, 'Practice sentence goes here.', 'Practice'),
+      phase(3, 'Output sentence goes here.', 'Output'),
+      phase(4, 'Check sentence goes here.', 'Check'),
+    ]);
+
+    const texts = extractPronunciationTargets(lesson).filter((t) => t.phase === 1).map((t) => t.text);
+    expect(texts).toEqual(['A', 'B', 'C']);
+  });
+
+  it('extracts glossary/term tables by header tokens (Letter/Letra/Expressão/Termo)', () => {
+    const lesson = lessonWithPhases([
+      phase(
+        1,
+        [
+          '| Expressão | PT-BR |',
+          '|---|---|',
+          '| **pull request** | solicitação de mudança |',
+          '| **deploy** | implantação |',
+        ].join('\n'),
+        'Input',
+      ),
+      phase(2, 'Practice sentence goes here.', 'Practice'),
+      phase(3, 'Output sentence goes here.', 'Output'),
+      phase(4, 'Check sentence goes here.', 'Check'),
+    ]);
+    const texts = extractPronunciationTargets(lesson).map((t) => t.text);
+    expect(texts).toContain('pull request');
+    expect(texts).toContain('deploy');
+  });
+
   it('keeps only first occurrence when dialogue and table produce same normalized text', () => {
     const lesson = lessonWithPhases([
       phase(
