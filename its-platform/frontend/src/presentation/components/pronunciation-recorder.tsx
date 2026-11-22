@@ -49,6 +49,7 @@ export function PronunciationRecorder({
   // Hydration-safe: same initial markup on server/client; capabilities detected after mount.
   const [canRecord, setCanRecord] = useState(false);
   const [hasSpeechRecognition, setHasSpeechRecognition] = useState(false);
+  const [micBlockReason, setMicBlockReason] = useState<string | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -62,11 +63,22 @@ export function PronunciationRecorder({
     const mediaDevicesSupported =
       typeof navigator !== 'undefined' &&
       typeof navigator.mediaDevices?.getUserMedia === 'function';
+    const secure = window.isSecureContext;
     // Post-mount only: keeps server/client initial markup identical for hydration.
-    // Recording requires MediaRecorder/getUserMedia; SpeechRecognition is optional transcript only.
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional mount-time capability detection
+    // Recording requires secure context + MediaRecorder/getUserMedia; SpeechRecognition is optional transcript only.
+    /* eslint-disable react-hooks/set-state-in-effect -- intentional mount-time capability detection */
     setHasSpeechRecognition(speechRecognitionSupported);
-    setCanRecord(mediaDevicesSupported);
+    if (!secure) {
+      setCanRecord(false);
+      setMicBlockReason(copy.pronunciation.micInsecureContext);
+    } else if (!mediaDevicesSupported) {
+      setCanRecord(false);
+      setMicBlockReason(copy.pronunciation.micError);
+    } else {
+      setCanRecord(true);
+      setMicBlockReason(null);
+    }
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   const handleEvaluate = useCallback(async () => {
@@ -331,13 +343,20 @@ export function PronunciationRecorder({
 
       {/* Recording UI */}
       {state === 'idle' && (
-        <button
-          onClick={startRecording}
-          disabled={!canRecord}
-          className="btn btn-primary w-full py-3 text-lg"
-        >
-          {copy.pronunciation.startRecording}
-        </button>
+        <div className="space-y-2">
+          <button
+            onClick={startRecording}
+            disabled={!canRecord}
+            className="btn btn-primary w-full py-3 text-lg"
+          >
+            {copy.pronunciation.startRecording}
+          </button>
+          {!canRecord && micBlockReason ? (
+            <p className="text-sm text-amber-700 dark:text-amber-300" role="status">
+              {micBlockReason}
+            </p>
+          ) : null}
+        </div>
       )}
 
       {state === 'recording' && (
