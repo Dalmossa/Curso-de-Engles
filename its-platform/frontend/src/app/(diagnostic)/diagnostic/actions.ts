@@ -1,12 +1,17 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+import { toDomainError, type PlacementResult } from '@/core';
 import { getServerContext } from '@/infrastructure/composition/server-container';
 import { serializeDomainError, type ActionResult } from '@/shared/action-result';
 import type { DiagnosticFormValues } from '@/presentation/forms/diagnostic-form';
-import type { PlacementResult } from '@/core';
 import { routes } from '@/shared/routes';
 
+/**
+ * Runs the diagnostic placement. `redirect` navigates by throwing, so it stays outside the
+ * `catch`: a captured redirect used to be serialised as an error with no `kind`, which left
+ * `ErrorState` with no copy to render.
+ */
 export async function runDiagnosticAction(
   values: DiagnosticFormValues,
 ): Promise<ActionResult<PlacementResult>> {
@@ -21,9 +26,10 @@ export async function runDiagnosticAction(
       : { mode: values.mode };
 
     await useCases.runDiagnostic.execute(learnerId, input);
-    // We don't have a results page yet; redirect to home
-    redirect(routes.home);
   } catch (error) {
-    return { ok: false, error: serializeDomainError(error as unknown as Parameters<typeof serializeDomainError>[0]) };
+    return { ok: false, error: serializeDomainError(toDomainError(error)) };
   }
+
+  // No results page yet: a successful placement goes home.
+  redirect(routes.home);
 }

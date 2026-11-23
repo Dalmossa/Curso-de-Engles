@@ -102,6 +102,20 @@ export interface ErrorCopy {
   readonly showRetry: boolean;
 }
 
+/**
+ * Shared fallback for the declared `unknown` kind and for any kind a different bundle
+ * version might send. Returning an object in both paths keeps `ErrorState` from reading
+ * `title` off `undefined` when the server serialises an unrecognised error.
+ */
+function unknownErrorCopy(error: DomainError): ErrorCopy {
+  return {
+    title: 'Algo deu errado',
+    message: error.detail || 'Não foi possível concluir a operação.',
+    action: 'Tentar novamente',
+    showRetry: false,
+  };
+}
+
 export function domainErrorCopy(error: DomainError): ErrorCopy {
   switch (error.kind) {
     case 'network':
@@ -167,12 +181,9 @@ export function domainErrorCopy(error: DomainError): ErrorCopy {
         showRetry: false,
       };
     case 'unknown':
-      return {
-        title: 'Algo deu errado',
-        message: error.detail || 'Não foi possível concluir a operação.',
-        action: 'Tentar novamente',
-        showRetry: false,
-      };
+      return unknownErrorCopy(error);
+    default:
+      return unknownErrorCopy(error);
   }
 }
 
